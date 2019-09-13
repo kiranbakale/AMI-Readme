@@ -1,0 +1,10 @@
+plugin: gcp_compute
+projects:
+  - gitlab-qa-resources
+filters:
+groups:
+  test: "'gitlab-10k-testbed' in name"
+scopes:
+  - https://www.googleapis.com/auth/compute
+service_account_file: ../serviceaccount.json
+auth_kind: serviceaccount

@@ -1,0 +1,34 @@
+---
+- name: Update apt
+  apt: update_cache=yes
+
+- name: Install a list of packages
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - curl
+    - openssh-server
+    - ca-certificates
+    - glances
+    - nano
+    - tzdata
+    - postfix
+
+- name: Check if GitLab is already installed.
+  stat: path=/usr/bin/gitlab-ctl
+  register: gitlab_file
+
+- name: Download GitLab repository installation script.
+  get_url:
+    url: "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh"
+    dest: /tmp/gitlab_install_repository.sh
+  when: not gitlab_file.stat.exists
+
+- name: Install GitLab repository.
+  command: bash /tmp/gitlab_install_repository.sh
+  when: not gitlab_file.stat.exists
+
+- name: install gitlab
+  shell: EXTERNAL_URL="http://34.68.42.84" apt-get install gitlab-ce
+  when: not gitlab_file.stat.exists
