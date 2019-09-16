@@ -1,0 +1,5 @@
+---
+- hosts: postgres, postgres_secondary
+  roles:
+    - postgres
+  become: true

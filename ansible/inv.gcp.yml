@@ -2,8 +2,9 @@ plugin: gcp_compute
 projects:
   - gitlab-qa-resources
 filters:
-groups:
-  test: "'gitlab-10k-testbed' in name"
+keyed_groups:
+  - key: labels.gitlab_node_type
+    separator: ''
 scopes:
   - https://www.googleapis.com/auth/compute
 service_account_file: ../serviceaccount.json

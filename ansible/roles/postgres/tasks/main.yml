@@ -18,6 +18,8 @@
 - name: Check if GitLab is already installed.
   stat: path=/usr/bin/gitlab-ctl
   register: gitlab_file
+  tags:
+    - always
 
 - name: Download GitLab repository installation script.
   get_url:
@@ -25,13 +27,25 @@
     dest: /tmp/gitlab_install_repository.sh
   when: not gitlab_file.stat.exists
 
-- name: Install GitLab repository.
+- name: Install GitLab repository
   command: bash /tmp/gitlab_install_repository.sh
   when: not gitlab_file.stat.exists
 
 - name: install gitlab
   apt:
     name: gitlab-ce
-  environment:
-    EXTERNAL_URL: "http://{{ ansible_default_ipv4.address }}"
   when: not gitlab_file.stat.exists
+
+- name: Create the /etc/gitlab/gitlab.rb file
+  template:
+    src: templates/gitlab.rb.j2
+    dest: /etc/gitlab/gitlab.rb
+  tags:
+    - gitlab_template
+  become: yes
+
+- name: reconfigure gitlab
+  shell: gitlab-ctl reconfigure
+  tags:
+    - reconfigure
+  become: yes

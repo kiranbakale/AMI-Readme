@@ -25,6 +25,10 @@ resource "google_compute_instance" "vm_instance" {
     ssh-keys = var.ssh_public_key
   }
 
+  labels = {
+    gitlab_node_type = "postgres"
+  }
+
   network_interface {
     network = "default"
 
