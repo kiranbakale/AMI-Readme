@@ -1,5 +1,14 @@
 ---
-- hosts: test
-  roles:
-    - common
-  become: true
+- hosts: postgres_primary
+  vars:
+    consul_ips: "{{ groups['consul'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
+
+  tasks:
+  - debug:
+      msg: "{{ groups['postgres_secondary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join(',') }}"
+
+  - debug:
+      msg: "{{ ((groups['postgres_primary'] + groups['postgres_secondary']) | length) + 1 }}"
+
+  - debug:
+      msg: "{{ consul_ips | join(',') }}"

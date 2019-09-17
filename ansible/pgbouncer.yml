@@ -1,0 +1,6 @@
+---
+- hosts: pgbouncer
+  roles:
+    - common
+    - pgbouncer
+  become: true

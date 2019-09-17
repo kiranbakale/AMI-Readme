@@ -1,0 +1,4 @@
+consul_internal_ips: "{{ groups['consul'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
+consul_password: '0a6da13ae1754357b71ba1ac6c6caa6b'
+postgres_password: '37aca09f2f8ff04f27bdb2ed159ec81f'
+pgbouncer_password: '9fdf957895675ef0741f66811c8fa958'

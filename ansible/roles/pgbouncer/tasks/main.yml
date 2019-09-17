@@ -1,0 +1,18 @@
+---
+- name: Install gitlab package
+  apt:
+    name: gitlab-ee
+    update_cache: yes
+  when: not gitlab_file.stat.exists
+
+- name: Create the /etc/gitlab/gitlab.rb file
+  template:
+    src: templates/pgbouncer.gitlab.rb.j2
+    dest: /etc/gitlab/gitlab.rb
+  tags:
+    - gitlab_template
+
+- name: reconfigure gitlab
+  shell: gitlab-ctl reconfigure
+  tags:
+    - reconfigure

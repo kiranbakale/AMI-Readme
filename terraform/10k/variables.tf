@@ -1,18 +1,18 @@
 variable "project" {
-  default = "gitlab-qa-resources"
+  default = "gitlab-qa-10k-cd77c7"
 }
 
 variable "credentials_file" {}
 variable "ssh_public_key" {}
 
 variable "region" {
-  default = "us-central1"
+  default = "europe-west4"
 }
 
 variable "zone" {
-  default = "us-central1-c"
+  default = "europe-west4-c"
 }
 
 variable "prefix" {
-  default = "gitlab-10k-testbed"
+  default = "gitlab-qa-10k"
 }

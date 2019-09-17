@@ -1,0 +1,6 @@
+---
+- hosts: consul
+  roles:
+    - common
+    - consul
+  become: true

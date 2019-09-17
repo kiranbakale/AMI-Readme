@@ -1,5 +1,8 @@
 ---
-- hosts: postgres, postgres_secondary
+- hosts: 
+    - postgres_primary
+    - postgres_secondary
   roles:
+    - common
     - postgres
   become: true

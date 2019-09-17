@@ -1,6 +1,6 @@
 plugin: gcp_compute
 projects:
-  - gitlab-qa-resources
+  - gitlab-qa-10k-cd77c7
 filters:
 keyed_groups:
   - key: labels.gitlab_node_type

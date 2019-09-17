@@ -1,0 +1,11 @@
+# Disable all components except Consul
+roles ['consul_role']
+
+consul['configuration'] = {
+  server: true,
+  retry_join: %w({{ consul_internal_ips | join(' ') }})
+}
+
+gitlab_rails['auto_migrate'] = false
+
+node_exporter['listen_address'] = '0.0.0.0:9100'

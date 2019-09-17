@@ -1,51 +1,22 @@
 ---
-- name: Update apt
-  apt: update_cache=yes
-
-- name: Install a list of packages
+- name: Install gitlab package
   apt:
-    name: "{{ packages }}"
-  vars:
-    packages:
-    - curl
-    - openssh-server
-    - ca-certificates
-    - glances
-    - nano
-    - tzdata
-    - postfix
-
-- name: Check if GitLab is already installed.
-  stat: path=/usr/bin/gitlab-ctl
-  register: gitlab_file
-  tags:
-    - always
-
-- name: Download GitLab repository installation script.
-  get_url:
-    url: "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh"
-    dest: /tmp/gitlab_install_repository.sh
-  when: not gitlab_file.stat.exists
-
-- name: Install GitLab repository
-  command: bash /tmp/gitlab_install_repository.sh
-  when: not gitlab_file.stat.exists
-
-- name: install gitlab
-  apt:
-    name: gitlab-ce
+    name: gitlab-ee
+    update_cache: yes
   when: not gitlab_file.stat.exists
 
 - name: Create the /etc/gitlab/gitlab.rb file
   template:
-    src: templates/gitlab.rb.j2
+    src: templates/postgres_ha.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
-  tags:
-    - gitlab_template
-  become: yes
+  tags: gitlab_template
 
 - name: reconfigure gitlab
   shell: gitlab-ctl reconfigure
-  tags:
-    - reconfigure
-  become: yes
+  tags: reconfigure
+
+- name: Enable secondary standby
+  shell: gitlab-ctl repmgr standby setup {{ postgres_primary_ip }} -w
+  tags: postgres_secondary_standby
+  when: 
+    - "'postgres_secondary' in group_names"

@@ -1,33 +1,23 @@
- # Disable all components except Pgbouncer and Consul agent
- roles ['pgbouncer_role']
+# Disable all components except Pgbouncer and Consul agent
+roles ['pgbouncer_role']
 
- # Configure Pgbouncer
- pgbouncer['admin_users'] = %w(pgbouncer gitlab-consul)
+# Configure Pgbouncer
+pgbouncer['admin_users'] = %w(pgbouncer gitlab-consul)
 
- # Configure Consul agent
- consul['watchers'] = %w(postgresql)
+# Configure Consul agent
+consul['watchers'] = %w(postgresql)
 
- # START user configuration
- # Please set the real values as explained in Required Information section
- # Replace CONSUL_PASSWORD_HASH with with a generated md5 value
- # Replace PGBOUNCER_PASSWORD_HASH with with a generated md5 value
- pgbouncer['users'] = {
-   'gitlab-consul': {
-     password: 'consul-test-password'
-   },
-   'pgbouncer': {
-     password: 'pgbouncer-test-password'
-   }
- }
+pgbouncer['users'] = {
+  'gitlab-consul': {
+    password: '{{ consul_password }}'
+  },
+  'pgbouncer': {
+    password: '{{ pgbouncer_password }}'
+  }
+}
+
+consul['configuration'] = {
+  retry_join: %w({{ consul_internal_ips | join(' ') }})
+}
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
- # Replace placeholders:
- #
- # Y.Y.Y.Y consul1.gitlab.example.com Z.Z.Z.Z
- # with the addresses gathered for CONSUL_SERVER_NODES
- consul['configuration'] = {
-   retry_join: %w(),
-   bind_addr: ''
- }
- #
- # END user configuration
