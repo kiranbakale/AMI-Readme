@@ -11,7 +11,7 @@ resource "google_compute_address" "consul_ip" {
 resource "google_compute_instance" "consul" {
   count = var.consul_count
   name = "${var.prefix}-consul-${count.index + 1}"
-  machine_type = "n2-highcpu-2"
+  machine_type = "n1-standard-2"
 
   boot_disk {
     initialize_params {

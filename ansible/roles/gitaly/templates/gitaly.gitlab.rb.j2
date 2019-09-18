@@ -1,0 +1,68 @@
+# /etc/gitlab/gitlab.rb
+# Avoid running unnecessary services on the Gitaly server
+postgresql['enable'] = false
+redis['enable'] = false
+nginx['enable'] = false
+prometheus['enable'] = false
+unicorn['enable'] = false
+sidekiq['enable'] = false
+gitlab_workhorse['enable'] = false
+alertmanager['enable'] = false
+geo_postgresql['enable'] = false
+geo_primary_role['enable'] = false
+geo_secondary_role['enable'] = false
+gitlab_monitor['enable'] = false
+gitlab_pages['enable'] = false
+grafana['enable'] = false
+manage_accounts['enable'] = false
+manage_storage_directories['enable'] = false
+mattermost['enable'] = false
+mattermost_nginx['enable'] = false
+pages_nginx['enable'] = false
+pgbouncer['enable'] = false
+pgbouncer_exporter['enable'] = false
+postgres_exporter['enable'] = false
+prometheus['enable'] = false
+prometheus_monitoring['enable'] = false
+puma['enable'] = false
+redis_exporter['enable'] = false
+redis_master_role['enable'] = false
+redis_sentinel_role['enable'] = false
+redis_slave_role['enable'] = false
+registry['enable'] = false
+registry_nginx['enable'] = false
+repmgr['enable'] = false
+repmgrd['enable'] = false
+sentinel['enable'] = false
+sidekiq_cluster['enable'] = false
+storage_check['enable'] = false
+
+# Prevent database connections during 'gitlab-ctl reconfigure'
+gitlab_rails['rake_cache_clear'] = false
+gitlab_rails['auto_migrate'] = false
+
+# Configure the gitlab-shell API callback URL. Without this, `git push` will
+# fail. This can be your 'front door' GitLab URL or an internal load
+# balancer.
+# gitlab_rails['internal_api_url'] = 'http://157.230.219.6'
+gitlab_rails['internal_api_url'] = 'http://174.138.111.136'
+
+# Make Gitaly accept connections on all network interfaces. You must use
+# firewalls to restrict access to this address/port.
+gitaly['listen_addr'] = "0.0.0.0:8075"
+gitaly['auth_token'] = 'abc123secret'
+
+gitaly['storage'] = [
+  { 'name' => 'default', 'path' => '/mnt/gitlab/storage1/repositories' },
+]
+
+gitaly['prometheus_grpc_latency_buckets'] = [0.001, 0.005, 0.025, 0.1, 0.5, 1.0, 10.0, 30.0, 60.0, 300.0, 1500.0]
+
+consul['enable'] = true
+consul['configuration'] = {
+  retry_join: %w({{ consul_internal_ips | join(' ') }}),
+}
+consul['monitoring_service_discovery'] =  true
+
+node_exporter['listen_address'] = '0.0.0.0:9100'
+gitaly['prometheus_listen_addr'] = "0.0.0.0:9236"

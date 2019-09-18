@@ -1,15 +1,14 @@
 ---
 - name: Create the /etc/gitlab/gitlab.rb file
   template:
-    src: templates/consul.gitlab.rb.j2
+    src: templates/gitaly.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
-  tags:
-    - gitlab_template
+  tags: gitlab_template
 
 - name: reconfigure gitlab
   shell: gitlab-ctl reconfigure
-  tags:
-    - reconfigure
+  retries: 1
+  tags: reconfigure
 
 - name: Create skip-auto-reconfigure file
   file:

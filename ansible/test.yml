@@ -1,5 +1,5 @@
 ---
-- hosts: postgres_primary
+- hosts: postgres_secondary
   vars:
     consul_ips: "{{ groups['consul'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
 
@@ -12,3 +12,6 @@
 
   - debug:
       msg: "{{ consul_ips | join(',') }}"
+
+  - debug:
+      msg: "{{ ansible_hostname }}"

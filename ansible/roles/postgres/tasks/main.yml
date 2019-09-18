@@ -1,10 +1,4 @@
 ---
-- name: Install gitlab package
-  apt:
-    name: gitlab-ee
-    update_cache: yes
-  when: not gitlab_file.stat.exists
-
 - name: Create the /etc/gitlab/gitlab.rb file
   template:
     src: templates/postgres_ha.gitlab.rb.j2
@@ -15,8 +9,22 @@
   shell: gitlab-ctl reconfigure
   tags: reconfigure
 
-- name: Enable secondary standby
-  shell: gitlab-ctl repmgr standby setup {{ postgres_primary_ip }} -w
+- name: Check if secondary standby status
+  shell: gitlab-ctl repmgr cluster show | grep -E 'standby | gitlab-qa-10k-postgres-2'
+  register: postgres_secondary_standby_status
   tags: postgres_secondary_standby
   when: 
     - "'postgres_secondary' in group_names"
+
+- name: Enable secondary standby
+  shell: "(gitlab-ctl repmgr cluster show | grep -E 'standby | gitlab-qa-10k-postgres-2') || {{ ansible_hostname }} gitlab-ctl repmgr standby setup {{ postgres_primary_ip }} -w"
+  tags: postgres_secondary_standby
+  when: 
+    - "'postgres_secondary' in group_names"
+    - not postgres_secondary_standby_status
+
+- name: Create skip-auto-reconfigure file
+  file:
+    path: /etc/gitlab/skip-auto-reconfigure
+    state: touch
+    mode: u=rw,g=r,o=r

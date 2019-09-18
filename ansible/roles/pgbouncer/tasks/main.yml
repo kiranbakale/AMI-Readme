@@ -1,18 +1,17 @@
 ---
-- name: Install gitlab package
-  apt:
-    name: gitlab-ee
-    update_cache: yes
-  when: not gitlab_file.stat.exists
-
 - name: Create the /etc/gitlab/gitlab.rb file
   template:
     src: templates/pgbouncer.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
-  tags:
-    - gitlab_template
+  tags: gitlab_template
 
 - name: reconfigure gitlab
   shell: gitlab-ctl reconfigure
-  tags:
-    - reconfigure
+  retries: 1
+  tags: reconfigure
+
+- name: Create skip-auto-reconfigure file
+  file:
+    path: /etc/gitlab/skip-auto-reconfigure
+    state: touch
+    mode: u=rw,g=r,o=r

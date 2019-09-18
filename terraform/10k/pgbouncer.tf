@@ -11,7 +11,7 @@ resource "google_compute_address" "pgbouncer_ip" {
 resource "google_compute_instance" "pgbouncer" {
   count = var.pgbouncer_count
   name = "${var.prefix}-pgbouncer-${count.index + 1}"
-  machine_type = "n2-standard-4"
+  machine_type = "n1-standard-2"
 
   boot_disk {
     initialize_params {

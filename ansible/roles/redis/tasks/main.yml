@@ -1,7 +1,7 @@
 ---
 - name: Create the /etc/gitlab/gitlab.rb file
   template:
-    src: templates/consul.gitlab.rb.j2
+    src: templates/redis.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
   tags:
     - gitlab_template

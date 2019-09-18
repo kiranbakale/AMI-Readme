@@ -16,8 +16,13 @@ pgbouncer['users'] = {
   }
 }
 
+consul['enable'] = true
 consul['configuration'] = {
-  retry_join: %w({{ consul_internal_ips | join(' ') }})
+  retry_join: %w({{ consul_internal_ips | join(' ') }}),
 }
+consul['monitoring_service_discovery'] =  true
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
+
+# Bug - https://gitlab.com/gitlab-org/omnibus-gitlab/issues/4713
+pgbouncer_exporter['enable'] = false

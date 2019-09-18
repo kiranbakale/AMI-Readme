@@ -29,3 +29,9 @@
 - name: Install GitLab repository.
   command: bash /tmp/gitlab_install_repository.sh
   when: not gitlab_file.stat.exists
+
+- name: Install GitLab package
+  apt:
+    name: gitlab-ee
+    update_cache: yes
+  when: not gitlab_file.stat.exists

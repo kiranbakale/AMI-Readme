@@ -11,7 +11,7 @@ resource "google_compute_address" "postgres_ip" {
 resource "google_compute_instance" "postgres" {
   count = var.postgres_count
   name = "${var.prefix}-postgres-${count.index + 1}"
-  machine_type = "n2-standard-4"
+  machine_type = "n1-standard-4"
 
   boot_disk {
     initialize_params {

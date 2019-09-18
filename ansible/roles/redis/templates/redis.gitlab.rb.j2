@@ -1,0 +1,26 @@
+# Specify server role as 'redis_primary_role'
+roles ['{{ "redis_master_role" if "redis_primary" in group_names else "redis_slave_role"}}']
+
+redis['bind'] = '0.0.0.0'
+redis['port'] = 6379
+redis['password'] = '{{ redis_password }}'
+
+{% if 'redis_secondary' in group_names %}
+redis['master_ip'] = '{{ redis_primary_ip }}'
+{% endif %}
+
+gitlab_rails['auto_migrate'] = false
+redis_exporter['listen_address'] = '0.0.0.0:9121'
+redis_exporter['flags'] = {
+  'redis.addr' => "redis://localhost:6379",
+  'redis.password' => '{{ redis_password }}'
+}
+
+consul['enable'] = true
+consul['configuration'] = {
+  retry_join: %w({{ consul_internal_ips | join(' ') }}),
+}
+consul['monitoring_service_discovery'] =  true
+
+node_exporter['listen_address'] = '0.0.0.0:9100'
+redis_exporter['listen_address'] = '0.0.0.0:9121'

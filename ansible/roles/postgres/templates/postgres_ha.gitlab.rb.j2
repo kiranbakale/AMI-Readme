@@ -16,7 +16,6 @@ postgresql['sql_user_password'] = '{{ postgres_password }}'
 postgresql['max_wal_senders'] = "{{ ((groups['postgres_primary'] + groups['postgres_secondary']) | length) + 1 }}"
 postgresql['max_replication_slots'] = "{{ ((groups['postgres_primary'] + groups['postgres_secondary']) | length) + 1 }}"
 
-# Replace XXX.XXX.XXX.XXX/YY with Network Address
 postgresql['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 repmgr['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 
@@ -24,6 +23,7 @@ repmgr['master_on_initialization'] = {{ postgres_repmgr_master }}
 
 # Consul
 consul['services'] = %w(postgresql)
+consul['enable'] = true
 consul['configuration'] = {
   retry_join: %w({{ consul_internal_ips | join(' ') }}),
 }
