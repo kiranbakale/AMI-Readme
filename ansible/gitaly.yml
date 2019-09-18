@@ -1,6 +1,6 @@
 ---
-- hosts: pgbouncer
+- hosts: gitaly
   roles:
     - all
-    - pgbouncer
+    - gitaly
   become: true

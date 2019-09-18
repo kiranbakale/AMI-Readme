@@ -19,6 +19,7 @@ redis_exporter['flags'] = {
 consul['enable'] = true
 consul['configuration'] = {
   retry_join: %w({{ consul_internal_ips | join(' ') }}),
+  bind_addr: '{{ ansible_default_ipv4.address }}'
 }
 consul['monitoring_service_discovery'] =  true
 

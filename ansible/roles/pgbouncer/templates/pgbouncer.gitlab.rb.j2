@@ -9,16 +9,17 @@ consul['watchers'] = %w(postgresql)
 
 pgbouncer['users'] = {
   'gitlab-consul': {
-    password: '{{ consul_password }}'
+    password: "{{ (consul_password + 'gitlab-consul') | md5 }}"
   },
   'pgbouncer': {
-    password: '{{ pgbouncer_password }}'
+    password: "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
   }
 }
 
 consul['enable'] = true
 consul['configuration'] = {
   retry_join: %w({{ consul_internal_ips | join(' ') }}),
+  bind_addr: '{{ ansible_default_ipv4.address }}'
 }
 consul['monitoring_service_discovery'] =  true
 

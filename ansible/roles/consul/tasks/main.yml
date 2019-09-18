@@ -6,10 +6,14 @@
   tags:
     - gitlab_template
 
-- name: reconfigure gitlab
+- name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
   tags:
     - reconfigure
+
+- name: Restart Consul
+  command: gitlab-ctl restart consul
+  when: gitlab_file.stat.exists
 
 - name: Create skip-auto-reconfigure file
   file:

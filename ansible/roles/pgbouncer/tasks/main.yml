@@ -5,10 +5,21 @@
     dest: /etc/gitlab/gitlab.rb
   tags: gitlab_template
 
-- name: reconfigure gitlab
+- name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
-  retries: 1
+  retries: 2
   tags: reconfigure
+
+- name: Create .pgpass file
+  command: gitlab-ctl write-pgpass --host 127.0.0.1 --database pgbouncer --hostuser gitlab-consul
+  args:
+    stdin: "{{ pgbouncer_password }}\n{{ pgbouncer_password }}\n"
+    creates: /var/opt/gitlab/postgresql/.pgpass
+  become: yes
+
+# Bug - https://gitlab.com/gitlab-org/omnibus-gitlab/issues/3448
+- name: Restart Consul
+  command: gitlab-ctl restart consul
 
 - name: Create skip-auto-reconfigure file
   file:

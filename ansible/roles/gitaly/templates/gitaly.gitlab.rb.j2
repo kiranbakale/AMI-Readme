@@ -14,8 +14,8 @@ geo_secondary_role['enable'] = false
 gitlab_monitor['enable'] = false
 gitlab_pages['enable'] = false
 grafana['enable'] = false
-manage_accounts['enable'] = false
-manage_storage_directories['enable'] = false
+# manage_accounts['enable'] = false
+# manage_storage_directories['enable'] = false
 mattermost['enable'] = false
 mattermost_nginx['enable'] = false
 pages_nginx['enable'] = false
@@ -35,7 +35,7 @@ repmgr['enable'] = false
 repmgrd['enable'] = false
 sentinel['enable'] = false
 sidekiq_cluster['enable'] = false
-storage_check['enable'] = false
+# storage_check['enable'] = false
 
 # Prevent database connections during 'gitlab-ctl reconfigure'
 gitlab_rails['rake_cache_clear'] = false
@@ -44,8 +44,7 @@ gitlab_rails['auto_migrate'] = false
 # Configure the gitlab-shell API callback URL. Without this, `git push` will
 # fail. This can be your 'front door' GitLab URL or an internal load
 # balancer.
-# gitlab_rails['internal_api_url'] = 'http://157.230.219.6'
-gitlab_rails['internal_api_url'] = 'http://174.138.111.136'
+gitlab_rails['internal_api_url'] = '{{ external_url }}'
 
 # Make Gitaly accept connections on all network interfaces. You must use
 # firewalls to restrict access to this address/port.
@@ -53,7 +52,8 @@ gitaly['listen_addr'] = "0.0.0.0:8075"
 gitaly['auth_token'] = 'abc123secret'
 
 gitaly['storage'] = [
-  { 'name' => 'default', 'path' => '/mnt/gitlab/storage1/repositories' },
+  { 'name' => 'default', 'path' => '/mnt/gitlab/default/repositories' },
+  { 'name' => 'storage1', 'path' => '/mnt/gitlab/storage1/repositories' },
 ]
 
 gitaly['prometheus_grpc_latency_buckets'] = [0.001, 0.005, 0.025, 0.1, 0.5, 1.0, 10.0, 30.0, 60.0, 300.0, 1500.0]
@@ -61,6 +61,7 @@ gitaly['prometheus_grpc_latency_buckets'] = [0.001, 0.005, 0.025, 0.1, 0.5, 1.0,
 consul['enable'] = true
 consul['configuration'] = {
   retry_join: %w({{ consul_internal_ips | join(' ') }}),
+  bind_addr: '{{ ansible_default_ipv4.address }}'
 }
 consul['monitoring_service_discovery'] =  true
 

@@ -1,0 +1,23 @@
+---
+- name: Create the /etc/gitlab/gitlab.rb file
+  template:
+    src: templates/gitlab-rails.gitlab.rb.j2
+    dest: /etc/gitlab/gitlab.rb
+  tags: gitlab_template
+
+- name: Create skip-auto-reconfigure file
+  file:
+    path: /etc/gitlab/skip-auto-reconfigure
+    state: touch
+    mode: u=rw,g=r,o=r
+  when: 
+    - "'gitlab_rails_secondary' in group_names"
+
+- name: Reconfigure GitLab
+  shell: gitlab-ctl reconfigure
+  tags: reconfigure
+
+- name: Database Setup
+  command: gitlab-rake gitlab:setup
+  when: 
+    - "'gitlab_rails_primary' in group_names"

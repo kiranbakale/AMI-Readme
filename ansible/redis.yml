@@ -3,5 +3,6 @@
     - redis_primary
     - redis_secondary
   roles:
+    - all
     - redis
   become: true

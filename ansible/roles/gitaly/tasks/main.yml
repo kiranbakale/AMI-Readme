@@ -5,10 +5,20 @@
     dest: /etc/gitlab/gitlab.rb
   tags: gitlab_template
 
-- name: reconfigure gitlab
+- name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
-  retries: 1
   tags: reconfigure
+
+- name: Create Gitaly directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: git
+    group: git
+  with_items:
+    - /mnt/gitlab/default/repositories
+    - /mnt/gitlab/storage1/repositories
 
 - name: Create skip-auto-reconfigure file
   file:

@@ -14,4 +14,4 @@
       msg: "{{ consul_ips | join(',') }}"
 
   - debug:
-      msg: "{{ ansible_hostname }}"
+      msg: "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"

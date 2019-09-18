@@ -5,23 +5,23 @@
     dest: /etc/gitlab/gitlab.rb
   tags: gitlab_template
 
-- name: reconfigure gitlab
+- name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
   tags: reconfigure
 
-- name: Check if secondary standby status
-  shell: gitlab-ctl repmgr cluster show | grep -E 'standby | gitlab-qa-10k-postgres-2'
+- name: Check secondary standby status
+  shell: (gitlab-ctl repmgr cluster show 2>/dev/null | grep -E 'standby | {{ ansible_hostname }}') || echo ""
   register: postgres_secondary_standby_status
   tags: postgres_secondary_standby
   when: 
     - "'postgres_secondary' in group_names"
 
 - name: Enable secondary standby
-  shell: "(gitlab-ctl repmgr cluster show | grep -E 'standby | gitlab-qa-10k-postgres-2') || {{ ansible_hostname }} gitlab-ctl repmgr standby setup {{ postgres_primary_ip }} -w"
+  shell: "gitlab-ctl repmgr standby setup {{ postgres_primary_ip }} -w"
   tags: postgres_secondary_standby
   when: 
     - "'postgres_secondary' in group_names"
-    - not postgres_secondary_standby_status
+    - postgres_secondary_standby_status.stdout == ''
 
 - name: Create skip-auto-reconfigure file
   file:

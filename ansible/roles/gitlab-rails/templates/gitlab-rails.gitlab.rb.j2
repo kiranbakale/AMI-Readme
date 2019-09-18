@@ -1,0 +1,54 @@
+roles ['application_role']
+external_url '{{ external_url }}'
+
+unicorn['enable'] = false
+puma['enable'] = true
+puma['worker_processes'] = 4
+puma['max_threads'] = 4
+
+git_data_dirs(
+  {
+    'default' => { 'path' => '/mnt/default', 'gitaly_address' => 'tcp://{{ gitaly_ip }}:8075' },
+  }
+)
+
+gitaly['enable'] = false
+gitlab_rails['gitaly_token'] = 'abc123secret'
+
+gitlab_rails['db_host'] = '{{ pgbouncer_ip }}'
+gitlab_rails['db_port'] = 6432
+gitlab_rails['db_password'] = '{{ postgres_password }}'
+
+gitlab_rails['initial_root_password'] = '5iveL!fe'
+
+gitlab_rails['auto_migrate'] = {{ 'true' if "gitlab_rails_primary" in group_names else 'false' }}
+
+redis['master_name'] = 'gitlab-redis'
+## The same password for Redis authentication you set up for the master node.
+redis['master_password'] = '{{ redis_password }}'
+## A list of sentinels with `host` and `port`
+gitlab_rails['redis_sentinels'] = [
+{% for ip in consul_internal_ips %}
+  {'host' => '{{ ip }}', 'port' => 26379},
+{% endfor %}
+]
+
+# Disable all components except Pgbouncer and Consul agent
+postgresql['enable'] = false
+nginx['enable'] = true
+
+nginx['status']['options'] = {
+  "server_tokens" => "off",
+  "access_log" => "off"
+}
+node_exporter['listen_address'] = '0.0.0.0:9100'
+# gitlab_rails['monitoring_whitelist'] = ['157.230.235.163']
+gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
+sidekiq['listen_address'] = "0.0.0.0"
+
+consul['enable'] = true
+consul['configuration'] = {
+  retry_join: %w({{ consul_internal_ips | join(' ') }}),
+  bind_addr: '{{ ansible_default_ipv4.address }}'
+}
+consul['monitoring_service_discovery'] =  true

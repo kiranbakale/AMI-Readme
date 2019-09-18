@@ -3,5 +3,6 @@
     - postgres_primary
     - postgres_secondary
   roles:
+    - all
     - postgres
   become: true

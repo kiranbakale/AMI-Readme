@@ -1,6 +1,6 @@
 ---
-- hosts: pgbouncer
+- hosts: sidekiq
   roles:
     - all
-    - pgbouncer
+    - sidekiq
   become: true
