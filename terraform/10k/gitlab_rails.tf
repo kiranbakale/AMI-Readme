@@ -23,6 +23,7 @@ resource "google_compute_instance" "gitlab_rails" {
 
   metadata = {
     ssh-keys = var.ssh_public_key
+    global_ip = google_compute_global_address.gitlab_rails.address
   }
 
   labels = {
@@ -41,6 +42,17 @@ resource "google_compute_instance" "gitlab_rails" {
     ignore_changes = [
       min_cpu_platform
     ]
+  }
+}
+
+resource "google_compute_instance_group" "gitlab_rails" {
+  name = "${var.prefix}-gitlab-rails-group"
+
+  instances = google_compute_instance.gitlab_rails[*].self_link
+
+  named_port {
+    name = "http"
+    port = "80"
   }
 }
 

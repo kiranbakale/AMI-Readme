@@ -6,4 +6,5 @@ redis_password: 'rae5ceiH3sheeGohz2la'
 redis_primary_ip: "{{ groups['redis_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
 pgbouncer_ip: "{{ groups['pgbouncer'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
 gitaly_ip: "{{ groups['gitaly'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
-external_url: "http://34.90.11.163"
+global_ip: "{{ groups['gitlab_rails_primary'] | map('extract', hostvars, ['metadata', 'items']) | sum(start=[]) | selectattr('key', 'equalto', 'global_ip') | map(attribute='value')| join('') }}"
+external_url: "http://{{ global_ip }}"

@@ -6,11 +6,11 @@ variable "credentials_file" {}
 variable "ssh_public_key" {}
 
 variable "region" {
-  default = "europe-west4"
+  default = "us-central1"
 }
 
 variable "zone" {
-  default = "europe-west4-c"
+  default = "us-central1-f"
 }
 
 variable "prefix" {

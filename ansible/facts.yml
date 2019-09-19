@@ -1,0 +1,21 @@
+- hosts: 
+    - localhost
+  tasks:
+    - name: "Get GCP Global Address"
+      gcp_compute_global_address_facts:
+        project: gitlab-qa-10k-cd77c7
+        auth_kind: serviceaccount
+        service_account_file: ../serviceaccount.json
+      register: address_facts
+
+    - set_fact:
+        fact_global_ip: "{{ address_facts['items'][0]['address'] }}"
+
+    - debug:
+        msg: "{{ fact_global_ip }}"
+
+- hosts: 
+    - gitlab_rails_primary
+  tasks:
+    - debug:
+        msg: "{{ fact_global_ip }}"

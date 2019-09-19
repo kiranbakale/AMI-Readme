@@ -1,0 +1,32 @@
+external_url '{{ external_url }}'
+
+# Enable Prometheus
+prometheus['enable'] = true
+prometheus['listen_address'] = '0.0.0.0:9090'
+prometheus['monitor_kubernetes'] = false
+
+# Enable Grafana
+grafana['enable'] = true
+grafana['admin_password'] = 'password'
+
+consul['enable'] = true
+consul['configuration'] = {
+  retry_join: %w({{ consul_internal_ips | join(' ') }}),
+  bind_addr: '{{ ansible_default_ipv4.address }}'
+}
+consul['monitoring_service_discovery'] =  true
+
+# Disable all other services
+gitlab_rails['auto_migrate'] = false
+alertmanager['enable'] = false
+gitaly['enable'] = false
+gitlab_exporter['enable'] = false
+gitlab_workhorse['enable'] = false
+nginx['enable'] = true
+postgres_exporter['enable'] = false
+postgresql['enable'] = false
+redis['enable'] = false
+redis_exporter['enable'] = false
+sidekiq['enable'] = false
+unicorn['enable'] = false
+node_exporter['enable'] = false

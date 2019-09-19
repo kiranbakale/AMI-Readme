@@ -6,3 +6,4 @@
 - import_playbook: sidekiq.yml
 - import_playbook: gitaly.yml
 - import_playbook: gitlab-rails.yml
+- import_playbook: monitor.yml

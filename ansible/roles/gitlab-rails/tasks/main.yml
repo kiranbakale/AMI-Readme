@@ -17,7 +17,7 @@
   shell: gitlab-ctl reconfigure
   tags: reconfigure
 
-- name: Database Setup
-  command: gitlab-rake gitlab:setup
-  when: 
-    - "'gitlab_rails_primary' in group_names"
+#- name: Database Setup
+#  command: gitlab-rake gitlab:setup
+#  when: 
+#    - "'gitlab_rails_primary' in group_names"

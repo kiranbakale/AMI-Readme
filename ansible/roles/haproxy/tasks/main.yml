@@ -1,0 +1,22 @@
+---
+- name: Create the /etc/gitlab/gitlab.rb file
+  template:
+    src: templates/consul.gitlab.rb.j2
+    dest: /etc/gitlab/gitlab.rb
+  tags:
+    - gitlab_template
+
+- name: Reconfigure GitLab
+  shell: gitlab-ctl reconfigure
+  tags:
+    - reconfigure
+
+- name: Restart Consul
+  command: gitlab-ctl restart consul
+  when: gitlab_file.stat.exists
+
+- name: Create skip-auto-reconfigure file
+  file:
+    path: /etc/gitlab/skip-auto-reconfigure
+    state: touch
+    mode: u=rw,g=r,o=r

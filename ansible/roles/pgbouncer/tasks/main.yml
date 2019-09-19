@@ -7,7 +7,9 @@
 
 - name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
-  retries: 2
+  register: result
+  retries: 1
+  until: result is success
   tags: reconfigure
 
 - name: Create .pgpass file
