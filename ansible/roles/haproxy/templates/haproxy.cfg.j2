@@ -1,21 +1,32 @@
-# Disable all components except Consul
-roles ['consul_role', 'redis_sentinel_role']
+global
+    log /dev/log local0
+    log localhost local1 notice
+    log stdout format raw local0
+    maxconn 2000
+    daemon
+ 
+defaults
+    log global
+    mode http
+    option httplog
+    option dontlognull
+    retries 3
+    timeout connect 5000
+    timeout client 50000
+    timeout server 50000
+ 
+frontend http-in
+    bind *:80
+    default_backend webservers
+ 
+backend webservers
+    option httpchk HEAD /
+{% for ip in gitlab_rails_ips %}
+    server gitlab-rails{{loop.index}} {{ ip }}:80 check
+{% endfor %}
 
-gitlab_rails['auto_migrate'] = false
-
-redis['master_name'] = 'gitlab-redis'
-redis['master_password'] = '{{ redis_password }}'
-redis['master_ip'] = '{{ redis_primary_ip }}'
-redis['port'] = 6379
-
-sentinel['bind'] = '0.0.0.0'
-sentinel['quorum'] = 2
-
-consul['enable'] = true
-consul['configuration'] = {
-  server: true,
-  retry_join: %w({{ consul_internal_ips | join(' ') }}),
-  bind_addr: '{{ ansible_default_ipv4.address }}'
-}
-consul['monitoring_service_discovery'] =  true
-node_exporter['listen_address'] = '0.0.0.0:9100'
+listen stats
+    bind *:1936
+    mode http
+    stats enable
+    stats uri /

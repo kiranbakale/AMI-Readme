@@ -23,7 +23,7 @@ resource "google_compute_instance" "gitlab_rails" {
 
   metadata = {
     ssh-keys = var.ssh_public_key
-    global_ip = google_compute_global_address.gitlab_rails.address
+    # global_ip = google_compute_global_address.gitlab_rails.address
   }
 
   labels = {

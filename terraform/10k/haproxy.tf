@@ -16,7 +16,7 @@ resource "google_compute_instance" "haproxy" {
 
   boot_disk {
     initialize_params {
-      image = "cos-cloud/cos-stable"
+      image = "ubuntu-1804-lts"
       size = "20"
     }
   }

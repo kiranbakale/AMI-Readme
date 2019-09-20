@@ -1,6 +1,6 @@
 variable "monitor_count" {
   description = "Number of monitor nodes to create"
-  default = 3
+  default = 1
 }
 
 resource "google_compute_address" "monitor_ip" {
@@ -23,7 +23,7 @@ resource "google_compute_instance" "monitor" {
 
   metadata = {
     ssh-keys = var.ssh_public_key
-    global_ip = google_compute_global_address.gitlab_rails.address
+    # global_ip = google_compute_global_address.gitlab_rails.address
   }
 
   labels = {

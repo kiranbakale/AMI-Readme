@@ -14,6 +14,8 @@
     - nano
     - tzdata
     - postfix
+    - ack
+    - rsync
 
 - name: Check if GitLab is already installed.
   stat: path=/usr/bin/gitlab-ctl

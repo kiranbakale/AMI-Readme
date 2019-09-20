@@ -5,6 +5,34 @@
     dest: /etc/gitlab/gitlab.rb
   tags: gitlab_template
 
+- name: Reconfigure GitLab Primary
+  shell: gitlab-ctl reconfigure
+  tags: reconfigure
+  when: "'gitlab_rails_primary' in group_names"
+
+#- name: Copy GitLab Primary Secrets to Secondaries
+#  synchronize: src=/etc/gitlab/gitlab-secrets.json dest=/etc/gitlab/gitlab-secrets.json
+#  delegate_to: "{{ item }}"
+#  tags: copy
+#  with_items: "{{ groups['gitlab_rails_secondary'] }}"
+#  when: "'gitlab_rails_primary' in group_names"
+
+- name: Store file 
+  fetch:
+    src: /etc/gitlab/gitlab-secrets.json
+    dest: /tmp/gitlab-secrets.json
+    flat: yes
+  tags: copy
+  when: "'gitlab_rails_primary' in group_names"
+
+- name: Copy file
+  copy:
+    src: /tmp/gitlab-secrets.json
+    dest: /etc/gitlab/gitlab-secrets.json
+  tags: copy
+  when: 
+    - "'gitlab_rails_secondary' in group_names"
+
 - name: Create skip-auto-reconfigure file
   file:
     path: /etc/gitlab/skip-auto-reconfigure
@@ -13,9 +41,10 @@
   when: 
     - "'gitlab_rails_secondary' in group_names"
 
-- name: Reconfigure GitLab
+- name: Reconfigure GitLab Secondaries
   shell: gitlab-ctl reconfigure
   tags: reconfigure
+  when: "'gitlab_rails_secondary' in group_names"
 
 #- name: Database Setup
 #  command: gitlab-rake gitlab:setup

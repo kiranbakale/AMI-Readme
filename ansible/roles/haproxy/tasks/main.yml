@@ -1,22 +1,41 @@
 ---
-- name: Create the /etc/gitlab/gitlab.rb file
-  template:
-    src: templates/consul.gitlab.rb.j2
-    dest: /etc/gitlab/gitlab.rb
-  tags:
-    - gitlab_template
+- name: Install Docker Prerequisites
+  apt:
+    name: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg2' ,'software-properties-common']
+    update_cache: yes
 
-- name: Reconfigure GitLab
-  shell: gitlab-ctl reconfigure
-  tags:
-    - reconfigure
+- name: Add Docker GPG key
+  apt_key: url=https://download.docker.com/linux/ubuntu/gpg
 
-- name: Restart Consul
-  command: gitlab-ctl restart consul
-  when: gitlab_file.stat.exists
+- name: Add Docker APT repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/{{ansible_distribution|lower}} {{ansible_distribution_release}} stable
 
-- name: Create skip-auto-reconfigure file
+- name: Install Docker
+  apt:
+    name: docker-ce
+    update_cache: yes
+
+#- name: Update Docker User
+#  shell: "usermod -aG docker {{ ansible_user_id }}"
+#  become: no
+
+- name: Remove old HAProxy container
+  shell: "docker rm -f haproxy 2>/dev/null"
+  ignore_errors: true
+
+- name: Create /opt/haproxy directory
   file:
-    path: /etc/gitlab/skip-auto-reconfigure
-    state: touch
-    mode: u=rw,g=r,o=r
+    path: /opt/haproxy
+    state: directory
+
+- name: Create /opt/haproxy/haproxy.cfg file
+  template:
+    src: templates/haproxy.cfg.j2
+    dest: /opt/haproxy/haproxy.cfg
+
+- name: Start HAProxy Docker
+  shell: |
+    docker pull haproxy:alpine
+    docker run -d --restart=always --name=haproxy -p 80:80 -p 1936:1936 -v /opt/haproxy:/usr/local/etc/haproxy:ro haproxy:alpine
+
