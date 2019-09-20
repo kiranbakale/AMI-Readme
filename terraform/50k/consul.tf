@@ -3,7 +3,7 @@ module "consul" {
 
   prefix = "${var.prefix}"
   node_type = "consul"
-  node_count = 12
+  node_count = 3
 
   machine_type = "n1-highcpu-2"
   ssh_public_key = var.ssh_public_key

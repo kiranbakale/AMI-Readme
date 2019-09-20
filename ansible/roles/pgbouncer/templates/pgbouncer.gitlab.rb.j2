@@ -3,10 +3,6 @@ roles ['pgbouncer_role']
 
 # Configure Pgbouncer
 pgbouncer['admin_users'] = %w(pgbouncer gitlab-consul)
-
-# Configure Consul agent
-consul['watchers'] = %w(postgresql)
-
 pgbouncer['users'] = {
   'gitlab-consul': {
     password: "{{ (consul_password + 'gitlab-consul') | md5 }}"
@@ -15,7 +11,11 @@ pgbouncer['users'] = {
     password: "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
   }
 }
+pgbouncer['admin_users']
+pgbouncer['max_client_conn'] = '8192'
 
+# Configure Consul agent
+consul['watchers'] = %w(postgresql)
 consul['enable'] = true
 consul['configuration'] = {
   retry_join: %w({{ consul_internal_ips | join(' ') }}),

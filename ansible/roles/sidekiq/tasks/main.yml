@@ -12,13 +12,17 @@
     dest: /etc/gitlab/gitlab-secrets.json
   tags: copy
 
-- name: Reconfigure GitLab
-  shell: gitlab-ctl reconfigure
-  tags:
-    - reconfigure
-
 - name: Create skip-auto-reconfigure file
   file:
     path: /etc/gitlab/skip-auto-reconfigure
     state: touch
     mode: u=rw,g=r,o=r
+
+- name: Reconfigure GitLab
+  shell: gitlab-ctl reconfigure
+  tags:
+    - reconfigure
+
+- name: Hot Reload Sidekiq 
+  shell: gitlab-ctl hup sidekiq
+  tags: reload

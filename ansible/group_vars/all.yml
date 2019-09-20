@@ -7,6 +7,7 @@ redis_primary_ip: "{{ groups['redis_primary'] | map('extract', hostvars, ['netwo
 pgbouncer_ip: "{{ groups['pgbouncer'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
 gitaly_ip: "{{ groups['gitaly'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
 monitor_ip: "{{ groups['monitor'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+haproxy_ip: "{{ groups['haproxy'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
 global_ip: "{{ groups['gitlab_rails_primary'] | map('extract', hostvars, ['metadata', 'items']) | sum(start=[]) | selectattr('key', 'equalto', 'global_ip') | map(attribute='value')| join('') }}"
 # global_ip: "{{ groups['haproxy'] | map('extract', hostvars, ['networkInterfaces']) |  sum(start=[]) | map(attribute='accessConfigs') | sum(start=[]) | map(attribute='natIP') | join('') }}"
 gitlab_rails_ips: "{{ (groups['gitlab_rails_primary'] + groups['gitlab_rails_secondary']) | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"

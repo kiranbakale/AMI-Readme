@@ -10,6 +10,11 @@
   tags: reconfigure
   when: "'gitlab_rails_primary' in group_names"
 
+- name: Hot Reload GitLab Primary
+  shell: gitlab-ctl hup unicorn && gitlab-ctl hup sidekiq
+  tags: reload
+  when: "'gitlab_rails_primary' in group_names"
+
 - name: Store secrets file from primary
   fetch:
     src: /etc/gitlab/gitlab-secrets.json
@@ -39,7 +44,7 @@
   tags: reconfigure
   when: "'gitlab_rails_secondary' in group_names"
 
-#- name: Database Setup
-#  command: gitlab-rake gitlab:setup
-#  when: 
-#    - "'gitlab_rails_primary' in group_names"
+- name: Hot Reload GitLab Secondaries
+  shell: gitlab-ctl hup unicorn && gitlab-ctl hup sidekiq
+  tags: reload
+  when: "'gitlab_rails_secondary' in group_names"

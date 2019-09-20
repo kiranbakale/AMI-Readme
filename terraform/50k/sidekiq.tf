@@ -3,7 +3,7 @@ module "sidekiq" {
 
   prefix = "${var.prefix}"
   node_type = "sidekiq"
-  node_count = 16
+  node_count = 8
 
   machine_type = "n1-standard-4"
   ssh_public_key = var.ssh_public_key

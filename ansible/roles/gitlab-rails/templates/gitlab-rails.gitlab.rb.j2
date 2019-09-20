@@ -43,10 +43,12 @@ nginx['enable'] = true
 
 nginx['status']['options'] = {
   "server_tokens" => "off",
-  "access_log" => "off"
+  "access_log" => "off",
+  "allow" => "{{ monitor_ip }}",
+  "deny" => "all",
 }
 node_exporter['listen_address'] = '0.0.0.0:9100'
-gitlab_rails['monitoring_whitelist'] = ['{{ monitor_ip }}']
+gitlab_rails['monitoring_whitelist'] = ['{{ monitor_ip }}', '{{ haproxy_ip }}']
 gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
 sidekiq['listen_address'] = "0.0.0.0"
 
