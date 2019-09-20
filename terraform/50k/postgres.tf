@@ -3,13 +3,9 @@ module "postgres" {
 
   prefix = "${var.prefix}"
   node_type = "postgres"
-  node_count = 3
+  node_count = 12
 
   machine_type = "n1-standard-4"
   ssh_public_key = var.ssh_public_key
   global_ip = google_compute_global_address.gitlab.address
-}
-
-output "postgres" {
-  value = module.postgres
 }

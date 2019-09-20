@@ -15,7 +15,7 @@
     - tzdata
     - postfix
     - ack
-    - rsync
+    - tree
 
 - name: Check if GitLab is already installed.
   stat: path=/usr/bin/gitlab-ctl

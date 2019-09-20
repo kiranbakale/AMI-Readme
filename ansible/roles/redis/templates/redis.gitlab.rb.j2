@@ -1,4 +1,4 @@
-# Specify server role as 'redis_primary_role'
+# Specify server role as 'redis_master_role'
 roles ['{{ "redis_master_role" if "redis_primary" in group_names else "redis_slave_role"}}']
 
 redis['bind'] = '0.0.0.0'

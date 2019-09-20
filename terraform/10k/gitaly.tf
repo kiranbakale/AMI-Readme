@@ -1,58 +1,14 @@
-variable "gitaly_count" {
-  description = "Number of gitaly nodes to create"
-  default = 1
-}
+module "gitaly" {
+  source = "../modules/gitlab_gcp_instance"
 
-resource "google_compute_address" "gitaly_ip" {
-  count = var.gitaly_count
-  name = "${var.prefix}-gitaly-ip-${count.index + 1}"
-}
+  prefix = "${var.prefix}"
+  node_type = "gitaly"
 
-resource "google_compute_instance" "gitaly" {
-  count = var.gitaly_count
-  name = "${var.prefix}-gitaly-${count.index + 1}"
   machine_type = "n1-standard-16"
-
-  boot_disk {
-    initialize_params {
-      image = "ubuntu-1804-lts"
-      size = "100"
-    }
-  }
-
-  metadata = {
-    ssh-keys = var.ssh_public_key
-    # global_ip = google_compute_global_address.gitlab_rails.address
-  }
-
-  labels = {
-    gitlab_node_type = "gitaly"
-  }
-
-  network_interface {
-    network = "default"
-
-    access_config {
-      nat_ip = google_compute_address.gitaly_ip[count.index].address
-    }
-  }
-
-  lifecycle {
-    ignore_changes = [
-      min_cpu_platform
-    ]
-  }
+  ssh_public_key = var.ssh_public_key
+  global_ip = google_compute_global_address.gitlab.address
 }
 
-output "gitaly-machine-names" {
-  value = google_compute_instance.gitaly[*].name
+output "gitaly" {
+  value = module.gitaly
 }
-
-output "gitaly-internal-addresses" {
-  value = google_compute_instance.gitaly[*].network_interface[0].network_ip
-}
-
-output "gitaly-addresses" {
-  value = google_compute_instance.gitaly[*].network_interface[0].access_config[0].nat_ip
-}
-

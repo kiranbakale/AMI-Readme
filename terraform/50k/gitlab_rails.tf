@@ -3,7 +3,7 @@ module "gitlab_rails" {
 
   prefix = "${var.prefix}"
   node_type = "gitlab-rails"
-  node_count = 5
+  node_count = 20
 
   machine_type = "n1-standard-16"
   ssh_public_key = var.ssh_public_key
@@ -26,8 +26,4 @@ resource "google_compute_instance_group" "gitlab_rails" {
     name = "https"
     port = "443"
   }
-}
-
-output "gitlab_rails" {
-  value = module.gitlab_rails
 }

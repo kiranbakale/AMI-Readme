@@ -5,7 +5,7 @@
       gcp_compute_global_address_facts:
         project: gitlab-qa-10k-cd77c7
         auth_kind: serviceaccount
-        service_account_file: ../serviceaccount.json
+        service_account_file: ../serviceaccount-10k.json
       register: address_facts
 
     - set_fact:

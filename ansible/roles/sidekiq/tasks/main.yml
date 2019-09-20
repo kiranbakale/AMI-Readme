@@ -6,6 +6,12 @@
   tags:
     - gitlab_template
 
+- name: Copy secrets file to sidekiqs
+  copy:
+    src: /tmp/gitlab-secrets.json
+    dest: /etc/gitlab/gitlab-secrets.json
+  tags: copy
+
 - name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
   tags:

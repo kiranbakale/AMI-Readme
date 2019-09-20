@@ -14,11 +14,12 @@ git_data_dirs(
 )
 
 gitaly['enable'] = false
-gitlab_rails['gitaly_token'] = 'abc123secret'
+gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
 gitlab_rails['db_host'] = '{{ pgbouncer_ip }}'
 gitlab_rails['db_port'] = 6432
 gitlab_rails['db_password'] = '{{ postgres_password }}'
+gitlab_rails['db_pool'] = 160
 
 gitlab_rails['initial_root_password'] = '5iveL!fe'
 
@@ -45,7 +46,7 @@ nginx['status']['options'] = {
   "access_log" => "off"
 }
 node_exporter['listen_address'] = '0.0.0.0:9100'
-# gitlab_rails['monitoring_whitelist'] = ['157.230.235.163']
+gitlab_rails['monitoring_whitelist'] = ['{{ monitor_ip }}']
 gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
 sidekiq['listen_address'] = "0.0.0.0"
 
