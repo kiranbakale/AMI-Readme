@@ -2,7 +2,7 @@
 - name: Update apt
   apt: update_cache=yes
 
-- name: Install a list of packages
+- name: Install system packages
   apt:
     name: "{{ packages }}"
   vars:
@@ -16,6 +16,16 @@
     - postfix
     - ack
     - tree
+    - python-pip
+    - python3-pip
+  tags: packages
+
+- name: Install python packages
+  pip:
+    name: 
+    - requests
+    - google-auth
+  tags: packages
 
 - name: Check if GitLab is already installed.
   stat: path=/usr/bin/gitlab-ctl
@@ -37,3 +47,11 @@
     name: gitlab-ee
     update_cache: yes
   when: not gitlab_file.stat.exists
+
+#- name: Store secrets file
+#  fetch:
+#    src: /etc/gitlab/gitlab-secrets.json
+#    dest: /tmp/gitlab-secrets.json
+#    flat: yes
+#  tags: secrets
+#  run_once: true

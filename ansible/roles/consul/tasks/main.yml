@@ -6,10 +6,19 @@
   tags:
     - gitlab_template
 
+- name: Download secrets file
+  shell: gsutil cp gs://gitlab-conf-storage/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true
+  tags: secrets
+
 - name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
   tags:
     - reconfigure
+
+- name: Upload secrets file if missing
+  shell: gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://gitlab-conf-storage
+  tags: secrets
+  run_once: true
 
 - name: Restart Consul
   command: gitlab-ctl restart consul
@@ -20,3 +29,8 @@
     path: /etc/gitlab/skip-auto-reconfigure
     state: touch
     mode: u=rw,g=r,o=r
+
+- name: Store secrets file
+  shell: gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://gitlab-conf-storage
+  tags: secrets
+  run_once: true

@@ -1,0 +1,13 @@
+plugin: gcp_compute
+projects:
+  - gitlab-qa-25k-bc38fe
+filters:
+keyed_groups:
+  - key: labels.gitlab_node_type
+    separator: ''
+  - key: labels.gitlab_node_level
+    separator: ''
+scopes:
+  - https://www.googleapis.com/auth/compute
+service_account_file: ../serviceaccount-25k.json
+auth_kind: serviceaccount

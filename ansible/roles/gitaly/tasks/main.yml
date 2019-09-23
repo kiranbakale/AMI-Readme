@@ -5,9 +5,19 @@
     dest: /etc/gitlab/gitlab.rb
   tags: gitlab_template
 
+- name: Download secrets file
+  shell: gsutil cp gs://gitlab-conf-storage/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true
+  tags: secrets
+
 - name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
-  tags: reconfigure
+  tags:
+    - reconfigure
+
+- name: Upload secrets file if missing
+  shell: gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://gitlab-conf-storage
+  tags: secrets
+  run_once: true
 
 - name: Create Gitaly directories
   file:

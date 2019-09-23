@@ -35,6 +35,10 @@ resource "google_compute_instance" "gitlab" {
     }
   }
 
+  service_account {
+    scopes = ["storage-rw"]
+  }
+
   lifecycle {
     ignore_changes = [
       min_cpu_platform

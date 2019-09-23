@@ -6,23 +6,26 @@
   tags:
     - gitlab_template
 
-- name: Copy secrets file to sidekiqs
-  copy:
-    src: /tmp/gitlab-secrets.json
-    dest: /etc/gitlab/gitlab-secrets.json
-  tags: copy
-
-- name: Create skip-auto-reconfigure file
-  file:
-    path: /etc/gitlab/skip-auto-reconfigure
-    state: touch
-    mode: u=rw,g=r,o=r
+- name: Download secrets file
+  shell: gsutil cp gs://gitlab-conf-storage/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true
+  tags: secrets
 
 - name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
   tags:
     - reconfigure
 
+- name: Upload secrets file if missing
+  shell: gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://gitlab-conf-storage
+  tags: secrets
+  run_once: true
+
 - name: Hot Reload Sidekiq 
   shell: gitlab-ctl hup sidekiq
   tags: reload
+
+- name: Create skip-auto-reconfigure file
+  file:
+    path: /etc/gitlab/skip-auto-reconfigure
+    state: touch
+    mode: u=rw,g=r,o=r
