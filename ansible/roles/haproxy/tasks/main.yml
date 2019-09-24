@@ -16,10 +16,6 @@
     name: docker-ce
     update_cache: yes
 
-#- name: Update Docker User
-#  shell: "usermod -aG docker {{ ansible_user_id }}"
-#  become: no
-
 - name: Remove old HAProxy container
   shell: "docker rm -f haproxy 2>/dev/null"
   ignore_errors: true

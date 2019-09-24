@@ -6,13 +6,6 @@ puma['enable'] = true
 puma['worker_processes'] = 40
 puma['max_threads'] = 4
 
-git_data_dirs(
-  {
-    'default' => { 'path' => '/mnt/default', 'gitaly_address' => 'tcp://{{ gitaly_ip }}:8075' },
-    'storage1' => { 'path' => '/mnt/storage1', 'gitaly_address' => 'tcp://{{ gitaly_ip }}:8075' },
-  }
-)
-
 gitaly['enable'] = false
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
@@ -20,12 +13,30 @@ gitlab_rails['db_host'] = '{{ pgbouncer_ip }}'
 gitlab_rails['db_port'] = 6432
 gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['db_pool'] = 160
-
 gitlab_rails['initial_root_password'] = '5iveL!fe'
-
 gitlab_rails['auto_migrate'] = {{ 'true' if "gitlab_rails_primary" in group_names else 'false' }}
-
 gitlab_rails['monitoring_whitelist'] = ['0.0.0.0/0']
+
+# Storage Config
+# Gitaly
+git_data_dirs(
+  {
+    'default' => { 'gitaly_address' => 'tcp://{{ gitaly_ip }}:8075' },
+    'storage1' => { 'gitaly_address' => 'tcp://{{ gitaly_ip }}:8075' },
+  }
+)
+# NFS
+gitlab_rails['uploads_directory'] = '{{ gitlab_nfs_path }}/uploads'
+gitlab_rails['shared_path'] = '{{ gitlab_nfs_path }}/shared'
+gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
+
+# Ensure UIDs and GIDs match between servers for permissions via NFS
+user['uid'] = 9000
+user['gid'] = 9000
+web_server['uid'] = 9001
+web_server['gid'] = 9001
+registry['uid'] = 9002
+registry['gid'] = 9002
 
 redis['master_name'] = 'gitlab-redis'
 ## The same password for Redis authentication you set up for the master node.
@@ -51,6 +62,7 @@ node_exporter['listen_address'] = '0.0.0.0:9100'
 gitlab_rails['monitoring_whitelist'] = ['{{ monitor_ip }}', '{{ haproxy_ip }}']
 gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
 sidekiq['listen_address'] = "0.0.0.0"
+
 
 consul['enable'] = true
 consul['configuration'] = {

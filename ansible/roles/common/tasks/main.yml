@@ -1,6 +1,8 @@
 ---
-- name: Update apt
-  apt: update_cache=yes
+- name: Apt Upgrade
+  apt: 
+    upgrade: 'yes'
+    update_cache: 'yes'
 
 - name: Install system packages
   apt:
@@ -18,6 +20,7 @@
     - tree
     - python-pip
     - python3-pip
+    - nfs-common
   tags: packages
 
 - name: Install python packages
@@ -25,33 +28,33 @@
     name: 
     - requests
     - google-auth
+    - netaddr
   tags: packages
 
 - name: Check if GitLab is already installed.
   stat: path=/usr/bin/gitlab-ctl
   register: gitlab_file
   tags: always
+  when: install_gitlab
 
 - name: Download GitLab repository installation script.
   get_url:
     url: "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh"
     dest: /tmp/gitlab_install_repository.sh
-  when: not gitlab_file.stat.exists
+  when: 
+    - install_gitlab
+    - not gitlab_file.stat.exists
 
 - name: Install GitLab repository.
   command: bash /tmp/gitlab_install_repository.sh
-  when: not gitlab_file.stat.exists
+  when: 
+    - install_gitlab
+    - not gitlab_file.stat.exists
 
 - name: Install GitLab package
   apt:
     name: gitlab-ee
     update_cache: yes
-  when: not gitlab_file.stat.exists
-
-#- name: Store secrets file
-#  fetch:
-#    src: /etc/gitlab/gitlab-secrets.json
-#    dest: /tmp/gitlab-secrets.json
-#    flat: yes
-#  tags: secrets
-#  run_once: true
+  when: 
+    - install_gitlab
+    - not gitlab_file.stat.exists

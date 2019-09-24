@@ -1,6 +1,5 @@
 ---
 - hosts: gitaly
   roles:
-    - all
     - gitaly
   become: true

@@ -1,6 +1,5 @@
 ---
 - hosts: pgbouncer
   roles:
-    - all
     - pgbouncer
   become: true

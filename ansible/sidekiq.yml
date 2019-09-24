@@ -1,6 +1,5 @@
 ---
 - hosts: sidekiq
   roles:
-    - all
     - sidekiq
   become: true

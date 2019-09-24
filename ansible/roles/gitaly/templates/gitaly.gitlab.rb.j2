@@ -1,4 +1,3 @@
-# /etc/gitlab/gitlab.rb
 # Avoid running unnecessary services on the Gitaly server
 postgresql['enable'] = false
 redis['enable'] = false
@@ -11,7 +10,7 @@ alertmanager['enable'] = false
 geo_postgresql['enable'] = false
 geo_primary_role['enable'] = false
 geo_secondary_role['enable'] = false
-gitlab_monitor['enable'] = false
+gitlab_exporter['enable'] = false
 gitlab_pages['enable'] = false
 grafana['enable'] = false
 # manage_accounts['enable'] = false
@@ -49,7 +48,7 @@ gitlab_rails['internal_api_url'] = '{{ external_url }}'
 # Make Gitaly accept connections on all network interfaces. You must use
 # firewalls to restrict access to this address/port.
 gitaly['listen_addr'] = "0.0.0.0:8075"
-gitaly['auth_token'] = 'abc123secret'
+gitaly['auth_token'] = "{{ gitaly_token }}"
 
 gitaly['storage'] = [
   { 'name' => 'default', 'path' => '/mnt/gitlab/default/repositories' },

@@ -1,0 +1,28 @@
+---
+- name: Install NFS Server
+  apt:
+    name: ['nfs-kernel-server']
+    update_cache: yes
+
+- name: Disable NFS Server Delegation
+  shell: |
+    echo 0 > /proc/sys/fs/leases-enable
+    sysctl -w fs.leases-enable=0
+
+- name: Create GitLab NFS directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0777'
+  with_items:
+    - "{{ gitlab_nfs_path }}"
+
+- name: Create /etc/exports
+  template:
+    src: templates/exports.j2
+    dest: /etc/exports
+
+- name: restart nfs server
+  service: 
+    name: nfs-kernel-server
+    state: restarted

@@ -1,10 +1,16 @@
 ---
+- hosts: all
+  roles:
+    - common
+  become: true
+
+- import_playbook: gitlab-nfs.yml
 - import_playbook: consul.yml
 - import_playbook: postgres.yml
 - import_playbook: pgbouncer.yml
 - import_playbook: redis.yml
 - import_playbook: haproxy.yml
 - import_playbook: gitaly.yml
-- import_playbook: gitlab-rails.yml
 - import_playbook: sidekiq.yml
+- import_playbook: gitlab-rails.yml
 - import_playbook: monitor.yml

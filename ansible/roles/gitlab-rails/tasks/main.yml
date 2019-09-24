@@ -1,4 +1,22 @@
 ---
+- name: Mount GitLab NFS
+  mount:
+    fstype: nfs
+    opts: defaults,nofail,lookupcache=positive
+    state: mounted
+    src: "{{ gitlab_nfs_ip }}:{{ gitlab_nfs_path }}"
+    path: "{{ gitlab_nfs_path }}"
+  tags: nfs
+
+- name: Configure SSH Fast Lookup
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^{{ item.setting }}="
+    line: "{{ item.setting }}={{ item.value }}"
+  with_items: 
+    - { setting: 'AuthorizedKeysCommand', value: '/opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell-authorized-keys-check git %u %k'}
+    - { setting: 'AuthorizedKeysCommandUser', value: 'git'}
+
 - name: Create the /etc/gitlab/gitlab.rb file
   template:
     src: templates/gitlab-rails.gitlab.rb.j2

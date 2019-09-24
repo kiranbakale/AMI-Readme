@@ -13,3 +13,7 @@ global_ip: "{{ groups['gitlab_rails_primary'] | map('extract', hostvars, ['metad
 gitlab_rails_ips: "{{ (groups['gitlab_rails_primary'] + groups['gitlab_rails_secondary']) | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
 external_url: "http://{{ global_ip }}"
 gitaly_token: 'abc123secret'
+internal_network_cidr: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
+gitlab_nfs_ip: "{{ groups['gitlab_nfs'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+gitlab_nfs_path: "/mnt/gitlab-nfs"
+install_gitlab: true

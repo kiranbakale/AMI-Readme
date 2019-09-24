@@ -1,7 +1,8 @@
 ---
-- hosts: consul
+- hosts: gitlab_rails_primary
   vars:
     consul_ips: "{{ groups['consul'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
+    ip_test: "{{ ansible_default_ipv4.address }}/16"
 
   tasks:
   - debug:
@@ -11,7 +12,16 @@
       msg: "{{ ((groups['postgres_primary'] + groups['postgres_secondary']) | length) + 1 }}"
 
   - debug:
-      msg: "{{ consul_ips | join(',') }}"
+      msg: "{{ ansible_default_ipv4 | ipsubnet(16) }}"
 
   - debug:
-      msg: "{{ lookup('file', '/Users/grantyoung/Dev/performance-environment-builder/serviceaccount-10k.json') | string }}"
+      msg: "{{ ansible_default_ipv4.address }}/{{ ansible_default_ipv4.netmask }}"
+
+  - debug:
+      msg: "{{ ip_test | ipaddr('network/prefix') }}"
+
+  - debug:
+      msg: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
+
+  - debug:
+      msg: "{{ internal_network_cidr }}"

@@ -1,6 +1,6 @@
 alertmanager['enable'] = false
 gitaly['enable'] = false
-gitlab_monitor['enable'] = false
+gitlab_exporter['enable'] = false
 gitlab_workhorse['enable'] = false
 nginx['enable'] = false
 postgres_exporter['enable'] = false
@@ -13,9 +13,24 @@ puma['enable'] = false
 
 gitlab_rails['db_host'] = '{{ pgbouncer_ip }}'
 gitlab_rails['db_port'] = 6432
+gitlab_rails['db_password'] = '{{ postgres_password }}'
+gitlab_rails['auto_migrate'] = false
+
+# Storage Config
+# NFS
+gitlab_rails['uploads_directory'] = '{{ gitlab_nfs_path }}/uploads'
+gitlab_rails['shared_path'] = '{{ gitlab_nfs_path }}/shared'
+gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
+
+# Ensure UIDs and GIDs match between servers for permissions via NFS
+user['uid'] = 9000
+user['gid'] = 9000
+web_server['uid'] = 9001
+web_server['gid'] = 9001
+registry['uid'] = 9002
+registry['gid'] = 9002
 
 redis['master_name'] = 'gitlab-redis'
-
 ## The same password for Redis authentication you set up for the master node.
 redis['master_password'] = '{{ redis_password }}'
 
@@ -25,9 +40,6 @@ gitlab_rails['redis_sentinels'] = [
   {'host' => '{{ ip }}', 'port' => 26379},
 {% endfor %}
 ]
-
-gitlab_rails['db_password'] = '{{ postgres_password }}'
-gitlab_rails['auto_migrate'] = false
 
 #sidekiq_cluster['enable'] = true
 #sidekiq_cluster['negate'] = true

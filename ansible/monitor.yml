@@ -1,6 +1,5 @@
 ---
 - hosts: monitor
   roles:
-    - all
     - monitor
   become: true
