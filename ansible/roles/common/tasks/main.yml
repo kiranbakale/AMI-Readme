@@ -9,6 +9,7 @@
     name: "{{ packages }}"
   vars:
     packages:
+    - aptitude
     - curl
     - openssh-server
     - ca-certificates

@@ -3,7 +3,7 @@ module "gitlab_rails" {
 
   prefix = "${var.prefix}"
   node_type = "gitlab-rails"
-  node_count = 5
+  node_count = 10
 
   machine_type = "n1-standard-16"
   ssh_public_key = var.ssh_public_key

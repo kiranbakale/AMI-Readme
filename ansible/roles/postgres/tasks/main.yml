@@ -6,7 +6,7 @@
   tags: gitlab_template
 
 - name: Download secrets file
-  shell: gsutil cp gs://gitlab-conf-storage/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true
+  shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
 
 - name: Reconfigure GitLab
@@ -15,7 +15,7 @@
     - reconfigure
 
 - name: Upload secrets file if missing
-  shell: gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://gitlab-conf-storage
+  shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_conf_storage }}"
   tags: secrets
   run_once: true
 

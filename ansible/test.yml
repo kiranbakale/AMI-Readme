@@ -15,13 +15,4 @@
       msg: "{{ ansible_default_ipv4 | ipsubnet(16) }}"
 
   - debug:
-      msg: "{{ ansible_default_ipv4.address }}/{{ ansible_default_ipv4.netmask }}"
-
-  - debug:
-      msg: "{{ ip_test | ipaddr('network/prefix') }}"
-
-  - debug:
-      msg: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
-
-  - debug:
-      msg: "{{ internal_network_cidr }}"
+      msg: "{{ gitlab_conf_storage }}"

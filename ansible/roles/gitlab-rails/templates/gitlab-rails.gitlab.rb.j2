@@ -59,10 +59,9 @@ nginx['status']['options'] = {
   "deny" => "all",
 }
 node_exporter['listen_address'] = '0.0.0.0:9100'
-gitlab_rails['monitoring_whitelist'] = ['{{ monitor_ip }}', '{{ haproxy_ip }}']
+gitlab_rails['monitoring_whitelist'] = ['{{ monitor_ip }}']
 gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
 sidekiq['listen_address'] = "0.0.0.0"
-
 
 consul['enable'] = true
 consul['configuration'] = {
