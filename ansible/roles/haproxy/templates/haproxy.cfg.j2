@@ -8,6 +8,7 @@ global
 defaults
     log global
     mode http
+    default-server inter 10s fall 3 rise 2
     option httplog
     option dontlognull
     retries 3
@@ -17,13 +18,23 @@ defaults
  
 frontend http-in
     bind *:80
-    default_backend webservers
+
+    acl grafana path_beg -i /-/grafana
+    use_backend grafana if grafana
+
+    default_backend gitlab-rails
  
-backend webservers
-    option httpchk HEAD /
+backend gitlab-rails
+    option httpchk GET /-/health
+
 {% for ip in gitlab_rails_ips %}
     server gitlab-rails{{loop.index}} {{ ip }}:80 check
 {% endfor %}
+
+backend grafana
+    option httpchk GET /-/grafana/api/health
+
+    server grafana {{ monitor_ip }}:80 check
 
 listen stats
     bind *:1936

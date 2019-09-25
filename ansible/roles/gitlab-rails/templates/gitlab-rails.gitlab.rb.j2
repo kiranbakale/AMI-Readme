@@ -3,8 +3,17 @@ external_url '{{ external_url }}'
 
 unicorn['enable'] = false
 puma['enable'] = true
-puma['worker_processes'] = 40
+puma['worker_processes'] = 20
 puma['max_threads'] = 4
+puma['worker_timeout'] = 300
+puma['per_worker_max_memory_mb'] = 1024
+puma['listen'] = '0.0.0.0'
+
+#unicorn['enable'] = true
+#unicorn['worker_processes'] = 40
+#unicorn['listen'] = '0.0.0.0'
+#unicorn['worker_memory_limit_min'] = "786432000"
+#unicorn['worker_memory_limit_max'] = "1073741824"
 
 gitaly['enable'] = false
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
@@ -15,7 +24,6 @@ gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['db_pool'] = 160
 gitlab_rails['initial_root_password'] = '5iveL!fe'
 gitlab_rails['auto_migrate'] = {{ 'true' if "gitlab_rails_primary" in group_names else 'false' }}
-gitlab_rails['monitoring_whitelist'] = ['0.0.0.0/0']
 
 # Storage Config
 # Gitaly
@@ -48,24 +56,25 @@ gitlab_rails['redis_sentinels'] = [
 {% endfor %}
 ]
 
-# Disable all components except Pgbouncer and Consul agent
 postgresql['enable'] = false
-nginx['enable'] = true
 
+nginx['enable'] = true
 nginx['status']['options'] = {
   "server_tokens" => "off",
   "access_log" => "off",
   "allow" => "{{ monitor_ip }}",
   "deny" => "all",
 }
-node_exporter['listen_address'] = '0.0.0.0:9100'
-gitlab_rails['monitoring_whitelist'] = ['{{ monitor_ip }}']
-gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
-sidekiq['listen_address'] = "0.0.0.0"
 
+# Monitoring
 consul['enable'] = true
 consul['configuration'] = {
   retry_join: %w({{ consul_internal_ips | join(' ') }}),
   bind_addr: '{{ ansible_default_ipv4.address }}'
 }
-consul['monitoring_service_discovery'] =  true
+consul['monitoring_service_discovery'] = true
+
+node_exporter['listen_address'] = '0.0.0.0:9100'
+gitlab_rails['monitoring_whitelist'] = ['0.0.0.0/0']
+gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
+sidekiq['listen_address'] = '0.0.0.0'

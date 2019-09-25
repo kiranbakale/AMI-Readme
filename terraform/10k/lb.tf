@@ -25,7 +25,7 @@ resource "google_compute_backend_service" "gitlab" {
   name        = "${var.prefix}-gitlab-rails-backend-service"
   port_name   = "http"
   protocol    = "HTTP"
-  timeout_sec = 10
+  timeout_sec = 120
 
   backend {
     group = google_compute_instance_group.gitlab_rails.self_link
@@ -39,11 +39,12 @@ resource "google_compute_backend_service" "gitlab" {
 resource "google_compute_health_check" "gitlab" {
   name = "${var.prefix}-gitlab-rails-health-check"
 
-  timeout_sec        = 10
-  check_interval_sec = 10
+  timeout_sec        = 60
+  check_interval_sec = 60
 
-  tcp_health_check {
-    port = "80"
+  http_health_check {
+    port = 80
+    request_path = "/-/health"
   }
 }
 

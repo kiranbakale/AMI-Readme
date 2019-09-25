@@ -17,6 +17,13 @@ gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['auto_migrate'] = false
 
 # Storage Config
+# Gitaly
+git_data_dirs(
+  {
+    'default' => { 'gitaly_address' => 'tcp://{{ gitaly_ip }}:8075' },
+    'storage1' => { 'gitaly_address' => 'tcp://{{ gitaly_ip }}:8075' },
+  }
+)
 # NFS
 gitlab_rails['uploads_directory'] = '{{ gitlab_nfs_path }}/uploads'
 gitlab_rails['shared_path'] = '{{ gitlab_nfs_path }}/shared'
@@ -31,7 +38,6 @@ registry['uid'] = 9002
 registry['gid'] = 9002
 
 redis['master_name'] = 'gitlab-redis'
-## The same password for Redis authentication you set up for the master node.
 redis['master_password'] = '{{ redis_password }}'
 
 ## A list of sentinels with `host` and `port`
@@ -41,7 +47,13 @@ gitlab_rails['redis_sentinels'] = [
 {% endfor %}
 ]
 
-#sidekiq_cluster['enable'] = true
-#sidekiq_cluster['negate'] = true
-#sidekiq_cluster['queue_groups'] = ['','']
-sidekiq['listen_address'] = "0.0.0.0"
+# Monitoring
+consul['enable'] = true
+consul['configuration'] = {
+  retry_join: %w({{ consul_internal_ips | join(' ') }}),
+  bind_addr: '{{ ansible_default_ipv4.address }}'
+}
+consul['monitoring_service_discovery'] = true
+
+node_exporter['listen_address'] = '0.0.0.0:9100'
+sidekiq['listen_address'] = '0.0.0.0'

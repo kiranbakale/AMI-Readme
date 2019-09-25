@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+  - debug: 
+      msg: "{{ error }}"
+
+  - shell: "ack -s '{{ error }}' /var/log/gitlab || true" 
+    register: output
+    ignore_errors: true
+
+  - debug: 
+      msg: "{{ output.stdout_lines }}"

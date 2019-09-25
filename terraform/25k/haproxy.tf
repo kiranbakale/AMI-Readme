@@ -5,7 +5,7 @@ module "haproxy" {
   node_type = "haproxy"
   node_count = 1
 
-  machine_type = "n1-highcpu-4"
+  machine_type = "n1-highcpu-8"
   ssh_public_key = var.ssh_public_key
   global_ip = google_compute_global_address.gitlab.address
   tags = ["${var.prefix}-web", "${var.prefix}-haproxy"]

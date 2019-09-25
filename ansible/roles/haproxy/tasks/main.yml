@@ -33,5 +33,5 @@
 - name: Start HAProxy Docker
   shell: |
     docker pull haproxy:alpine
-    docker run -d --restart=always --name=haproxy -p 80:80 -p 1936:1936 -v /opt/haproxy:/usr/local/etc/haproxy:ro haproxy:alpine
+    docker run -d --restart=always --name=haproxy -p 80:80 -p 443:443 -p 1936:1936 -v /opt/haproxy:/usr/local/etc/haproxy:ro haproxy:alpine
 

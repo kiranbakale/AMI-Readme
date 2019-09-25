@@ -20,6 +20,13 @@ consul['monitoring_service_discovery'] =  true
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
 
+nginx['status']['options'] = {
+  "server_tokens" => "off",
+  "access_log" => "off",
+  "allow" => "{{ monitor_ip }}",
+  "deny" => "all",
+}
+
 # Disable all other services
 gitlab_rails['auto_migrate'] = false
 alertmanager['enable'] = false
