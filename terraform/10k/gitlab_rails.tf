@@ -5,7 +5,7 @@ module "gitlab_rails" {
   node_type = "gitlab-rails"
   node_count = 5
 
-  machine_type = "custom-20-16384"
+  machine_type = "custom-20-18432"
   ssh_public_key = var.ssh_public_key
   # global_ip = google_compute_global_address.gitlab.address
 

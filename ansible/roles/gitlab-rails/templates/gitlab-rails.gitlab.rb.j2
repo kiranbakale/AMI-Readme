@@ -3,11 +3,17 @@ external_url '{{ external_url }}'
 
 unicorn['enable'] = false
 puma['enable'] = true
-puma['worker_processes'] = 20
-puma['max_threads'] = 4
+puma['worker_processes'] = 16
+puma['max_threads'] = 8
 puma['worker_timeout'] = 300
 puma['per_worker_max_memory_mb'] = 1024
 puma['listen'] = '0.0.0.0'
+
+#unicorn['enable'] = true
+#unicorn['worker_processes'] = 40
+#unicorn['listen'] = '0.0.0.0'
+#unicorn['worker_memory_limit_min'] = "786432000"
+#unicorn['worker_memory_limit_max'] = "1073741824"
 
 gitaly['enable'] = false
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'

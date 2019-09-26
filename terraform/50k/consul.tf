@@ -9,3 +9,7 @@ module "consul" {
   ssh_public_key = var.ssh_public_key
   # global_ip = google_compute_global_address.gitlab.address
 }
+
+output "consul" {
+  value = module.consul
+}

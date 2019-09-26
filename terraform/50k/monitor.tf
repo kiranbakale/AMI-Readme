@@ -11,21 +11,6 @@ module "monitor" {
   tags = ["${var.prefix}-web", "${var.prefix}-monitor"]
 }
 
-resource "google_compute_firewall" "monitor" {
-  ## firewall rules enabling the load balancer health checks
-  name    = "${var.prefix}-monitor-firewall-rule"
-  network = "default"
-
-  description = "Allow Prometheus access"
-
-  allow {
-    protocol = "icmp"
-  }
-
-  allow {
-    protocol = "tcp"
-    ports    = ["9090"]
-  }
-
-  target_tags   = ["${var.prefix}-monitor"]
+output "monitor" {
+  value = module.monitor
 }
