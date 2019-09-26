@@ -7,7 +7,7 @@ module "consul" {
 
   machine_type = "n1-highcpu-2"
   ssh_public_key = var.ssh_public_key
-  global_ip = google_compute_global_address.gitlab.address
+  # global_ip = google_compute_global_address.gitlab.address
 }
 
 output "consul" {

@@ -9,12 +9,6 @@ puma['worker_timeout'] = 300
 puma['per_worker_max_memory_mb'] = 1024
 puma['listen'] = '0.0.0.0'
 
-#unicorn['enable'] = true
-#unicorn['worker_processes'] = 40
-#unicorn['listen'] = '0.0.0.0'
-#unicorn['worker_memory_limit_min'] = "786432000"
-#unicorn['worker_memory_limit_max'] = "1073741824"
-
 gitaly['enable'] = false
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
@@ -47,9 +41,7 @@ registry['uid'] = 9002
 registry['gid'] = 9002
 
 redis['master_name'] = 'gitlab-redis'
-## The same password for Redis authentication you set up for the master node.
 redis['master_password'] = '{{ redis_password }}'
-## A list of sentinels with `host` and `port`
 gitlab_rails['redis_sentinels'] = [
 {% for ip in consul_internal_ips %}
   {'host' => '{{ ip }}', 'port' => 26379},

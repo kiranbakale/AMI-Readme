@@ -16,6 +16,8 @@ gitlab_rails['db_port'] = 6432
 gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['auto_migrate'] = false
 
+gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
+
 # Storage Config
 # Gitaly
 git_data_dirs(
@@ -39,8 +41,6 @@ registry['gid'] = 9002
 
 redis['master_name'] = 'gitlab-redis'
 redis['master_password'] = '{{ redis_password }}'
-
-## A list of sentinels with `host` and `port`
 gitlab_rails['redis_sentinels'] = [
 {% for ip in consul_internal_ips %}
   {'host' => '{{ ip }}', 'port' => 26379},

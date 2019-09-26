@@ -1,5 +1,5 @@
 # https://binx.io/blog/2018/11/19/how-to-configure-global-load-balancing-with-google-cloud-platform/
-
+/*
 resource "google_compute_global_address" "gitlab" {
   name = "${var.prefix}-gitlab-rails-global-address"
 }
@@ -51,3 +51,4 @@ resource "google_compute_health_check" "gitlab" {
 output "gitlab-rails-load-balancer-ip" {
   value = google_compute_global_address.gitlab.address
 }
+*/

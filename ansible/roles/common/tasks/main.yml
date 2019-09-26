@@ -1,27 +1,9 @@
 ---
-- name: Apt Upgrade
-  apt: 
-    upgrade: 'yes'
-    update_cache: 'yes'
-
 - name: Install system packages
   apt:
-    name: "{{ packages }}"
-  vars:
-    packages:
-    - aptitude
-    - curl
-    - openssh-server
-    - ca-certificates
-    - glances
-    - nano
-    - tzdata
-    - postfix
-    - ack
-    - tree
-    - python-pip
-    - python3-pip
-    - nfs-common
+    name: ['aptitude', 'curl', 'openssh-server', 'ca-certificates', 'glances', 'nano', 'tzdata', 'postfix',
+           'ack', 'tree', 'python-pip', 'python3-pip', 'nfs-common']
+    update_cache: yes
   tags: packages
 
 - name: Install python packages

@@ -19,7 +19,7 @@ resource "google_compute_instance" "gitlab" {
 
   metadata = {
     ssh-keys = var.ssh_public_key
-    global_ip = var.global_ip
+    # global_ip = var.global_ip
   }
 
   labels = {

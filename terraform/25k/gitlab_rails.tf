@@ -3,11 +3,11 @@ module "gitlab_rails" {
 
   prefix = "${var.prefix}"
   node_type = "gitlab-rails"
-  node_count = 10
+  node_count = 12
 
-  machine_type = "n1-standard-16"
+  machine_type = "custom-20-18432"
   ssh_public_key = var.ssh_public_key
-  global_ip = google_compute_global_address.gitlab.address
+  # global_ip = google_compute_global_address.gitlab.address
 
   tags = ["${var.prefix}-web"]
 }
