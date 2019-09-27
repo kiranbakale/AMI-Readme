@@ -16,18 +16,22 @@ The Toolkit consists of two industry leading tools:
 * [Ansible](https://docs.ansible.com/ansible/latest/index.html) - To configure GitLab on the provisioned infrastructure
 
 ## Preparation
-### Download Service Account Keys (WIP)
+### Configuring [`git-crypt`](https://github.com/AGWA/git-crypt) for authentication
 
-To be able to use both Terraform and Ansible locally against GCP you'll need to download a [Service Account Key](https://cloud.google.com/iam/docs/understanding-service-accounts) to authenticate.
+To enable authentication for both Ansible and Terraform several authentication files are provided with the toolkit. These secret files are all encrypted with [`git-crypt`](https://github.com/AGWA/git-crypt) and you'll need to either be added as a trusted user (for local use) or be provided with a symmetric key (for CI use) to unlock these as follows:
 
-These keys should be already created for our reference environment projects and can be found under each project's secrets bucket. For the projects you want to access head to each of their secrets bucket and proceed to download the Service Account Key to this project's root (will following the naming convention of `serviceaccount-<project>.json`).
+#### As a Trusted User (for local use)
 
-Currently we have 3 projects that have keys as follows:
-* [10k](https://storage.cloud.google.com/gitlab-gitlab-qa-10k-secrets/serviceaccount-10k.json)
-* [20k](https://storage.cloud.google.com/gitlab-gitlab-qa-25k-secrets/serviceaccount-25k.json)
-* [50k](https://storage.cloud.google.com/gitlab-gitlab-qa-50k-secrets/serviceaccount-50k.json)
+To be added as a trusted user you need to generate a [GPG](https://gnupg.org/) key on your machine and send the public part to the Enablement Quality team to be added:
 
-The toolkit is already configured to access the keys as they are named in the root on this project. Note that this may change in the future as we update best practices on handling authentication.
+1. [Follow our instructions](https://docs.gitlab.com/ee/user/project/repository/gpg_signed_commits/#generating-a-gpg-key) up to step 11 on how to generate a GPG file and public key.
+1. After step 11 you should have your public key in ASCII form. Contact the Enablement Quality team (e.g. on Slack at #qa-performance) where they'll take the key and add you as a trusted user.
+
+After being added as a trusted user, you can checkout this repo and then unlock the secret files with the command `git-crypt unlock`. `git-crypt` will then automatically encrypt and decrypt secrets for you from now on.
+
+#### With a provided symmetric key (CI use)
+
+TBC
 
 ### Useful Resources
 
@@ -57,7 +61,7 @@ Provisioning or updating an Environment's infrastructure with [Terraform](https:
 
 We use [Ansible](https://docs.ansible.com/ansible/latest/index.html) to configure GitLab on an Environment's infrastructure. 
 
-This is achieved through getting VM info via the [`gcp_compute` Dynamic Inventory source](https://docs.ansible.com/ansible/latest/plugins/inventory/gcp_compute.html) (using the same Service Account key as before) and then running Ansible Playbooks & Roles against each depending on the VM Labels set via Terraform:
+This is achieved through getting VM info via the [`gcp_compute` Dynamic Inventory source](https://docs.ansible.com/ansible/latest/plugins/inventory/gcp_compute.html) and then running Ansible Playbooks & Roles against each depending on the VM Labels set via Terraform:
 
 Playbooks & Roles are structured to cover GitLab nodes respectively. E.G. There are playbooks for `gitlab-rails`, `gitaly`, etc... You can see the current list under `ansible/roles/`.
 
