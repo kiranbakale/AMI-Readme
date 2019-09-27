@@ -9,5 +9,5 @@ keyed_groups:
     separator: ''
 scopes:
   - https://www.googleapis.com/auth/compute
-service_account_file: ../serviceaccount-25k.json
+service_account_file: ../secrets/serviceaccount-25k.json
 auth_kind: serviceaccount

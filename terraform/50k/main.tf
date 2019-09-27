@@ -9,6 +9,6 @@ provider "google" {
 terraform {
   backend "gcs" {
     bucket  = "50k-terraform-state"
-    credentials = "../../serviceaccount-50k.json"
+    credentials = "../../secrets/serviceaccount-50k.json"
   }
 }

@@ -2,8 +2,9 @@ variable "project" {
   default = "gitlab-qa-25k-bc38fe"
 }
 
-variable "credentials_file" {}
-variable "ssh_public_key" {}
+variable "credentials_file" {
+  default = "../../secrets/serviceaccount-25k.json"
+}
 
 variable "region" {
   default = "us-east1"

@@ -1,6 +1,6 @@
 variable "prefix" {}
 variable "node_type" {}
-variable "ssh_public_key" {}
+# variable "ssh_public_key" {}
 # variable "global_ip" {}
 
 variable "node_count" {
