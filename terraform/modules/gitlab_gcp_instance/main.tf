@@ -18,7 +18,8 @@ resource "google_compute_instance" "gitlab" {
   }
 
   metadata = {
-    ssh-keys = var.ssh_public_key
+    # ssh-keys = var.ssh_public_key
+    enable-oslogin = "TRUE"
     # global_ip = var.global_ip
   }
 

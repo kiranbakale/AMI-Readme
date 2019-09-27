@@ -1,3 +1,4 @@
 all:
   vars:
     prefix: "gitlab-qa-25k"
+    ansible_user: "sa_109616956154772805294"
