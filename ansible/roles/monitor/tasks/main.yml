@@ -1,5 +1,5 @@
 ---
-- name: Create the /etc/gitlab/gitlab.rb file
+- name: Create /etc/gitlab/gitlab.rb
   template:
     src: templates/monitor.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
@@ -9,6 +9,14 @@
 - name: Download secrets file
   shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
+
+- name: Create custom Grafana dashboards
+  template:
+    src: "templates/{{ item }}.j2"
+    dest: /opt/gitlab/embedded/service/grafana-dashboards/{{ item }}.json
+  tags: gitlab_template
+  with_items:
+    - "server-performance.json"
 
 - name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure

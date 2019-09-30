@@ -25,7 +25,7 @@ resource "google_compute_instance" "gitlab" {
 
   labels = {
     gitlab_node_type = var.node_type
-    gitlab_node_level = count.index == 0 ? "${var.node_type}-primary" : "${var.node_type}-secondary"
+    gitlab_node_level = count.index == 0 && var.label_secondaries ? "${var.node_type}-primary" : "${var.node_type}-secondary"
   }
 
   network_interface {

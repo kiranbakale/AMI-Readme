@@ -1,5 +1,5 @@
 ---
-- name: Create the /etc/gitlab/gitlab.rb file
+- name: Create /etc/gitlab/gitlab.rb
   template:
     src: templates/redis.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb

@@ -23,6 +23,9 @@ frontend http-in
     acl grafana path_beg -i /-/grafana
     use_backend grafana if grafana
 
+    acl gitlab_k6_performance_test hdr_sub(User-Agent) GitlabK6PerformanceTest
+    use_backend gitlab-rails if gitlab_k6_performance_test
+
     default_backend gitlab-rails
  
 backend gitlab-rails

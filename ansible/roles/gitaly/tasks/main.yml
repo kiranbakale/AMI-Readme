@@ -1,5 +1,5 @@
 ---
-- name: Create the /etc/gitlab/gitlab.rb file
+- name: Create /etc/gitlab/gitlab.rb
   template:
     src: templates/gitaly.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
@@ -19,16 +19,22 @@
   tags: secrets
   run_once: true
 
-- name: Create Gitaly directories
+- name: Create Default Gitaly directory
   file:
-    path: "{{ item }}"
+    path: "/mnt/gitlab/default/repositories"
     state: directory
     mode: '0755'
     owner: git
     group: git
-  with_items:
-    - /mnt/gitlab/default/repositories
-    - /mnt/gitlab/storage1/repositories
+  when: "'gitaly_primary' in group_names"
+
+- name: Create Additional Gitaly directories
+  file:
+    path: "/mnt/gitlab/storage{{ gitaly_number }}/repositories"
+    state: directory
+    mode: '0755'
+    owner: git
+    group: git
 
 - name: Create skip-auto-reconfigure file
   file:

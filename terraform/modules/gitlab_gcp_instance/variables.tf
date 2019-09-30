@@ -23,3 +23,7 @@ variable "machine_image" {
 variable "disk_size" {
   default = "100"
 }
+
+variable "label_secondaries" {
+  default = false
+}

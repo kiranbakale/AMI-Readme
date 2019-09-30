@@ -1,5 +1,5 @@
 ---
-- hosts: gitlab_rails_primary
+- hosts: gitaly
   vars:
     consul_ips: "{{ groups['consul'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
     ip_test: "{{ ansible_default_ipv4.address }}/16"
@@ -12,7 +12,9 @@
       msg: "{{ ((groups['postgres_primary'] + groups['postgres_secondary']) | length) + 1 }}"
 
   - debug:
-      msg: "{{ ansible_default_ipv4 | ipsubnet(16) }}"
+      # msg: "{{ zip(groups['gitaly'] | map('regex_search', 'gitaly-\\d+') | list, 1) }}"
+      msg: "{{ groups['gitaly'] | list }}"
 
   - debug:
-      msg: "{{ gitlab_conf_storage }}"
+      # msg: "{{ zip(groups['gitaly'] | map('regex_search', 'gitaly-\\d+') | list, 1) }}"
+      msg: "{{ ansible_hostname | regex_search('\\d+$') }}"

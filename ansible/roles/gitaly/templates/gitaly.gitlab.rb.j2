@@ -51,8 +51,10 @@ gitaly['listen_addr'] = "0.0.0.0:8075"
 gitaly['auth_token'] = "{{ gitaly_token }}"
 
 gitaly['storage'] = [
+{% if 'gitaly_primary' in group_names %}
   { 'name' => 'default', 'path' => '/mnt/gitlab/default/repositories' },
-  { 'name' => 'storage1', 'path' => '/mnt/gitlab/storage1/repositories' },
+{% endif %}
+  { 'name' => "storage{{ gitaly_number }}", 'path' => "/mnt/gitlab/storage{{ gitaly_number }}/repositories" },
 ]
 
 gitaly['prometheus_grpc_latency_buckets'] = [0.001, 0.005, 0.025, 0.1, 0.5, 1.0, 10.0, 30.0, 60.0, 300.0, 1500.0]
