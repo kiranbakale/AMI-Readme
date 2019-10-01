@@ -33,6 +33,16 @@ After being added as a trusted user, you can checkout this repo and then unlock 
 
 TBC
 
+### Installing Ansible Dependencies
+
+We utilize some community roles from [Ansible Galaxy](https://galaxy.ansible.com/home) that allow for convenient deployment of some third party applications.
+
+Ansible needs these roles installed along with any specific dependencies to proceed. To do this you only have to run the following before running Ansible:
+
+1. `cd` to the `ansible/` directory
+1. Run the following command to install the roles - `ansible-galaxy install -r requirements.yml`
+    * If on Mac OS you also need to install `gnu-tar` - `brew install gnu-tar`
+
 ### Useful Resources
 
 Each of the tools this toolkit uses need to be installed before using:

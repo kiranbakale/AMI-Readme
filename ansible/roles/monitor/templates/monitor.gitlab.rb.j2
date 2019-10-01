@@ -5,11 +5,52 @@ prometheus['enable'] = true
 prometheus['listen_address'] = '0.0.0.0:9090'
 prometheus['monitor_kubernetes'] = false
 
+prometheus['scrape_configs'] = [
+  {
+    'job_name': 'non_omnibus_node',
+    'static_configs' => [
+      'targets' => ["{{ haproxy_ip }}:9100", "{{ gitlab_nfs_ip }}:9100"],
+    ],
+  },
+  {
+    'job_name': 'haproxy',
+    'static_configs' => [
+      'targets' => ["{{ haproxy_ip }}:1936"],
+    ],
+  },
+]
+
 # Enable Grafana
 grafana['enable'] = true
 grafana['admin_password'] = 'password'
 grafana['disable_login_form'] = false
 grafana['allow_user_sign_up'] = true
+
+grafana['dashboards'] = [
+  {
+    'name' => 'GitLab Omnibus',
+    'orgId' => 1,
+    'folder' => 'GitLab Omnibus',
+    'type' => 'file',
+    'disableDeletion' => true,
+    'updateIntervalSeconds' => 600,
+    'options' => {
+      'path' => '/opt/gitlab/embedded/service/grafana-dashboards',
+    }
+  },
+  {
+    'name' => 'GitLab Quality',
+    'orgId' => 1,
+    'folder' => 'GitLab Quality',
+    'type' => 'file',
+    'disableDeletion' => true,
+    'updateIntervalSeconds' => 600,
+    'options' => {
+      'path' => '/opt/gitlab-quality/dashboards',
+    }
+  }
+]
+
 
 consul['enable'] = true
 consul['configuration'] = {

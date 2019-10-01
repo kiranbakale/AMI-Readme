@@ -18,14 +18,12 @@ resource "google_compute_instance" "gitlab" {
   }
 
   metadata = {
-    # ssh-keys = var.ssh_public_key
     enable-oslogin = "TRUE"
-    # global_ip = var.global_ip
   }
 
   labels = {
     gitlab_node_type = var.node_type
-    gitlab_node_level = count.index == 0 && var.label_secondaries ? "${var.node_type}-primary" : "${var.node_type}-secondary"
+    gitlab_node_level = var.label_secondaries == true ? (count.index == 0 ? "${var.node_type}-primary" : "${var.node_type}-secondary") : ""
   }
 
   network_interface {

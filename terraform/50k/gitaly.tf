@@ -5,9 +5,8 @@ module "gitaly" {
   node_type = "gitaly"
   node_count = 2
 
-  machine_type = "n1-highcpu-64"
-  # ssh_public_key = var.ssh_public_key
-  # global_ip = google_compute_global_address.gitlab.address
+  machine_type = "custom-32-184320"
+  label_secondaries = true
 }
 
 output "gitaly" {

@@ -42,6 +42,8 @@ backend grafana
 
 listen stats
     bind *:1936
+    http-request use-service prometheus-exporter if { path /metrics }
     mode http
     stats enable
     stats uri /
+    stats refresh 10s

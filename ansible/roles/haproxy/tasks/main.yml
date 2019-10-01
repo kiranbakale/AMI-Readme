@@ -17,7 +17,7 @@
     update_cache: yes
 
 - name: Remove old HAProxy container
-  shell: "docker rm -f haproxy 2>/dev/null"
+  shell: "docker rm -f haproxy 2>/dev/null || true"
   ignore_errors: true
 
 - name: Create /opt/haproxy directory

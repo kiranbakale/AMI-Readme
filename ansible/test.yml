@@ -1,5 +1,5 @@
 ---
-- hosts: gitaly
+- hosts: sidekiq
   vars:
     consul_ips: "{{ groups['consul'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
     ip_test: "{{ ansible_default_ipv4.address }}/16"
@@ -17,4 +17,4 @@
 
   - debug:
       # msg: "{{ zip(groups['gitaly'] | map('regex_search', 'gitaly-\\d+') | list, 1) }}"
-      msg: "{{ ansible_hostname | regex_search('\\d+$') }}"
+      msg: "{{ gitaly_primary_ip }}"

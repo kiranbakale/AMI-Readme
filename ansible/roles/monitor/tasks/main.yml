@@ -10,18 +10,29 @@
   shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
 
-- name: Create custom Grafana dashboards
+- name: Create Quality Grafana dashboards directory
+  file:
+    path: /opt/gitlab-quality/dashboards
+    state: directory
+
+- name: Create Quality Grafana dashboards
   template:
     src: "templates/{{ item }}.j2"
-    dest: /opt/gitlab/embedded/service/grafana-dashboards/{{ item }}.json
+    dest: /opt/gitlab-quality/dashboards/{{ item }}
   tags: gitlab_template
   with_items:
     - "server-performance.json"
+    - "haproxy.json"
 
 - name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
   tags:
     - reconfigure
+
+- name: Restart GitLab
+  command: gitlab-ctl restart
+  tags:
+    - restart
 
 - name: Upload secrets file if missing
   shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_conf_storage }}"

@@ -2,4 +2,5 @@
 - hosts: gitlab_nfs
   roles:
     - gitlab-nfs
+    - cloudalchemy.node-exporter
   become: true

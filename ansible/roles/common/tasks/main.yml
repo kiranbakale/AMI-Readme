@@ -14,13 +14,13 @@
     - netaddr
   tags: packages
 
-- name: Check if GitLab is already installed.
+- name: Check if GitLab is already installed
   stat: path=/usr/bin/gitlab-ctl
   register: gitlab_file
   tags: always
   when: install_gitlab
 
-- name: Download GitLab repository installation script.
+- name: Download GitLab repository installation script
   get_url:
     url: "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh"
     dest: /tmp/gitlab_install_repository.sh
@@ -28,7 +28,7 @@
     - install_gitlab
     - not gitlab_file.stat.exists
 
-- name: Install GitLab repository.
+- name: Install GitLab repository
   command: bash /tmp/gitlab_install_repository.sh
   when: 
     - install_gitlab
@@ -41,3 +41,7 @@
   when: 
     - install_gitlab
     - not gitlab_file.stat.exists
+
+- name: Update all packages to the latest version
+  apt:
+    upgrade: 'safe'
