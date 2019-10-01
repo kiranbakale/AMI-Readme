@@ -5,8 +5,8 @@ module "haproxy" {
   node_type = "haproxy"
   node_count = 1
 
-  machine_type = "n1-highcpu-2"
-  # ssh_public_key = var.ssh_public_key
+  machine_type = "n1-highcpu-4"
+
   tags = ["${var.prefix}-web", "${var.prefix}-haproxy"]
 }
 

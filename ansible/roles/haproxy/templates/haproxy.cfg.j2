@@ -10,6 +10,8 @@ defaults
     mode http
     default-server inter 10s fall 3 rise 2
     balance leastconn
+    compression algo gzip
+    compression type text/css text/html text/plain text/xml application/json
     option httplog
     option dontlognull
     retries 3

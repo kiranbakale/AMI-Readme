@@ -5,6 +5,7 @@ module "redis" {
   node_type = "redis"
   node_count = 2
 
+  machine_type = "n1-highcpu-4"
   label_secondaries = true
 }
 
