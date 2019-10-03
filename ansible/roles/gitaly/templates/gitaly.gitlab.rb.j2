@@ -13,8 +13,6 @@ geo_secondary_role['enable'] = false
 gitlab_exporter['enable'] = false
 gitlab_pages['enable'] = false
 grafana['enable'] = false
-# manage_accounts['enable'] = false
-# manage_storage_directories['enable'] = false
 mattermost['enable'] = false
 mattermost_nginx['enable'] = false
 pages_nginx['enable'] = false
@@ -22,7 +20,6 @@ pgbouncer['enable'] = false
 pgbouncer_exporter['enable'] = false
 postgres_exporter['enable'] = false
 prometheus['enable'] = false
-# prometheus_monitoring['enable'] = false
 puma['enable'] = false
 redis_exporter['enable'] = false
 redis_master_role['enable'] = false
@@ -58,6 +55,7 @@ gitaly['storage'] = [
 ]
 
 gitaly['prometheus_grpc_latency_buckets'] = [0.001, 0.005, 0.025, 0.1, 0.5, 1.0, 10.0, 30.0, 60.0, 300.0, 1500.0]
+gitaly['ruby_num_workers'] = 32
 
 consul['enable'] = true
 consul['configuration'] = {

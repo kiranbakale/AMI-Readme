@@ -1,4 +1,3 @@
-{% raw %}
 {
   "annotations": {
     "list": [
@@ -9432,4 +9431,3 @@
   "uid": "TA-PNV2Zk",
   "version": 4
 }
-{% endraw %}

@@ -3,17 +3,11 @@ external_url '{{ external_url }}'
 
 unicorn['enable'] = false
 puma['enable'] = true
-puma['worker_processes'] = 16
-puma['max_threads'] = 8
+puma['worker_processes'] = {{ gitlab_rails_puma_workers }}
+puma['max_threads'] = {{ gitlab_rails_puma_threads }}
 puma['worker_timeout'] = 300
 puma['per_worker_max_memory_mb'] = 1024
 puma['listen'] = '0.0.0.0'
-
-#unicorn['enable'] = true
-#unicorn['worker_processes'] = 40
-#unicorn['listen'] = '0.0.0.0'
-#unicorn['worker_memory_limit_min'] = "786432000"
-#unicorn['worker_memory_limit_max'] = "1073741824"
 
 gitaly['enable'] = false
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
@@ -21,7 +15,7 @@ gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 gitlab_rails['db_host'] = '{{ pgbouncer_ip }}'
 gitlab_rails['db_port'] = 6432
 gitlab_rails['db_password'] = '{{ postgres_password }}'
-gitlab_rails['db_pool'] = 160
+gitlab_rails['db_pool'] = '{{ gitlab_rails_db_pool }}'
 gitlab_rails['initial_root_password'] = '5iveL!fe'
 gitlab_rails['auto_migrate'] = {{ 'true' if "gitlab_rails_primary" in group_names else 'false' }}
 

@@ -5,7 +5,7 @@ module "gitaly" {
   node_type = "gitaly"
   node_count = 2
 
-  machine_type = "custom-32-122880"
+  machine_type = "n1-standard-32"
   label_secondaries = true
 }
 

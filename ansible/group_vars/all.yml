@@ -1,24 +1,42 @@
-consul_internal_ips: "{{ groups['consul'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
-consul_password: '0a6da13ae1754357b71ba1ac6c6caa6b'
-postgres_password: '37aca09f2f8ff04f27bdb2ed159ec81f'
-pgbouncer_password: '9fdf957895675ef0741f66811c8fa958'
-redis_password: 'rae5ceiH3sheeGohz2la'
-redis_primary_ip: "{{ groups['redis_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
-pgbouncer_ip: "{{ groups['pgbouncer'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
-monitor_ip: "{{ groups['monitor'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
-haproxy_ip: "{{ groups['haproxy'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
-# global_ip: "{{ groups['gitlab_rails_primary'] | map('extract', hostvars, ['metadata', 'items']) | sum(start=[]) | selectattr('key', 'equalto', 'global_ip') | map(attribute='value')| join('') }}"
-global_ip: "{{ groups['haproxy'] | map('extract', hostvars, ['networkInterfaces']) |  sum(start=[]) | map(attribute='accessConfigs') | sum(start=[]) | map(attribute='natIP') | join('') }}"
-gitlab_rails_ips: "{{ (groups['gitlab_rails_primary'] + groups['gitlab_rails_secondary']) | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
-external_url: "http://{{ global_ip }}"
-gitaly_token: 'abc123secret'
-internal_network_cidr: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
-gitlab_nfs_ip: "{{ groups['gitlab_nfs'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
-gitlab_nfs_path: "/mnt/gitlab-nfs"
+# Ansible / General
 install_gitlab: true
 gitlab_conf_storage: "{{ prefix }}-conf-storage"
 
+# Consul
+consul_internal_ips: "{{ groups['consul'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
+consul_password: '0a6da13ae1754357b71ba1ac6c6caa6b'
+
+# HAProxy / Network
+haproxy_ip: "{{ groups['haproxy'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+global_ip: "{{ haproxy_ip }}"
+# global_ip: "{{ groups['gitlab_rails_primary'] | map('extract', hostvars, ['metadata', 'items']) | sum(start=[]) | selectattr('key', 'equalto', 'global_ip') | map(attribute='value')| join('') }}"
+external_url: "http://{{ global_ip }}"
+
+# Gitaly
 gitaly_primary_ip: "{{ groups['gitaly_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
 gitaly_secondary_ips: "{{ groups['gitaly_secondary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
-# gitlab_prefixes: "{{ groups['gitaly'] | map('regex_search', 'gitaly-\\d+') | list }}"
-# gitaly_storages: "{{ dict(gitlab_prefixes | zip(gitaly_ips)) }}"
+gitaly_token: 'abc123secret'
+# gitaly_ruby_workers: "{{ (groups['gitlab_rails'] | length) * gitlab_rails_puma_workers * gitlab_rails_puma_threads }}"
+
+# GitLab NFS
+gitlab_nfs_ip: "{{ groups['gitlab_nfs'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+gitlab_nfs_path: "/mnt/gitlab-nfs"
+gitlab_nfs_export_cidr: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
+
+# GitLab Rails
+gitlab_rails_ips: "{{ (groups['gitlab_rails_primary'] + groups['gitlab_rails_secondary']) | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
+gitlab_rails_puma_workers: 16
+gitlab_rails_puma_threads: 8
+gitlab_rails_db_pool: "{{ gitlab_rails_puma_workers * gitlab_rails_puma_threads}}"
+
+# GitLab Monitor
+monitor_ip: "{{ groups['monitor'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+
+# GitLab Postgres / PGBouncer
+postgres_password: '37aca09f2f8ff04f27bdb2ed159ec81f'
+pgbouncer_password: '9fdf957895675ef0741f66811c8fa958'
+pgbouncer_ip: "{{ groups['pgbouncer'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+
+# GitLab Redis
+redis_password: 'rae5ceiH3sheeGohz2la'
+redis_primary_ip: "{{ groups['redis_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"

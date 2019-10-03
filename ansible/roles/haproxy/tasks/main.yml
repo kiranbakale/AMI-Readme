@@ -19,19 +19,23 @@
 - name: Remove old HAProxy container
   shell: "docker rm -f haproxy 2>/dev/null || true"
   ignore_errors: true
+  tags: reconfigure
 
 - name: Create /opt/haproxy directory
   file:
     path: /opt/haproxy
     state: directory
+  tags: reconfigure
 
 - name: Create /opt/haproxy/haproxy.cfg file
   template:
     src: templates/haproxy.cfg.j2
     dest: /opt/haproxy/haproxy.cfg
+  tags: reconfigure
 
 - name: Start HAProxy Docker
   shell: |
     docker pull haproxy:alpine
     docker run -d --restart=always --name=haproxy -p 80:80 -p 443:443 -p 1936:1936 -v /opt/haproxy:/usr/local/etc/haproxy:ro haproxy:alpine
+  tags: reconfigure
 

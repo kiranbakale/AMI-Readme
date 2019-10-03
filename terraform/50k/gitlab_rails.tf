@@ -3,7 +3,7 @@ module "gitlab_rails" {
 
   prefix = "${var.prefix}"
   node_type = "gitlab-rails"
-  node_count = 25
+  node_count = 24
 
   machine_type = "custom-20-18432"
   label_secondaries = true

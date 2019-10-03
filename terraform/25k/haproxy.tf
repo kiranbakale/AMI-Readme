@@ -5,7 +5,7 @@ module "haproxy" {
   node_type = "haproxy"
   node_count = 1
 
-  machine_type = "n1-highcpu-4"
+  machine_type = "n1-highcpu-2"
 
   tags = ["${var.prefix}-web", "${var.prefix}-haproxy"]
 }

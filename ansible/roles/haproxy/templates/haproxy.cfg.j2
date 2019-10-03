@@ -22,16 +22,19 @@ defaults
 frontend http-in
     bind *:80
 
+    acl gitlab-k6-performance-test hdr_sub(User-Agent) GitlabK6PerformanceTest
+    use_backend gitlab-rails if gitlab-k6-performance-test
+
+    acl gitlab-rails-api path_beg -i /api/v4
+    use_backend gitlab-rails if gitlab-rails-api
+
     acl grafana path_beg -i /-/grafana
     use_backend grafana if grafana
-
-    acl gitlab_k6_performance_test hdr_sub(User-Agent) GitlabK6PerformanceTest
-    use_backend gitlab-rails if gitlab_k6_performance_test
 
     default_backend gitlab-rails
  
 backend gitlab-rails
-    option httpchk GET /-/health
+    option httpchk GET /-/readiness
 
 {% for ip in gitlab_rails_ips %}
     server gitlab-rails{{loop.index}} {{ ip }}:80 check

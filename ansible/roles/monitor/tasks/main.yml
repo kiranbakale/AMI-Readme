@@ -3,8 +3,7 @@
   template:
     src: templates/monitor.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
-  tags:
-    - gitlab_template
+  tags: reconfigure
 
 - name: Download secrets file
   shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
@@ -14,24 +13,24 @@
   file:
     path: /opt/gitlab-quality/dashboards
     state: directory
+  tags: reconfigure
 
-- name: Create Quality Grafana dashboards
-  template:
-    src: "templates/{{ item }}.j2"
-    dest: /opt/gitlab-quality/dashboards/{{ item }}
-  tags: gitlab_template
-  with_items:
-    - "server-performance.json"
-    - "haproxy.json"
+- name: Copy Quality Grafana dashboards
+  copy:
+    src: "{{ item }}"
+    dest: "/opt/gitlab-quality/dashboards"
+  with_fileglob:
+    - files/*
+  tags: reconfigure
 
 - name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
-  tags:
-    - reconfigure
+  tags: reconfigure
 
-- name: Restart GitLab
+- name: Restart Monitor
   command: gitlab-ctl restart
   tags:
+    - reconfigure
     - restart
 
 - name: Upload secrets file if missing

@@ -5,7 +5,7 @@ module "monitor" {
   node_type = "monitor"
   node_count = 1
 
-  machine_type = "custom-4-8192"
+  machine_type = "n1-highcpu-4"
 
   tags = ["${var.prefix}-web", "${var.prefix}-monitor"]
 }

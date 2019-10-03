@@ -21,7 +21,7 @@
   template:
     src: templates/gitlab-rails.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
-  tags: gitlab_template
+  tags: reconfigure
 
 - name: Download secrets file
   shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
@@ -41,7 +41,7 @@
 
 - name: Hot Reload GitLab Primary
   shell: gitlab-ctl hup puma && gitlab-ctl hup sidekiq
-  tags: reload
+  tags: reconfigure
   when: "'gitlab_rails_primary' in group_names"
 
 - name: Reconfigure GitLab Secondaries
@@ -51,7 +51,7 @@
 
 - name: Hot Reload GitLab Secondaries
   shell: gitlab-ctl hup puma && gitlab-ctl hup sidekiq
-  tags: reload
+  tags: reconfigure
   when: "'gitlab_rails_secondary' in group_names"
 
 - name: Create skip-auto-reconfigure file

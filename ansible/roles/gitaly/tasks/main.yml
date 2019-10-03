@@ -3,7 +3,9 @@
   template:
     src: templates/gitaly.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
-  tags: gitlab_template
+  tags: 
+    - gitlab_template
+    - reconfigure
 
 - name: Download secrets file
   shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
@@ -11,8 +13,13 @@
 
 - name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
+  tags: reconfigure
+
+- name: Restart Gitaly
+  command: gitlab-ctl restart
   tags:
     - reconfigure
+    - restart
 
 - name: Upload secrets file if missing
   shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_conf_storage }}"

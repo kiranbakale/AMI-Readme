@@ -5,7 +5,7 @@ module "pgbouncer" {
   node_type = "pgbouncer"
   node_count = 1
 
-  machine_type = "custom-8-4096"
+  machine_type = "n1-highcpu-8"
 }
 
 output "pgbouncer" {

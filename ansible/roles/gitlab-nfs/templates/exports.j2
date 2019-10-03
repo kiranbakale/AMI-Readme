@@ -9,4 +9,4 @@
 # /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
 #
 
-{{ gitlab_nfs_path }} {{ internal_network_cidr }}(rw,sync,no_root_squash,no_subtree_check)
+{{ gitlab_nfs_path }} {{ gitlab_nfs_export_cidr }}(rw,sync,no_root_squash,no_subtree_check)
