@@ -6,7 +6,7 @@ stages:
   image: alpine
   before_script:
     - echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
-    - apk add -u --no-cache openssh-client ca-certificates ansible git-crypt wget unzip 
+    - apk add -u --no-cache git-crypt
     - echo "$GIT_CRYPT_KEY" | base64 -d > /tmp/git-crypt.key
     - git-crypt unlock /tmp/git-crypt.key
     - chmod 600 secrets/gitlab-qa-gcp-ssh
@@ -15,6 +15,7 @@ terraform:
   extends: .update-base
   stage: provision
   script:
+    - apk add -u --no-cache wget unzip
     - wget -q -P /tmp/ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     - unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin
     - cd terraform/$ENVIRONMENT_NAME
@@ -25,10 +26,11 @@ terraform:
       - schedules
 
 ansible:
-  extends: .update-base
+  extends: .update-base∂
   stage: configure
   script:
-    - pip3 install --upgrade pip google-auth requests
+    - apk add -u --no-cache openssh-client ca-certificates ansible
+    - pip3 install --upgrade pip && pip3 install google-auth requests netaddr
     - chmod 700 ansible
     - cd ansible
     - ansible-galaxy install -r requirements.yml
