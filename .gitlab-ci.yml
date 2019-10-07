@@ -30,7 +30,7 @@ ansible:
   stage: configure
   script:
     - apk add -u --no-cache openssh-client ca-certificates ansible
-    - pip3 install --upgrade pip && pip3 install google-auth requests netaddr
+    - pip3 install --upgrade pip google-auth requests netaddr
     - chmod 700 ansible
     - cd ansible
     - ansible-galaxy install -r requirements.yml
