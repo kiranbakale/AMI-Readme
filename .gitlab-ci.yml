@@ -12,7 +12,7 @@ stages:
     - chmod 600 secrets/gitlab-qa-gcp-ssh
 
 terraform:
-  extends: .k6-base
+  extends: .update-base
   script:
     - wget -P /tmp/ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     - unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin
@@ -24,7 +24,7 @@ terraform:
       - schedules
 
 ansible:
-  extends: .k6-base
+  extends: .update-base
   script:
     - pip3 install --upgrade pip google-auth requests
     - cd ansible
