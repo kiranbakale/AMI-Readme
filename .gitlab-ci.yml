@@ -26,7 +26,7 @@ terraform:
       - schedules
 
 ansible:
-  extends: .update-base∂
+  extends: .update-base
   stage: configure
   script:
     - apk add -u --no-cache openssh-client ca-certificates ansible
