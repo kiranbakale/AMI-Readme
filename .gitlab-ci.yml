@@ -1,9 +1,9 @@
 stages:
-  - update
+  - provision
+  - configure
 
 .update-base:
   image: alpine
-  stage: update
   before_script:
     - echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
     - apk add -u --no-cache openssh-client ca-certificates ansible git-crypt wget unzip 
@@ -13,6 +13,7 @@ stages:
 
 terraform:
   extends: .update-base
+  stage: provision
   script:
     - wget -P /tmp/ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     - unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin
@@ -25,6 +26,7 @@ terraform:
 
 ansible:
   extends: .update-base
+  stage: configure
   script:
     - pip3 install --upgrade pip google-auth requests
     - cd ansible
