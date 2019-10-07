@@ -1,0 +1,35 @@
+stages:
+  - update
+
+.update-base:
+  image: alpine
+  stage: update
+  before_script:
+    - echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+    - apk add -u --no-cache openssh-client ca-certificates ansible git-crypt wget unzip 
+    - echo "$GIT_CRYPT_KEY" | base64 -d > /tmp/git-crypt.key
+    - git-crypt unlock /tmp/git-crypt.key
+    - chmod 600 secrets/gitlab-qa-gcp-ssh
+
+terraform:
+  extends: .k6-base
+  script:
+    - wget -P /tmp/ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+    - unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin
+    - cd terraform/$ENVIRONMENT_NAME
+    - terraform init
+    - terraform apply -auto-approve
+  only:
+    refs:
+      - schedules
+
+ansible:
+  extends: .k6-base
+  script:
+    - pip3 install --upgrade pip google-auth requests
+    - cd ansible
+    - ansible-galaxy install -r requirements.yml
+    - ansible-playbook -i inventories/$ENVIRONMENT_NAME all.yml
+  only:
+    refs:
+      - schedules

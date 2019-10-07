@@ -7,6 +7,7 @@ provider "google" {
 }
 
 terraform {
+  required_version = "~> 0.12.9"
   backend "gcs" {
     bucket  = "25k-terraform-state"
     credentials = "../../secrets/serviceaccount-25k.json"

@@ -34,7 +34,7 @@ frontend http-in
     default_backend gitlab-rails
  
 backend gitlab-rails
-    option httpchk GET /-/readiness
+    option httpchk GET /-/liveness
 
 {% for ip in gitlab_rails_ips %}
     server gitlab-rails{{loop.index}} {{ ip }}:80 check
