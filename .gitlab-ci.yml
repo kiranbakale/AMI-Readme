@@ -14,6 +14,8 @@ stages:
 terraform:
   extends: .update-base
   stage: provision
+  variables:
+    TERRAFORM_VERSION: "0.12.9"
   script:
     - apk add -u --no-cache wget unzip
     - wget -q -P /tmp/ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
