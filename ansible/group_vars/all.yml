@@ -39,4 +39,10 @@ pgbouncer_ip: "{{ groups['pgbouncer'] | map('extract', hostvars, ['networkInterf
 
 # GitLab Redis
 redis_password: 'rae5ceiH3sheeGohz2la'
-redis_primary_ip: "{{ groups['redis_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+# redis_primary_ip: "{{ groups['redis_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+# redis_internal_ips: "{{ groups['redis'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
+
+redis_cache_primary_ip: "{{ groups['redis_cache_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+redis_cache_internal_ips: "{{ groups['redis_cache'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
+redis_persistent_primary_ip: "{{ groups['redis_persistent_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+redis_persistent_internal_ips: "{{ groups['redis_persistent'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"

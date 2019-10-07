@@ -18,21 +18,26 @@ gitlab_rails['auto_migrate'] = false
 
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
-# Storage Config
-# Gitaly
-git_data_dirs({
-  'default' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_ip }}:8075' },
-  'storage1' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_ip }}:8075' },
-{% for gitaly_secondary_ip in gitaly_secondary_ips %}
-  "storage{{loop.index + 1}}" => { 'gitaly_address' => 'tcp://{{ gitaly_secondary_ip }}:8075' },
+# Redis Servers Config
+gitlab_rails['redis_cache_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-cache'
+gitlab_rails['redis_queues_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
+gitlab_rails['redis_shared_state_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
+
+gitlab_rails['redis_cache_sentinels'] = [
+{% for ip in redis_cache_internal_ips %}
+  {host: '{{ ip }}', port: 26379},
 {% endfor %}
-})
-
-
-# NFS
-gitlab_rails['uploads_directory'] = '{{ gitlab_nfs_path }}/uploads'
-gitlab_rails['shared_path'] = '{{ gitlab_nfs_path }}/shared'
-gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
+]
+gitlab_rails['redis_queues_sentinels'] = [
+{% for ip in redis_persistent_internal_ips %}
+  {host: '{{ ip }}', port: 26379},
+{% endfor %}
+]
+gitlab_rails['redis_shared_state_sentinels'] = [
+{% for ip in redis_persistent_internal_ips %}
+  {host: '{{ ip }}', port: 26379},
+{% endfor %}
+]
 
 # Ensure UIDs and GIDs match between servers for permissions via NFS
 user['uid'] = 9000
@@ -41,14 +46,6 @@ web_server['uid'] = 9001
 web_server['gid'] = 9001
 registry['uid'] = 9002
 registry['gid'] = 9002
-
-redis['master_name'] = 'gitlab-redis'
-redis['master_password'] = '{{ redis_password }}'
-gitlab_rails['redis_sentinels'] = [
-{% for ip in consul_internal_ips %}
-  {'host' => '{{ ip }}', 'port' => 26379},
-{% endfor %}
-]
 
 # Monitoring
 consul['enable'] = true
@@ -60,3 +57,18 @@ consul['monitoring_service_discovery'] = true
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
 sidekiq['listen_address'] = '0.0.0.0'
+
+# Storage Config
+# NFS
+gitlab_rails['uploads_directory'] = '{{ gitlab_nfs_path }}/uploads'
+gitlab_rails['shared_path'] = '{{ gitlab_nfs_path }}/shared'
+gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
+
+# Gitaly
+git_data_dirs({
+  'default' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_ip }}:8075' },
+  'storage1' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_ip }}:8075' },
+{% for gitaly_secondary_ip in gitaly_secondary_ips %}
+  "storage{{loop.index + 1}}" => { 'gitaly_address' => 'tcp://{{ gitaly_secondary_ip }}:8075' },
+{% endfor %}
+})

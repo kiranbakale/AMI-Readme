@@ -1,5 +1,5 @@
 ---
-- hosts: gitaly
+- hosts: redis_*
   vars:
     consul_ips: "{{ groups['consul'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
     ip_test: "{{ ansible_default_ipv4.address }}/16"
@@ -13,8 +13,4 @@
 
   - debug:
       # msg: "{{ zip(groups['gitaly'] | map('regex_search', 'gitaly-\\d+') | list, 1) }}"
-      msg: "{{ groups['gitaly'] | list }}"
-
-  - debug:
-      # msg: "{{ zip(groups['gitaly'] | map('regex_search', 'gitaly-\\d+') | list, 1) }}"
-      msg: "{{ gitaly_ruby_workers }}"
+      msg: "{{ ansible_memory_mb.real.total }} - {{ ((ansible_memory_mb.real.total | int) * 0.9) | int }}mb"

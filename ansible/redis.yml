@@ -1,7 +1,6 @@
 ---
 - hosts: 
-    - redis_primary
-    - redis_secondary
+    - redis_*
   roles:
     - redis
   become: true

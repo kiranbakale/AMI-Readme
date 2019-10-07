@@ -12,8 +12,8 @@
 - name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
   register: result
-  retries: 1
-  until: result is success
+  # retries: 1
+  # until: result is success
   tags: reconfigure
 
 - name: Upload secrets file if missing
