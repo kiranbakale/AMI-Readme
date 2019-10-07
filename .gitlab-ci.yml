@@ -15,7 +15,7 @@ terraform:
   extends: .update-base
   stage: provision
   script:
-    - wget -P /tmp/ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+    - wget -q -P /tmp/ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     - unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin
     - cd terraform/$ENVIRONMENT_NAME
     - terraform init
@@ -29,6 +29,7 @@ ansible:
   stage: configure
   script:
     - pip3 install --upgrade pip google-auth requests
+    - chmod -v 700 ansible
     - cd ansible
     - ansible-galaxy install -r requirements.yml
     - ansible-playbook -i inventories/$ENVIRONMENT_NAME all.yml
