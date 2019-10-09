@@ -5,6 +5,8 @@ module "gitaly" {
   node_type = "gitaly"
   node_count = 2
 
+  disk_type = "pd-ssd"
+
   machine_type = "custom-64-184320"
   label_secondaries = true
 }

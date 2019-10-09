@@ -14,6 +14,7 @@ resource "google_compute_instance" "gitlab" {
     initialize_params {
       image = var.machine_image
       size = var.disk_size
+      type = var.disk_type
     }
   }
 

@@ -3,9 +3,12 @@ module "gitlab_rails" {
 
   prefix = "${var.prefix}"
   node_type = "gitlab-rails"
-  node_count = 24
+  node_count =15
+  # node_count = 12
 
-  machine_type = "custom-20-18432"
+  # machine_type = "custom-20-18432"
+  machine_type = "n1-highcpu-32"
+  # machine_type = "custom-16-16384"
   label_secondaries = true
 
   tags = ["${var.prefix}-web"]

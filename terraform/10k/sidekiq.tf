@@ -5,7 +5,7 @@ module "sidekiq" {
   node_type = "sidekiq"
   node_count = 4
 
-  machine_type = "n1-highcpu-4"
+  machine_type = "n1-standard-4"
 }
 
 output "sidekiq" {

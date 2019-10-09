@@ -8,7 +8,7 @@ redis['master_name'] = '{{ "gitlab-redis-cache" if (group_names | select("match"
 redis['master_password'] = '{{ redis_password }}'
 
 {% if (group_names | select("match", ".*_cache_.*") | list | count > 0) %}
-redis['maxmemory'] = '{{ ((ansible_memory_mb.real.total | int) * 0.9) | int }}mb'
+redis['maxmemory'] = '{{ ((ansible_memory_mb.real.total | int) * 0.9) | round | int }}mb'
 redis['maxmemory_policy'] = "allkeys-lru"
 redis['maxmemory_samples'] = 5
 {% endif %}

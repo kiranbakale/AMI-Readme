@@ -22,9 +22,13 @@ prometheus['scrape_configs'] = [
 
 # Enable Grafana
 grafana['enable'] = true
-grafana['admin_password'] = 'password'
+grafana['admin_password'] = '5iveL!fe'
 grafana['disable_login_form'] = false
-grafana['allow_user_sign_up'] = true
+grafana['env'] = {
+  'GF_AUTH_ANONYMOUS_ENABLED' => true,
+  'GF_SERVER_ROOT_URL' => "{{ external_url }}/-/grafana"
+}
+# grafana['allow_user_sign_up'] = true
 
 grafana['dashboards'] = [
   {
@@ -50,7 +54,6 @@ grafana['dashboards'] = [
     }
   }
 ]
-
 
 consul['enable'] = true
 consul['configuration'] = {

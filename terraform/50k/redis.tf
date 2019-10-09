@@ -5,7 +5,7 @@ module "redis-cache" {
   node_type = "redis-cache"
   node_count = 3
 
-  machine_type = "n1-highcpu-4"
+  machine_type = "n1-standard-4"
   label_secondaries = true
 }
 
@@ -20,7 +20,7 @@ module "redis-persistent" {
   node_type = "redis-persistent"
   node_count = 3
 
-  machine_type = "n1-highcpu-4"
+  machine_type = "n1-standard-4"
   label_secondaries = true
 }
 

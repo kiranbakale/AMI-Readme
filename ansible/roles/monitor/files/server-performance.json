@@ -101,7 +101,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "CPU",
+      "title": "CPU %",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -153,7 +153,7 @@
         "x": 12,
         "y": 0
       },
-      "id": 5,
+      "id": 17,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -177,56 +177,34 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/Memory Used %/i",
+          "color": "#FA6400",
+          "dashes": true,
+          "legend": false,
+          "spaceLength": 7,
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (job)(ruby_process_resident_memory_bytes{job!='prometheus'})",
+          "expr": "(node_memory_MemTotal_bytes{job!='prometheus'} - node_memory_MemAvailable_bytes{job!='prometheus'}) * on(instance) group_left(nodename) (node_uname_info)",
           "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "legendFormat": "10k Memory - {{job}}",
-          "refId": "A"
-        },
-        {
-          "expr": "(((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) or ((node_memory_MemFree_bytes + node_memory_Buffers_bytes + node_memory_Cached_bytes) / node_memory_MemTotal_bytes)) * 100) * on(instance) group_left(nodename) (node_uname_info)",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "legendFormat": "Memory - {{nodename}}",
-          "refId": "B"
-        },
-        {
-          "expr": "sum by (job)(process_resident_memory_bytes{job!='prometheus'} + process_virtual_memory_bytes{job!='prometheus'})",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "refId": "C"
-        },
-        {
-          "expr": "avg by (job)(process_resident_memory_bytes{job!~'prometheus|node'})",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{job}}",
-          "refId": "D"
-        },
-        {
-          "expr": "avg by (job)(ruby_process_resident_memory_bytes{job!~'prometheus|node'})",
-          "format": "time_series",
-          "hide": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{job}}",
-          "refId": "E"
-        },
-        {
-          "expr": "(node_memory_MemTotal_bytes{job!='prometheus'} - node_memory_MemFree_bytes{job!='prometheus'}- (node_memory_Cached_bytes{job!='prometheus'} + node_memory_Buffers_bytes{job!='prometheus'})) * on(instance) group_left(nodename) (node_uname_info)",
-          "format": "time_series",
+          "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "Memory Used - {{nodename}}",
+          "legendFormat": "Memory Used MB - {{nodename}}",
           "refId": "F"
+        },
+        {
+          "expr": "((100 - ((node_memory_MemAvailable_bytes{job!='prometheus'} * 100) / node_memory_MemTotal_bytes{job!='prometheus'})) > 75) * on(instance) group_left(nodename) (node_uname_info)",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Memory Used % - {{nodename}}",
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -249,7 +227,7 @@
       },
       "yaxes": [
         {
-          "format": "decbytes",
+          "format": "bytes",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -257,12 +235,12 @@
           "show": true
         },
         {
-          "format": "decbytes",
-          "label": null,
+          "format": "percent",
+          "label": "",
           "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
+          "max": "100",
+          "min": "0",
+          "show": true
         }
       ],
       "yaxis": {
@@ -280,7 +258,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
-        "w": 12,
+        "w": 8,
         "x": 0,
         "y": 17
       },
@@ -373,8 +351,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
-        "w": 12,
-        "x": 12,
+        "w": 8,
+        "x": 8,
         "y": 17
       },
       "id": 14,
@@ -503,13 +481,352 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "GitLab Omnibus",
-      "fill": 1,
+      "description": "",
+      "editable": true,
+      "error": false,
+      "fill": 2,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 12,
+        "w": 8,
+        "x": 16,
+        "y": 17
+      },
+      "id": 19,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "maxPerRow": 2,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/.*Back.*/",
+          "transform": "negative-Y"
+        },
+        {
+          "alias": "/.*1.*/",
+          "color": "#6ED0E0"
+        },
+        {
+          "alias": "/.*2.*/",
+          "color": "#7EB26D"
+        },
+        {
+          "alias": "/.*3.*/",
+          "color": "#1F78C1"
+        },
+        {
+          "alias": "/.*4.*/",
+          "color": "#CCA300"
+        },
+        {
+          "alias": "/.*5.*/",
+          "color": "#890F02"
+        },
+        {
+          "alias": "/.*other.*/",
+          "color": "#806EB7"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(irate(haproxy_frontend_http_responses_total[5m])) by (code)",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Frontend {{ code }}",
+          "metric": "",
+          "refId": "A",
+          "step": 30
+        },
+        {
+          "expr": "sum(irate(haproxy_backend_http_responses_total[5m])) by (code)",
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "Backend {{ code }}",
+          "metric": "",
+          "refId": "B",
+          "step": 30
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "HAProxy Stats",
+      "tooltip": {
+        "msResolution": true,
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
         "w": 12,
         "x": 0,
         "y": 29
+      },
+      "id": 20,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null as zero",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "((rate(node_disk_read_time_seconds_total[1m]) / rate(node_disk_reads_completed_total[1m])) * 100) * on(instance) group_left(nodename) (node_uname_info)",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Disk Read Latency - {{nodename}}",
+          "refId": "B"
+        },
+        {
+          "expr": "((rate(node_disk_write_time_seconds_total[1m]) / rate(node_disk_writes_completed_total[1m])) * 100) * on(instance) group_left(nodename) (node_uname_info)",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Disk Write Latency - {{nodename}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Disk Latency (ms)",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 29
+      },
+      "id": 21,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null as zero",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "(sum by (instance) (irate(node_disk_read_bytes_total[2m]))) * on(instance) group_left(nodename) (node_uname_info)",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Disk Read Rate - {{nodename}}",
+          "refId": "C"
+        },
+        {
+          "expr": "(sum by (instance) (irate(node_disk_written_bytes_total[2m]))) * on(instance) group_left(nodename) (node_uname_info)",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Disk Write Rate - {{nodename}}",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Disk Rates (mb/s)",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 41
       },
       "id": 8,
       "legend": {
@@ -601,7 +918,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 29
+        "y": 41
       },
       "id": 7,
       "legend": {
@@ -693,7 +1010,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 41
+        "y": 53
       },
       "id": 12,
       "legend": {
@@ -786,7 +1103,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 41
+        "y": 53
       },
       "id": 13,
       "legend": {
@@ -879,7 +1196,7 @@
         "h": 14,
         "w": 8,
         "x": 0,
-        "y": 53
+        "y": 65
       },
       "id": 9,
       "legend": {
@@ -978,7 +1295,7 @@
         "h": 14,
         "w": 8,
         "x": 8,
-        "y": 53
+        "y": 65
       },
       "id": 10,
       "legend": {
@@ -1070,7 +1387,7 @@
         "h": 14,
         "w": 8,
         "x": 16,
-        "y": 53
+        "y": 65
       },
       "id": 16,
       "legend": {
@@ -1162,7 +1479,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 67
+        "y": 79
       },
       "id": 6,
       "legend": {
@@ -1251,12 +1568,12 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 12,
+        "h": 13,
         "w": 12,
         "x": 12,
-        "y": 67
+        "y": 79
       },
-      "id": 15,
+      "id": 5,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1272,7 +1589,7 @@
       "lines": true,
       "linewidth": 2,
       "links": [],
-      "nullPointMode": "null as zero",
+      "nullPointMode": "null",
       "options": {
         "dataLinks": []
       },
@@ -1280,41 +1597,26 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "/.*Max Open Files/",
-          "dashes": true,
-          "hideTooltip": true,
-          "legend": false
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "process_open_fds * on(instance) group_left(nodename) (node_uname_info)",
-          "format": "time_series",
+          "expr": "((100 - ((node_memory_MemAvailable_bytes{job!='prometheus'} * 100) / node_memory_MemTotal_bytes{job!='prometheus'}))) * on(instance) group_left(nodename) (node_uname_info)",
           "intervalFactor": 2,
-          "legendFormat": "{{nodename}} - Open Files",
+          "legendFormat": "Memory Used % - {{nodename}}",
           "refId": "A"
-        },
-        {
-          "expr": "process_max_fds * on(instance) group_left(nodename) (node_uname_info)",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{nodename}} -Max Open Files",
-          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Open Files",
+      "title": "Memory %",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1327,20 +1629,21 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "decimals": null,
+          "format": "percent",
           "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
+          "max": "100",
+          "min": "0",
           "show": true
         },
         {
-          "format": "short",
+          "format": "percent",
           "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
+          "max": "100",
+          "min": "0",
+          "show": false
         }
       ],
       "yaxis": {
@@ -1349,7 +1652,7 @@
       }
     }
   ],
-  "refresh": "10s",
+  "refresh": "",
   "schemaVersion": 19,
   "style": "dark",
   "tags": [],
@@ -1357,7 +1660,7 @@
     "list": []
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -1388,5 +1691,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 1
+  "version": 3
 }

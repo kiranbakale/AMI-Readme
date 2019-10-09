@@ -9,13 +9,13 @@
   shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
 
-- name: Create Quality Grafana dashboards directory
+- name: Create GitLab Quality Grafana dashboards directory
   file:
     path: /opt/gitlab-quality/dashboards
     state: directory
   tags: reconfigure
 
-- name: Copy Quality Grafana dashboards
+- name: Copy GitLab Quality Grafana dashboards
   copy:
     src: "{{ item }}"
     dest: "/opt/gitlab-quality/dashboards"

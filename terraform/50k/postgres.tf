@@ -5,7 +5,7 @@ module "postgres" {
   node_type = "postgres"
   node_count = 3
 
-  machine_type = "n1-highcpu-16"
+  machine_type = "n1-standard-16"
   label_secondaries = true
 }
 

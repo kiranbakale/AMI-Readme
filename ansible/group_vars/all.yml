@@ -25,9 +25,7 @@ gitlab_nfs_export_cidr: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('net
 
 # GitLab Rails
 gitlab_rails_ips: "{{ (groups['gitlab_rails_primary'] + groups['gitlab_rails_secondary']) | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
-gitlab_rails_puma_workers: 16
-gitlab_rails_puma_threads: 8
-gitlab_rails_db_pool: "{{ gitlab_rails_puma_workers * gitlab_rails_puma_threads}}"
+# gitlab_rails_puma_workers: 16
 
 # GitLab Monitor
 monitor_ip: "{{ groups['monitor'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
