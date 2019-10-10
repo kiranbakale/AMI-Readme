@@ -7,7 +7,8 @@ module "gitaly" {
 
   disk_type = "pd-ssd"
 
-  machine_type = "custom-64-184320"
+  # machine_type = "custom-64-184320"
+  machine_type = "n1-standard-64"
   label_secondaries = true
 }
 

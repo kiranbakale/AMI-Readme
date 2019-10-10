@@ -55,7 +55,7 @@ gitaly['storage'] = [
 ]
 
 gitaly['prometheus_grpc_latency_buckets'] = [0.001, 0.005, 0.025, 0.1, 0.5, 1.0, 10.0, 30.0, 60.0, 300.0, 1500.0]
-gitaly['ruby_num_workers'] = 32
+gitaly['ruby_num_workers'] = {{ gitaly_ruby_num_workers }}
 
 consul['enable'] = true
 consul['configuration'] = {

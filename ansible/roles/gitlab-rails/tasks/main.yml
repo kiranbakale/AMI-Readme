@@ -21,6 +21,9 @@
   template:
     src: templates/gitlab-rails.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
+  register: result
+  retries: 1
+  until: result is success
   tags: reconfigure
 
 - name: Download secrets file

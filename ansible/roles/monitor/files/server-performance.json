@@ -658,7 +658,7 @@
         {
           "expr": "((rate(node_disk_read_time_seconds_total[1m]) / rate(node_disk_reads_completed_total[1m])) * 100) * on(instance) group_left(nodename) (node_uname_info)",
           "format": "time_series",
-          "hide": false,
+          "hide": true,
           "intervalFactor": 2,
           "legendFormat": "Disk Read Latency - {{nodename}}",
           "refId": "B"
@@ -666,17 +666,25 @@
         {
           "expr": "((rate(node_disk_write_time_seconds_total[1m]) / rate(node_disk_writes_completed_total[1m])) * 100) * on(instance) group_left(nodename) (node_uname_info)",
           "format": "time_series",
-          "hide": false,
+          "hide": true,
           "intervalFactor": 2,
           "legendFormat": "Disk Write Latency - {{nodename}}",
           "refId": "A"
+        },
+        {
+          "expr": "(irate(node_disk_io_time_seconds_total[5m])) * on(instance) group_left(nodename) (node_uname_info)",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Disk Usage Time - {{nodename}}",
+          "refId": "D"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Disk Latency (ms)",
+      "title": "Disk Usage Times",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -692,7 +700,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "s",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -751,7 +759,12 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "/Disk Read Rate.*/i",
+          "transform": "negative-Y"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -777,7 +790,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Disk Rates (mb/s)",
+      "title": "Disk I/O Rates",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -794,7 +807,7 @@
       "yaxes": [
         {
           "format": "decbytes",
-          "label": null,
+          "label": "Bytes read (-) / write (+)",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -820,13 +833,208 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "GitLab Omnibus",
-      "fill": 1,
+      "fill": 2,
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
         "w": 12,
         "x": 0,
         "y": 41
+      },
+      "id": 23,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "maxPerRow": 6,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "(irate(node_context_switches_total[5m])) * on(instance) group_left(nodename) (node_uname_info)",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Context Switches - {{nodename}}",
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "expr": "irate(node_intr_total[5m])  * on(instance) group_left(nodename) (node_uname_info)",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "Interrupts - {{nodename}}",
+          "refId": "B",
+          "step": 240
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Context Switches / Interrupts",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Counter",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 41
+      },
+      "id": 6,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null as zero",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(irate(gitlab_transaction_duration_seconds_count[30s])) by (controller, action) > 0",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "{{controller}} - {{action}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Controller - Action Requests",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 53
       },
       "id": 8,
       "legend": {
@@ -918,7 +1126,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 41
+        "y": 53
       },
       "id": 7,
       "legend": {
@@ -1007,10 +1215,103 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 12,
-        "w": 12,
+        "h": 14,
+        "w": 8,
         "x": 0,
-        "y": 53
+        "y": 65
+      },
+      "id": 24,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null as zero",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(rate(grpc_client_handled_total[5m])) by (grpc_method) > 0",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "Gitaly GRPC Handled - {{grpc_method}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Gitaly gRPC",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 14,
+        "w": 8,
+        "x": 8,
+        "y": 65
       },
       "id": 12,
       "legend": {
@@ -1100,10 +1401,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 53
+        "h": 14,
+        "w": 8,
+        "x": 16,
+        "y": 65
       },
       "id": 13,
       "legend": {
@@ -1196,7 +1497,7 @@
         "h": 14,
         "w": 8,
         "x": 0,
-        "y": 65
+        "y": 79
       },
       "id": 9,
       "legend": {
@@ -1214,7 +1515,7 @@
       "lines": true,
       "linewidth": 2,
       "links": [],
-      "nullPointMode": "null as zero",
+      "nullPointMode": "null",
       "options": {
         "dataLinks": []
       },
@@ -1295,7 +1596,7 @@
         "h": 14,
         "w": 8,
         "x": 8,
-        "y": 65
+        "y": 79
       },
       "id": 10,
       "legend": {
@@ -1387,7 +1688,7 @@
         "h": 14,
         "w": 8,
         "x": 16,
-        "y": 65
+        "y": 79
       },
       "id": 16,
       "legend": {
@@ -1473,105 +1774,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "GitLab Omnibus",
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 79
-      },
-      "id": 6,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "max",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "nullPointMode": "null as zero",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum(irate(gitlab_transaction_duration_seconds_count[30s])) by (controller, action) > 0",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{controller}} - {{action}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Controller - Action Requests",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "GitLab Omnibus",
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 13,
-        "w": 12,
-        "x": 12,
-        "y": 79
+        "y": 93
       },
       "id": 5,
       "legend": {
@@ -1652,7 +1861,7 @@
       }
     }
   ],
-  "refresh": "",
+  "refresh": "10s",
   "schemaVersion": 19,
   "style": "dark",
   "tags": [],
@@ -1660,7 +1869,7 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
