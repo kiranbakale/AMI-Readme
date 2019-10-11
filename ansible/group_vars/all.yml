@@ -44,3 +44,5 @@ redis_cache_primary_ip: "{{ groups['redis_cache_primary'] | map('extract', hostv
 redis_cache_internal_ips: "{{ groups['redis_cache'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
 redis_persistent_primary_ip: "{{ groups['redis_persistent_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
 redis_persistent_internal_ips: "{{ groups['redis_persistent'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
+
+jaeger_ip: "{{ groups['jaeger'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"

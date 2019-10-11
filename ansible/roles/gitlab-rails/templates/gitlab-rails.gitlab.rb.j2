@@ -48,6 +48,10 @@ gitlab_rails['redis_shared_state_sentinels'] = [
 {% endfor %}
 ]
 
+gitlab_rails['env'] = {
+  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=1"
+}
+
 postgresql['enable'] = false
 
 nginx['enable'] = true

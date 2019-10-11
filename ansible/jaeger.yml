@@ -1,0 +1,5 @@
+---
+- hosts: jaeger
+  roles:
+    - jaeger
+  become: true

@@ -45,3 +45,6 @@
 - name: Update all packages to the latest version
   apt:
     upgrade: 'safe'
+  register: result
+  retries: 1
+  until: result is success

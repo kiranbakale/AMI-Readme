@@ -9,7 +9,7 @@
       msg: "{{ groups['postgres_secondary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join(',') }}"
 
   - debug:
-      msg: "{{ ((groups['postgres_primary'] + groups['postgres_secondary']) | length) + 1 }}"
+      msg: "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=1"
 
   - debug:
       # msg: "{{ zip(groups['gitaly'] | map('regex_search', 'gitaly-\\d+') | list, 1) }}"
