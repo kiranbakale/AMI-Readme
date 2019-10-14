@@ -3,7 +3,7 @@ module "jaeger" {
 
   prefix = "${var.prefix}"
   node_type = "jaeger"
-  node_count = 1
+  node_count = 0
 
   machine_type = "n1-standard-2"
 

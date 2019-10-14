@@ -8,7 +8,8 @@ consul_password: '0a6da13ae1754357b71ba1ac6c6caa6b'
 
 # HAProxy / Network
 haproxy_ip: "{{ groups['haproxy'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
-global_ip: "{{ haproxy_ip }}"
+haproxy_external_ip: "{{ groups['haproxy'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='accessConfigs') | map('first') | map(attribute='natIP') | join('') }}"
+global_ip: "{{ haproxy_external_ip }}"
 # global_ip: "{{ groups['gitlab_rails_primary'] | map('extract', hostvars, ['metadata', 'items']) | sum(start=[]) | selectattr('key', 'equalto', 'global_ip') | map(attribute='value')| join('') }}"
 external_url: "http://{{ global_ip }}"
 
@@ -45,4 +46,6 @@ redis_cache_internal_ips: "{{ groups['redis_cache'] | map('extract', hostvars, [
 redis_persistent_primary_ip: "{{ groups['redis_persistent_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
 redis_persistent_internal_ips: "{{ groups['redis_persistent'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
 
-jaeger_ip: "{{ groups['jaeger'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+# Jaeger Distributed Tracing
+jaeger: "{{ 'jaeger' in groups }}"
+jaeger_ip: "{{ (groups['jaeger'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')) if jaeger else '' }}"

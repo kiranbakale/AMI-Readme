@@ -1,5 +1,5 @@
 resource "google_compute_address" "gitlab" {
-  count = var.node_count
+  count = length(var.external_ips) == 0 ? var.node_count : 0
   name = "${var.prefix}-${var.node_type}-ip-${count.index + 1}"
 }
 
@@ -31,7 +31,7 @@ resource "google_compute_instance" "gitlab" {
     network = "default"
 
     access_config {
-      nat_ip = google_compute_address.gitlab[count.index].address
+      nat_ip = length(var.external_ips) == 0 ? google_compute_address.gitlab[count.index].address : var.external_ips[count.index]
     }
   }
 

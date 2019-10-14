@@ -7,3 +7,7 @@ module "sidekiq" {
 
   machine_type = "n1-standard-4"
 }
+
+output "sidekiq" {
+  value = module.sidekiq
+}

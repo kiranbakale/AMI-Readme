@@ -57,9 +57,11 @@ gitaly['storage'] = [
 gitaly['prometheus_grpc_latency_buckets'] = [0.001, 0.005, 0.025, 0.1, 0.5, 1.0, 10.0, 30.0, 60.0, 300.0, 1500.0]
 gitaly['ruby_num_workers'] = {{ gitaly_ruby_num_workers }}
 
+{% if jaeger %}
 gitaly['env'] = {
-  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=1"
+  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
 }
+{% endif %}
 
 consul['enable'] = true
 consul['configuration'] = {

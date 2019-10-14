@@ -4,8 +4,9 @@ module "haproxy" {
   prefix = "${var.prefix}"
   node_type = "haproxy"
   node_count = 1
-
+  
   machine_type = "n1-highcpu-2"
+  external_ips = ["104.196.144.226"]
 
   tags = ["${var.prefix}-web", "${var.prefix}-haproxy"]
 }

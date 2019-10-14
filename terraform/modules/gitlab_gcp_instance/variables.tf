@@ -10,6 +10,11 @@ variable "tags" {
   default = []
 }
 
+variable "external_ips" {
+  type = list(string)
+  default = []
+}
+
 variable "machine_type" {
   default = "n1-standard-2"
 }

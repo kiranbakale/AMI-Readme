@@ -6,6 +6,7 @@ module "haproxy" {
   node_count = 1
 
   machine_type = "n1-highcpu-2"
+  external_ips = ["34.73.165.75"]
 
   tags = ["${var.prefix}-web", "${var.prefix}-haproxy"]
 }

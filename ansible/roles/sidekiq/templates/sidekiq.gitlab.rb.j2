@@ -39,9 +39,11 @@ gitlab_rails['redis_shared_state_sentinels'] = [
 {% endfor %}
 ]
 
+{% if jaeger %}
 gitlab_rails['env'] = {
-  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=1"
+  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
 }
+{% endif %}
 
 # Ensure UIDs and GIDs match between servers for permissions via NFS
 user['uid'] = 9000
@@ -71,7 +73,7 @@ gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
 # Gitaly
 git_data_dirs({
   'default' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_ip }}:8075' },
-  'storage1' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_ip }}:8075' },
+  # 'storage1' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_ip }}:8075' },
 {% for gitaly_secondary_ip in gitaly_secondary_ips %}
   "storage{{loop.index + 1}}" => { 'gitaly_address' => 'tcp://{{ gitaly_secondary_ip }}:8075' },
 {% endfor %}
