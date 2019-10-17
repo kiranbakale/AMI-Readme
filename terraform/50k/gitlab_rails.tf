@@ -8,7 +8,7 @@ module "gitlab_rails" {
   machine_type = "n1-highcpu-32"
   label_secondaries = true
 
-  tags = ["${var.prefix}-web"]∂
+  tags = ["${var.prefix}-web"]
 }
 
 resource "google_compute_instance_group" "gitlab_rails" {

@@ -9,10 +9,16 @@
   shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
 
-- name: Reconfigure GitLab
+- name: Reconfigure PostgreSQL
   shell: gitlab-ctl reconfigure
   tags:
     - reconfigure
+
+- name: Restart PostgreSQL
+  command: gitlab-ctl restart
+  tags:
+    - reconfigure
+    - restart
 
 - name: Upload secrets file if missing
   shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_conf_storage }}"

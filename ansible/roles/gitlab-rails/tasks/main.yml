@@ -22,7 +22,7 @@
     src: templates/gitlab-rails.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
   register: result
-  retries: 1
+  retries: 3
   until: result is success
   tags: reconfigure
 
@@ -42,20 +42,34 @@
   tags: secrets
   run_once: true
 
-- name: Hot Reload GitLab Primary
-  shell: gitlab-ctl hup puma && gitlab-ctl hup sidekiq
-  tags: reconfigure
+- name: Restart GitLab Primary
+  command: gitlab-ctl restart
+  tags:
+    - reconfigure
+    - restart
   when: "'gitlab_rails_primary' in group_names"
+
+#- name: Hot Reload GitLab Primary
+#  shell: gitlab-ctl hup puma
+#  tags: reconfigure
+#  when: "'gitlab_rails_primary' in group_names"
 
 - name: Reconfigure GitLab Secondaries
   shell: gitlab-ctl reconfigure
   tags: reconfigure
   when: "'gitlab_rails_secondary' in group_names"
 
-- name: Hot Reload GitLab Secondaries
-  shell: gitlab-ctl hup puma && gitlab-ctl hup sidekiq
-  tags: reconfigure
+- name: Restart GitLab Secondaries
+  command: gitlab-ctl restart
+  tags:
+    - reconfigure
+    - restart
   when: "'gitlab_rails_secondary' in group_names"
+
+#- name: Hot Reload GitLab Secondaries
+#  shell: gitlab-ctl hup puma
+#  tags: reconfigure
+#  when: "'gitlab_rails_secondary' in group_names"
 
 - name: Create skip-auto-reconfigure file
   file:

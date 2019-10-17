@@ -2,7 +2,11 @@ global
     log /dev/log local0
     log localhost local1 notice
     log stdout format raw local0
-    maxconn 2000
+    maxconn 10000
+#    nbproc {{ ansible_processor_vcpus }}
+#{% for cpu in range(ansible_processor_vcpus) %}
+#    cpu-map {{ cpu + 1 }} {{ cpu + 1 }}
+#{% endfor %}
     daemon
  
 defaults

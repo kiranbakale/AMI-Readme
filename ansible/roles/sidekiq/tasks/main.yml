@@ -28,19 +28,25 @@
   shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
 
-- name: Reconfigure GitLab
+- name: Reconfigure Sidekiq
   shell: gitlab-ctl reconfigure
   tags:
     - reconfigure
+
+- name: Restart Sidekiq
+  command: gitlab-ctl restart
+  tags:
+    - reconfigure
+    - restart
+    
+#- name: Hot Reload Sidekiq 
+#  shell: gitlab-ctl hup sidekiq
+#  tags: reload
 
 - name: Upload secrets file if missing
   shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_conf_storage }}"
   tags: secrets
   run_once: true
-
-- name: Hot Reload Sidekiq 
-  shell: gitlab-ctl hup sidekiq
-  tags: reload
 
 - name: Create skip-auto-reconfigure file
   file:
