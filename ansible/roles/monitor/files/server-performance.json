@@ -200,7 +200,7 @@
           "refId": "F"
         },
         {
-          "expr": "((100 - ((node_memory_MemAvailable_bytes{job!='prometheus'} * 100) / node_memory_MemTotal_bytes{job!='prometheus'})) > 75) * on(instance) group_left(nodename) (node_uname_info)",
+          "expr": "((100 - ((node_memory_MemAvailable_bytes{job!='prometheus'} * 100) / node_memory_MemTotal_bytes{job!='prometheus'})) > 75) * on(instance) group_left(nodename)(node_uname_info)",
           "hide": false,
           "intervalFactor": 2,
           "legendFormat": "Memory Used % - {{nodename}}",
@@ -618,12 +618,104 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "GitLab Omnibus",
+      "description": "",
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 12,
-        "w": 12,
+        "h": 14,
+        "w": 8,
         "x": 0,
+        "y": 29
+      },
+      "id": 26,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null as zero",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "topk(10, node_filesystem_size_bytes{device!~'rootfs'} - node_filesystem_free_bytes{device!~'rootfs'})  * on(instance) group_left(nodename)(node_uname_info)",
+          "intervalFactor": 2,
+          "legendFormat": "{{nodename}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Disk Space Used",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 14,
+        "w": 8,
+        "x": 8,
         "y": 29
       },
       "id": 20,
@@ -730,9 +822,9 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
+        "h": 14,
+        "w": 8,
+        "x": 16,
         "y": 29
       },
       "id": 21,
@@ -839,7 +931,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 41
+        "y": 43
       },
       "id": 23,
       "legend": {
@@ -896,7 +988,7 @@
       "title": "Context Switches / Interrupts",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -942,7 +1034,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 41
+        "y": 43
       },
       "id": 6,
       "legend": {
@@ -1034,7 +1126,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 53
+        "y": 55
       },
       "id": 8,
       "legend": {
@@ -1126,7 +1218,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 53
+        "y": 55
       },
       "id": 7,
       "legend": {
@@ -1218,7 +1310,7 @@
         "h": 14,
         "w": 8,
         "x": 0,
-        "y": 65
+        "y": 67
       },
       "id": 24,
       "legend": {
@@ -1311,7 +1403,7 @@
         "h": 14,
         "w": 8,
         "x": 8,
-        "y": 65
+        "y": 67
       },
       "id": 12,
       "legend": {
@@ -1404,7 +1496,7 @@
         "h": 14,
         "w": 8,
         "x": 16,
-        "y": 65
+        "y": 67
       },
       "id": 13,
       "legend": {
@@ -1497,7 +1589,7 @@
         "h": 14,
         "w": 8,
         "x": 0,
-        "y": 79
+        "y": 81
       },
       "id": 9,
       "legend": {
@@ -1596,7 +1688,7 @@
         "h": 14,
         "w": 8,
         "x": 8,
-        "y": 79
+        "y": 81
       },
       "id": 10,
       "legend": {
@@ -1688,7 +1780,7 @@
         "h": 14,
         "w": 8,
         "x": 16,
-        "y": 79
+        "y": 81
       },
       "id": 16,
       "legend": {
@@ -1780,7 +1872,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 93
+        "y": 95
       },
       "id": 5,
       "legend": {
@@ -1872,7 +1964,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 93
+        "y": 95
       },
       "id": 25,
       "legend": {
@@ -1961,7 +2053,7 @@
       }
     }
   ],
-  "refresh": "10s",
+  "refresh": "",
   "schemaVersion": 19,
   "style": "dark",
   "tags": [],
@@ -2000,5 +2092,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 3
+  "version": 5
 }

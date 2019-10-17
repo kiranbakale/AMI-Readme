@@ -1,2 +1,2 @@
 gitaly_number: "{{ ansible_hostname | regex_search('\\d+$') }}"
-gitaly_ruby_num_workers: "{{ (ansible_processor_vcpus * 0.9) | round | int }}"
+gitaly_ruby_num_workers: "{{ (ansible_processor_vcpus * 0.2) | round | int }}"
