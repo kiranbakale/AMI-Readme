@@ -6,9 +6,7 @@
   register: result
   retries: 3
   until: result is success
-  tags: 
-    - gitlab_template
-    - reconfigure
+  tags: reconfigure
 
 - name: Download secrets file
   shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"

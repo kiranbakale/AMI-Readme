@@ -3,7 +3,7 @@
   template:
     src: templates/postgres_ha.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
-  tags: gitlab_template
+  tags: reconfigure
 
 - name: Download secrets file
   shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"

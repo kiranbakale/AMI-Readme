@@ -5,7 +5,7 @@ module "gitlab-nfs" {
   node_type = "gitlab-nfs"
   node_count = 1
 
-  machine_type = "n1-highcpu-16"
+  machine_type = "n1-highcpu-4"
 }
 
 output "gitlab_nfs" {
