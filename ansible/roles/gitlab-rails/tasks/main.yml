@@ -26,8 +26,10 @@
   until: result is success
   tags: reconfigure
 
-- name: Download secrets file
-  shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
+- name: Download secrets files
+  shell: |
+    gsutil cp gs://{{ gitlab_secrets_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true
+    gsutil cp gs://{{ gitlab_secrets_storage }}/{{ serviceaccount_filename }} {{ serviceaccount_path }} 2>/dev/null || true
   tags: secrets
 
 - name: Reconfigure GitLab Primary
@@ -38,7 +40,7 @@
   when: "'gitlab_rails_primary' in group_names"
 
 - name: Upload secrets file if missing
-  shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_conf_storage }}"
+  shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_secrets_storage }}"
   tags: secrets
   run_once: true
 
@@ -48,11 +50,6 @@
     - reconfigure
     - restart
   when: "'gitlab_rails_primary' in group_names"
-
-#- name: Hot Reload GitLab Primary
-#  shell: gitlab-ctl hup puma
-#  tags: reconfigure
-#  when: "'gitlab_rails_primary' in group_names"
 
 - name: Reconfigure GitLab Secondaries
   shell: gitlab-ctl reconfigure
@@ -65,11 +62,6 @@
     - reconfigure
     - restart
   when: "'gitlab_rails_secondary' in group_names"
-
-#- name: Hot Reload GitLab Secondaries
-#  shell: gitlab-ctl hup puma
-#  tags: reconfigure
-#  when: "'gitlab_rails_secondary' in group_names"
 
 - name: Create skip-auto-reconfigure file
   file:

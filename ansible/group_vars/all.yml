@@ -1,6 +1,6 @@
 # Ansible / General
 install_gitlab: true
-gitlab_conf_storage: "{{ prefix }}-conf-storage"
+gitlab_secrets_storage: "{{ prefix }}-secrets-storage"
 gitlab_object_storage: "{{ prefix }}-object-storage"
 
 # Consul

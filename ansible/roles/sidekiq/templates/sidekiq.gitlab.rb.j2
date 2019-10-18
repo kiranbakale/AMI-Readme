@@ -69,22 +69,25 @@ sidekiq['listen_address'] = '0.0.0.0'
 gitlab_rails['artifacts_object_store_enabled'] = true
 gitlab_rails['artifacts_object_store_remote_directory'] = "{{ gitlab_object_storage }}"
 gitlab_rails['artifacts_object_store_connection'] = {
- 'provider' => 'Google',
- 'google_project' => '{{ project_name }}'
+  'provider' => 'Google',
+  'google_project' => '{{ project_name }}',
+  'google_json_key_location' => '{{ serviceaccount_path }}'
 }
 
 gitlab_rails['lfs_object_store_enabled'] = true
 gitlab_rails['lfs_object_store_remote_directory'] = "{{ gitlab_object_storage }}"
 gitlab_rails['lfs_object_store_connection'] = {
- 'provider' => 'Google',
- 'google_project' => '{{ project_name }}'
+  'provider' => 'Google',
+  'google_project' => '{{ project_name }}',
+  'google_json_key_location' => '{{ serviceaccount_path }}'
 }
 
 gitlab_rails['uploads_object_store_enabled'] = true
 gitlab_rails['uploads_object_store_remote_directory'] = "{{ gitlab_object_storage }}"
 gitlab_rails['uploads_object_store_connection'] = {
- 'provider' => 'Google',
- 'google_project' => '{{ project_name }}'
+  'provider' => 'Google',
+  'google_project' => '{{ project_name }}',
+  'google_json_key_location' => '{{ serviceaccount_path }}'
 }
 
 # NFS

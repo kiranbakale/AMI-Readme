@@ -17,3 +17,7 @@ variable "zone" {
 variable "prefix" {
   default = "gitlab-qa-10k"
 }
+
+variable "secrets_storage_bucket" {
+  default = "gitlab-gitlab-qa-10k-secrets"
+}

@@ -23,8 +23,10 @@
     dest: /etc/gitlab/gitlab.rb
   tags: reconfigure
 
-- name: Download secrets file
-  shell: "gsutil cp gs://{{ gitlab_conf_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
+- name: Download secrets files
+  shell: |
+    gsutil cp gs://{{ gitlab_secrets_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true
+    gsutil cp gs://{{ gitlab_secrets_storage }}/{{ serviceaccount_filename }} {{ serviceaccount_path }} 2>/dev/null || true
   tags: secrets
 
 - name: Reconfigure Sidekiq
@@ -43,7 +45,7 @@
 #  tags: reload
 
 - name: Upload secrets file if missing
-  shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_conf_storage }}"
+  shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_secrets_storage }}"
   tags: secrets
   run_once: true
 
