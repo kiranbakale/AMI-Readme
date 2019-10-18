@@ -1,6 +1,7 @@
 # Ansible / General
 install_gitlab: true
 gitlab_conf_storage: "{{ prefix }}-conf-storage"
+gitlab_object_storage: "{{ prefix }}-object-storage"
 
 # Consul
 consul_internal_ips: "{{ groups['consul'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
