@@ -1,6 +1,8 @@
 stages:
+  - start
   - provision
   - configure
+  - stop
 
 .update-base:
   image: alpine
@@ -10,6 +12,25 @@ stages:
     - echo "$GIT_CRYPT_KEY" | base64 -d > /tmp/git-crypt.key
     - git-crypt unlock /tmp/git-crypt.key
     - chmod 600 secrets/gitlab-qa-gcp-ssh
+  only:
+    refs:
+      - schedules
+
+.start-stop-base:
+  extends: .update-base
+  script:
+    - apk add -u --no-cache python curl which bash
+    - curl -sSL https://sdk.cloud.google.com > /tmp/gcl.sh && bash /tmp/gcl.sh --disable-prompts && rm /tmp/gcl.sh
+    - export PATH=$PATH:/root/google-cloud-sdk/bin
+    - gcloud auth activate-service-account --key-file=$GCLOUD_SERVICEACCOUNT_KEY_PATH
+    - gcloud config set project $GCLOUD_PROJECT_NAME
+
+start:
+  extends: .start-stop-base
+  stage: start
+  script:
+    - gcloud compute instances start $(gcloud compute instances list --format='value(name)')
+    - sleep 60
 
 terraform:
   extends: .update-base
@@ -23,9 +44,6 @@ terraform:
     - cd terraform/$ENVIRONMENT_NAME
     - terraform init
     - terraform apply -auto-approve
-  only:
-    refs:
-      - schedules
 
 ansible:
   extends: .update-base
@@ -37,6 +55,12 @@ ansible:
     - cd ansible
     - ansible-galaxy install -r requirements.yml
     - ansible-playbook -i inventories/$ENVIRONMENT_NAME all.yml
+
+stop:
+  extends: .start-stop-base
+  stage: start
+  script:
+    - gcloud compute instances stop $(gcloud compute instances list --format='value(name)')
   only:
-    refs:
-      - schedules
+    variables:
+      - $STOP_ENVIRONMENT == "true"

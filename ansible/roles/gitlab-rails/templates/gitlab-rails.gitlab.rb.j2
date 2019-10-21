@@ -106,6 +106,31 @@ gitlab_rails['uploads_object_store_connection'] = {
   'google_json_key_location' => '{{ serviceaccount_path }}'
 }
 
+gitlab_rails['external_diffs_enabled'] = true
+gitlab_rails['external_diffs_object_store_enabled'] = true
+gitlab_rails['external_diffs_object_store_remote_directory'] = "{{ gitlab_object_storage }}"
+gitlab_rails['external_diffs_object_store_connection'] = {
+  'provider' => 'Google',
+  'google_project' => '{{ project_name }}',
+  'google_json_key_location' => '{{ serviceaccount_path }}'
+}
+
+gitlab_rails['packages_object_store_enabled'] = true
+gitlab_rails['packages_object_store_remote_directory'] = "{{ gitlab_object_storage }}"
+gitlab_rails['packages_object_store_connection'] = {
+  'provider' => 'Google',
+  'google_project' => '{{ project_name }}',
+  'google_json_key_location' => '{{ serviceaccount_path }}'
+}
+
+gitlab_rails['dependency_proxy_object_store_enabled'] = true
+gitlab_rails['dependency_proxy_object_store_remote_directory'] = "{{ gitlab_object_storage }}"
+gitlab_rails['dependency_proxy_object_store_connection'] = {
+  'provider' => 'Google',
+  'google_project' => '{{ project_name }}',
+  'google_json_key_location' => '{{ serviceaccount_path }}'
+}
+
 # NFS
 gitlab_rails['uploads_directory'] = '{{ gitlab_nfs_path }}/uploads'
 gitlab_rails['shared_path'] = '{{ gitlab_nfs_path }}/shared'
