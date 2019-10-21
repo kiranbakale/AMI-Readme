@@ -23,7 +23,7 @@ start:
     - curl -sSL https://sdk.cloud.google.com > /tmp/gcl.sh && bash /tmp/gcl.sh --disable-prompts 1> /dev/null && rm /tmp/gcl.sh
     - export PATH=$PATH:/root/google-cloud-sdk/bin
     - gcloud auth activate-service-account --key-file=$GCLOUD_SERVICEACCOUNT_KEY_PATH
-    - gcloud compute instances start $(gcloud compute instances list --format='value(name)')
+    - gcloud compute instances start --zone $GCLOUD_ZONE $(gcloud compute instances list --format='value(name)')
     - sleep 60
   only:
     variables:
@@ -67,7 +67,7 @@ stop:
     - curl -sSL https://sdk.cloud.google.com > /tmp/gcl.sh && bash /tmp/gcl.sh --disable-prompts 1> /dev/null && rm /tmp/gcl.sh
     - export PATH=$PATH:/root/google-cloud-sdk/bin
     - gcloud auth activate-service-account --key-file=$GCLOUD_SERVICEACCOUNT_KEY_PATH
-    - gcloud compute instances stop $(gcloud compute instances list --format='value(name)')
+    - gcloud compute instances stop --zone $GCLOUD_ZONE $(gcloud compute instances list --format='value(name)')
   only:
     variables:
       - $ENVIRONMENT_ACTION == "stop"
