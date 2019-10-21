@@ -1,4 +1,12 @@
 ---
+- name: Update Ulimit Open Files
+  pam_limits:
+    domain: '*'
+    limit_type: '-'
+    limit_item: nofile
+    value: '10240'
+  tags: ulimit
+
 - name: Create /etc/gitlab/gitlab.rb
   template:
     src: templates/pgbouncer.gitlab.rb.j2

@@ -13,8 +13,7 @@ stages:
     - git-crypt unlock /tmp/git-crypt.key
     - chmod 600 secrets/gitlab-qa-gcp-ssh
   only:
-    refs:
-      - schedules
+    - schedules
 
 .start-stop-base:
   extends: .update-base
@@ -31,6 +30,9 @@ start:
   script:
     - gcloud compute instances start $(gcloud compute instances list --format='value(name)')
     - sleep 60
+  only:
+    variables:
+      - $ENVIRONMENT_ACTION == "start" || $ENVIRONMENT_ACTION == "update"
 
 terraform:
   extends: .update-base
@@ -44,6 +46,9 @@ terraform:
     - cd terraform/$ENVIRONMENT_NAME
     - terraform init
     - terraform apply -auto-approve
+  only:
+    variables:
+      - $ENVIRONMENT_ACTION == "update"
 
 ansible:
   extends: .update-base
@@ -55,6 +60,9 @@ ansible:
     - cd ansible
     - ansible-galaxy install -r requirements.yml
     - ansible-playbook -i inventories/$ENVIRONMENT_NAME all.yml
+  only:
+    variables:
+      - $ENVIRONMENT_ACTION == "update"
 
 stop:
   extends: .start-stop-base
@@ -63,4 +71,4 @@ stop:
     - gcloud compute instances stop $(gcloud compute instances list --format='value(name)')
   only:
     variables:
-      - $STOP_ENVIRONMENT == "true"
+      - $ENVIRONMENT_ACTION == "stop"

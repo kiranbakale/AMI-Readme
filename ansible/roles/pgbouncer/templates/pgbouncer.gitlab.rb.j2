@@ -11,8 +11,6 @@ pgbouncer['users'] = {
     password: "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
   }
 }
-pgbouncer['admin_users']
-pgbouncer['max_client_conn'] = '8192'
 
 # Configure Consul agent
 consul['watchers'] = %w(postgresql)
