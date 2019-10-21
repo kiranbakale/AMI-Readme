@@ -15,19 +15,15 @@ stages:
   only:
     - schedules
 
-.start-stop-base:
+start:
   extends: .update-base
+  stage: start
   script:
     - apk add -u --no-cache python curl which bash
     - curl -sSL https://sdk.cloud.google.com > /tmp/gcl.sh && bash /tmp/gcl.sh --disable-prompts && rm /tmp/gcl.sh
     - export PATH=$PATH:/root/google-cloud-sdk/bin
     - gcloud auth activate-service-account --key-file=$GCLOUD_SERVICEACCOUNT_KEY_PATH
     - gcloud config set project $GCLOUD_PROJECT_NAME
-
-start:
-  extends: .start-stop-base
-  stage: start
-  script:
     - gcloud compute instances start $(gcloud compute instances list --format='value(name)')
     - sleep 60
   only:
@@ -65,9 +61,14 @@ ansible:
       - $ENVIRONMENT_ACTION == "update"
 
 stop:
-  extends: .start-stop-base
+  extends: .update-base
   stage: start
   script:
+    - apk add -u --no-cache python curl which bash
+    - curl -sSL https://sdk.cloud.google.com > /tmp/gcl.sh && bash /tmp/gcl.sh --disable-prompts && rm /tmp/gcl.sh
+    - export PATH=$PATH:/root/google-cloud-sdk/bin
+    - gcloud auth activate-service-account --key-file=$GCLOUD_SERVICEACCOUNT_KEY_PATH
+    - gcloud config set project $GCLOUD_PROJECT_NAME
     - gcloud compute instances stop $(gcloud compute instances list --format='value(name)')
   only:
     variables:
