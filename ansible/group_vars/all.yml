@@ -11,14 +11,11 @@ consul_password: '0a6da13ae1754357b71ba1ac6c6caa6b'
 haproxy_ip: "{{ groups['haproxy'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
 haproxy_external_ip: "{{ groups['haproxy'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='accessConfigs') | map('first') | map(attribute='natIP') | join('') }}"
 global_ip: "{{ haproxy_external_ip }}"
-# global_ip: "{{ groups['gitlab_rails_primary'] | map('extract', hostvars, ['metadata', 'items']) | sum(start=[]) | selectattr('key', 'equalto', 'global_ip') | map(attribute='value')| join('') }}"
-external_url: "http://{{ global_ip }}"
 
 # Gitaly
 gitaly_primary_ip: "{{ groups['gitaly_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
 gitaly_secondary_ips: "{{ groups['gitaly_secondary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
 gitaly_token: 'abc123secret'
-# gitaly_ruby_workers: "{{ (groups['gitlab_rails'] | length) * gitlab_rails_puma_workers * gitlab_rails_puma_threads }}"
 
 # GitLab NFS
 gitlab_nfs_ip: "{{ groups['gitlab_nfs'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
@@ -39,9 +36,6 @@ pgbouncer_ip: "{{ groups['pgbouncer'] | map('extract', hostvars, ['networkInterf
 
 # GitLab Redis
 redis_password: 'rae5ceiH3sheeGohz2la'
-# redis_primary_ip: "{{ groups['redis_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
-# redis_internal_ips: "{{ groups['redis'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
-
 redis_cache_primary_ip: "{{ groups['redis_cache_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
 redis_cache_internal_ips: "{{ groups['redis_cache'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
 redis_persistent_primary_ip: "{{ groups['redis_persistent_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
