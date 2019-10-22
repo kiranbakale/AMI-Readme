@@ -1587,7 +1587,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
-        "w": 8,
+        "w": 12,
         "x": 0,
         "y": 81
       },
@@ -1686,100 +1686,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
-        "w": 8,
-        "x": 8,
-        "y": 81
-      },
-      "id": 10,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "current",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "nullPointMode": "null as zero",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "label_replace(sum by (job, instance)(irate(ruby_gc_stat_count[5m])), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{nodename}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Ruby GC Cycles",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "GitLab Omnibus",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 14,
-        "w": 8,
-        "x": 16,
+        "w": 12,
+        "x": 12,
         "y": 81
       },
       "id": 16,
@@ -2051,9 +1959,109 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 107
+      },
+      "id": 27,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "label_replace(sum by (instance)(pg_stat_activity_count), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Activity Count - {{nodename}}",
+          "refId": "A"
+        },
+        {
+          "expr": "label_replace(sum by (instance)(pg_replication_lag), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "hide": true,
+          "intervalFactor": 2,
+          "legendFormat": "Replication Lag - {{nodename}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Postgres Metrics",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
-  "refresh": "",
+  "refresh": "10s",
   "schemaVersion": 19,
   "style": "dark",
   "tags": [],
@@ -2092,5 +2100,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 5
+  "version": 6
 }
