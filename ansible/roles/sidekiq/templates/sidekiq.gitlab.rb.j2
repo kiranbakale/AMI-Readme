@@ -123,7 +123,7 @@ gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
 # Gitaly
 git_data_dirs({
   'default' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_ip }}:8075' },
-  # 'storage1' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_ip }}:8075' },
+  'storage1' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_ip }}:8075' },
 {% for gitaly_secondary_ip in gitaly_secondary_ips %}
   "storage{{loop.index + 1}}" => { 'gitaly_address' => 'tcp://{{ gitaly_secondary_ip }}:8075' },
 {% endfor %}
