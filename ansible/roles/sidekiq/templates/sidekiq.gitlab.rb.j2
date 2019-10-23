@@ -11,12 +11,12 @@ redis_exporter['enable'] = false
 unicorn['enable'] = false
 puma['enable'] = false
 
+gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
+
 gitlab_rails['db_host'] = '{{ pgbouncer_ip }}'
 gitlab_rails['db_port'] = 6432
 gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['auto_migrate'] = false
-
-gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
 # Redis Servers Config
 gitlab_rails['redis_cache_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-cache'

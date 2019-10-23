@@ -1,8 +1,11 @@
 roles ['application_role']
-external_url '{{ external_url }}'
-
+postgresql['enable'] = false
+# sidekiq['enable'] = false
 unicorn['enable'] = false
 puma['enable'] = true
+
+external_url '{{ external_url }}'
+
 puma['worker_processes'] = {{ gitlab_rails_puma_workers }}
 puma['max_threads'] = {{ gitlab_rails_puma_threads }}
 puma['worker_timeout'] = 300
@@ -18,14 +21,6 @@ gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['db_pool'] = '{{ gitlab_rails_db_pool }}'
 gitlab_rails['initial_root_password'] = '5iveL!fe'
 gitlab_rails['auto_migrate'] = {{ 'true' if "gitlab_rails_primary" in group_names else 'false' }}
-
-# Ensure UIDs and GIDs match between servers for permissions via NFS
-user['uid'] = 9000
-user['gid'] = 9000
-web_server['uid'] = 9001
-web_server['gid'] = 9001
-registry['uid'] = 9002
-registry['gid'] = 9002
 
 # Redis Servers Config
 gitlab_rails['redis_cache_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-cache'
@@ -57,8 +52,13 @@ gitlab_workhorse['env'] = {
 }
 {% endif %}
 
-postgresql['enable'] = false
-sidekiq['enable'] = false
+# Ensure UIDs and GIDs match between servers for permissions via NFS
+user['uid'] = 9000
+user['gid'] = 9000
+web_server['uid'] = 9001
+web_server['gid'] = 9001
+registry['uid'] = 9002
+registry['gid'] = 9002
 
 nginx['enable'] = true
 nginx['status']['options'] = {
