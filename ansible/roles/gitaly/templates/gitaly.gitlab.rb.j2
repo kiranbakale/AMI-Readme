@@ -70,13 +70,13 @@ gitaly['ruby_num_workers'] = {{ gitaly_ruby_num_workers }}
 
 {% if jaeger %}
 gitaly['env'] = {
-  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
+  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
 }
 {% endif %}
 
 consul['enable'] = true
 consul['configuration'] = {
-  retry_join: %w({{ consul_internal_ips | join(' ') }}),
+  retry_join: %w({{ consul_int_ips | join(' ') }}),
   bind_addr: '{{ ansible_default_ipv4.address }}'
 }
 consul['monitoring_service_discovery'] =  true

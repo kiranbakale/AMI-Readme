@@ -43,8 +43,3 @@
     path: /etc/gitlab/skip-auto-reconfigure
     state: touch
     mode: u=rw,g=r,o=r
-
-- name: Remove old HAProxy container
-  shell: "docker rm -f haproxy 2>/dev/null || true"
-  ignore_errors: true
-  tags: reconfigure

@@ -11,13 +11,13 @@ pgbouncer['users'] = {
     password: "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
   }
 }
-pgbouncer['max_client_conn'] = '4098'
+pgbouncer['max_client_conn'] = '1366'
 
 # Configure Consul agent
 consul['watchers'] = %w(postgresql)
 consul['enable'] = true
 consul['configuration'] = {
-  retry_join: %w({{ consul_internal_ips | join(' ') }}),
+  retry_join: %w({{ consul_int_ips | join(' ') }}),
   bind_addr: '{{ ansible_default_ipv4.address }}'
 }
 consul['monitoring_service_discovery'] =  true

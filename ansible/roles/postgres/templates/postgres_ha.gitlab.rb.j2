@@ -25,7 +25,7 @@ repmgr['master_on_initialization'] = {{ postgres_repmgr_master }}
 consul['services'] = %w(postgresql)
 consul['enable'] = true
 consul['configuration'] = {
-  retry_join: %w({{ consul_internal_ips | join(' ') }}),
+  retry_join: %w({{ consul_int_ips | join(' ') }}),
   bind_addr: '{{ ansible_default_ipv4.address }}'
 }
 consul['monitoring_service_discovery'] =  true

@@ -34,11 +34,22 @@
     dest: /opt/haproxy/haproxy.cfg
   tags: reconfigure
 
-- name: Start HAProxy Docker
-  shell: |
-    docker pull haproxy:alpine
-    docker run -d --restart=always --name=haproxy -p 80:80 -p 443:443 -p 1936:1936 -v /opt/haproxy:/usr/local/etc/haproxy:ro haproxy:alpine
+- name: Pull HAProxy Docker Image
+  shell: docker pull haproxy:alpine
   tags:
     - reconfigure
     - restart
 
+- name: Start HAProxy Internal Docker
+  shell: docker run -d --restart=always --name=haproxy -p 6432:6432 -p 1936:1936 -v /opt/haproxy:/usr/local/etc/haproxy:ro haproxy:alpine
+  tags:
+    - reconfigure
+    - restart
+  when: "'haproxy_internal' in group_names"
+
+- name: Start HAProxy External Docker
+  shell: docker run -d --restart=always --name=haproxy -p 80:80 -p 443:443 -p 1936:1936 -v /opt/haproxy:/usr/local/etc/haproxy:ro haproxy:alpine
+  tags:
+    - reconfigure
+    - restart
+  when: "'haproxy_external' in group_names"

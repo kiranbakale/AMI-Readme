@@ -574,7 +574,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "HAProxy Stats",
+      "title": "HAProxy HTTP Stats",
       "tooltip": {
         "msResolution": true,
         "shared": true,
@@ -2100,5 +2100,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 6
+  "version": 10
 }

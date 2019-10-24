@@ -1,5 +1,5 @@
 ---
-- hosts: gitlab_rails
+- hosts: haproxy_*
   vars:
     consul_ips: "{{ groups['consul'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
     ip_test: "{{ ansible_default_ipv4.address }}/16"
@@ -9,9 +9,9 @@
       msg: "{{ groups['postgres_secondary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join(',') }}"
 
   - debug:
-      # msg: "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
-      # msg: "{{ jaeger_ip is defined }}"
-      # msg: "{{ jaeger_ip|length }}"
+      # msg: "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
+      # msg: "{{ jaeger_int_ip is defined }}"
+      # msg: "{{ jaeger_int_ip|length }}"
       # msg: "{{ (groups['jaeger'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')) if 'jaeger' in groups else '' }}"
       msg: "{{ jaeger }}"
 
@@ -20,7 +20,4 @@
       msg: "{{ ansible_memory_mb.real.total }} - {{ ((ansible_memory_mb.real.total | int) * 0.9) | round | int }}mb"
 
   - debug:
-      msg: "{{ global_ip }}"
-
-  - debug:
-      msg: "{{ groups['haproxy'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='accessConfigs') | map('first') | map(attribute='natIP') | join('') }}"
+      msg: "{{ hostvars[inventory_hostname] }}"

@@ -3,7 +3,7 @@ roles ['{{ "redis_master_role" if (group_names | select("match", ".*_primary") |
 redis['bind'] = '0.0.0.0'
 redis['port'] = 6379
 redis['password'] = '{{ redis_password }}'
-redis['master_ip'] = '{{ redis_cache_primary_ip if (group_names | select("match", ".*_cache_.*") | list | count > 0) else redis_persistent_primary_ip }}'
+redis['master_ip'] = '{{ redis_cache_primary_int_ip if (group_names | select("match", ".*_cache_.*") | list | count > 0) else redis_persistent_primary_int_ip }}'
 redis['master_name'] = '{{ "gitlab-redis-cache" if (group_names | select("match", ".*_cache_.*") | list | count > 0) else "gitlab-redis-persistent" }}'
 redis['master_password'] = '{{ redis_password }}'
 
@@ -20,7 +20,7 @@ gitlab_rails['auto_migrate'] = false
 
 consul['enable'] = true
 consul['configuration'] = {
-  retry_join: %w({{ consul_internal_ips | join(' ') }}),
+  retry_join: %w({{ consul_int_ips | join(' ') }}),
   bind_addr: '{{ ansible_default_ipv4.address }}'
 }
 consul['monitoring_service_discovery'] =  true

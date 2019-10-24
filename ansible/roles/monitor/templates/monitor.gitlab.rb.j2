@@ -9,13 +9,13 @@ prometheus['scrape_configs'] = [
   {
     'job_name': 'non_omnibus_node',
     'static_configs' => [
-      'targets' => ["{{ haproxy_ip }}:9100", "{{ gitlab_nfs_ip }}:9100"],
+      'targets' => ["{{ haproxy_external_int_ip }}:9100", "{{ haproxy_internal_int_ip }}:9100", "{{ gitlab_nfs_int_ip }}:9100"],
     ],
   },
   {
     'job_name': 'haproxy',
     'static_configs' => [
-      'targets' => ["{{ haproxy_ip }}:1936"],
+      'targets' => ["{{ haproxy_external_int_ip }}:1936", "{{ haproxy_internal_int_ip }}:1936"],
     ],
   },
 ]
@@ -28,7 +28,6 @@ grafana['env'] = {
   'GF_AUTH_ANONYMOUS_ENABLED' => true,
   'GF_SERVER_ROOT_URL' => "{{ external_url }}/-/grafana"
 }
-# grafana['allow_user_sign_up'] = true
 
 grafana['dashboards'] = [
   {
@@ -57,7 +56,7 @@ grafana['dashboards'] = [
 
 consul['enable'] = true
 consul['configuration'] = {
-  retry_join: %w({{ consul_internal_ips | join(' ') }}),
+  retry_join: %w({{ consul_int_ips | join(' ') }}),
   bind_addr: '{{ ansible_default_ipv4.address }}'
 }
 consul['monitoring_service_discovery'] =  true
@@ -67,7 +66,7 @@ node_exporter['listen_address'] = '0.0.0.0:9100'
 nginx['status']['options'] = {
   "server_tokens" => "off",
   "access_log" => "off",
-  "allow" => "{{ monitor_ip }}",
+  "allow" => "{{ monitor_int_ip }}",
   "deny" => "all",
 }
 
