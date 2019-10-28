@@ -19,9 +19,9 @@ defaults
     option httplog
     option dontlognull
     retries 3
-    timeout connect 50000
-    timeout client 50000
-    timeout server 50000
+    timeout connect 600000
+    timeout client 600000
+    timeout server 600000
  
 {% include hostvars[inventory_hostname].group_names[0] + '.cfg.j2' %}
 

@@ -63,6 +63,10 @@
     - restart
   when: "'gitlab_rails_secondary' in group_names"
 
+- name: Perform Post Deployment DB Migrations
+  command: gitlab-rake db:migrate
+  when: "'gitlab_rails_primary' in group_names"
+
 - name: Create skip-auto-reconfigure file
   file:
     path: /etc/gitlab/skip-auto-reconfigure
