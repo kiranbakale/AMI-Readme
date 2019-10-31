@@ -11,6 +11,8 @@ redis_exporter['enable'] = false
 unicorn['enable'] = false
 puma['enable'] = false
 
+registry_external_url '{{ external_url }}:4567'
+
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
 gitlab_rails['db_host'] = '{{ haproxy_internal_int_ip }}'
@@ -50,8 +52,8 @@ user['uid'] = 9000
 user['gid'] = 9000
 web_server['uid'] = 9001
 web_server['gid'] = 9001
-registry['uid'] = 9002
-registry['gid'] = 9002
+registry['uid'] = 9003
+registry['gid'] = 9003
 
 # Monitoring
 consul['enable'] = true
@@ -113,6 +115,13 @@ gitlab_rails['dependency_proxy_object_store_connection'] = {
   'provider' => 'Google',
   'google_project' => '{{ project_name }}',
   'google_json_key_location' => '{{ serviceaccount_path }}'
+}
+
+registry['storage'] = {
+  'gcs' => {
+    'bucket' => '{{ gitlab_object_storage }}'
+    # 'keyfile' => '{{ serviceaccount_path }}'
+  }
 }
 
 # NFS
