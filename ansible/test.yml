@@ -1,5 +1,5 @@
 ---
-- hosts: haproxy_*
+- hosts: gitlab_rails
   vars:
     consul_ips: "{{ groups['consul'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
     ip_test: "{{ ansible_default_ipv4.address }}/16"
@@ -20,4 +20,4 @@
       msg: "{{ ansible_memory_mb.real.total }} - {{ ((ansible_memory_mb.real.total | int) * 0.9) | round | int }}mb"
 
   - debug:
-      msg: "{{ hostvars[inventory_hostname] }}"
+      msg: "{{ gitlab_rails_db_pool }}"
