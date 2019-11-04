@@ -65,6 +65,9 @@
 
 - name: Perform Post Deployment DB Migrations
   command: gitlab-rake db:migrate
+  register: result
+  retries: 3
+  until: result is success
   when: "'gitlab_rails_primary' in group_names"
 
 - name: Create skip-auto-reconfigure file
