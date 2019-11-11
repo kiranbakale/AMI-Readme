@@ -34,8 +34,8 @@
 
 - name: Reconfigure GitLab Primary
   shell: gitlab-ctl reconfigure
-  environment:
-    SKIP_POST_DEPLOYMENT_MIGRATIONS: 'true'
+  # environment:
+  #  SKIP_POST_DEPLOYMENT_MIGRATIONS: 'true'
   tags: reconfigure
   when: "'gitlab_rails_primary' in group_names"
 
