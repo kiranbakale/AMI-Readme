@@ -1,6 +1,6 @@
 # GitLab Performance Environment Builder
 
-Terraform and Ansible toolkit for building reference HA GitLab environments on Google Cloud Platform (GCP) for performance testing.
+Terraform and Ansible tool for building reference HA GitLab environments on Google Cloud Platform (GCP) for performance testing.
 
 ## Background
 
@@ -15,7 +15,8 @@ The Toolkit consists of two industry leading tools:
 * [Terraform](https://www.terraform.io/) - To provision environment infrastructure
 * [Ansible](https://docs.ansible.com/ansible/latest/index.html) - To configure GitLab on the provisioned infrastructure
 
-## Preparation
+## Initializing the tool
+
 ### Configuring [`git-crypt`](https://github.com/AGWA/git-crypt) for authentication
 
 To enable authentication for both Ansible and Terraform several authentication files are provided with the toolkit. These secret files are all encrypted with [`git-crypt`](https://github.com/AGWA/git-crypt) and you'll need to either be added as a trusted user (for local use) or be provided with a symmetric key (for CI use) to unlock these as follows:
@@ -53,30 +54,66 @@ If you are new to any of the tools here it's worth going through the following t
 * [Terraform GCP Tutorial](https://learn.hashicorp.com/terraform/gcp/intro)
 * [Ansible Tutorial](https://www.guru99.com/ansible-tutorial.html)
 
-## Provisioning Environment(s) Infrastructure with Terraform
+## Building the environment
 
-Provisioning or updating an Environment's infrastructure with [Terraform](https://www.terraform.io/) is done as follows:
+### Preparing the GCP Project
+
+A few steps need to be be performed manually with new GCP projects. The follow should only need to be done once:
+
+#### Service Account Key
+
+Each environment will have it's own project on GCP. Terraform and Ansible require a [Service Account](https://cloud.google.com/iam/docs/understanding-service-accounts) to be created in each project and the key to be added to this project's secrets folder.
+
+If this is a new project without a Service Account then you can create one as follows if you're an admin:
+
+* Head to the [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) page. Be sure to check that the correct project is selected in the dropdown at the top of the page.
+* Proceed to create an account with the name `gitlab-qa` and the roles `Compute OS Admin Login` and `Editor`
+* On the last page there will be the option to generate a key. Select to do so with the `JSON` format and save it to the `secrets` folder in this project with the naming convention `serviceaccount-<project-name>.json`, e.g. `serviceaccount-10k.json`.  The key file will be automatically encrypted via `git-crypt` as detailed above.
+* Finish creating the user
+
+#### Grant access to team members
+
+Quality team members (and as others as required) also need to be given access to the project as follows:
+
+* Head to the project's [IAM](https://console.cloud.google.com/iam-admin/iam?supportedpurview=project) page. Be sure to check that the correct project is selected in the dropdown at the top of the page.
+* Select to add a new member to the project by clicking `+Add` at the top of the page
+* Search for the user by name, select them when found, give them the `Editor` role and then finally save.
+
+#### Get Static External IP
+
+One thing we also need to do is define one external IP manually outside of Terraform that will be used to access the project permanently. This is required due to Terraform needing full control over everything it creates so in the case of a teardown the IP here would also be destroyed and break any DNS entries.
+
+New GCP projects should already have one IP defined by default that we will use for this purpose. If there isn't one then a new IP can be generated via the [External IP Addresses](https://console.cloud.google.com/networking/addresses/list?project=gitlab-qa-25k-bc38fe) page as required.
+
+Once either the default or newly created IP is found take note of the IP address itself as it will need to be added to the respective `HAProxy` Terraform script to configure it to use accordingly. E.G. Like this in the [10k scripts](https://gitlab.com/gitlab-org/quality/performance-environment-builder/blob/master/terraform/10k/haproxy.tf#L9).
+
+### Provisioning Environment(s) Infrastructure with Terraform
+
+[Terraform](https://www.terraform.io/) provisions the Environment's infrastructure. It works in a unique way where each project should have it's own folder and State.
 
 >>>
 **[Terraform Remote State](https://learn.hashicorp.com/terraform/gcp/remote)**
 **Terraform keeps a live [state](https://learn.hashicorp.com/terraform/gcp/remote) file of the environment. This is an important part of Terraform as it will refer to this to see what state the intended environment is in at the time of running. To ensure the state is correct for everyone using the tool we store it in the environment's GCP Project under a specific bucket. This should already be configured for the existing projects if not you'll need to ensure the bucket is created in GCP and then configure the respective `main.tf` file accordingly.**
 >>>
 
-1. `cd` to the intended environment's directory under `terraform/`. For this example we'll select the 10k environment - `cd terraform/10k`
-1. You can first run `terraform plan` to view the current state of the environment and what will be changed if you proceed to apply.
-1. To apply any changes run `terraform apply` 
+1. Create the environment's Terraform directory and scripts if they don't already exist under `terraform/`. For convenience you should copy one of the existing projects and update the authentication details in the `main.tf` and `variables.tf` files to match the new GCP project.
+1. `cd` to the environment's directory under `terraform/`. For this example we'll select the 10k environment - `cd terraform/10k`
+1. In the environment's Terraform directory (e.g. `terraform/10k`), start by [initializing](https://www.terraform.io/docs/commands/init.html) the environment's Terraform scripts with `terraform init`.
+1. You can next optionally run`terraform plan` to view the current state of the environment and what will be changed if you proceed to apply.
+1. To apply any changes run `terraform apply` and select yes
     * **Warning - running this command will likely apply changes to shared infrastructure. Only run this command if you have permission to do so.**
 
-## Configuring GitLab on Environment(s) with Ansible
+### Configuring GitLab on Environment(s) with Ansible
 
-We use [Ansible](https://docs.ansible.com/ansible/latest/index.html) to configure GitLab on an Environment's infrastructure. 
+[Ansible](https://docs.ansible.com/ansible/latest/index.html) configures GitLab on an Environment's infrastructure. 
 
-This is achieved through getting VM info via the [`gcp_compute` Dynamic Inventory source](https://docs.ansible.com/ansible/latest/plugins/inventory/gcp_compute.html) and then running Ansible Playbooks & Roles against each depending on the VM Labels set via Terraform:
+This is achieved through getting VM info via the [`gcp_compute` Dynamic Inventory source](https://docs.ansible.com/ansible/latest/plugins/inventory/gcp_compute.html) and then running Ansible Playbooks & Roles against each depending on the VM Labels set via Terraform. Unlike Terraform Ansible doesn't require seperate folders per Environment but does require a small config directory for each under `ansible/inventories/`
 
 Playbooks & Roles are structured to cover GitLab nodes respectively. E.G. There are playbooks for `gitlab-rails`, `gitaly`, etc... You can see the current list under `ansible/roles/`.
 
 Examples of running Ansible to configure a GitLab instance can be found below. In this example we'll run all playbooks and roles against all nodes via the `all.yml` playbook:
 
 1. `cd` to the `ansible/` directory
+1. Create the Environment's inventory config under `ansible/inventories/` if it doesn't exist already. For convenience you should copy one of the existing projects inventories and update all files with the relevant info for the new environment.
 1. You then use the `ansible-playbook` command to run the playbook, specifying the intended environment's inventory as well - `ansible-playbook -i inventories/10k all.yml`
     ** If you only want to run a specific playbook & role against the respective VMs you switch out `all.yml` and replace it with the intended playbook, e.g. `gitlab-rails.yml`
