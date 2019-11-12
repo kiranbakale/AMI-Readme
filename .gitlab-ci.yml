@@ -26,6 +26,7 @@ start:
     - curl -sSL https://sdk.cloud.google.com > /tmp/gcl.sh && bash /tmp/gcl.sh --disable-prompts 1> /dev/null && rm /tmp/gcl.sh
     - export PATH=$PATH:/root/google-cloud-sdk/bin
     - gcloud auth activate-service-account --key-file=$GCLOUD_SERVICEACCOUNT_KEY_PATH
+    - echo "Starting VMs on GCP project '$CLOUDSDK_CORE_PROJECT'"
     - gcloud compute instances start --zone $GCLOUD_ZONE $(gcloud compute instances list --format='value(name)')
     - sleep 60
   only:
