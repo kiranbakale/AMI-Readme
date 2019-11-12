@@ -12,6 +12,9 @@ stages:
     - echo "$GIT_CRYPT_KEY" | base64 -d > /tmp/git-crypt.key
     - git-crypt unlock /tmp/git-crypt.key
     - chmod 600 secrets/gitlab-qa-gcp-ssh
+  variables:
+    GCLOUD_SERVICEACCOUNT_KEY_PATH: secrets/serviceaccount-$ENVIRONMENT_NAME.json
+    CLOUDSDK_CORE_PROJECT: $GCP_PROJECT_NAME
   only:
     - schedules
 
