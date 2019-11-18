@@ -9,6 +9,18 @@
   shell: "gsutil cp gs://{{ gitlab_secrets_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
 
+- name: Stop Consul
+  shell: gitlab-ctl stop consul
+  tags:
+    - reconfigure
+
+- name: Clear old Consul data
+  file:
+    path: /var/opt/gitlab/consul/data
+    state: absent
+  tags:
+    - reconfigure
+
 - name: Reconfigure Consul
   shell: gitlab-ctl reconfigure
   tags:
