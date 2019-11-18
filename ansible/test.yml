@@ -20,4 +20,4 @@
       msg: "{{ ansible_memory_mb.real.total }} - {{ ((ansible_memory_mb.real.total | int) * 0.9) | round | int }}mb"
 
   - debug:
-      msg: "{{ gitlab_rails_db_pool }}"
+      msg: "{{ gitlab_repo_script_url }}"

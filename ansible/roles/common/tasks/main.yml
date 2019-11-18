@@ -22,17 +22,18 @@
 
 - name: Download GitLab repository installation script
   get_url:
-    url: "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh"
+    url: "{{ gitlab_repo_script_url }}"
     dest: /tmp/gitlab_install_repository.sh
+    force: yes
+  register: repo_file
   when: 
     - install_gitlab
-    - not gitlab_file.stat.exists
 
 - name: Install GitLab repository
   command: bash /tmp/gitlab_install_repository.sh
   when: 
     - install_gitlab
-    - not gitlab_file.stat.exists
+    - repo_file.changed
 
 - name: Install GitLab package
   apt:
