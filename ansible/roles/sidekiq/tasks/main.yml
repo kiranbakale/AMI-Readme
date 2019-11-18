@@ -36,6 +36,9 @@
 
 - name: Restart Sidekiq
   command: gitlab-ctl restart
+  register: result
+  retries: 2
+  until: result is success
   tags:
     - reconfigure
     - restart

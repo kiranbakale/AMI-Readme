@@ -26,6 +26,9 @@
 
 - name: Restart PgBouncer
   command: gitlab-ctl restart
+  register: result
+  retries: 2
+  until: result is success
   tags:
     - reconfigure
     - restart
@@ -44,6 +47,12 @@
 # Bug - https://gitlab.com/gitlab-org/omnibus-gitlab/issues/3448
 - name: Restart Consul
   command: gitlab-ctl restart consul
+  register: result
+  retries: 2
+  until: result is success
+  tags:
+    - reconfigure
+    - restart
 
 - name: Create skip-auto-reconfigure file
   file:
