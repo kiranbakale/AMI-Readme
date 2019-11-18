@@ -28,10 +28,6 @@
   tags: secrets
   run_once: true
 
-- name: Restart Consul
-  command: gitlab-ctl restart consul
-  when: gitlab_file.stat.exists
-
 - name: Create skip-auto-reconfigure file
   file:
     path: /etc/gitlab/skip-auto-reconfigure
