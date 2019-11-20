@@ -6,6 +6,7 @@ module "sidekiq" {
   node_count = 4
 
   machine_type = "n1-standard-4"
+  machine_image = "${var.machine_image}"
 }
 
 output "sidekiq" {

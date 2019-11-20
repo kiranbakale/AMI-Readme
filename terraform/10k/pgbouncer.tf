@@ -5,8 +5,8 @@ module "pgbouncer" {
   node_type = "pgbouncer"
   node_count = 3
 
-  # machine_type = "custom-2-4096"
   machine_type = "n1-highcpu-2"
+  machine_image = "${var.machine_image}"
 }
 
 output "pgbouncer" {

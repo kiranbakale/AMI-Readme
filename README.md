@@ -36,13 +36,15 @@ TBC
 
 ### Installing Ansible Dependencies
 
-We utilize some community roles from [Ansible Galaxy](https://galaxy.ansible.com/home) that allow for convenient deployment of some third party applications.
+Ansible requires some dependencies to be installed based on how we use it. You'll need to install python package dependencies on your machine along with some community roles from [Ansible Galaxy](https://galaxy.ansible.com/home) that allow for convenient deployment of some third party applications.
 
-Ansible needs these roles installed along with any specific dependencies to proceed. To do this you only have to run the following before running Ansible:
+To do this you only have to run the following before running Ansible:
 
 1. `cd` to the `ansible/` directory
-1. Run the following command to install the roles - `ansible-galaxy install -r requirements.yml`
-    * If on Mac OS you also need to install `gnu-tar` - `brew install gnu-tar`
+1. First install the python packages via `pip install -r requirements/ansible-python-packages.txt`.
+    * Note it's expected you already have Python and it's package manager pip installed. Additionally you may have the Python3 version of pip installed, `pip3`, and you should replace accordingly.
+1. Next, run the following command to install the roles - `ansible-galaxy install -r requirements.yml`
+1. Note that if you're on a Mac OS machine you also need to install `gnu-tar` - `brew install gnu-tar`
 
 ### Useful Resources
 

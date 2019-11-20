@@ -4,3 +4,4 @@
 *.tfstate.backup
 secrets.auto.tfvars
 .terraform/
+ansible/test.yml

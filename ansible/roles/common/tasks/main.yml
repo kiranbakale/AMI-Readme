@@ -2,7 +2,7 @@
 - name: Install system packages
   apt:
     name: ['aptitude', 'curl', 'openssh-server', 'ca-certificates', 'glances', 'nano', 'tzdata', 'postfix',
-           'ack', 'tree', 'python-pip', 'python3-pip', 'nfs-common']
+           'ack-grep', 'tree', 'python-pip', 'python3-pip', 'nfs-common']
     update_cache: yes
   tags: packages
 
