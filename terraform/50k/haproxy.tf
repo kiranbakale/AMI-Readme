@@ -6,6 +6,7 @@ module "haproxy_external" {
   node_count = 1
   
   machine_type = "n1-highcpu-2"
+  machine_image = "${var.machine_image}"
   external_ips = ["35.237.211.103"]
 
   tags = ["${var.prefix}-web", "${var.prefix}-haproxy"]
@@ -23,6 +24,7 @@ module "haproxy_internal" {
   node_count = 1
   
   machine_type = "n1-highcpu-8"
+  machine_image = "${var.machine_image}"
 
   tags = ["${var.prefix}-haproxy"]
 }

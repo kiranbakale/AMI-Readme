@@ -6,6 +6,7 @@ module "gitlab-nfs" {
   node_count = 1
 
   machine_type = "n1-highcpu-4"
+  machine_image = "${var.machine_image}"
 }
 
 output "gitlab_nfs" {

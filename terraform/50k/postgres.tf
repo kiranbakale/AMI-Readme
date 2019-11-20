@@ -6,6 +6,7 @@ module "postgres" {
   node_count = 3
 
   machine_type = "n1-standard-16"
+  machine_image = "${var.machine_image}"
   label_secondaries = true
 }
 

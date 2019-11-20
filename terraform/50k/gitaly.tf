@@ -7,9 +7,8 @@ module "gitaly" {
 
   disk_type = "pd-ssd"
 
-  # machine_type = "custom-64-184320"
-  # machine_type = "n1-standard-64"
   machine_type = "n1-highcpu-64"
+  machine_image = "${var.machine_image}"
   label_secondaries = true
 }
 

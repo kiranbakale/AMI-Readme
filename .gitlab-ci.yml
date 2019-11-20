@@ -54,10 +54,10 @@ ansible:
   stage: configure
   script:
     - apk add -u --no-cache openssh-client ca-certificates ansible
-    - pip3 install --upgrade pip google-auth requests netaddr
+    - pip3 install -U -r requirements/ansible-python-packages.txt
     - chmod 700 ansible
     - cd ansible
-    - ansible-galaxy install -r requirements.yml
+    - ansible-galaxy install -r requirements/ansible-roles.yml
     - ansible-playbook -i inventories/$ENVIRONMENT_NAME all.yml
   only:
     variables:

@@ -18,6 +18,10 @@ variable "prefix" {
   default = "gitlab-qa-10k"
 }
 
+variable "machine_image" {
+  default = "ubuntu-1804-lts"
+}
+
 variable "secrets_storage_bucket" {
   default = "gitlab-gitlab-qa-10k-secrets"
 }

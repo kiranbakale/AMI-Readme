@@ -5,8 +5,8 @@ module "gitlab_rails" {
   node_type = "gitlab-rails"
   node_count = 3
 
-  # machine_type = "custom-20-18432"
   machine_type = "n1-highcpu-32"
+  machine_image = "${var.machine_image}"
   label_secondaries = true
 
   tags = ["${var.prefix}-web"]

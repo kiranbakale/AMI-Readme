@@ -6,6 +6,7 @@ module "jaeger" {
   node_count = 0
 
   machine_type = "n1-standard-2"
+  machine_image = "${var.machine_image}"
 
   tags = ["${var.prefix}-jaeger"]
 }
