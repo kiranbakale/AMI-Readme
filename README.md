@@ -7,8 +7,9 @@ Terraform and Ansible tool for building reference HA GitLab environments on Goog
 This toolkit is designed to provision and configure GitLab environments, each in their own GCP Project, that match one of our existing or soon to be created [High Availability Reference Architectures](https://docs.gitlab.com/ee/administration/high_availability/README.html#high-availability-architecture-examples)
 
 At the time of writing we have the following environments we are currently building with this toolkit:
-* [10k](https://console.cloud.google.com/home/dashboard?orgonly=true&project=gitlab-qa-10k-cd77c7&supportedpurview=organizationId)
-* [20k](https://console.cloud.google.com/home/dashboard?orgonly=true&project=gitlab-qa-25k-bc38fe&supportedpurview=organizationId)
+* [5k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-5k-0ee8fa)
+* [10k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-10k-cd77c7)
+* [25k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-25k-bc38fe)
 * [50k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-50k-193234)
 
 The Toolkit consists of two industry leading tools:
@@ -62,9 +63,11 @@ If you are new to any of the tools here it's worth going through the following t
 
 A few steps need to be be performed manually with new GCP projects. The follow should only need to be done once:
 
-#### Service Account Key
+#### Service Account key
 
 Each environment will have it's own project on GCP. Terraform and Ansible require a [Service Account](https://cloud.google.com/iam/docs/understanding-service-accounts) to be created in each project and the key to be added to this project's secrets folder.
+
+##### Creating the Service Account and key
 
 If this is a new project without a Service Account then you can create one as follows if you're an admin:
 
@@ -72,6 +75,20 @@ If this is a new project without a Service Account then you can create one as fo
 * Proceed to create an account with the name `gitlab-qa` and the roles `Compute OS Admin Login` and `Editor`
 * On the last page there will be the option to generate a key. Select to do so with the `JSON` format and save it to the `secrets` folder in this project with the naming convention `serviceaccount-<project-name>.json`, e.g. `serviceaccount-10k.json`.  The key file will be automatically encrypted via `git-crypt` as detailed above.
 * Finish creating the user
+
+##### Configuring SSH OS Login for Service Account
+
+In addition to creating the Service Account and saving the key we need to also setup [OS Login](https://www.google.com/search?q=gcp+OS+Login&oq=gcp+OS+Login&aqs=chrome..69i57j69i60.2017j0j1&sourceid=chrome&ie=UTF-8) for the account for SSH access to the created VMs on GCP, which is required by Ansible.
+
+For convenience most of the steps required to enable this has already been done. In this project's `secrets/` folder you'd find an SSH key pair, named `gitlab-qa-gcp-ssh`, that is used for all the current project's Service Accounts for login. For a new Service Account you can enable OS Login as follows:
+
+* First head to the `secrets` folder
+* With the `gcloud` command set it to point at your intended project - `gcloud config set project <project-name>`
+* Now login as the Service Account user via it's key created in the last step - `gcloud auth activate-service-account --key-file=serviceaccount-5k.json`
+* Proceed to add the project's public SSH key to the account - `gcloud compute os-login ssh-keys add --key-file=gitlab-qa-gcp-ssh.pub`
+* Finish with switching gcloud back to be logged in as your account `gcloud config set account <account-email-address>`
+
+SSH access should now be enabled on the Service Account and this will be used by Ansible to SSH login each VM. More info on OS Login and how it's configure can be found [here](https://alex.dzyoba.com/blog/gcp-ansible-service-account/).
 
 #### Grant access to team members
 
@@ -100,6 +117,7 @@ Once either the default or newly created IP is found take note of the IP address
 
 1. Create the environment's Terraform directory and scripts if they don't already exist under `terraform/`. For convenience you should copy one of the existing projects and update the authentication details in the `main.tf` and `variables.tf` files to match the new GCP project.
 1. `cd` to the environment's directory under `terraform/`. For this example we'll select the 10k environment - `cd terraform/10k`
+1. On the intended GCP project create a Storage Bucket for storing the Terraform state. You can name this as you please but the name then needs to be set in the environment's `main.tf` as a backend setting. For example here is the 10k environment's [main.tf](terraform/10k/main.tf) file with backend config.
 1. In the environment's Terraform directory (e.g. `terraform/10k`), start by [initializing](https://www.terraform.io/docs/commands/init.html) the environment's Terraform scripts with `terraform init`.
 1. You can next optionally run`terraform plan` to view the current state of the environment and what will be changed if you proceed to apply.
 1. To apply any changes run `terraform apply` and select yes
