@@ -54,9 +54,9 @@ ansible:
   stage: configure
   script:
     - apk add -u --no-cache openssh-client ca-certificates ansible
-    - pip3 install -U -r requirements/ansible-python-packages.txt
     - chmod 700 ansible
     - cd ansible
+    - pip3 install -U -r requirements/ansible-python-packages.txt
     - ansible-galaxy install -r requirements/ansible-roles.yml
     - ansible-playbook -i inventories/$ENVIRONMENT_NAME all.yml
   only:
