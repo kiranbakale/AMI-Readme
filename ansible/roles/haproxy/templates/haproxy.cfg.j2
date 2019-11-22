@@ -8,6 +8,7 @@ global
     cpu-map {{ cpu + 1 }} {{ cpu + 1 }}
 {% endfor %}
     daemon
+
  
 defaults
     log global
@@ -22,6 +23,7 @@ defaults
     timeout connect 600000
     timeout client 600000
     timeout server 600000
+    errorfile 503 /usr/local/etc/haproxy/errorfiles/503.http
  
 {% include hostvars[inventory_hostname].group_names[0] + '.cfg.j2' %}
 
