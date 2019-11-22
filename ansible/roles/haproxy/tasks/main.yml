@@ -34,6 +34,12 @@
     dest: /opt/haproxy/haproxy.cfg
   tags: reconfigure
 
+- name: Copy HAProxy error files
+  copy:
+    src: "files/errorfiles"
+    dest: "/opt/haproxy"
+  tags: reconfigure
+
 - name: Pull HAProxy Docker Image
   shell: docker pull haproxy:alpine
   tags:
