@@ -4,8 +4,8 @@ sidekiq['enable'] = false
 unicorn['enable'] = false
 puma['enable'] = true
 
-external_url '{{ external_url }}'
-registry_external_url '{{ external_url }}:4567'
+external_url '{{ external_url| regex_replace("\\/$", "") }}'
+registry_external_url '{{ external_url| regex_replace("\\/$", "") }}:4567'
 
 puma['worker_processes'] = {{ gitlab_rails_puma_workers }}
 puma['max_threads'] = {{ gitlab_rails_puma_threads }}

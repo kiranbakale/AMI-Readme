@@ -11,7 +11,7 @@ redis_exporter['enable'] = false
 unicorn['enable'] = false
 puma['enable'] = false
 
-registry_external_url '{{ external_url }}:4567'
+registry_external_url '{{ external_url| regex_replace("\\/$", "") }}:4567'
 
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
