@@ -7,6 +7,7 @@ Terraform and Ansible tool for building reference HA GitLab environments on Goog
 This toolkit is designed to provision and configure GitLab environments, each in their own GCP Project, that match one of our existing or soon to be created [High Availability Reference Architectures](https://docs.gitlab.com/ee/administration/high_availability/README.html#high-availability-architecture-examples)
 
 At the time of writing we have the following environments we are currently building with this toolkit:
+* [2k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-2k-ca9f9e)
 * [5k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-5k-0ee8fa)
 * [10k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-10k-cd77c7)
 * [25k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-25k-bc38fe)
