@@ -1,5 +1,5 @@
 provider "google" {
-  version = "~> 2.16"
+  version = "~> 2.20"
   credentials = file(var.credentials_file)
 
   project = var.project
@@ -8,7 +8,7 @@ provider "google" {
 }
 
 terraform {
-  required_version = "~> 0.12.9"
+  required_version = "= 0.12.18"
   backend "gcs" {
     bucket  = "5k-terraform-state"
     credentials = "../../secrets/serviceaccount-5k.json"

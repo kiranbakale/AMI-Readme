@@ -52,6 +52,7 @@ To do this you only have to run the following before running Ansible:
 
 Each of the tools this toolkit uses need to be installed before using:
 * [Terraform Install Guide](https://learn.hashicorp.com/terraform/getting-started/install.html)
+  * Make sure to install Terraform version `0.12.18`. Terraform requires the version to match for all people using it. Quality team will periodically update this version after testing. Warning will be thrown by Terraform when the install version isn't correct.
 * [Ansible Install Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
 If you are new to any of the tools here it's worth going through the following tutorials for them:

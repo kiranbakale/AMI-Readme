@@ -5,3 +5,4 @@ all:
     ansible_user: "sa_117413207790422770954"
     ansible_ssh_private_key_file: "../secrets/gitlab-qa-gcp-ssh"
     external_url: "http://5k.testbed.gitlab.net"
+    redis_separated: false

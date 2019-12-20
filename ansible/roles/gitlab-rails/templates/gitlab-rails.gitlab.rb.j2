@@ -24,25 +24,36 @@ gitlab_rails['initial_root_password'] = '5iveL!fe'
 gitlab_rails['auto_migrate'] = {{ 'true' if "gitlab_rails_primary" in group_names else 'false' }}
 
 # Redis Servers Config
+{% if 'redis' in groups %} 
+redis['master_name'] = 'gitlab-redis'
+redis['master_password'] = '{{ redis_password }}'
+
+gitlab_rails['redis_sentinels'] = [
+{% for ip in redis_sentinel_int_ips %}
+  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
+{% endfor %}
+]
+{% else %} 
 gitlab_rails['redis_cache_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-cache'
 gitlab_rails['redis_queues_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
 gitlab_rails['redis_shared_state_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
 
 gitlab_rails['redis_cache_sentinels'] = [
-{% for ip in redis_cache_int_ips %}
-  {host: '{{ ip }}', port: 26379},
+{% for ip in redis_sentinel_cache_int_ips %}
+  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
 gitlab_rails['redis_queues_sentinels'] = [
-{% for ip in redis_persistent_int_ips %}
-  {host: '{{ ip }}', port: 26379},
+{% for ip in redis_sentinel_persistent_int_ips %}
+  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
 gitlab_rails['redis_shared_state_sentinels'] = [
-{% for ip in redis_persistent_int_ips %}
-  {host: '{{ ip }}', port: 26379},
+{% for ip in redis_sentinel_persistent_int_ips %}
+  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
+{% endif %} 
 
 {% if jaeger %}
 gitlab_rails['env'] = {
