@@ -1,5 +1,6 @@
 ---
-- hosts: consul
+- hosts: 
+  - consul*
   roles:
     - consul
   become: true

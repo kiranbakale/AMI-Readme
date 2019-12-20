@@ -1,20 +1,19 @@
-roles ['{{ "redis_master_role" if (group_names | select("match", ".*_primary") | list | count > 0) else "redis_slave_role" }}']
+roles ['redis_sentinel_role']
 
-redis['bind'] = '0.0.0.0'
-redis['port'] = {{ redis_port }}
-redis['password'] = '{{ redis_password }}'
+sentinel['bind'] = '0.0.0.0'
+sentinel['quorum'] = 2
 
 {% if (group_names | select("match", ".*_cache_.*") | list | count > 0) %}
+redis['master_name'] = 'gitlab-redis-cache'
 redis['master_ip'] = '{{ redis_cache_primary_int_ip }}'
-
-redis['maxmemory'] = '{{ ((ansible_memory_mb.real.total | int) * 0.9) | round | int }}mb'
-redis['maxmemory_policy'] = "allkeys-lru"
-redis['maxmemory_samples'] = 5
 {% elif (group_names | select("match", ".*_persistent_.*") | list | count > 0) %}
+redis['master_name'] = 'gitlab-redis-persistent'
 redis['master_ip'] = '{{ redis_persistent_primary_int_ip }}'
 {% else %}
+redis['master_name'] = 'gitlab-redis'
 redis['master_ip'] = '{{ redis_primary_int_ip }}'
 {% endif %}
+redis['master_password'] = '{{ redis_password }}'
 
 gitlab_rails['auto_migrate'] = false
 
@@ -26,8 +25,3 @@ consul['configuration'] = {
 consul['monitoring_service_discovery'] =  true
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
-redis_exporter['listen_address'] = '0.0.0.0:9121'
-redis_exporter['flags'] = {
-  'redis.addr' => "redis://localhost:{{ redis_port }}",
-  'redis.password' => '{{ redis_password }}'
-}

@@ -1,4 +1,12 @@
-roles ['consul_role']
+roles ['consul_role', 'redis_sentinel_role']
+
+redis['master_name'] = 'gitlab-redis'
+redis['master_ip'] = '{{ redis_primary_int_ip }}'
+redis['master_password'] = '{{ redis_password }}'
+redis['port'] = {{ redis_port }}
+
+sentinel['bind'] = '0.0.0.0'
+sentinel['quorum'] = 2
 
 gitlab_rails['auto_migrate'] = false
 

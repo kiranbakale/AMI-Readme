@@ -1,4 +1,4 @@
-module "redis-cache" {
+module "redis_cache" {
   source = "../modules/gitlab_gcp_instance"
 
   prefix = "${var.prefix}"
@@ -10,11 +10,27 @@ module "redis-cache" {
   label_secondaries = true
 }
 
-output "redis-cache" {
-  value = module.redis-cache
+output "redis_cache" {
+  value = module.redis_cache
 }
 
-module "redis-persistent" {
+module "redis_sentinel_cache" {
+  source = "../modules/gitlab_gcp_instance"
+
+  prefix = "${var.prefix}"
+  node_type = "redis-sentinel-cache"
+  node_count = 3
+
+  machine_type = "g1-small"
+  machine_image = "${var.machine_image}"
+  label_secondaries = true
+}
+
+output "redis_sentinel_cache" {
+  value = module.redis_sentinel_cache
+}
+
+module "redis_persistent" {
   source = "../modules/gitlab_gcp_instance"
 
   prefix = "${var.prefix}"
@@ -26,6 +42,22 @@ module "redis-persistent" {
   label_secondaries = true
 }
 
-output "redis-persistent" {
-  value = module.redis-persistent
+output "redis_persistent" {
+  value = module.redis_persistent
+}
+
+module "redis_sentinel_persistent" {
+  source = "../modules/gitlab_gcp_instance"
+
+  prefix = "${var.prefix}"
+  node_type = "redis-sentinel-persistent"
+  node_count = 3
+
+  machine_type = "g1-small"
+  machine_image = "${var.machine_image}"
+  label_secondaries = true
+}
+
+output "redis_sentinel_persistent" {
+  value = module.redis_sentinel_persistent
 }

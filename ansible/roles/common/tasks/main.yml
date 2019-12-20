@@ -35,15 +35,29 @@
     - install_gitlab
     - repo_file.changed
 
+- name: Uninstall GitLab package
+  command: "{{ item }}"
+  args:
+    warn: false
+  with_items:
+    - apt-mark install gitlab-ee
+    - apt-get remove gitlab-ee -y
+  when: 
+    - uninstall_gitlab | bool
+  
 - name: Install GitLab package
-  apt:
-    name: gitlab-ee
-    update_cache: yes
+  command: "{{ item }}"
+  with_items:
+    - apt-mark install gitlab-ee
+    - apt-get install {{ gitlab_package }} -y --allow-downgrades
+    - apt-mark hold gitlab-ee
+  args:
+    warn: false
   when: 
     - install_gitlab
-    - not gitlab_file.stat.exists
+    - gitlab_package is defined
 
-- name: Update all packages to the latest version
+- name: Update system packages to the latest version
   apt:
     upgrade: 'safe'
   register: result

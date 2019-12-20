@@ -1,8 +1,8 @@
-module "redis-cache" {
+module "redis" {
   source = "../modules/gitlab_gcp_instance"
 
   prefix = "${var.prefix}"
-  node_type = "redis-cache"
+  node_type = "redis"
   node_count = 3
 
   machine_type = "n1-standard-2"
@@ -10,21 +10,6 @@ module "redis-cache" {
   label_secondaries = true
 }
 
-output "redis-cache" {
-  value = module.redis-cache
-}
-
-module "redis-persistent" {
-  source = "../modules/gitlab_gcp_instance"
-
-  prefix = "${var.prefix}"
-  node_type = "redis-persistent"
-  node_count = 3
-
-  machine_type = "n1-standard-2"
-  label_secondaries = true
-}
-
-output "redis-persistent" {
-  value = module.redis-persistent
+output "redis" {
+  value = module.redis
 }
