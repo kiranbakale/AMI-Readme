@@ -45,14 +45,14 @@ To do this you only have to run the following before running Ansible:
 1. `cd` to the `ansible/` directory
 1. First install the python packages via `pip install -r requirements/ansible-python-packages.txt`.
     * Note it's expected you already have Python and it's package manager pip installed. Additionally you may have the Python3 version of pip installed, `pip3`, and you should replace accordingly.
-1. Next, run the following command to install the roles - `ansible-galaxy install -r requirements.yml`
+1. Next, run the following command to install the roles - `ansible-galaxy install -r ansible-roles.yml`
 1. Note that if you're on a Mac OS machine you also need to install `gnu-tar` - `brew install gnu-tar`
 
 ### Useful Resources
 
 Each of the tools this toolkit uses need to be installed before using:
 * [Terraform Install Guide](https://learn.hashicorp.com/terraform/getting-started/install.html)
-  * Make sure to install Terraform version `0.12.18`. Terraform requires the version to match for all people using it. Quality team will periodically update this version after testing. Warning will be thrown by Terraform when the install version isn't correct.
+  * Make sure to install the specific Terraform version as stated in the environment's `main.tf` file. Terraform requires the version to match for all people using it. Quality team will periodically update this version after testing. Errors will be thrown by Terraform when the install version being used doesn't match what it's shared State file expects.
 * [Ansible Install Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
 If you are new to any of the tools here it's worth going through the following tutorials for them:
@@ -106,15 +106,16 @@ One thing we also need to do is define one external IP manually outside of Terra
 
 New GCP projects should already have one IP defined by default that we will use for this purpose. If there isn't one then a new IP can be generated via the [External IP Addresses](https://console.cloud.google.com/networking/addresses/list?project=gitlab-qa-25k-bc38fe) page as required.
 
-Once either the default or newly created IP is found take note of the IP address itself as it will need to be added to the respective `HAProxy` Terraform script to configure it to use accordingly. E.G. Like this in the [10k scripts](https://gitlab.com/gitlab-org/quality/performance-environment-builder/blob/master/terraform/10k/haproxy.tf#L9).
+Once either the default or newly created IP is found take note of the IP address itself as it will need to be added to the specific `HAProxy` Terraform script as the `external_ips` variable under the `haproxy_external` module. You can refer to the existing environment scripts for reference, e.g. as shown [here in the 10k environment's HAProxy script](https://gitlab.com/gitlab-org/quality/performance-environment-builder/blob/master/terraform/10k/haproxy.tf).
 
 ### Provisioning Environment(s) Infrastructure with Terraform
 
 [Terraform](https://www.terraform.io/) provisions the Environment's infrastructure. It works in a unique way where each project should have it's own folder and State.
 
 >>>
-**[Terraform Remote State](https://learn.hashicorp.com/terraform/gcp/remote)**
-**Terraform keeps a live [state](https://learn.hashicorp.com/terraform/gcp/remote) file of the environment. This is an important part of Terraform as it will refer to this to see what state the intended environment is in at the time of running. To ensure the state is correct for everyone using the tool we store it in the environment's GCP Project under a specific bucket. This should already be configured for the existing projects if not you'll need to ensure the bucket is created in GCP and then configure the respective `main.tf` file accordingly.**
+**Terraform keeps a live [state](https://learn.hashicorp.com/terraform/gcp/remote) file of the environment. This is an important part of Terraform as it will refer to this to see what state the intended environment is in at the time of running.**
+
+**To ensure the state is correct for everyone using the tool we store it in the environment's GCP Project under a specific bucket. This should already be configured for the existing projects if not you'll need to ensure the bucket is created in GCP and then configure the respective `main.tf` file accordingly. In addition, Terraform requires everyone to be using the same program version when accessing the state. The specific approved version can also be seen in the respective `main.tf` file.**
 >>>
 
 1. Create the environment's Terraform directory and scripts if they don't already exist under `terraform/`. For convenience you should copy one of the existing projects and update the authentication details in the `main.tf` and `variables.tf` files to match the new GCP project.
