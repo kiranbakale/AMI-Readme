@@ -6,6 +6,7 @@ module "gitaly" {
   node_count = 4
 
   disk_type = "pd-ssd"
+  disk_size = "500"
 
   machine_type = "n1-highcpu-64"
   machine_image = "${var.machine_image}"
