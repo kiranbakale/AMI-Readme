@@ -15,8 +15,6 @@ postgresql['sql_user_password'] = "{{ (postgres_password + 'gitlab') | md5 }}"
 
 postgresql['max_wal_senders'] = "{{ ((groups['postgres_primary'] + groups['postgres_secondary']) | length) + 1 }}"
 postgresql['max_replication_slots'] = "{{ ((groups['postgres_primary'] + groups['postgres_secondary']) | length) + 1 }}"
-# https://gitlab.com/gitlab-org/quality/performance/issues/168
-postgresql['max_connections'] = 1000
 
 postgresql['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 repmgr['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
