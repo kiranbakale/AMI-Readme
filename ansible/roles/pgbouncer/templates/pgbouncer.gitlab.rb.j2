@@ -11,7 +11,8 @@ pgbouncer['users'] = {
     password: "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
   }
 }
-pgbouncer['max_client_conn'] = '1366'
+# pgbouncer['max_client_conn'] = '1366'
+pgbouncer['max_db_connections'] = 200
 
 # Configure Consul agent
 consul['watchers'] = %w(postgresql)
@@ -23,4 +24,6 @@ consul['configuration'] = {
 consul['monitoring_service_discovery'] =  true
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
+
+pgbouncer_exporter['enable'] = true
 pgbouncer_exporter['listen_address'] = '0.0.0.0:9188'

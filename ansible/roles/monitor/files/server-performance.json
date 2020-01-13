@@ -15,6 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "id": 11,
   "links": [],
   "panels": [
     {
@@ -2059,6 +2060,110 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 107
+      },
+      "id": 28,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum (pgbouncer_pools_client_active_connections{database=~\"gitlabhq_production\"})",
+          "intervalFactor": 2,
+          "legendFormat": "Client Active Connections",
+          "refId": "A"
+        },
+        {
+          "expr": "sum (pgbouncer_pools_server_active_connections{database=~\"gitlabhq_production\"})",
+          "intervalFactor": 2,
+          "legendFormat": "Server Active Connections ",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(rate(pgbouncer_stats_queries_pooled_total{database=~\"gitlabhq_production\"}[1m]))",
+          "intervalFactor": 2,
+          "legendFormat": "Pooled Queries",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "PgBouncer Metrics",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": "10s",
@@ -2100,5 +2205,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 10
+  "version": 3
 }

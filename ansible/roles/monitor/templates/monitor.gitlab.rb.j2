@@ -18,6 +18,16 @@ prometheus['scrape_configs'] = [
       'targets' => ["{{ haproxy_external_int_ip }}:1936", "{{ haproxy_internal_int_ip }}:1936"],
     ],
   },
+  {
+    'job_name': 'pgbouncer',
+    'static_configs' => [
+      'targets' => [
+{% for ip in pgbouncer_int_ips %}
+        "{{ ip }}:9188",
+{% endfor %}
+      ],
+    ],
+  }
 ]
 
 # Enable Grafana
