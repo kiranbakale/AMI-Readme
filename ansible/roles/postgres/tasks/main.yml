@@ -28,14 +28,16 @@
   run_once: true
 
 - name: Debug capture output of 'gitlab-ctl repmgr cluster show'
-  shell: "gitlab-ctl repmgr cluster show 2>/dev/null"
+  shell: "gitlab-ctl repmgr cluster show 2>/dev/null || echo ''"
   register: cluster_show
+  ignore_errors: yes
   tags:
     - debug
 
 - name: Debug show output of 'gitlab-ctl repmgr cluster show'
   debug: 
     msg: "{{ cluster_show.stdout }}"
+  when: cluster_show.stdout != ''
   tags:
     - debug
 
