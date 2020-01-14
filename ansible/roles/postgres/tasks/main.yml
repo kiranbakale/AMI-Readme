@@ -27,8 +27,20 @@
   tags: secrets
   run_once: true
 
+- name: Debug capture output of 'gitlab-ctl repmgr cluster show'
+  shell: "gitlab-ctl repmgr cluster show 2>/dev/null"
+  register: cluster_show
+  tags:
+    - debug
+
+- name: Debug show output of 'gitlab-ctl repmgr cluster show'
+  debug: 
+    msg: "{{ cluster_show.stdout }}"
+  tags:
+    - debug
+
 - name: Check secondary standby status
-  shell: (gitlab-ctl repmgr cluster show 2>/dev/null | grep -E 'standby | {{ ansible_hostname }}') || echo ""
+  shell: (gitlab-ctl repmgr cluster show 2>/dev/null | grep -E 'standby \| {{ ansible_hostname }}') || echo ""
   register: postgres_secondary_standby_status
   tags: postgres_secondary_standby
   when: 
