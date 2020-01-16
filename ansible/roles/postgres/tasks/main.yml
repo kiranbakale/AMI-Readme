@@ -28,7 +28,7 @@
   run_once: true
 
 - name: Debug capture output of 'gitlab-ctl repmgr cluster show'
-  shell: "gitlab-ctl repmgr cluster show 2>/dev/null || echo ''"
+  shell: "gitlab-ctl repmgr cluster show 2>/dev/null"
   register: cluster_show
   ignore_errors: yes
   tags:
@@ -37,7 +37,7 @@
 - name: Debug show output of 'gitlab-ctl repmgr cluster show'
   debug: 
     msg: "{{ cluster_show.stdout }}"
-  when: cluster_show.stdout != ''
+  when: cluster_show.stdout is defined
   tags:
     - debug
 
@@ -50,10 +50,14 @@
 
 - name: Enable secondary standby
   shell: "gitlab-ctl repmgr standby setup {{ postgres_primary_ip }} -w"
+  register: postgres_secondary_standby_result
   tags: postgres_secondary_standby
   when: 
     - "'postgres_secondary' in group_names"
     - postgres_secondary_standby_status.stdout == ''
+  failed_when:
+    - postgres_secondary_standby_result.rc != 0
+    - '"exists already" not in postgres_secondary_standby_result.stderr'
 
 - name: Create skip-auto-reconfigure file
   file:

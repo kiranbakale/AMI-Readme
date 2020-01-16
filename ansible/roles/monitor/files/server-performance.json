@@ -1778,9 +1778,102 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 12,
-        "w": 12,
+        "h": 14,
+        "w": 8,
         "x": 0,
+        "y": 95
+      },
+      "id": 29,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "label_replace(sum by (instance)(ruby_memory_bytes), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "{{nodename}}",
+          "refId": "F"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Ruby Memory Used",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "percent",
+          "label": "",
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 14,
+        "w": 8,
+        "x": 8,
         "y": 95
       },
       "id": 5,
@@ -1870,9 +1963,9 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
+        "h": 14,
+        "w": 8,
+        "x": 16,
         "y": 95
       },
       "id": 25,
@@ -1973,7 +2066,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 107
+        "y": 109
       },
       "id": 27,
       "legend": {
@@ -2073,7 +2166,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 107
+        "y": 109
       },
       "id": 28,
       "legend": {
@@ -2205,5 +2298,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 3
+  "version": 1
 }
