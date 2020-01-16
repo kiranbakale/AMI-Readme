@@ -12,7 +12,6 @@ module "jaeger" {
 }
 
 resource "google_compute_firewall" "jaeger" {
-  ## firewall rules enabling the load balancer health checks
   name    = "${var.prefix}-jaeger-firewall-rule"
   network = "default"
 

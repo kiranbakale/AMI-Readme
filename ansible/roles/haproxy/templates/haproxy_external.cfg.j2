@@ -12,6 +12,11 @@ frontend http-in
 
     default_backend gitlab-rails
 
+frontend prometheus
+    bind *:9090
+
+    default_backend prometheus
+
 backend gitlab-rails
     option httpchk GET /-/liveness
 
@@ -23,3 +28,8 @@ backend grafana
     option httpchk GET /-/grafana/api/health
 
     server grafana {{ monitor_int_ip }}:80 check
+
+backend prometheus
+    option httpchk GET /-/healthy
+
+    server prometheus {{ monitor_int_ip }}:9090 check

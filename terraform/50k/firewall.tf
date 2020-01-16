@@ -1,5 +1,4 @@
 resource "google_compute_firewall" "gitlab_http_https" {
-  ## firewall rules enabling the load balancer health checks
   name    = "${var.prefix}-gitlab-rails-firewall-rule-http-https"
   network = "default"
 
@@ -18,7 +17,6 @@ resource "google_compute_firewall" "gitlab_http_https" {
 }
 
 resource "google_compute_firewall" "monitor" {
-  ## firewall rules enabling the load balancer health checks
   name    = "${var.prefix}-monitor-firewall-rule"
   network = "default"
 
