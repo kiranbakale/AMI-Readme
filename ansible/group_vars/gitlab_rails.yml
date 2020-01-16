@@ -1,5 +1,5 @@
 gitlab_rails_puma_workers: "{% if ansible_processor_vcpus is defined %}{{ (ansible_processor_vcpus * 0.9) | round | int }}{% else %}29{% endif %}"
-gitlab_rails_puma_threads: 8
+gitlab_rails_puma_threads: 16
 gitlab_rails_db_pool: "{{ gitlab_rails_puma_workers | int * gitlab_rails_puma_threads | int}}"
 
 serviceaccount_filename: "serviceaccount.json"
