@@ -9,7 +9,7 @@ module "haproxy_external" {
   machine_image = "${var.machine_image}"
   external_ips = ["34.73.165.75"]
 
-  tags = ["${var.prefix}-web", "${var.prefix}-haproxy"]
+  tags = ["${var.prefix}-web", "${var.prefix}-haproxy", "${var.prefix}-monitor"]
 }
 
 output "haproxy_external" {
@@ -34,7 +34,6 @@ output "haproxy_internal" {
 }
 
 resource "google_compute_firewall" "haproxy_stats" {
-  ## firewall rules enabling the load balancer health checks
   name    = "${var.prefix}-haproxy-stats-firewall-rule"
   network = "default"
 
