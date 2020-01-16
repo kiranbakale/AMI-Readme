@@ -14,12 +14,6 @@
     - netaddr
   tags: packages
 
-- name: Check if GitLab is already installed
-  stat: path=/usr/bin/gitlab-ctl
-  register: gitlab_file
-  tags: always
-  when: install_gitlab
-
 - name: Download GitLab repository installation script
   get_url:
     url: "{{ gitlab_repo_script_url }}"
@@ -42,20 +36,35 @@
   with_items:
     - apt-mark install gitlab-ee
     - apt-get remove gitlab-ee -y
+  when:
+    - install_gitlab
+    - uninstall_gitlab
+
+- name: Unlock GitLab package updates
+  command: apt-mark install gitlab-ee
   when: 
-    - uninstall_gitlab | bool
+    - install_gitlab
   
-- name: Install GitLab package
-  command: "{{ item }}"
-  with_items:
-    - apt-mark install gitlab-ee
-    - apt-get install {{ gitlab_package }} -y --allow-downgrades
-    - apt-mark hold gitlab-ee
+- name: Install GitLab repo package
+  command: apt-get install {{ gitlab_repo_package }} -y --allow-downgrades
   args:
     warn: false
   when: 
     - install_gitlab
-    - gitlab_package is defined
+    - gitlab_repo_package != ''
+    - gitlab_deb_package == ''
+
+- name: Install GitLab deb package
+  apt:
+    deb: "{{ gitlab_deb_package }}"
+  when: 
+    - install_gitlab
+    - gitlab_deb_package != ''
+
+- name: Lock GitLab package updates
+  command: apt-mark hold gitlab-ee
+  when: 
+    - install_gitlab
 
 - name: Update system packages to the latest version
   apt:
