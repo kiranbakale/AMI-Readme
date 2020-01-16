@@ -1,7 +1,8 @@
 # Ansible / General
 install_gitlab: true
 uninstall_gitlab: false
-gitlab_package: "{{ lookup('env','GITLAB_PACKAGE') | default('gitlab-ee', true) }}"
+gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default('gitlab-ee', true) }}"
+gitlab_deb_package: "{{ lookup('env','GITLAB_DEB_PACKAGE')}}"
 gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh', true) }}"
 gitlab_secrets_storage: "{{ prefix }}-secrets-storage"
 gitlab_object_storage: "{{ prefix }}-object-storage"
