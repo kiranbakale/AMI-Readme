@@ -1779,7 +1779,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
-        "w": 8,
+        "w": 12,
         "x": 0,
         "y": 95
       },
@@ -1872,8 +1872,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
-        "w": 8,
-        "x": 8,
+        "w": 12,
+        "x": 12,
         "y": 95
       },
       "id": 5,
@@ -1964,9 +1964,9 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
-        "w": 8,
-        "x": 16,
-        "y": 95
+        "w": 12,
+        "x": 0,
+        "y": 109
       },
       "id": 25,
       "legend": {
@@ -1999,17 +1999,22 @@
       "targets": [
         {
           "expr": "label_replace(sum by (instance)(puma_active_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "hide": false,
+          "hide": true,
           "intervalFactor": 2,
           "legendFormat": "Active Connections - {{nodename}}",
           "refId": "A"
         },
         {
           "expr": "label_replace(sum by (instance)(puma_queued_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "hide": false,
+          "hide": true,
           "intervalFactor": 2,
           "legendFormat": "Queued Connections - {{nodename}}",
           "refId": "B"
+        },
+        {
+          "expr": "label_replace(sum by (instance)(puma_running_workers{pid=\"puma_master\"} - puma_workers{pid=\"puma_master\"}), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "legendFormat": "Running Workers - {{nodename}}",
+          "refId": "C"
         }
       ],
       "thresholds": [],
@@ -2063,10 +2068,107 @@
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
+        "h": 14,
+        "w": 12,
+        "x": 12,
+        "y": 109
+      },
+      "id": 30,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 3,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pluginVersion": "6.3.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "label_replace(sum by (instance)(puma_running_workers{pid=\"puma_master\"}), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "legendFormat": "Running Workers - {{nodename}}",
+          "refId": "C"
+        },
+        {
+          "expr": "label_replace(sum by (instance)((puma_workers{pid=\"puma_master\"} - puma_running_workers{pid=\"puma_master\"}) > 0), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "legendFormat": "Killed Workers - {{nodename}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Puma Running Workers ",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 109
+        "y": 123
       },
       "id": 27,
       "legend": {
@@ -2166,7 +2268,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 109
+        "y": 123
       },
       "id": 28,
       "legend": {
@@ -2298,5 +2400,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 1
+  "version": 5
 }
