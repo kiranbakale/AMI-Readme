@@ -1067,7 +1067,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(irate(gitlab_transaction_duration_seconds_count[30s])) by (controller, action) > 0",
+          "expr": "sum(irate(gitlab_transaction_duration_seconds_count{controller!=''}[1m])) by (controller, action) > 0",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{controller}} - {{action}}",
@@ -2414,5 +2414,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 6
+  "version": 4
 }
