@@ -1,5 +1,7 @@
+gitlab_rails_webserver: 'puma'
 gitlab_rails_puma_workers: "{% if ansible_processor_vcpus is defined %}{{ (ansible_processor_vcpus * 0.9) | round | int }}{% else %}29{% endif %}"
 gitlab_rails_puma_threads: 4
+gitlab_rails_unicorn_workers: "{% if ansible_processor_vcpus is defined %}{{ ((ansible_processor_vcpus * 1.5) + 1) | round | int }}{% else %}49{% endif %}"
 
 serviceaccount_filename: "serviceaccount.json"
 serviceaccount_path: "/etc/gitlab/{{ serviceaccount_filename }}"

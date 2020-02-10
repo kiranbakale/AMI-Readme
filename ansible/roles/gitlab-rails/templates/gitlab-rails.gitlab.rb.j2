@@ -1,15 +1,24 @@
 roles ['application_role']
 postgresql['enable'] = false
 sidekiq['enable'] = false
-unicorn['enable'] = false
-puma['enable'] = true
 
 external_url '{{ external_url| regex_replace("\\/$", "") }}'
 registry_external_url '{{ external_url| regex_replace("\\/$", "") }}:4567'
 
+{% if gitlab_rails_webserver == 'puma' %}
+unicorn['enable'] = false
+puma['enable'] = true
+
 puma['worker_processes'] = {{ gitlab_rails_puma_workers }}
 puma['max_threads'] = {{ gitlab_rails_puma_threads }}
 puma['listen'] = '0.0.0.0'
+{% elif gitlab_rails_webserver == 'unicorn' %} 
+unicorn['enable'] = true
+puma['enable'] = false
+
+unicorn['worker_processes'] = {{ gitlab_rails_unicorn_workers }}
+unicorn['listen'] = '0.0.0.0'
+{% endif %}
 
 gitaly['enable'] = false
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'

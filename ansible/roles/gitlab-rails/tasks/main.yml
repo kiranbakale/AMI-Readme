@@ -55,7 +55,7 @@
   when: "'gitlab_rails_primary' in group_names"
 
 - name: Restart GitLab Primary
-  command: gitlab-ctl restart
+  command: gitlab-ctl stop && gitlab-ctl start
   register: result
   retries: 2
   until: result is success
@@ -70,7 +70,7 @@
   when: "'gitlab_rails_secondary' in group_names"
 
 - name: Restart GitLab Secondaries
-  command: gitlab-ctl restart
+  command: gitlab-ctl stop && gitlab-ctl start
   register: result
   retries: 2
   until: result is success
