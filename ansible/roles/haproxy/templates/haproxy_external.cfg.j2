@@ -1,12 +1,6 @@
 frontend http-in
     bind *:80
 
-    acl gitlab-k6-performance-test hdr_sub(User-Agent) GitlabK6PerformanceTest
-    use_backend gitlab-rails if gitlab-k6-performance-test
-
-    acl gitlab-rails-api path_beg -i /api/v4
-    use_backend gitlab-rails if gitlab-rails-api
-
     acl grafana path_beg -i /-/grafana
     use_backend grafana if grafana
 
@@ -18,7 +12,7 @@ frontend prometheus
     default_backend prometheus
 
 backend gitlab-rails
-    option httpchk GET /-/liveness
+    option httpchk GET /-/readiness
 
 {% for ip in gitlab_rails_int_ips %}
     server gitlab-rails{{loop.index}} {{ ip }}:80 check

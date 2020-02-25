@@ -2,12 +2,14 @@ frontend internal-pgbouncer-tcp-in
     bind *:6432
     mode tcp
     option tcplog
+    option clitcpka
 
     default_backend pgbouncer
 
 backend pgbouncer
     mode tcp
     option tcp-check
+    option srvtcpka
 
 {% for ip in pgbouncer_int_ips %}
     server pgbouncer{{loop.index}} {{ ip }}:6432 check

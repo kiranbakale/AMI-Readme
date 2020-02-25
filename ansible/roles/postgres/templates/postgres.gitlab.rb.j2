@@ -7,9 +7,7 @@ postgresql['hot_standby'] = 'on'
 postgresql['wal_level'] = 'replica'
 postgresql['shared_preload_libraries'] = 'repmgr_funcs'
 
-# Perform automatic database migrations if primary
-gitlab_rails['initial_root_password'] = '5iveL!fe'
-gitlab_rails['auto_migrate'] = {{ 'true' if "postgres_primary" in group_names else 'false' }}
+gitlab_rails['auto_migrate'] = false
 
 postgresql['pgbouncer_user_password'] = "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
 postgresql['sql_user_password'] = "{{ (postgres_password + 'gitlab') | md5 }}"
