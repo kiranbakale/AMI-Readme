@@ -3,7 +3,7 @@ module "gitlab_rails" {
 
   prefix = "${var.prefix}"
   node_type = "gitlab-rails"
-  node_count = 7
+  node_count = 5
 
   machine_type = "n1-highcpu-32"
   machine_image = "${var.machine_image}"
