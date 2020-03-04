@@ -160,6 +160,8 @@ gitlab_rails['uploads_directory'] = '{{ gitlab_nfs_path }}/uploads'
 gitlab_rails['shared_path'] = '{{ gitlab_nfs_path }}/shared'
 gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
 
+gitlab_rails['gitlab_default_projects_features_builds'] = false
+
 # Gitaly
 git_data_dirs({
   'default' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_int_ip }}:8075' },
