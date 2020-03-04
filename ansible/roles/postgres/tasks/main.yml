@@ -1,5 +1,5 @@
 ---
-- name: Create /etc/gitlab/gitlab.rb
+- name: Setup GitLab config file
   template:
     src: templates/postgres.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
@@ -49,7 +49,7 @@
     - "'postgres_secondary' in group_names"
 
 - name: Enable secondary standby
-  shell: "gitlab-ctl repmgr standby setup {{ postgres_primary_ip }} -w"
+  shell: "gitlab-ctl repmgr standby setup {{ postgres_primary_int_ip }} -w"
   register: postgres_secondary_standby_result
   tags: postgres_secondary_standby
   when: 

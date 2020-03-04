@@ -14,13 +14,19 @@ puma['listen'] = '0.0.0.0'
 gitaly['enable'] = false
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
+# Database Settings
+gitlab_rails['db_password'] = '{{ postgres_password }}'
+gitlab_rails['initial_root_password'] = '5iveL!fe'
+
+{% if db_migrate is defined and db_migrate == true %} 
+gitlab_rails['db_host'] = '{{ postgres_primary_int_ip }}'
+gitlab_rails['db_port'] = 5432
+gitlab_rails['auto_migrate'] = true
+{% else %} 
 gitlab_rails['db_host'] = '{{ haproxy_internal_int_ip }}'
 gitlab_rails['db_port'] = 6432
-gitlab_rails['db_password'] = '{{ postgres_password }}'
-
-# Perform automatic database migrations if primary
-gitlab_rails['initial_root_password'] = '5iveL!fe'
-gitlab_rails['auto_migrate'] = {{ 'true' if "gitlab_rails_primary" in group_names else 'false' }}
+gitlab_rails['auto_migrate'] = false
+{% endif %} 
 
 # Redis Servers Config
 {% if 'redis' in groups %} 

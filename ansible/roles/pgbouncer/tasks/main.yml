@@ -7,7 +7,7 @@
     value: '10240'
   tags: ulimit
 
-- name: Create /etc/gitlab/gitlab.rb
+- name: Setup GitLab config file
   template:
     src: templates/pgbouncer.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
@@ -43,6 +43,7 @@
   args:
     stdin: "{{ pgbouncer_password }}\n{{ pgbouncer_password }}\n"
     creates: /var/opt/gitlab/postgresql/.pgpass
+  tags: reconfigure
 
 # Bug - https://gitlab.com/gitlab-org/omnibus-gitlab/issues/3448
 - name: Restart Consul

@@ -1,5 +1,5 @@
 ---
-- name: Create /etc/gitlab/gitlab.rb
+- name: Setup GitLab config file
   template:
     src: templates/monitor.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
