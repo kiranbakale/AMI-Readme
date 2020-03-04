@@ -34,7 +34,9 @@ gitlab_rails_int_ips: "{{ (groups['gitlab_rails_primary'] + groups['gitlab_rails
 monitor_int_ip: "{{ groups['monitor'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
 
 # GitLab Postgres / PGBouncer
+postgres_primary_int_ip: "{{ groups['postgres_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')}}"
 postgres_password: '37aca09f2f8ff04f27bdb2ed159ec81f'
+
 pgbouncer_password: '9fdf957895675ef0741f66811c8fa958'
 pgbouncer_int_ips: "{{ groups['pgbouncer'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
 

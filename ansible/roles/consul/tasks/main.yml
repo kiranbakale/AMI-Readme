@@ -1,5 +1,5 @@
 ---
-- name: Create /etc/gitlab/gitlab.rb
+- name: Setup GitLab config file
   template:
     src: "{{ 'templates/consul+sentinel.gitlab.rb.j2' if 'consul_sentinel' in group_names else 'templates/consul.gitlab.rb.j2' }}"
     dest: /etc/gitlab/gitlab.rb

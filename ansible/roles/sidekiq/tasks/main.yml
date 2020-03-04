@@ -17,7 +17,7 @@
     - { setting: 'AuthorizedKeysCommand', value: '/opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell-authorized-keys-check git %u %k'}
     - { setting: 'AuthorizedKeysCommandUser', value: 'git'}
 
-- name: Create /etc/gitlab/gitlab.rb
+- name: Setup GitLab config file
   template:
     src: templates/sidekiq.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
