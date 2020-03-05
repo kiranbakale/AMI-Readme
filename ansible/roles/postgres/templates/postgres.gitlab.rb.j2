@@ -6,6 +6,7 @@ postgresql['listen_address'] = '0.0.0.0'
 postgresql['hot_standby'] = 'on'
 postgresql['wal_level'] = 'replica'
 postgresql['shared_preload_libraries'] = 'repmgr_funcs'
+postgresql['max_connections'] = 330
 
 gitlab_rails['auto_migrate'] = false
 
