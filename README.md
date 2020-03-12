@@ -44,15 +44,15 @@ To do this you only have to run the following before running Ansible:
 
 1. `cd` to the `ansible/` directory
 1. First install the python packages via `pip install -r requirements/ansible-python-packages.txt`.
-    * Note it's expected you already have Python and it's package manager pip installed. Additionally you may have the Python3 version of pip installed, `pip3`, and you should replace accordingly.
-1. Next, run the following command to install the roles - `ansible-galaxy install -r ansible-roles.yml`
+    * Note it's expected you already have Python and its package manager pip installed. Additionally you may have the Python3 version of pip installed, `pip3`, and you should replace accordingly.
+1. Next, run the following command to install the roles - `ansible-galaxy install -r requirements/ansible-roles.yml`
 1. Note that if you're on a Mac OS machine you also need to install `gnu-tar` - `brew install gnu-tar`
 
 ### Useful Resources
 
 Each of the tools this toolkit uses need to be installed before using:
 * [Terraform Install Guide](https://learn.hashicorp.com/terraform/getting-started/install.html)
-  * Make sure to install the specific Terraform version as stated in the environment's `main.tf` file. Terraform requires the version to match for all people using it. Quality team will periodically update this version after testing. Errors will be thrown by Terraform when the install version being used doesn't match what it's shared State file expects.
+  * Make sure to install the specific Terraform version as stated in the environment's `main.tf` file. Terraform requires the version to match for all people using it. Quality team will periodically update this version after testing. Errors will be thrown by Terraform when the install version being used doesn't match what its shared State file expects.
 * [Ansible Install Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
 If you are new to any of the tools here it's worth going through the following tutorials for them:
@@ -67,7 +67,7 @@ A few steps need to be be performed manually with new GCP projects. The follow s
 
 #### Service Account key
 
-Each environment will have it's own project on GCP. Terraform and Ansible require a [Service Account](https://cloud.google.com/iam/docs/understanding-service-accounts) to be created in each project and the key to be added to this project's secrets folder.
+Each environment will have its own project on GCP. Terraform and Ansible require a [Service Account](https://cloud.google.com/iam/docs/understanding-service-accounts) to be created in each project and the key to be added to this project's secrets folder.
 
 ##### Creating the Service Account and key
 
@@ -86,11 +86,11 @@ For convenience most of the steps required to enable this has already been done.
 
 * First head to the `secrets` folder
 * With the `gcloud` command set it to point at your intended project - `gcloud config set project <project-name>`
-* Now login as the Service Account user via it's key created in the last step - `gcloud auth activate-service-account --key-file=serviceaccount-5k.json`
+* Now login as the Service Account user via its key created in the last step - `gcloud auth activate-service-account --key-file=serviceaccount-5k.json`
 * Proceed to add the project's public SSH key to the account - `gcloud compute os-login ssh-keys add --key-file=gitlab-qa-gcp-ssh.pub`
 * Finish with switching gcloud back to be logged in as your account `gcloud config set account <account-email-address>`
 
-SSH access should now be enabled on the Service Account and this will be used by Ansible to SSH login each VM. More info on OS Login and how it's configure can be found [here](https://alex.dzyoba.com/blog/gcp-ansible-service-account/).
+SSH access should now be enabled on the Service Account and this will be used by Ansible to SSH login each VM. More info on OS Login and how it's configured can be found [here](https://alex.dzyoba.com/blog/gcp-ansible-service-account/).
 
 #### Grant access to team members
 
@@ -110,7 +110,7 @@ Once either the default or newly created IP is found take note of the IP address
 
 ### Provisioning Environment(s) Infrastructure with Terraform
 
-[Terraform](https://www.terraform.io/) provisions the Environment's infrastructure. It works in a unique way where each project should have it's own folder and State.
+[Terraform](https://www.terraform.io/) provisions the Environment's infrastructure. It works in a unique way where each project should have its own folder and State.
 
 >>>
 **Terraform keeps a live [state](https://learn.hashicorp.com/terraform/gcp/remote) file of the environment. This is an important part of Terraform as it will refer to this to see what state the intended environment is in at the time of running.**
