@@ -28,7 +28,10 @@
   tags: reconfigure
 
 - name: Restart Monitor
-  command: gitlab-ctl stop && gitlab-ctl start
+  shell: |
+    pkill -f "/opt/gitlab/embedded/bin/prometheus.*" || echo "Prometheus is already stopped"
+    gitlab-ctl stop
+    gitlab-ctl start
   register: result
   retries: 2
   until: result is success
