@@ -29,8 +29,8 @@
 
 - name: Restart Monitor
   shell: |
-    pkill -f "/opt/gitlab/embedded/bin/prometheus.*" || echo "Prometheus is already stopped"
     gitlab-ctl stop
+    pkill -f "/opt/gitlab/embedded/bin/prometheus[[:alnum:][:space:]\-]+" || echo "Prometheus is already stopped"
     gitlab-ctl start
   register: result
   retries: 2
