@@ -36,7 +36,7 @@ resource "google_compute_instance" "gitlab" {
   }
 
   service_account {
-    scopes = ["storage-rw"]
+    scopes = concat(["storage-rw"], var.scopes)
   }
 
   lifecycle {

@@ -1,2 +1,2 @@
-install_gitlab: false
+omnibus_node: false
 haproxy_ports: [80, 443, 1963, 6432]

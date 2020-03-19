@@ -64,6 +64,13 @@
     - restart
   when: "'gitlab_rails_primary' in group_names"
 
+#- name: Enable Feature Flags (GitLab Primary)
+#  command: gitlab-rails runner "Feature.enable(:async_merge_request_check_mergeability)"
+#  tags:
+#    - reconfigure
+#    - restart
+#  when: "'gitlab_rails_primary' in group_names"
+
 - name: Reconfigure GitLab Secondaries
   shell: gitlab-ctl reconfigure
   tags: reconfigure

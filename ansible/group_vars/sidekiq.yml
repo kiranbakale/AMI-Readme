@@ -1,2 +1,0 @@
-serviceaccount_filename: "serviceaccount.json"
-serviceaccount_path: "/etc/gitlab/{{ serviceaccount_filename }}"

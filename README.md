@@ -74,7 +74,7 @@ Each environment will have its own project on GCP. Terraform and Ansible require
 If this is a new project without a Service Account then you can create one as follows if you're an admin:
 
 * Head to the [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) page. Be sure to check that the correct project is selected in the dropdown at the top of the page.
-* Proceed to create an account with the name `gitlab-qa` and the roles `Compute OS Admin Login` and `Editor`
+* Proceed to create an account with the name `gitlab-qa` with the `Compute OS Admin Login`, `Editor` and `Kubernetes Engine Admin` roles.
 * On the last page there will be the option to generate a key. Select to do so with the `JSON` format and save it to the `secrets` folder in this project with the naming convention `serviceaccount-<project-name>.json`, e.g. `serviceaccount-10k.json`.  The key file will be automatically encrypted via `git-crypt` as detailed above.
 * Finish creating the user
 
@@ -85,9 +85,11 @@ In addition to creating the Service Account and saving the key we need to also s
 For convenience most of the steps required to enable this has already been done. In this project's `secrets/` folder you'd find an SSH key pair, named `gitlab-qa-gcp-ssh`, that is used for all the current project's Service Accounts for login. For a new Service Account you can enable OS Login as follows:
 
 * First head to the `secrets` folder
-* With the `gcloud` command set it to point at your intended project - `gcloud config set project <project-name>`
-* Now login as the Service Account user via its key created in the last step - `gcloud auth activate-service-account --key-file=serviceaccount-5k.json`
+* With the `gcloud` command set it to point at your intended project - `gcloud config set project <project-id>`
+  * Note that you need the project's ID here and not the name. This can be seen on the home page for the project.
+* Now login as the Service Account user via it's key created in the last step - `gcloud auth activate-service-account --key-file=serviceaccount-5k.json`
 * Proceed to add the project's public SSH key to the account - `gcloud compute os-login ssh-keys add --key-file=gitlab-qa-gcp-ssh.pub`
+* Next you need to get the actual Service Account SSH username for Ansible. This is in the format of `sa_<ID>`. The ID can be obtained with the following command - `gcloud iam service-accounts describe gitlab-qa@<project-id>.iam.serviceaccount.com --format='value(uniqueId)'`. Take the ID from this command and add it to the Ansible inventory vars file under `ansible_user` in the format `sa_<ID>`.
 * Finish with switching gcloud back to be logged in as your account `gcloud config set account <account-email-address>`
 
 SSH access should now be enabled on the Service Account and this will be used by Ansible to SSH login each VM. More info on OS Login and how it's configured can be found [here](https://alex.dzyoba.com/blog/gcp-ansible-service-account/).

@@ -1,9 +1,9 @@
 variable "project" {
-  default = "gitlab-qa-25k-bc38fe"
+  default = "gitlab-qa-50k-k8s-799916"
 }
 
 variable "credentials_file" {
-  default = "../../secrets/serviceaccount-25k.json"
+  default = "../../secrets/serviceaccount-50k-k8s.json"
 }
 
 variable "region" {
@@ -15,7 +15,7 @@ variable "zone" {
 }
 
 variable "prefix" {
-  default = "gitlab-qa-25k"
+  default = "gitlab-qa-50k-k8s"
 }
 
 variable "machine_image" {

@@ -21,6 +21,9 @@ repmgr['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 
 repmgr['master_on_initialization'] = {{ postgres_repmgr_master }}
 
+# postgresql['idle_in_transaction_session_timeout'] = "0"
+# postgresql['statement_timeout'] = "0"
+
 # Consul
 consul['services'] = %w(postgresql)
 consul['enable'] = true

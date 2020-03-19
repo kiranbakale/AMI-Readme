@@ -1,1 +1,1 @@
-install_gitlab: false
+omnibus_node: false

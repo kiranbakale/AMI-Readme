@@ -12,7 +12,19 @@
     - requests
     - google-auth
     - netaddr
+    - openshift
+    - PyYAML
+    extra_args: --upgrade
   tags: packages
+
+- name: Configure TCP keepalive settings
+  sysctl:
+    name: net.ipv4.tcp_keepalive_time
+    value: '300'
+    sysctl_set: yes
+    state: present
+    reload: yes
+  tags: sysctl
 
 - name: Download GitLab repository installation script
   get_url:
@@ -21,36 +33,25 @@
     force: yes
   register: repo_file
   when: 
-    - install_gitlab
+    - omnibus_node
 
 - name: Install GitLab repository
   command: bash /tmp/gitlab_install_repository.sh
   when: 
-    - install_gitlab
+    - omnibus_node
     - repo_file.changed
-
-- name: Uninstall GitLab package
-  command: "{{ item }}"
-  args:
-    warn: false
-  with_items:
-    - apt-mark install gitlab-ee
-    - apt-get remove gitlab-ee -y
-  when:
-    - install_gitlab
-    - uninstall_gitlab
 
 - name: Unlock GitLab package updates
   command: apt-mark install gitlab-ee
   when: 
-    - install_gitlab
+    - omnibus_node
   
 - name: Install GitLab repo package
   command: apt-get install {{ gitlab_repo_package }} -y --allow-downgrades
   args:
     warn: false
   when: 
-    - install_gitlab
+    - omnibus_node
     - gitlab_repo_package != ''
     - gitlab_deb_package == ''
 
@@ -58,13 +59,13 @@
   apt:
     deb: "{{ gitlab_deb_package }}"
   when: 
-    - install_gitlab
+    - omnibus_node
     - gitlab_deb_package != ''
 
 - name: Lock GitLab package updates
   command: apt-mark hold gitlab-ee
   when: 
-    - install_gitlab
+    - omnibus_node
 
 - name: Update system packages to the latest version
   apt:

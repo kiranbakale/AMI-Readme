@@ -34,3 +34,8 @@ variable "disk_type" {
 variable "label_secondaries" {
   default = false
 }
+
+variable "scopes" {
+  type = list(string)
+  default = []
+}
