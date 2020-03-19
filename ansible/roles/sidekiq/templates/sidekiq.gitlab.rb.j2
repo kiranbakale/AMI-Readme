@@ -13,15 +13,16 @@ puma['enable'] = false
 
 registry_external_url '{{ external_url| regex_replace("\\/$", "") }}:4567'
 
+# Sidekiq Config
+sidekiq['listen_address'] = '0.0.0.0'
+sidekiq['concurrency'] = '{{ sidekiq_concurrency }}'
+
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
 gitlab_rails['db_host'] = '{{ haproxy_internal_int_ip }}'
 gitlab_rails['db_port'] = 6432
 gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['auto_migrate'] = false
-
-sidekiq['listen_address'] = '0.0.0.0'
-sidekiq['concurrency'] = '{{ sidekiq_concurrency }}'
 
 # Redis Servers Config
 {% if 'redis' in groups %} 

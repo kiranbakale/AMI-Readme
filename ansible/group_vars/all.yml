@@ -1,11 +1,12 @@
 # Ansible / General
-install_gitlab: true
-uninstall_gitlab: false
+omnibus_node: true
+gitlab_deb_package: "{{ lookup('env','GITLAB_DEB_PACKAGE')}}" # Optional if installing by direct deb
 gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default('gitlab-ee', true) }}"
-gitlab_deb_package: "{{ lookup('env','GITLAB_DEB_PACKAGE')}}"
 gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh', true) }}"
 gitlab_secrets_storage: "{{ prefix }}-secrets-storage"
 gitlab_object_storage: "{{ prefix }}-object-storage"
+serviceaccount_filename: "serviceaccount.json"
+serviceaccount_path: "/etc/gitlab/{{ serviceaccount_filename }}"
 
 # Consul
 consul_int_ips: "{{ (groups[(groups | select('match', '^consul.*') | join())] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list) if (groups | select('match', '^consul.*') | list | count == 1) else [] }}"
@@ -13,9 +14,8 @@ consul_password: '0a6da13ae1754357b71ba1ac6c6caa6b'
 
 # HAProxy / Network
 haproxy_internal_int_ip: "{{ groups['haproxy_internal'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
-haproxy_external_int_ip: "{{ groups['haproxy_external'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
-haproxy_external_ext_ip: "{{ groups['haproxy_external'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='accessConfigs') | map('first') | map(attribute='natIP') | join('') }}"
-global_ip: "{{ haproxy_external_ext_ip }}"
+haproxy_external_int_ip: "{{ (groups['haproxy_external'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')) if 'haproxy_external' in groups else '' }}"
+haproxy_external_ext_ip: "{{ (groups['haproxy_external'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='accessConfigs') | map('first') | map(attribute='natIP') | join('')) if 'haproxy_external' in groups else '' }}"
 
 # Gitaly
 gitaly_primary_int_ip: "{{ groups['gitaly_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"

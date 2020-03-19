@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 11,
+  "id": 13,
   "links": [],
   "panels": [
     {
@@ -624,7 +624,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
-        "w": 8,
+        "w": 12,
         "x": 0,
         "y": 29
       },
@@ -715,8 +715,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
-        "w": 8,
-        "x": 8,
+        "w": 12,
+        "x": 12,
         "y": 29
       },
       "id": 20,
@@ -824,11 +824,117 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
-        "w": 8,
-        "x": 16,
-        "y": 29
+        "w": 12,
+        "x": 0,
+        "y": 43
       },
       "id": 21,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null as zero",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/Disk IOPS Read Rate.*/i",
+          "transform": "negative-Y"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "(sum by (instance) (irate(node_disk_reads_completed_total[2m]))) * on(instance) group_left(nodename) (node_uname_info)",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Disk IOPS Read Rate - {{nodename}}",
+          "refId": "C"
+        },
+        {
+          "expr": "(sum by (instance) (irate(node_disk_writes_completed_total[2m]))) * on(instance) group_left(nodename) (node_uname_info)",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Disk IOPS Write Rate - {{nodename}}",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Disk IOPS",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "iops",
+          "label": "IOPS read (-) / write (+)",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 14,
+        "w": 12,
+        "x": 12,
+        "y": 43
+      },
+      "id": 34,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -883,7 +989,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Disk I/O Rates",
+      "title": "Disk I/O Byte Rates",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -932,7 +1038,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 43
+        "y": 57
       },
       "id": 23,
       "legend": {
@@ -1035,7 +1141,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 43
+        "y": 57
       },
       "id": 6,
       "legend": {
@@ -1127,7 +1233,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 55
+        "y": 69
       },
       "id": 8,
       "legend": {
@@ -1219,7 +1325,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 55
+        "y": 69
       },
       "id": 7,
       "legend": {
@@ -1309,102 +1415,9 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
-        "w": 8,
+        "w": 12,
         "x": 0,
-        "y": 67
-      },
-      "id": 24,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "max",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "nullPointMode": "null as zero",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum(rate(grpc_client_handled_total[5m])) by (grpc_method) > 0",
-          "format": "time_series",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Gitaly GRPC Handled - {{grpc_method}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Gitaly gRPC",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "GitLab Omnibus",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 14,
-        "w": 8,
-        "x": 8,
-        "y": 67
+        "y": 81
       },
       "id": 12,
       "legend": {
@@ -1495,9 +1508,9 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
-        "w": 8,
-        "x": 16,
-        "y": 67
+        "w": 12,
+        "x": 12,
+        "y": 81
       },
       "id": 13,
       "legend": {
@@ -1590,7 +1603,7 @@
         "h": 14,
         "w": 12,
         "x": 0,
-        "y": 81
+        "y": 95
       },
       "id": 9,
       "legend": {
@@ -1689,7 +1702,7 @@
         "h": 14,
         "w": 12,
         "x": 12,
-        "y": 81
+        "y": 95
       },
       "id": 16,
       "legend": {
@@ -1781,7 +1794,7 @@
         "h": 14,
         "w": 12,
         "x": 0,
-        "y": 95
+        "y": 109
       },
       "id": 29,
       "legend": {
@@ -1874,7 +1887,7 @@
         "h": 14,
         "w": 12,
         "x": 12,
-        "y": 95
+        "y": 109
       },
       "id": 5,
       "legend": {
@@ -1966,7 +1979,7 @@
         "h": 14,
         "w": 12,
         "x": 0,
-        "y": 109
+        "y": 123
       },
       "id": 25,
       "legend": {
@@ -1999,29 +2012,38 @@
       "targets": [
         {
           "expr": "label_replace(sum by (instance)(puma_active_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "hide": true,
+          "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "Active Connections - {{nodename}}",
+          "legendFormat": "Puma Active Connections - {{nodename}}",
           "refId": "A"
         },
         {
           "expr": "label_replace(sum by (instance)(puma_queued_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "hide": true,
+          "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "Queued Connections - {{nodename}}",
+          "legendFormat": "Puma Queued Connections - {{nodename}}",
           "refId": "B"
         },
         {
-          "expr": "label_replace(sum by (instance)(puma_running_workers{pid=\"puma_master\"} - puma_workers{pid=\"puma_master\"}), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "legendFormat": "Running Workers - {{nodename}}",
+          "expr": "label_replace(sum by (instance)(unicorn_active_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Unicorn Active Connections - {{nodename}}",
           "refId": "C"
+        },
+        {
+          "expr": "label_replace(sum by (instance)(unicorn_queued_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Unicorn Queued Connections - {{nodename}}",
+          "refId": "D"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Puma Metrics",
+      "title": "Webserver Metrics",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -2071,7 +2093,7 @@
         "h": 14,
         "w": 12,
         "x": 12,
-        "y": 109
+        "y": 123
       },
       "id": 30,
       "legend": {
@@ -2105,20 +2127,25 @@
       "targets": [
         {
           "expr": "label_replace(sum by (instance)(puma_running_workers{pid=\"puma_master\"}), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "legendFormat": "Running Workers - {{nodename}}",
+          "legendFormat": "Puma Running Workers - {{nodename}}",
           "refId": "C"
         },
         {
           "expr": "label_replace(sum by (instance)((puma_workers{pid=\"puma_master\"} - puma_running_workers{pid=\"puma_master\"}) > 0), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "legendFormat": "Killed Workers - {{nodename}}",
+          "legendFormat": "Puma Killed Workers - {{nodename}}",
           "refId": "A"
+        },
+        {
+          "expr": "label_replace(sum by (instance)(unicorn_workers), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "legendFormat": "Unicorn Running Workers - {{nodename}}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Puma Running Workers ",
+      "title": "Webserver Workers ",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -2139,7 +2166,7 @@
           "label": null,
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": "0",
           "show": true
         },
         {
@@ -2168,7 +2195,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 123
+        "y": 137
       },
       "id": 27,
       "legend": {
@@ -2268,7 +2295,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 123
+        "y": 137
       },
       "id": 28,
       "legend": {
@@ -2373,6 +2400,228 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 13,
+        "w": 24,
+        "x": 0,
+        "y": 149
+      },
+      "id": 31,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by (method)(irate(node_nfs_requests_total{proto='4'}[5m]))",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "{{method}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum by (method)(irate(node_nfsd_requests_total{proto='4'}[5m]))",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "{{method}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "NFS Rate Metrics",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
+        "receive_packets_eth0": "#7EB26D",
+        "receive_packets_lo": "#E24D42",
+        "transmit_packets_eth0": "#7EB26D",
+        "transmit_packets_lo": "#E24D42"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fill": 4,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 162
+      },
+      "id": 33,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by (operation)(irate(node_mountstats_nfs_operations_response_time_seconds_total[5m])) > 0",
+          "format": "time_series",
+          "hide": true,
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "{{operation}} - Response time",
+          "refId": "O",
+          "step": 240
+        },
+        {
+          "expr": "sum by (operation)(irate(node_mountstats_nfs_operations_request_time_seconds_total[5m])) > 0",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "{{operation}} - Request time",
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "expr": "sum by (operation)(irate(node_mountstats_nfs_operations_queue_time_seconds_total[5m])) > 0",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "intervalFactor": 2,
+          "legendFormat": "{{operation}} - Queue time",
+          "refId": "B",
+          "step": 240
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "NFS Response/Request time Total",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": "Response time",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": "10s",
@@ -2414,5 +2663,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 4
+  "version": 8
 }
