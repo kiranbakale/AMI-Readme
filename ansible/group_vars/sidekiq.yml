@@ -1,0 +1,2 @@
+sidekiq_concurrency: "{% if ansible_processor_vcpus is defined %}{{ (ansible_processor_vcpus * 20) | round | int }}{% else %}25{% endif %}"
+sidekiq_cluster: true
