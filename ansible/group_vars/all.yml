@@ -54,9 +54,6 @@ redis_sentinel_cache_int_ips: "{{ (groups['redis_sentinel_cache'] | map('extract
 redis_persistent_primary_int_ip: "{{ (groups['redis_persistent_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')) if 'redis_persistent' in groups else [] }}"
 redis_sentinel_persistent_int_ips: "{{ (groups['redis_sentinel_persistent'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list) if 'redis_sentinel_persistent' in groups else [] }}"
 
-# GitLab Sidekiq
-sidekiq_concurrency: "{% if ansible_processor_vcpus is defined %}{{ (ansible_processor_vcpus * 20) | round | int }}{% else %}25{% endif %}"
-
 # Jaeger Distributed Tracing
 jaeger: "{{ 'jaeger' in groups }}"
 jaeger_int_ip: "{{ (groups['jaeger'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')) if jaeger else [] }}"

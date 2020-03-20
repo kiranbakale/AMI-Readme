@@ -14,9 +14,16 @@ puma['enable'] = false
 registry_external_url '{{ external_url| regex_replace("\\/$", "") }}:4567'
 
 # Sidekiq Config
+{% if sidekiq_cluster is defined and sidekiq_cluster == true %} 
+sidekiq_cluster['enable'] = true
+sidekiq_cluster['queue_groups'] = [ "*" ]
+sidekiq_cluster['max_concurrency'] = {{ sidekiq_concurrency }}
+{% else %} 
 sidekiq['listen_address'] = '0.0.0.0'
-sidekiq['concurrency'] = '{{ sidekiq_concurrency }}'
+sidekiq['concurrency'] = {{ sidekiq_concurrency }}
+{% endif %} 
 
+# Backend Config
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
 gitlab_rails['db_host'] = '{{ haproxy_internal_int_ip }}'
