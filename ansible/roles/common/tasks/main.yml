@@ -1,4 +1,11 @@
 ---
+- name: Add GitLab repository GPG key
+  apt_key:
+    url: https://gitlab-org.gitlab.io/omnibus-gitlab/gitlab_new_gpg.key
+    state: present
+  when: 
+    - omnibus_node
+
 - name: Install system packages
   apt:
     name: ['aptitude', 'curl', 'openssh-server', 'ca-certificates', 'glances', 'nano', 'tzdata', 'postfix',
