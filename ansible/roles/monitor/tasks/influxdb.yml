@@ -1,0 +1,60 @@
+---
+- name: Install Docker Prerequisites
+  apt:
+    name: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg2' ,'software-properties-common']
+
+- name: Add Docker GPG key
+  apt_key: url=https://download.docker.com/linux/ubuntu/gpg
+
+- name: Add Docker APT repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/{{ansible_distribution|lower}} {{ansible_distribution_release}} stable
+
+- name: Install Docker
+  apt:
+    name: docker-ce
+    update_cache: yes
+
+- name: Remove old InfluxDB container
+  shell: "docker rm -f influxdb 2>/dev/null || true"
+  ignore_errors: true
+  tags:
+    - reconfigure
+
+- name: Create /opt/influxdb directory
+  file:
+    path: /opt/influxdb
+    state: directory
+  tags: 
+    - reconfigure
+
+- name: Pull InfluxDB Docker Image
+  shell: docker pull influxdb:alpine
+  tags:
+    - reconfigure
+    - restart
+
+- name: Start InfluxDB Docker
+  shell: docker run --memory="{{ influxdb_memory_limit}}m" -d --restart=always --name=influxdb -h {{ monitor_int_ip }} -p 8086:8086 -v /opt/influxdb:/var/lib/influxdb influxdb:alpine
+  tags:
+    - reconfigure
+    - restart
+
+- name: Wait for InfluxDB to be available
+  uri:
+    url: '{{ external_url_sanitised }}:8086/ping?verbose=true'
+  register: result
+  until: result.status == 200
+  retries: 10
+  delay: 3
+  tags:
+    - reconfigure
+    - restart
+
+- name: Create database in InfluxDB
+  shell: |
+    docker exec influxdb influx -execute "CREATE DATABASE gpt_results"
+    docker exec influxdb influx -execute "ALTER RETENTION POLICY "autogen" ON "gpt_results" DURATION 90d"
+  tags:
+    - reconfigure
+    - restart

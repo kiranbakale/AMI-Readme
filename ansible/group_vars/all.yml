@@ -7,6 +7,7 @@ gitlab_secrets_storage: "{{ prefix }}-secrets-storage"
 gitlab_object_storage: "{{ prefix }}-object-storage"
 serviceaccount_filename: "serviceaccount.json"
 serviceaccount_path: "/etc/gitlab/{{ serviceaccount_filename }}"
+external_url_sanitised: '{{ external_url| regex_replace("\\/$", "") }}'
 
 # Consul
 consul_int_ips: "{{ (groups[(groups | select('match', '^consul.*') | join())] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list) if (groups | select('match', '^consul.*') | list | count == 1) else [] }}"

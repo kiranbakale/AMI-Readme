@@ -11,6 +11,11 @@ frontend prometheus
 
     default_backend prometheus
 
+frontend influxdb
+    bind *:8086
+
+    default_backend influxdb    
+
 backend gitlab-rails
     option httpchk GET /-/readiness
 
@@ -27,3 +32,8 @@ backend prometheus
     option httpchk GET /-/healthy
 
     server prometheus {{ monitor_int_ip }}:9090 check
+
+backend influxdb
+    option httpchk GET /ping
+
+    server influxdb {{ monitor_int_ip }}:8086 check 

@@ -11,7 +11,7 @@ redis_exporter['enable'] = false
 unicorn['enable'] = false
 puma['enable'] = false
 
-registry_external_url '{{ external_url| regex_replace("\\/$", "") }}:4567'
+registry_external_url '{{ external_url_sanitised }}:4567'
 
 # Sidekiq Config
 {% if sidekiq_cluster is defined and sidekiq_cluster == true %} 

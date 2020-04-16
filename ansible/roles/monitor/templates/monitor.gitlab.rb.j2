@@ -1,4 +1,4 @@
-external_url '{{ external_url| regex_replace("\\/$", "") }}'
+external_url '{{ external_url_sanitised }}'
 
 # Enable Prometheus
 prometheus['enable'] = true
@@ -47,7 +47,7 @@ grafana['admin_password'] = '5iveL!fe'
 grafana['disable_login_form'] = false
 grafana['env'] = {
   'GF_AUTH_ANONYMOUS_ENABLED' => true,
-  'GF_SERVER_ROOT_URL' => '{{ external_url| regex_replace("\\/$", "") }}/-/grafana'
+  'GF_SERVER_ROOT_URL' => '{{ external_url_sanitised }}/-/grafana'
 }
 
 grafana['dashboards'] = [
@@ -72,6 +72,16 @@ grafana['dashboards'] = [
     'options' => {
       'path' => '/opt/gitlab-quality/dashboards',
     }
+  }
+]
+
+grafana['datasources'] = [
+  {
+    'name' => 'InfluxDB',
+    'type' => 'influxdb',
+    'access' => 'proxy',
+    'database' => 'gpt_results',
+    'url' => '{{ external_url_sanitised }}:8086'
   }
 ]
 
