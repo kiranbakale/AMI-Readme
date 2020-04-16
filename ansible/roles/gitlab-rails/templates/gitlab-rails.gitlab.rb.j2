@@ -2,8 +2,8 @@ roles ['application_role']
 postgresql['enable'] = false
 sidekiq['enable'] = false
 
-external_url '{{ external_url| regex_replace("\\/$", "") }}'
-registry_external_url '{{ external_url| regex_replace("\\/$", "") }}:4567'
+external_url '{{ external_url_sanitised }}'
+registry_external_url '{{ external_url_sanitised }}:4567'
 
 {% if gitlab_rails_webserver == 'puma' %}
 unicorn['enable'] = false

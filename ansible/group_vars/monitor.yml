@@ -1,0 +1,1 @@
+influxdb_memory_limit: "{{ (ansible_memtotal_mb / 3) | round | int }}"

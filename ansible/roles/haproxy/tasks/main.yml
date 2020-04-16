@@ -54,7 +54,7 @@
   when: "'haproxy_internal' in group_names"
 
 - name: Start HAProxy External Docker
-  shell: docker run -d --restart=always --name=haproxy -p 80:80 -p 443:443 -p 1936:1936 -p 9090:9090 -v /opt/haproxy:/usr/local/etc/haproxy:ro haproxy:alpine
+  shell: docker run -d --restart=always --name=haproxy -p 80:80 -p 443:443 -p 1936:1936 -p 9090:9090 -p 8086:8086 -v /opt/haproxy:/usr/local/etc/haproxy:ro haproxy:alpine
   tags:
     - reconfigure
     - restart

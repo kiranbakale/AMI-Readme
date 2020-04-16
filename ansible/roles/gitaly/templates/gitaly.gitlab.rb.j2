@@ -40,7 +40,7 @@ gitlab_rails['auto_migrate'] = false
 # Configure the gitlab-shell API callback URL. Without this, `git push` will
 # fail. This can be your 'front door' GitLab URL or an internal load
 # balancer.
-gitlab_rails['internal_api_url'] = '{{ external_url| regex_replace("\\/$", "") }}'
+gitlab_rails['internal_api_url'] = '{{ external_url_sanitised }}'
 
 # Make Gitaly accept connections on all network interfaces. You must use
 # firewalls to restrict access to this address/port.
