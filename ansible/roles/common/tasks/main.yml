@@ -1,82 +1,88 @@
 ---
-- name: Add GitLab repository GPG key
-  apt_key:
-    url: https://gitlab-org.gitlab.io/omnibus-gitlab/gitlab_new_gpg.key
-    state: present
-  when: 
-    - omnibus_node
+- name: Perform Common Tasks
+  block:
+    - name: Add GitLab repository GPG key
+      apt_key:
+        url: https://gitlab-org.gitlab.io/omnibus-gitlab/gitlab_new_gpg.key
+        state: present
+      when: 
+        - omnibus_node
 
-- name: Install system packages
-  apt:
-    name: ['aptitude', 'curl', 'openssh-server', 'ca-certificates', 'glances', 'nano', 'tzdata', 'postfix',
-           'ack-grep', 'tree', 'python-pip', 'python3-pip', 'nfs-common']
-    update_cache: yes
-  tags: packages
+    - name: Install system packages
+      apt:
+        name: ['aptitude', 'curl', 'openssh-server', 'ca-certificates', 'glances', 'nano', 'tzdata', 'postfix',
+              'ack-grep', 'tree', 'python-pip', 'python3-pip', 'nfs-common']
+        update_cache: yes
+      tags: packages
 
-- name: Install python packages
-  pip:
-    name: 
-    - requests
-    - google-auth
-    - netaddr
-    - openshift
-    - PyYAML
-    extra_args: --upgrade
-  tags: packages
+    - name: Install python packages
+      pip:
+        name:
+        - requests
+        - google-auth
+        - netaddr
+        - openshift
+        - PyYAML
+        extra_args: --upgrade
+      tags: packages
 
-- name: Configure TCP keepalive settings
-  sysctl:
-    name: net.ipv4.tcp_keepalive_time
-    value: '300'
-    sysctl_set: yes
-    state: present
-    reload: yes
-  tags: sysctl
+    - name: Configure TCP keepalive settings
+      sysctl:
+        name: net.ipv4.tcp_keepalive_time
+        value: '300'
+        sysctl_set: yes
+        state: present
+        reload: yes
+      tags: sysctl
 
-- name: Download GitLab repository installation script
-  get_url:
-    url: "{{ gitlab_repo_script_url }}"
-    dest: /tmp/gitlab_install_repository.sh
-    force: yes
-  register: repo_file
-  when: 
-    - omnibus_node
+    - name: Download GitLab repository installation script
+      get_url:
+        url: "{{ gitlab_repo_script_url }}"
+        dest: /tmp/gitlab_install_repository.sh
+        force: yes
+      register: repo_file
+      when:
+        - omnibus_node
 
-- name: Install GitLab repository
-  command: bash /tmp/gitlab_install_repository.sh
-  when: 
-    - omnibus_node
-    - repo_file.changed
+    - name: Install GitLab repository
+      command: bash /tmp/gitlab_install_repository.sh
+      when:
+        - omnibus_node
+        - repo_file.changed
 
-- name: Unlock GitLab package updates
-  command: apt-mark install gitlab-ee
-  when: 
-    - omnibus_node
-  
-- name: Install GitLab repo package
-  command: apt-get install {{ gitlab_repo_package }} -y --allow-downgrades
-  args:
-    warn: false
-  when: 
-    - omnibus_node
-    - gitlab_repo_package != ''
-    - gitlab_deb_package == ''
+    - name: Unlock GitLab package updates
+      command: apt-mark install gitlab-ee
+      when: 
+        - omnibus_node
+      
+    - name: Install GitLab repo package
+      command: apt-get install {{ gitlab_repo_package }} -y --allow-downgrades
+      args:
+        warn: false
+      when: 
+        - omnibus_node
+        - gitlab_repo_package != ''
+        - gitlab_deb_package == ''
 
-- name: Install GitLab deb package
-  apt:
-    deb: "{{ gitlab_deb_package }}"
-  when: 
-    - omnibus_node
-    - gitlab_deb_package != ''
+    - name: Install GitLab deb package
+      apt:
+        deb: "{{ gitlab_deb_package }}"
+      when:
+        - omnibus_node
+        - gitlab_deb_package != ''
 
-- name: Lock GitLab package updates
-  command: apt-mark hold gitlab-ee
-  when: 
-    - omnibus_node
+    - name: Lock GitLab package updates
+      command: apt-mark hold gitlab-ee
+      when:
+        - omnibus_node
 
-- name: Update system packages to the latest version
-  apt:
-    upgrade: 'safe'
-  register: result
-  retries: 1
-  until: result is success
+    - name: Update system packages to the latest version
+      apt:
+        upgrade: 'safe'
+      register: result
+      retries: 1
+      until: result is success
+
+    - set_fact:
+        common_performed: true
+  when: common_performed is not defined

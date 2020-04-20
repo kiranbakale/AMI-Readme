@@ -1,0 +1,18 @@
+- name: Generate OAuth Token
+  uri:
+    url: '{{ external_url_sanitised }}/oauth/token'
+    method: POST
+    body:
+      grant_type: password
+      username: '{{ gitlab_admin_email }}'
+      password: '{{ gitlab_admin_password }}'
+    status_code: 200
+    body_format: json
+    return_content: yes
+  register: oauth_response
+  tags: oauth
+
+- name: Save OAuth Token
+  set_fact: 
+    gitlab_oauth_token: '{{ oauth_response.json.access_token }}'
+  tags: oauth

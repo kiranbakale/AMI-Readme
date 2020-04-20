@@ -2,5 +2,4 @@
 - hosts: haproxy_*
   roles:
     - haproxy
-    - cloudalchemy.node-exporter
   become: true

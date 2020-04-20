@@ -5,9 +5,11 @@ gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default('gitlab-e
 gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh', true) }}"
 gitlab_secrets_storage: "{{ prefix }}-secrets-storage"
 gitlab_object_storage: "{{ prefix }}-object-storage"
+gitlab_admin_email: 'admin@example.com'
+gitlab_admin_password: '5iveL!fe'
 serviceaccount_filename: "serviceaccount.json"
 serviceaccount_path: "/etc/gitlab/{{ serviceaccount_filename }}"
-external_url_sanitised: '{{ external_url| regex_replace("\\/$", "") }}'
+external_url_sanitised: '{{ external_url | regex_replace("\\/$", "") }}'
 
 # Consul
 consul_int_ips: "{{ (groups[(groups | select('match', '^consul.*') | join())] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list) if (groups | select('match', '^consul.*') | list | count == 1) else [] }}"
@@ -58,3 +60,6 @@ redis_sentinel_persistent_int_ips: "{{ (groups['redis_sentinel_persistent'] | ma
 # Jaeger Distributed Tracing
 jaeger: "{{ 'jaeger' in groups }}"
 jaeger_int_ip: "{{ (groups['jaeger'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')) if jaeger else [] }}"
+
+# Elastic
+elastic_int_ip: "{{ groups['elastic'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"

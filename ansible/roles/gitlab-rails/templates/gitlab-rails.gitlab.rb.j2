@@ -25,7 +25,7 @@ gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
 # Database Settings
 gitlab_rails['db_password'] = '{{ postgres_password }}'
-gitlab_rails['initial_root_password'] = '5iveL!fe'
+gitlab_rails['initial_root_password'] = '{{ gitlab_admin_password }}'
 
 {% if db_migrate is defined and db_migrate == true %} 
 gitlab_rails['db_host'] = '{{ postgres_primary_int_ip }}'

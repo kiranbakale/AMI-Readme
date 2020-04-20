@@ -3,7 +3,7 @@ variable "project" {
 }
 
 variable "credentials_file" {
-  default = "../../secrets/serviceaccount-2k.json"
+  default = "../../keys/performance/serviceaccount-2k.json"
 }
 
 variable "region" {

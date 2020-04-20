@@ -1,0 +1,6 @@
+---
+- hosts: 
+    - gitlab_rails_primary
+  roles:
+    - post-configure
+  become: true

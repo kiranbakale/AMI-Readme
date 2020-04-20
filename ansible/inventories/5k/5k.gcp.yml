@@ -9,7 +9,7 @@ keyed_groups:
     separator: ''
 scopes:
   - https://www.googleapis.com/auth/compute
-service_account_file: ../secrets/serviceaccount-5k.json
+service_account_file: ../keys/performance/serviceaccount-5k.json
 auth_kind: serviceaccount
 hostnames:
   # List host by name instead of the default public ip
