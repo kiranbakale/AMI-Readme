@@ -1,0 +1,11 @@
+- name: Configure Ultimate License
+  include_tasks: license.yml
+  when:
+    - gitlab_license_file is defined
+    - gitlab_license_plan is not defined
+  tags: license
+
+- name: Configure Advanced Search with Elasticsearch
+  include_tasks: elasticsearch.yml
+  when: "'elastic' in groups"
+  tags: elasticsearch

@@ -3,5 +3,6 @@ all:
     prefix: "gitlab-qa-2k"
     project_name: "gitlab-qa-2k-ca9f9e"
     ansible_user: "sa_117740835761395319154"
-    ansible_ssh_private_key_file: "../secrets/gitlab-qa-gcp-ssh"
+    ansible_ssh_private_key_file: "../keys/performance/gitlab-qa-gcp-ssh"
+    gitlab_license_file: "../keys/performance/Gitlab.gitlab-license"
     external_url: "http://2k.testbed.gitlab.net"

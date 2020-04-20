@@ -1,0 +1,80 @@
+- name: Generate OAuth Token if not present
+  include_tasks: oauth-token.yml
+  when: gitlab_oauth_token is not defined
+  tags: oauth
+
+- name: Configure Ultimate License
+  include_tasks: license.yml
+  when: gitlab_license_plan is not defined
+  tags: license
+
+- name: Get and save Environment Settings
+  block:
+    - name: Get Environment Settings
+      uri:
+        url: '{{ external_url_sanitised }}/api/v4/application/settings'
+        method: GET
+        headers:
+          Authorization: 'Bearer {{ gitlab_oauth_token }}'
+        status_code: 200, 201
+        body_format: json
+        return_content: yes
+      register: env_settings_response
+
+    - name: Save Environment Settings
+      set_fact: 
+        gitlab_environment_settings: '{{ env_settings_response.json }}'
+  when: gitlab_license_plan == 'ultimate'
+
+- name: Configure Elasticsearch (if not already done)
+  block:
+    - name: Configure Elasticsearch URL setting
+      uri:
+        url: '{{ external_url_sanitised }}/api/v4/application/settings'
+        method: PUT
+        headers:
+          Authorization: 'Bearer {{ gitlab_oauth_token }}'
+        body:
+          elasticsearch_url: 'http://{{ elastic_int_ip }}:9200'
+        status_code: 200, 201
+        body_format: json
+
+    - name: Create empty index for GitLab
+      shell: gitlab-rake gitlab:elastic:create_empty_index
+
+    - name: Enable GitLab Elasticsearch indexing setting
+      uri:
+        url: '{{ external_url_sanitised }}/api/v4/application/settings'
+        method: PUT
+        headers:
+          Authorization: 'Bearer {{ gitlab_oauth_token }}'
+        body:
+          elasticsearch_url: 'http://{{ elastic_int_ip }}:9200'
+          elasticsearch_indexing: true
+        status_code: 200, 201
+        body_format: json
+
+    - name: Index all GitLab projects
+      shell: gitlab-rake gitlab:elastic:index_projects
+
+    - name: Wait until indexing is complete
+      shell: gitlab-rake gitlab:elastic:index_projects_status
+      register: index_status_result
+      retries: 10
+      delay: 10
+      until: '"100.00%" in index_status_result.stdout'
+
+    - name: Enable GitLab Elasticsearch search setting
+      uri:
+        url: '{{ external_url_sanitised }}/api/v4/application/settings'
+        method: PUT
+        headers:
+          Authorization: 'Bearer {{ gitlab_oauth_token }}'
+        body:
+          elasticsearch_search: true
+        status_code: 200, 201
+        body_format: json
+  when:
+    - gitlab_license_plan == 'ultimate'
+    - gitlab_environment_settings.elasticsearch_indexing != true
+    - gitlab_environment_settings.elasticsearch_search != true

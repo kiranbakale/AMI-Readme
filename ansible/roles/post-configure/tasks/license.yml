@@ -1,0 +1,33 @@
+- name: Generate OAuth Token if not present
+  include_tasks: oauth-token.yml
+  when: gitlab_oauth_token is not defined
+  tags: oauth
+
+- name: Get License Plan
+  uri:
+    url: '{{ external_url_sanitised }}/api/v4/license'
+    method: GET
+    headers:
+      Authorization: 'Bearer {{ gitlab_oauth_token }}'
+    status_code: 200
+    body_format: json
+    return_content: yes
+  register: license_response
+
+- name: Configure Ultimate License (if missing)
+  uri:
+    url: '{{ external_url_sanitised }}/api/v4/license'
+    method: POST
+    headers:
+      Authorization: 'Bearer {{ gitlab_oauth_token }}'
+    body:
+      license: "{{ lookup('file', gitlab_license_file) }}"
+    status_code: 200, 201
+    body_format: json
+    return_content: yes
+  register: configure_license_response
+  when: license_response.json == None
+
+- name: Save License Plan
+  set_fact: 
+    gitlab_license_plan: '{{ configure_license_response.json.plan if license_response.json == None else license_response.json.plan }}'

@@ -1,1 +1,2 @@
 - src: cloudalchemy.node-exporter
+- src: geerlingguy.docker

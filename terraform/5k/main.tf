@@ -11,6 +11,6 @@ terraform {
   required_version = "= 0.12.18"
   backend "gcs" {
     bucket  = "5k-terraform-state"
-    credentials = "../../secrets/serviceaccount-5k.json"
+    credentials = "../../keys/performance/serviceaccount-5k.json"
   }
 }

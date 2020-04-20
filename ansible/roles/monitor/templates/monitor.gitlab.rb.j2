@@ -13,6 +13,9 @@ prometheus['scrape_configs'] = [
 {% if 'haproxy_external' in groups %}
         "{{ haproxy_external_int_ip }}:9100",
 {% endif %}
+{% if 'elastic' in groups %}
+        "{{ elastic_int_ip }}:9100",
+{% endif %}
         "{{ haproxy_internal_int_ip }}:9100",
         "{{ gitlab_nfs_int_ip }}:9100"
       ],
@@ -43,7 +46,7 @@ prometheus['scrape_configs'] = [
 
 # Enable Grafana
 grafana['enable'] = true
-grafana['admin_password'] = '5iveL!fe'
+grafana['admin_password'] = '{{ gitlab_admin_password }}'
 grafana['disable_login_form'] = false
 grafana['env'] = {
   'GF_AUTH_ANONYMOUS_ENABLED' => true,

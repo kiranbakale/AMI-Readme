@@ -1,0 +1,28 @@
+---
+- name: Configure Kernel vm.max_map_count setting
+  sysctl:
+    name: vm.max_map_count
+    value: '262144'
+    sysctl_set: yes
+    state: present
+    reload: yes
+  tags: sysctl
+
+- name: Remove old Elasticsearch container
+  shell: "docker rm -f elasticsearch 2>/dev/null || true"
+  ignore_errors: true
+  tags:
+    - reconfigure
+    - restart
+
+- name: Pull Elasticsearch Docker Image
+  shell: docker pull {{elasticsearch_docker_image}}:{{elasticsearch_version}}
+  tags:
+    - reconfigure
+    - restart
+
+- name: Start Elasticsearch container
+  shell: docker run -d --restart=always --name=elasticsearch -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms{{elasticsearch_heap_size}}m -Xmx{{elasticsearch_heap_size}}m" -e "bootstrap.memory_lock=true" --ulimit memlock=-1:-1 -p 9200:9200 -p 9300:9300 -v gitlab_search_esdata:/usr/share/elasticsearch/data {{elasticsearch_docker_image}}:{{elasticsearch_version}}
+  tags:
+    - reconfigure
+    - restart
