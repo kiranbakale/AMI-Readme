@@ -29,7 +29,7 @@
 
 - name: Wait for Elasticsearch to be available
   uri:
-    url: 'http://localhost:9200/_cluster/health?wait_for_status=green&timeout=60s'
+    url: 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s'
     timeout: 60
   register: result
   until: result.status == 200
