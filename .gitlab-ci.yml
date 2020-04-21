@@ -54,7 +54,7 @@ ansible:
   extends: .update-base
   stage: configure
   script:
-    - apk add -u --no-cache openssh-client ca-certificates ansible
+    - apk add -u --no-cache openssh-client ca-certificates ansible tar
     - chmod 700 ansible
     - cd ansible
     - pip3 install -U -r requirements/ansible-python-packages.txt
