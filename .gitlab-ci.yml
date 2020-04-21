@@ -45,6 +45,7 @@ terraform:
     - cd terraform/$ENVIRONMENT_NAME
     - terraform init
     - terraform apply -auto-approve
+    - sleep 20
   only:
     variables:
       - $ENVIRONMENT_ACTION == "update"
