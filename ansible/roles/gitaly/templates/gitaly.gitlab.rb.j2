@@ -54,21 +54,10 @@ gitaly['storage'] = [
   { 'name' => "storage{{ gitaly_number }}", 'path' => "/mnt/gitlab/storage{{ gitaly_number }}/repositories" },
 ]
 
-#gitaly['concurrency'] = [
-#  {
-#    'rpc' => "/gitaly.SmartHTTPService/PostUploadPack",
-#    'max_per_repo' => 20
-#  },
-#  {
-#    'rpc' => "/gitaly.SSHService/SSHUploadPack",
-#    'max_per_repo' => 20
-#  }
-#]
-
 gitaly['prometheus_grpc_latency_buckets'] = [0.001, 0.005, 0.025, 0.1, 0.5, 1.0, 10.0, 30.0, 60.0, 300.0, 1500.0]
 gitaly['ruby_num_workers'] = {{ gitaly_ruby_num_workers }}
 
-{% if jaeger %}
+{% if 'jaeger' in groups %}
 gitaly['env'] = {
   "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
 }
@@ -76,8 +65,8 @@ gitaly['env'] = {
 
 consul['enable'] = true
 consul['configuration'] = {
-  retry_join: %w({{ consul_int_ips | join(' ') }}),
-  bind_addr: '{{ ansible_default_ipv4.address }}'
+  bind_addr: '{{ ansible_default_ipv4.address }}',
+  retry_join: %w({{ (consul_int_ips if 'consul' in groups else gitlab_rails_int_ips) | join(' ') }})
 }
 consul['monitoring_service_discovery'] =  true
 

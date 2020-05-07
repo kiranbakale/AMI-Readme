@@ -4,7 +4,7 @@ frontend http-in
     acl grafana path_beg -i /-/grafana
     use_backend grafana if grafana
 
-    default_backend gitlab-rails
+    default_backend gitlab-web
 
 frontend prometheus
     bind *:9090
@@ -14,7 +14,12 @@ frontend prometheus
 frontend influxdb
     bind *:8086
 
-    default_backend influxdb    
+    default_backend influxdb
+
+frontend kibana
+    bind *:5601
+
+    default_backend kibana
 
 backend gitlab-rails
     option httpchk GET /-/readiness
@@ -37,3 +42,8 @@ backend influxdb
     option httpchk GET /ping
 
     server influxdb {{ monitor_int_ip }}:8086 check 
+
+backend kibana
+    option httpchk GET /api/status
+
+    server kibana {{ elastic_primary_int_ip }}:5601 check 

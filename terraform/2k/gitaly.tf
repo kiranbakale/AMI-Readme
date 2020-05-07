@@ -3,7 +3,7 @@ module "gitaly" {
 
   prefix = "${var.prefix}"
   node_type = "gitaly"
-  node_count = 2
+  node_count = 1
 
   disk_type = "pd-ssd"
 

@@ -12,54 +12,58 @@ serviceaccount_path: "/etc/gitlab/{{ serviceaccount_filename }}"
 external_url_sanitised: '{{ external_url | regex_replace("\\/$", "") }}'
 
 # Consul
-consul_int_ips: "{{ (groups[(groups | select('match', '^consul.*') | join())] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list) if (groups | select('match', '^consul.*') | list | count == 1) else [] }}"
+consul_int_ips: "{{ (groups['consul'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | list) if 'consul' in groups else [] }}"
 consul_password: '0a6da13ae1754357b71ba1ac6c6caa6b'
 
 # HAProxy / Network
-haproxy_internal_int_ip: "{{ groups['haproxy_internal'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
-haproxy_external_int_ip: "{{ (groups['haproxy_external'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')) if 'haproxy_external' in groups else '' }}"
-haproxy_external_ext_ip: "{{ (groups['haproxy_external'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='accessConfigs') | map('first') | map(attribute='natIP') | join('')) if 'haproxy_external' in groups else '' }}"
+haproxy_internal_int_ip: "{{ (groups['haproxy_internal'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'haproxy_internal' in groups else ''}}"
+haproxy_external_int_ip: "{{ (groups['haproxy_external'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'haproxy_external' in groups else '' }}"
+haproxy_external_ext_ip: "{{ (groups['haproxy_external'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='accessConfigs') | map('first') | map(attribute='natIP') | join('')) if 'haproxy_external' in groups else '' }}"
+
+# GitLab Rails (Application nodes)
+gitlab_rails_int_ips: "{{ groups['gitlab_rails'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | list }}"
 
 # Gitaly
-gitaly_primary_int_ip: "{{ groups['gitaly_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
-gitaly_secondary_int_ips: "{{ groups['gitaly_secondary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
+gitaly_primary_int_ip: "{{ (groups['gitaly_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'gitaly_primary' in groups else '' }}"
+gitaly_secondary_int_ips: "{{ (groups['gitaly_secondary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | list) if 'gitaly_secondary' in groups else [] }}"
 gitaly_token: 'abc123secret'
 
 # GitLab NFS
-gitlab_nfs_int_ip: "{{ groups['gitlab_nfs'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+gitlab_nfs_int_ip: "{{ groups['gitlab_nfs'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('') }}"
 gitlab_nfs_path: "/mnt/gitlab-nfs"
 gitlab_nfs_export_cidr: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
 
-# GitLab Rails
-gitlab_rails_int_ips: "{{ (groups['gitlab_rails_primary'] + groups['gitlab_rails_secondary']) | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
-
 # GitLab Monitor
-monitor_int_ip: "{{ groups['monitor'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+monitor_int_ip: "{{ (groups['monitor'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'monitor' in groups else '' }}"
 
 # GitLab Postgres / PGBouncer
-postgres_primary_int_ip: "{{ groups['postgres_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')}}"
+postgres_primary_int_ip: "{{ (groups['postgres_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'postgres_primary' in groups else '' }}"
 postgres_password: '37aca09f2f8ff04f27bdb2ed159ec81f'
 
 pgbouncer_password: '9fdf957895675ef0741f66811c8fa958'
-pgbouncer_int_ips: "{{ groups['pgbouncer'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list }}"
+pgbouncer_int_ips: "{{ (groups['pgbouncer'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | list) if 'pgbouncer' in groups else [] }}"
 
 # GitLab Redis
 redis_port: 6379
 redis_sentinel_port: 26379
 redis_password: 'rae5ceiH3sheeGohz2la'
 
-redis_primary_int_ip: "{{ (groups['redis_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')) if 'redis' in groups else [] }}"
-redis_sentinel_int_ips: "{{ (groups[(groups | select('match', '.*_sentinel$') | join())] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list) if (groups | select('match', '.*_sentinel$') | list | count == 1) else [] }}"
+redis_primary_int_ip: "{{ (groups['redis_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'redis' in groups else '' }}"
+redis_sentinel_int_ips: "{{ (groups['redis_sentinel'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | list) if 'redis_sentinel' in groups else [] }}"
 
-redis_cache_primary_int_ip: "{{ (groups['redis_cache_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')) if 'redis_cache' in groups else [] }}"
-redis_sentinel_cache_int_ips: "{{ (groups['redis_sentinel_cache'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list) if 'redis_sentinel_cache' in groups else [] }}"
+redis_cache_primary_int_ip: "{{ (groups['redis_cache_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'redis_cache' in groups else '' }}"
+redis_sentinel_cache_int_ips: "{{ (groups['redis_sentinel_cache'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | list) if 'redis_sentinel_cache' in groups else [] }}"
 
-redis_persistent_primary_int_ip: "{{ (groups['redis_persistent_primary'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')) if 'redis_persistent' in groups else [] }}"
-redis_sentinel_persistent_int_ips: "{{ (groups['redis_sentinel_persistent'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | list) if 'redis_sentinel_persistent' in groups else [] }}"
+redis_persistent_primary_int_ip: "{{ (groups['redis_persistent_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'redis_persistent' in groups else '' }}"
+redis_sentinel_persistent_int_ips: "{{ (groups['redis_sentinel_persistent'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | list) if 'redis_sentinel_persistent' in groups else [] }}"
 
 # Jaeger Distributed Tracing
-jaeger: "{{ 'jaeger' in groups }}"
-jaeger_int_ip: "{{ (groups['jaeger'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('')) if jaeger else [] }}"
+jaeger_int_ip: "{{ (groups['jaeger'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'jaeger' in groups else '' }}"
 
 # Elastic
-elastic_int_ip: "{{ groups['elastic'] | map('extract', hostvars, ['networkInterfaces']) |  map('first') | map(attribute='networkIP') | join('') }}"
+elasticsearch_clean_install: "{{ lookup('env','ELASTICSEARCH_CLEAN_INSTALL') | default('false', true) }}"
+elastic_primary_int_ip: "{{ (groups['elastic_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'elastic_primary' in groups else '' }}"
+elastic_int_ips: "{{ (groups['elastic'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | list) if 'elastic' in groups else [] }}"
+elasticsearch_urls: "{{ (elastic_int_ips | map('regex_replace', '^(.*)$', 'http://\\1:9200') | list) if elastic_int_ips | length > 0 else [] }}"
+elasticsearch_replicas: "{{ 1 if (groups['elastic'] | length > 1 ) else 0 }}"
+elasticsearch_shards: "{{ (((groups['elastic'] | map('extract', hostvars, ['ansible_processor_vcpus']) | list | sum) / (elasticsearch_replicas | int + 1)) | round | int) if 'elastic' in groups else 0 }}"

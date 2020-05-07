@@ -23,7 +23,7 @@ If you are new to any of the tools here it's also worth going through some tutor
 * [Terraform GCP Tutorial](https://learn.hashicorp.com/terraform/gcp/intro)
 * [Ansible Tutorial](https://www.guru99.com/ansible-tutorial.html)
 
-### Prepare Terraform State file on GCP
+### Prepare Terraform State Bucket on GCP
 
 One additional specific step is required for Terraform - preparing it's [State](https://www.terraform.io/docs/state/index.html). Terraform's State is integral to how it works. For every action it will store and update the state with the full environment status each time. It then refers to this for subsequent actions to ensure the environment is always exactly as configured.
 
@@ -53,7 +53,7 @@ To do this you only have to run the following before running Ansible:
 
 The builder requires several authentication keys to be generated and available in the [`keys`](../keys) directory to build the environments. The keys required are:
 
-* [GCP Service Account]((https://console.cloud.google.com/iam-admin/serviceaccounts)) key
+* [GCP Service Account](https://console.cloud.google.com/iam-admin/serviceaccounts) key
 * SSH key for [GCP OS Login](https://cloud.google.com/compute/docs/instances/managing-instance-access)
 * [GitLab license](https://about.gitlab.com/handbook/developer-onboarding/#working-on-gitlab-ee) key (Optional)
 
@@ -84,7 +84,7 @@ In addition to creating the Service Account and saving the key we need to also s
   * Note that you need the project's ID here and not the name. This can be seen on the home page for the project.
 * Now login as the Service Account user via it's key created in the last step - `gcloud auth activate-service-account --key-file=serviceaccount-<project-name>.json`
 * Proceed to add the project's public SSH key to the account - `gcloud compute os-login ssh-keys add --key-file=<SSH key>.pub`
-* Next you need to get the actual Service Account SSH username for Ansible. This is in the format of `sa_<ID>`. The ID can be obtained with the following command - `gcloud iam service-accounts describe gitlab-qa@<project-id>.iam.serviceaccount.com --format='value(uniqueId)'`. Take the ID from this command and add it to the Ansible inventory `vars.yml` file under `ansible_user` in the format `sa_<ID>`.
+* Next you need to get the actual Service Account SSH username for Ansible. This is in the format of `sa_<ID>`. The ID can be obtained with the following command - `gcloud iam service-accounts describe gitlab-qa@<project-id>.iam.gserviceaccount.com --format='value(uniqueId)'`. Take the ID from this command and add it to the Ansible inventory `vars.yml` file under `ansible_user` in the format `sa_<ID>`.
 * For the private key this also needs to be configured in the Ansible inventory `vars.yml` by setting `ansible_ssh_private_key_file` to the relative path of the private key file.
 * Finish with switching gcloud back to be logged in as your account `gcloud config set account <account-email-address>`
 

@@ -10,3 +10,15 @@ consul['configuration'] = {
 }
 consul['monitoring_service_discovery'] =  true
 node_exporter['listen_address'] = '0.0.0.0:9100'
+
+{% if (groups | select('match', '^redis_sentinel.*') | list | count == 0) %}
+# Redis Sentinel
+sentinel['enable'] = true
+sentinel['bind'] = '0.0.0.0'
+sentinel['quorum'] = 2
+
+redis['master_name'] = 'gitlab-redis'
+redis['master_ip'] = '{{ redis_primary_int_ip }}'
+redis['master_password'] = '{{ redis_password }}'
+redis['port'] = {{ redis_port }}
+{% endif %}

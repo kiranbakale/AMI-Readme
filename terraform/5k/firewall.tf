@@ -28,7 +28,7 @@ resource "google_compute_firewall" "monitor" {
 
   allow {
     protocol = "tcp"
-    ports    = ["8086", "9090"]
+    ports    = ["8086", "9090", "5601"]
   }
 
   target_tags   = ["${var.prefix}-monitor"]

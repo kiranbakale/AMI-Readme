@@ -8,8 +8,9 @@ module "elastic" {
   disk_type = "pd-ssd"
   disk_size = "500"
 
-  machine_type = "n1-standard-16"
+  machine_type = "n1-highcpu-8"
   machine_image = "${var.machine_image}"
+  label_secondaries = true
 
   tags = ["${var.prefix}-web", "${var.prefix}-elastic"]
 }

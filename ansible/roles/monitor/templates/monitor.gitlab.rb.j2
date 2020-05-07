@@ -13,10 +13,12 @@ prometheus['scrape_configs'] = [
 {% if 'haproxy_external' in groups %}
         "{{ haproxy_external_int_ip }}:9100",
 {% endif %}
-{% if 'elastic' in groups %}
-        "{{ elastic_int_ip }}:9100",
-{% endif %}
+{% if 'haproxy_internal' in groups %}
         "{{ haproxy_internal_int_ip }}:9100",
+{% endif %}
+{% for ip in elastic_int_ips %}
+        "{{ ip }}:9100",
+{% endfor %}
         "{{ gitlab_nfs_int_ip }}:9100"
       ],
     ],
@@ -28,10 +30,13 @@ prometheus['scrape_configs'] = [
 {% if 'haproxy_external' in groups %}
         "{{ haproxy_external_int_ip }}:1936",
 {% endif %}
+{% if 'haproxy_internal' in groups %}
         "{{ haproxy_internal_int_ip }}:1936"
+{% endif %}
       ],
     ],
   },
+{% if 'pgbouncer' in groups %}
   {
     'job_name': 'pgbouncer',
     'static_configs' => [
@@ -42,6 +47,7 @@ prometheus['scrape_configs'] = [
       ],
     ],
   }
+{% endif %}
 ]
 
 # Enable Grafana
@@ -80,6 +86,12 @@ grafana['dashboards'] = [
 
 grafana['datasources'] = [
   {
+    'name' => 'GitLab Omnibus',
+    'type' => 'prometheus',
+    'access' => 'proxy',
+    'url' => 'http://localhost:9090'
+  },
+  {
     'name' => 'InfluxDB',
     'type' => 'influxdb',
     'access' => 'proxy',
@@ -88,12 +100,13 @@ grafana['datasources'] = [
   }
 ]
 
+# Monitoring
 consul['enable'] = true
 consul['configuration'] = {
-  retry_join: %w({{ consul_int_ips | join(' ') }}),
-  bind_addr: '{{ ansible_default_ipv4.address }}'
+  bind_addr: '{{ ansible_default_ipv4.address }}',
+  retry_join: %w({{ (consul_int_ips if 'consul' in groups else gitlab_rails_int_ips) | join(' ') }})
 }
-consul['monitoring_service_discovery'] =  true
+consul['monitoring_service_discovery'] = true
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
 

@@ -1,6 +1,4 @@
 roles ['application_role']
-postgresql['enable'] = false
-sidekiq['enable'] = false
 
 external_url '{{ external_url_sanitised }}'
 registry_external_url '{{ external_url_sanitised }}:4567'
@@ -20,63 +18,8 @@ unicorn['worker_processes'] = {{ gitlab_rails_unicorn_workers }}
 unicorn['listen'] = '0.0.0.0'
 {% endif %}
 
-gitaly['enable'] = false
-gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
-
-# Database Settings
-gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['initial_root_password'] = '{{ gitlab_admin_password }}'
-
-{% if db_migrate is defined and db_migrate == true %} 
-gitlab_rails['db_host'] = '{{ postgres_primary_int_ip }}'
-gitlab_rails['db_port'] = 5432
-gitlab_rails['auto_migrate'] = true
-{% else %} 
-gitlab_rails['db_host'] = '{{ haproxy_internal_int_ip }}'
-gitlab_rails['db_port'] = 6432
-gitlab_rails['auto_migrate'] = false
-{% endif %} 
-
-# Redis Servers Config
-{% if 'redis' in groups %} 
-redis['master_name'] = 'gitlab-redis'
-redis['master_password'] = '{{ redis_password }}'
-
-gitlab_rails['redis_sentinels'] = [
-{% for ip in redis_sentinel_int_ips %}
-  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
-{% endfor %}
-]
-{% else %} 
-gitlab_rails['redis_cache_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-cache'
-gitlab_rails['redis_queues_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
-gitlab_rails['redis_shared_state_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
-
-gitlab_rails['redis_cache_sentinels'] = [
-{% for ip in redis_sentinel_cache_int_ips %}
-  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
-{% endfor %}
-]
-gitlab_rails['redis_queues_sentinels'] = [
-{% for ip in redis_sentinel_persistent_int_ips %}
-  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
-{% endfor %}
-]
-gitlab_rails['redis_shared_state_sentinels'] = [
-{% for ip in redis_sentinel_persistent_int_ips %}
-  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
-{% endfor %}
-]
-{% endif %} 
-
-{% if jaeger %}
-gitlab_rails['env'] = {
-  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
-}
-gitlab_workhorse['env'] = {
-  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
-}
-{% endif %}
+gitlab_rails['gitlab_default_projects_features_builds'] = false
 
 # Ensure UIDs and GIDs match between servers for permissions via NFS
 user['uid'] = 9000
@@ -90,24 +33,14 @@ nginx['enable'] = true
 nginx['status']['options'] = {
   "server_tokens" => "off",
   "access_log" => "off",
-  "allow" => "{{ monitor_int_ip }}",
   "deny" => "all",
+{% if 'monitor' in groups %}
+  "allow" => "{{ monitor_int_ip }}"
+{% endif -%}
 }
-
-# Monitoring
-consul['enable'] = true
-consul['configuration'] = {
-  retry_join: %w({{ consul_int_ips | join(' ') }}),
-  bind_addr: '{{ ansible_default_ipv4.address }}'
-}
-consul['monitoring_service_discovery'] = true
-
-node_exporter['listen_address'] = '0.0.0.0:9100'
-gitlab_rails['monitoring_whitelist'] = ['0.0.0.0/0']
-gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
 
 # Storage Config
-# Object Storage
+## Object Storage
 gitlab_rails['artifacts_object_store_enabled'] = true
 gitlab_rails['artifacts_object_store_remote_directory'] = "{{ gitlab_object_storage }}"
 gitlab_rails['artifacts_object_store_connection'] = {
@@ -160,18 +93,128 @@ gitlab_rails['dependency_proxy_object_store_connection'] = {
 registry['storage'] = {
   'gcs' => {
     'bucket' => '{{ gitlab_object_storage }}'
-    # 'keyfile' => '{{ serviceaccount_path }}'
   }
 }
 
-# NFS
+## NFS
 gitlab_rails['uploads_directory'] = '{{ gitlab_nfs_path }}/uploads'
 gitlab_rails['shared_path'] = '{{ gitlab_nfs_path }}/shared'
 gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
 
-gitlab_rails['gitlab_default_projects_features_builds'] = false
+# Monitoring
+consul['enable'] = true
+consul['configuration'] = {
+  bind_addr: '{{ ansible_default_ipv4.address }}',
+  retry_join: %w({{ (consul_int_ips if 'consul' in groups else gitlab_rails_int_ips) | join(' ') }}),
+{% if 'consul' not in groups and 'gitlab_rails_primary' in group_names %}
+  server: true,
+  bootstrap_expect: 1    # Non HA leader
+{% endif -%} 
+}
+consul['monitoring_service_discovery'] = true
 
-# Gitaly
+node_exporter['listen_address'] = '0.0.0.0:9100'
+gitlab_rails['monitoring_whitelist'] = ['0.0.0.0/0']
+gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
+
+# Components Config
+{% if 'redis' in groups %} 
+## Redis - Combined Queues (External)
+{% if groups['redis'] | length == 1 %}
+### Redis Single Node
+gitlab_rails['redis_port'] = '{{ redis_port }}'
+gitlab_rails['redis_host'] = '{{ redis_primary_int_ip }}'
+gitlab_rails['redis_password'] = '{{ redis_password }}'
+{% elif groups['redis'] | length > 1 %} 
+### Redis Multi Node
+redis['master_name'] = 'gitlab-redis'
+redis['master_password'] = '{{ redis_password }}'
+
+gitlab_rails['redis_sentinels'] = [
+{% for ip in (redis_sentinel_int_ips if redis_sentinel_int_ips | length > 0 else consul_int_ips) %}
+  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
+{% endfor %}
+]
+{% endif %}
+{% elif 'redis_cache' in groups and 'redis_persistent' in groups %}
+## Redis - Separate Queues (External)
+### Multi Node
+gitlab_rails['redis_cache_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-cache'
+gitlab_rails['redis_queues_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
+gitlab_rails['redis_shared_state_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
+
+gitlab_rails['redis_cache_sentinels'] = [
+{% for ip in redis_sentinel_cache_int_ips %}
+  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
+{% endfor %}
+]
+gitlab_rails['redis_queues_sentinels'] = [
+{% for ip in redis_sentinel_persistent_int_ips %}
+  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
+{% endfor %}
+]
+gitlab_rails['redis_shared_state_sentinels'] = [
+{% for ip in redis_sentinel_persistent_int_ips %}
+  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
+{% endfor %}
+]
+{% else %}
+## Redis - Combined Queues (Internal)
+redis['enable'] = true
+redis_exporter['listen_address'] = '0.0.0.0:9121'
+{% endif %}
+
+{% if 'sidekiq' in groups %}
+## Sidekiq (External)
+sidekiq['enable'] = false
+{% else %}
+## Sidekiq (Internal)
+sidekiq['enable'] = true
+sidekiq['listen_address'] = '0.0.0.0'
+{% endif %}
+
+{% if 'postgres' in groups %}
+## Postgres \ Database (External)
+postgresql['enable'] = false
+gitlab_rails['db_password'] = '{{ postgres_password }}'
+
+{% if 'pgbouncer' not in groups or (db_migrate is defined and db_migrate == true) %}
+gitlab_rails['db_host'] = '{{ postgres_primary_int_ip }}'
+gitlab_rails['db_port'] = 5432
+gitlab_rails['auto_migrate'] = {{ (true if 'gitlab_rails_primary' in group_names else false) | lower }}
+{% else %} 
+gitlab_rails['db_host'] = "{{ haproxy_internal_int_ip }}"
+gitlab_rails['db_port'] = 6432
+gitlab_rails['auto_migrate'] = false
+{% endif %}
+{% else %}
+## Postgres \ Database (Internal)
+postgresql['enable'] = true
+postgresql['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
+postgres_exporter['listen_address'] = '0.0.0.0:9187'
+{% endif %}
+
+{% if 'monitor' in groups %}
+## Monitor (External)
+prometheus['enable'] = false
+grafana['enable'] = false
+{% endif %}
+
+{%- if 'jaeger' in groups %}
+## Jaeger
+gitlab_rails['env'] = {
+  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
+}
+gitlab_workhorse['env'] = {
+  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
+}
+{% endif %}
+
+{% if 'gitaly' in groups %}
+## Gitaly (External)
+gitaly['enable'] = false
+gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
+
 git_data_dirs({
   'default' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_int_ip }}:8075' },
   'storage1' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_int_ip }}:8075' },
@@ -179,3 +222,8 @@ git_data_dirs({
   "storage{{loop.index + 1}}" => { 'gitaly_address' => 'tcp://{{ gitaly_secondary_ip }}:8075' },
 {% endfor %}
 })
+{% else %}
+## Gitaly (Internal)
+gitaly['enable'] = true
+gitaly['prometheus_listen_addr'] = "0.0.0.0:9236"
+{% endif %}

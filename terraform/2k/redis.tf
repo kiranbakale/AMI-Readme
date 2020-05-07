@@ -3,9 +3,9 @@ module "redis" {
 
   prefix = "${var.prefix}"
   node_type = "redis"
-  node_count = 3
+  node_count = 1
 
-  machine_type = "n1-standard-2"
+  machine_type = "n1-standard-1"
   machine_image = "${var.machine_image}"
   label_secondaries = true
 }

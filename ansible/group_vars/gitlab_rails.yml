@@ -1,4 +1,8 @@
 gitlab_rails_webserver: 'puma'
-gitlab_rails_puma_workers: "{% if ansible_processor_vcpus is defined %}{{ (ansible_processor_vcpus * 0.9) | round | int }}{% else %}29{% endif %}"
+
+# If GitLab Rails is running other components like Sidekiq tune worker count to be lower to accomodate
+gitlab_rails_worker_multiplier: "{% if (groups | select('match', '^(gitlab_rails|postgres|gitaly|redis|sidekiq|consul|monitor)$') | list | length) == 7 %}1.0{% else %}0.5{% endif %}"
+
+gitlab_rails_puma_workers: "{% if ansible_processor_vcpus is defined %}{{ (ansible_processor_vcpus * 0.9 * (gitlab_rails_worker_multiplier | float)) | round | int }}{% else %}10{% endif %}"
 gitlab_rails_puma_threads: 4
-gitlab_rails_unicorn_workers: "{% if ansible_processor_vcpus is defined %}{{ ((ansible_processor_vcpus * 1.5) + 1) | round | int }}{% else %}49{% endif %}"
+gitlab_rails_unicorn_workers: "{% if ansible_processor_vcpus is defined %}{{ ((ansible_processor_vcpus * 1.5 * (gitlab_rails_worker_multiplier | float)) + 1) | round | int }}{% else %}15{% endif %}"
