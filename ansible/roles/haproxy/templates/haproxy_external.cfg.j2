@@ -4,7 +4,7 @@ frontend http-in
     acl grafana path_beg -i /-/grafana
     use_backend grafana if grafana
 
-    default_backend gitlab-web
+    default_backend gitlab-rails
 
 frontend prometheus
     bind *:9090
