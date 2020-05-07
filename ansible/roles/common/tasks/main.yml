@@ -30,7 +30,9 @@
         reload: yes
       tags: sysctl
 
-    - name: Remove any non Nightly repos unless specified
+    # Removes the official release repo if it's present as we typically want to stick with Nightly
+    # Prevents apt from switching to the release channel (when an official release is younger than nightly)
+    - name: Ensure only GitLab Nightly apt repo is installed unless specified otherwise
       file:
         path: /etc/apt/sources.list.d/gitlab_gitlab-ee.list
         state: absent
