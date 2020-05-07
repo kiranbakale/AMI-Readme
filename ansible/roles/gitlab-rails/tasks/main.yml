@@ -23,7 +23,7 @@
     gsutil cp gs://{{ gitlab_secrets_storage }}/{{ serviceaccount_filename }} {{ serviceaccount_path }} 2>/dev/null || true
   tags: secrets
 
-- name: Setup GitLab config file for DB Configure
+- name: Setup GitLab Primary config file with DB Migrations
   template:
     src: templates/gitlab-rails.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
@@ -32,15 +32,19 @@
   register: result
   retries: 3
   until: result is success
-  tags: reconfigure
+  tags: 
+    - reconfigure
+    - db_migrate
   when: "'gitlab_rails_primary' in group_names"
 
-- name: Reconfigure GitLab Primary for DB
+- name: Reconfigure GitLab Primary
   shell: gitlab-ctl reconfigure
-  tags: reconfigure
+  tags:
+    - reconfigure
+    - db_migrate
   when: "'gitlab_rails_primary' in group_names"
 
-- name: Setup GitLab config file
+- name: Setup any GitLab Secondaries config files
   template:
     src: templates/gitlab-rails.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
@@ -48,13 +52,14 @@
   retries: 3
   until: result is success
   tags: reconfigure
+  when: "'gitlab_rails_secondary' in group_names"
 
-- name: Reconfigure GitLab Primary
+- name: Reconfigure any GitLab Secondaries
   shell: gitlab-ctl reconfigure
   tags: reconfigure
-  when: "'gitlab_rails_primary' in group_names"
+  when: "'gitlab_rails_secondary' in group_names"
 
-- name: Restart GitLab Primary
+- name: Restart GitLab
   command: gitlab-ctl stop && gitlab-ctl start
   register: result
   retries: 2
@@ -62,29 +67,6 @@
   tags:
     - reconfigure
     - restart
-  when: "'gitlab_rails_primary' in group_names"
-
-#- name: Enable Feature Flags (GitLab Primary)
-#  command: gitlab-rails runner "Feature.enable(:async_merge_request_check_mergeability)"
-#  tags:
-#    - reconfigure
-#    - restart
-#  when: "'gitlab_rails_primary' in group_names"
-
-- name: Reconfigure GitLab Secondaries
-  shell: gitlab-ctl reconfigure
-  tags: reconfigure
-  when: "'gitlab_rails_secondary' in group_names"
-
-- name: Restart GitLab Secondaries
-  command: gitlab-ctl stop && gitlab-ctl start
-  register: result
-  retries: 2
-  until: result is success
-  tags:
-    - reconfigure
-    - restart
-  when: "'gitlab_rails_secondary' in group_names"
 
 - name: Upload secrets file if missing
   shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_secrets_storage }}"

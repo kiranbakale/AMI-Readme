@@ -1,0 +1,8 @@
+all:
+  vars:
+    prefix: "gitlab-qa-1k"
+    project_name: "gitlab-qa-1k-0917a1"
+    ansible_user: "sa_109352604569166035741"
+    ansible_ssh_private_key_file: "../keys/performance/gitlab-qa-gcp-ssh"
+    gitlab_license_file: "../keys/performance/Gitlab.gitlab-license"
+    external_url: "http://1k.testbed.gitlab.net"

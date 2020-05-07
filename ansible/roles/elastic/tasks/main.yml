@@ -9,25 +9,36 @@
   tags: sysctl
 
 - name: Remove old Elasticsearch container
-  shell: "docker rm -f elasticsearch 2>/dev/null || true"
-  ignore_errors: true
+  docker_container:
+    name: elasticsearch
+    state: absent
   tags:
     - reconfigure
     - restart
 
-- name: Pull Elasticsearch Docker Image
-  shell: docker pull {{elasticsearch_docker_image}}:{{elasticsearch_version}}
+- name: Start Elasticsearch container(s)
+  docker_container:
+    name: elasticsearch
+    image: "{{ elasticsearch_docker_image }}:{{elastic_version}}"
+    pull: yes
+    restart_policy: always
+    state: started
+    env:
+      ES_JAVA_OPTS: "-Xms{{elasticsearch_heap_size}}m -Xmx{{elasticsearch_heap_size}}m"
+      bootstrap.memory_lock: 'true'
+      cluster.initial_master_nodes: "{{ elastic_int_ips | join(',') }}"
+      discovery.seed_hosts: "{{ elastic_int_ips | join(',') }}"
+      xpack.monitoring.enabled: 'true'
+      xpack.monitoring.collection.enabled: 'true'
+    volumes:
+      - gitlab_search_esdata:/usr/share/elasticsearch/data
+    ulimits: memlock:-1:-1
+    network_mode: host
   tags:
     - reconfigure
     - restart
 
-- name: Start Elasticsearch container
-  shell: docker run -d --restart=always --name=elasticsearch -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms{{elasticsearch_heap_size}}m -Xmx{{elasticsearch_heap_size}}m" -e "bootstrap.memory_lock=true" --ulimit memlock=-1:-1 -p 9200:9200 -p 9300:9300 -v gitlab_search_esdata:/usr/share/elasticsearch/data {{elasticsearch_docker_image}}:{{elasticsearch_version}}
-  tags:
-    - reconfigure
-    - restart
-
-- name: Wait for Elasticsearch to be available
+- name: Wait for Elasticsearch container(s) to be available
   uri:
     url: 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s'
     timeout: 60
@@ -35,6 +46,45 @@
   until: result.status == 200
   retries: 10
   delay: 5
+  tags:
+    - reconfigure
+    - restart
+
+- name: Remove old Kibana container
+  docker_container:
+    name: kibana
+    state: absent
+  when: "'elastic_primary' in group_names"
+  tags:
+    - reconfigure
+    - restart
+
+- name: Start Kibana container
+  docker_container:
+    name: kibana
+    image: "{{ kibana_docker_image }}:{{elastic_version}}"
+    pull: yes
+    restart_policy: always
+    state: started
+    env:
+      SERVER_HOST: '0.0.0.0'
+      ELASTICSEARCH_HOSTS: http://127.0.0.1:9200
+    network_mode: host
+  when: "'elastic_primary' in group_names"
+  tags:
+    - reconfigure
+    - restart
+    - kibana
+
+- name: Wait for Kibana container to be available
+  uri:
+    url: 'http://localhost:5601/api/status'
+    timeout: 60
+  register: result
+  until: result.status == 200
+  retries: 10
+  delay: 5
+  when: "'elastic_primary' in group_names"
   tags:
     - reconfigure
     - restart

@@ -3,7 +3,7 @@ module "postgres" {
 
   prefix = "${var.prefix}"
   node_type = "postgres"
-  node_count = 3
+  node_count = 1
 
   machine_type = "n1-standard-2"
   machine_image = "${var.machine_image}"

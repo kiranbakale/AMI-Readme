@@ -17,12 +17,7 @@
 
     - name: Install python packages
       pip:
-        name:
-        - requests
-        - google-auth
-        - netaddr
-        - openshift
-        - PyYAML
+        name: ['requests', 'google-auth', 'netaddr', 'openshift', 'PyYAML', 'docker']
         extra_args: --upgrade
       tags: packages
 
@@ -34,6 +29,14 @@
         state: present
         reload: yes
       tags: sysctl
+
+    - name: Remove any non Nightly repos unless specified
+      file:
+        path: /etc/apt/sources.list.d/gitlab_gitlab-ee.list
+        state: absent
+      when:
+        - omnibus_node
+        - gitlab_repo_script_url != "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh"
 
     - name: Download GitLab repository installation script
       get_url:
