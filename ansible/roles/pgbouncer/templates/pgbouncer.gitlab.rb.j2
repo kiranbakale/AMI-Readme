@@ -27,3 +27,6 @@ node_exporter['listen_address'] = '0.0.0.0:9100'
 
 pgbouncer_exporter['enable'] = true
 pgbouncer_exporter['listen_address'] = '0.0.0.0:9188'
+
+# Workaround for Sidekiq Cluster which is enabling by default
+sidekiq['enable'] = false
