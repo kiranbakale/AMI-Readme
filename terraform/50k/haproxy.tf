@@ -5,7 +5,7 @@ module "haproxy_external" {
   node_type = "haproxy-external"
   node_count = 1
   
-  machine_type = "n1-highcpu-2"
+  machine_type = "n1-highcpu-8"
   machine_image = "${var.machine_image}"
   external_ips = ["35.237.211.103"]
 
