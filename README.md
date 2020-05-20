@@ -17,3 +17,7 @@ The Toolkit consists of two industry standard tools:
 
 * [Preparing the toolkit](docs/prep_toolkit.md)
 * [Building environment(s)](docs/building_environments.md)
+
+## Raising Issues
+
+For any Issues with the builder please raise them on our main [performance project](https://gitlab.com/gitlab-org/quality/performance/-/issues).
