@@ -19,11 +19,9 @@ stages:
 
 start:
   extends: .update-base
+  image: google/cloud-sdk:alpine
   stage: start
   script:
-    - apk add -u --no-cache python curl which bash
-    - curl -sSL https://sdk.cloud.google.com > /tmp/gcl.sh && bash /tmp/gcl.sh --disable-prompts 1> /dev/null && rm /tmp/gcl.sh
-    - export PATH=$PATH:/root/google-cloud-sdk/bin && unset CLOUDSDK_CORE_PROJECT
     - gcloud auth activate-service-account --key-file=$GCLOUD_SERVICEACCOUNT_KEY_PATH
     - gcloud config set project $GCP_PROJECT_NAME
     - echo "Starting VMs on GCP project '$GCP_PROJECT_NAME'"
@@ -66,11 +64,9 @@ ansible:
 
 stop:
   extends: .update-base
+  image: google/cloud-sdk:alpine
   stage: stop
   script:
-    - apk add -u --no-cache python curl which bash
-    - curl -sSL https://sdk.cloud.google.com > /tmp/gcl.sh && bash /tmp/gcl.sh --disable-prompts 1> /dev/null && rm /tmp/gcl.sh
-    - export PATH=$PATH:/root/google-cloud-sdk/bin && unset CLOUDSDK_CORE_PROJECT
     - gcloud auth activate-service-account --key-file=$GCLOUD_SERVICEACCOUNT_KEY_PATH
     - gcloud config set project $GCP_PROJECT_NAME
     - echo "Stopping VMs on GCP project '$GCP_PROJECT_NAME'"
