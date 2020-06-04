@@ -10,7 +10,7 @@ provider "google" {
 terraform {
   required_version = "= 0.12.18"
   backend "gcs" {
-    bucket  = "TODO-Create bucket"
-    credentials = "../keys/enablement/TODO-Create service acount"
+    bucket  = "gitlab-qa-3k-distribution-terraform-state"
+    credentials = "../keys/distribution/gitlab-qa-3k-distribution-sa.json"
   }
 }

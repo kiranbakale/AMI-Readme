@@ -3,7 +3,7 @@ variable "project" {
 }
 
 variable "credentials_file" {
-  default = "../keys/enablement/TODO-Create service acount"
+  default = "../keys/distribution/gitlab-qa-3k-distribution-sa.json"
 }
 
 variable "region" {
