@@ -3,7 +3,7 @@ variable "project" {
 }
 
 variable "credentials_file" {
-  default = "../keys/distribution/gitlab-qa-3k-distribution-sa.json"
+  default = "../../keys/distribution/gitlab-qa-3k-distribution-sa.json"
 }
 
 variable "region" {
