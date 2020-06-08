@@ -1,5 +1,7 @@
 # Ansible / General
 omnibus_node: true
+swap_file_size_mb: '2048'
+swap_swappiness: '10'
 gitlab_deb_package: "{{ lookup('env','GITLAB_DEB_PACKAGE')}}" # Optional if installing by direct deb
 gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default('gitlab-ee', true) }}"
 gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh', true) }}"
@@ -56,6 +58,10 @@ redis_sentinel_cache_int_ips: "{{ (groups['redis_sentinel_cache'] | map('extract
 
 redis_persistent_primary_int_ip: "{{ (groups['redis_persistent_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'redis_persistent' in groups else '' }}"
 redis_sentinel_persistent_int_ips: "{{ (groups['redis_sentinel_persistent'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | list) if 'redis_sentinel_persistent' in groups else [] }}"
+
+# Sidekiq
+sidekiq_max_concurrency: 25
+sidekiq_cluster: true
 
 # Jaeger Distributed Tracing
 jaeger_int_ip: "{{ (groups['jaeger'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'jaeger' in groups else '' }}"

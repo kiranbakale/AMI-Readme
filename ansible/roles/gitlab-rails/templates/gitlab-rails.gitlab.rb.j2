@@ -171,6 +171,7 @@ sidekiq['enable'] = false
 ## Sidekiq (Internal)
 sidekiq['enable'] = true
 sidekiq['listen_address'] = '0.0.0.0'
+sidekiq['max_concurrency'] = 15
 {% endif %}
 
 {% if 'postgres' in groups %}

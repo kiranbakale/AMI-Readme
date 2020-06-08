@@ -23,6 +23,15 @@
     gsutil cp gs://{{ gitlab_secrets_storage }}/{{ serviceaccount_filename }} {{ serviceaccount_path }} 2>/dev/null || true
   tags: secrets
 
+- name: Stop GitLab
+  command: gitlab-ctl stop
+  register: result
+  retries: 2
+  until: result is success
+  tags:
+    - reconfigure
+    - restart
+
 - name: Setup GitLab Primary config file with DB Migrations
   template:
     src: templates/gitlab-rails.gitlab.rb.j2
@@ -59,8 +68,8 @@
   tags: reconfigure
   when: "'gitlab_rails_secondary' in group_names"
 
-- name: Restart GitLab
-  command: gitlab-ctl stop && gitlab-ctl start
+- name: Start GitLab
+  command: gitlab-ctl start
   register: result
   retries: 2
   until: result is success

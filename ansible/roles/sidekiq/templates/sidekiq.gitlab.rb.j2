@@ -20,7 +20,7 @@ sidekiq_cluster['queue_groups'] = [ "*" ]
 sidekiq_cluster['max_concurrency'] = {{ sidekiq_concurrency }}
 {% else %} 
 sidekiq['listen_address'] = '0.0.0.0'
-sidekiq['concurrency'] = {{ sidekiq_concurrency }}
+sidekiq['concurrency'] = {{ sidekiq_max_concurrency }}
 {% endif %} 
 
 # Ensure UIDs and GIDs match between servers for permissions via NFS
