@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 15,
+  "id": 12,
   "links": [],
   "panels": [
     {
@@ -28,7 +28,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 9,
+        "h": 12,
         "w": 12,
         "x": 0,
         "y": 0
@@ -141,7 +141,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "ms",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -172,7 +172,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 9,
+        "h": 12,
         "w": 12,
         "x": 12,
         "y": 0
@@ -287,7 +287,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "ms",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -321,7 +321,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 9
+        "y": 12
       },
       "id": 8,
       "legend": {
@@ -448,7 +448,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 9
+        "y": 12
       },
       "id": 12,
       "legend": {
@@ -584,7 +584,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 18
+        "y": 21
       },
       "id": 10,
       "options": {
@@ -668,7 +668,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 18
+        "y": 21
       },
       "id": 11,
       "options": {
@@ -755,7 +755,7 @@
     "list": []
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {
@@ -775,5 +775,5 @@
   "timezone": "",
   "title": "GPT Test results",
   "uid": "J0ysCtCWz",
-  "version": 14
+  "version": 1
 }
