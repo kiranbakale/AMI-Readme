@@ -13,3 +13,15 @@
       deletion_adjourned_period: 0
     status_code: 200, 201
     body_format: json
+
+- name: Disable Rate Limits
+  uri:
+    url: '{{ external_url_sanitised }}/api/v4/application/settings'
+    method: PUT
+    headers:
+      Authorization: 'Bearer {{ gitlab_oauth_token }}'
+    body:
+      issues_create_limit: 0
+      raw_blob_request_limit: 0
+    status_code: 200, 201
+    body_format: json
