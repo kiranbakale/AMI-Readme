@@ -57,6 +57,10 @@
 
     - name: Unlock GitLab package updates
       command: apt-mark install gitlab-ee
+      register: result
+      retries: 2
+      delay: 10
+      until: result is success
       when: 
         - omnibus_node
       
@@ -78,6 +82,10 @@
 
     - name: Lock GitLab package updates
       command: apt-mark hold gitlab-ee
+      register: result
+      retries: 2
+      delay: 10
+      until: result is success
       when:
         - omnibus_node
 
