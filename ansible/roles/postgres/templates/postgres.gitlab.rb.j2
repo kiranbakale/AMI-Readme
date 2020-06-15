@@ -38,6 +38,3 @@ postgres_exporter["env"] = {
   "DATA_SOURCE_NAME" => "user=gitlab-psql host=localhost database=postgres sslmode=disable"
 }
 node_exporter['listen_address'] = '0.0.0.0:9100'
-
-# Workaround for Sidekiq Cluster which is enabling by default
-sidekiq['enable'] = false

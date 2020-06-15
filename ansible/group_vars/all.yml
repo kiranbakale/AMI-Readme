@@ -61,7 +61,6 @@ redis_sentinel_persistent_int_ips: "{{ (groups['redis_sentinel_persistent'] | ma
 
 # Sidekiq
 sidekiq_max_concurrency: 25
-sidekiq_cluster: true
 
 # Jaeger Distributed Tracing
 jaeger_int_ip: "{{ (groups['jaeger'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'jaeger' in groups else '' }}"

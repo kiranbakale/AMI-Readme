@@ -6,6 +6,7 @@ nginx['enable'] = false
 postgres_exporter['enable'] = false
 postgresql['enable'] = false
 prometheus['enable'] = false
+grafana['enable'] = false
 redis['enable'] = false
 redis_exporter['enable'] = false
 unicorn['enable'] = false
@@ -14,14 +15,9 @@ puma['enable'] = false
 registry_external_url '{{ external_url_sanitised }}:4567'
 
 # Sidekiq Config
-{% if sidekiq_cluster is defined and sidekiq_cluster == true %} 
-sidekiq_cluster['enable'] = true
-sidekiq_cluster['queue_groups'] = [ "*" ]
-sidekiq_cluster['max_concurrency'] = {{ sidekiq_max_concurrency }}
-{% else %} 
+sidekiq['enable'] = true
 sidekiq['listen_address'] = '0.0.0.0'
 sidekiq['concurrency'] = {{ sidekiq_max_concurrency }}
-{% endif %} 
 
 # Ensure UIDs and GIDs match between servers for permissions via NFS
 user['uid'] = 9000

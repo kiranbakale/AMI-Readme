@@ -31,6 +31,3 @@ redis_exporter['flags'] = {
   'redis.addr' => "redis://localhost:{{ redis_port }}",
   'redis.password' => '{{ redis_password }}'
 }
-
-# Workaround for Sidekiq Cluster which is enabling by default
-sidekiq['enable'] = false

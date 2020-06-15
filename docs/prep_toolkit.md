@@ -14,12 +14,14 @@ Each environment needs to have its own project on GCP. A project can be requeste
 ## Install Terraform, Ansible and GCloud
 
 Each of the tools in this toolkit uses need to be installed beforehand. You can choose how to install both as desired as long as they're reachable on the command line after. The official installation docs for each are as follows:
+
 * [Terraform Install Guide](https://learn.hashicorp.com/terraform/getting-started/install.html)
   * **Make sure to install the specific Terraform version as stated in the environment's `main.tf` file**. Terraform requires the version to match for all people using it. Quality team will periodically update this version after testing. Errors will be thrown by Terraform when the install version being used doesn't match what its shared State file expects.
 * [Ansible Install Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 * [GCloud Install Guide](https://cloud.google.com/sdk/install)
 
 If you are new to any of the tools here it's also worth going through some tutorials to learn the basics. Some examples of good tutorials are:
+
 * [Terraform GCP Tutorial](https://learn.hashicorp.com/terraform/gcp/intro)
 * [Ansible Tutorial](https://www.guru99.com/ansible-tutorial.html)
 
@@ -70,6 +72,7 @@ Each environment should have its own project on GCP. Terraform and Ansible both 
 * Finish creating the user
 
 Once the key has been saved you need to configure both Terraform and Ansible to use it as follows:
+
 * Terraform - For each environment there are two places the Service Account key location needs to be configured, one for the State object storage and the other for the main GCP access. Configure the location in the `main.tf` and `variables.tf` files with the relative path. For `variables.tf` the path should be saved under the variable name of `credentials_file`.
   * As an example you can refer to the current environment projects. For example the 10k environment's [`main.tf`](../terraform/10k/main.tf) and [`variables.tf`](../terraform/10k/variables.tf) files.
 * Ansible - The files relative path location only needs to be configured once for each environment in the inventory file under the variable name `service_account_file`.
