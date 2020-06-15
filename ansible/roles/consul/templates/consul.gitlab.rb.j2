@@ -22,6 +22,3 @@ redis['master_ip'] = '{{ redis_primary_int_ip }}'
 redis['master_password'] = '{{ redis_password }}'
 redis['port'] = {{ redis_port }}
 {% endif %}
-
-# Workaround for Sidekiq Cluster which is enabling by default
-sidekiq['enable'] = false

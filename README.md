@@ -1,8 +1,9 @@
 # GitLab Performance Environment Builder
 
-Terraform and Ansible toolkit for building and updating GitLab [Reference Architecture](https://docs.gitlab.com/ee/administration/scaling/#reference-architectures) environments on Google Cloud Platform (GCP) for large scale setup validation and performance testing.
+Terraform and Ansible toolkit for building and updating GitLab [Reference Architecture](https://docs.gitlab.com/ee/administration/scaling/#reference-architectures) environments (latest version) on Google Cloud Platform (GCP) for large scale setup validation and performance testing.
 
 At the time of writing we have the following environments that are currently being built and maintained with this toolkit:
+
 * [2k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-2k-ca9f9e)
 * [5k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-5k-0ee8fa)
 * [10k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-10k-cd77c7)
@@ -10,6 +11,7 @@ At the time of writing we have the following environments that are currently bei
 * [50k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-50k-193234)
 
 The Toolkit consists of two industry standard tools:
+
 * [Terraform](https://www.terraform.io/) - To provision environment infrastructure
 * [Ansible](https://docs.ansible.com/ansible/latest/index.html) - To configure GitLab on the provisioned infrastructure
 

@@ -21,7 +21,7 @@ With the [toolkit prepared](prep_toolkit.md) you can proceed to building environ
 
 ## Configuring GitLab on Environment(s) with Ansible
 
-[Ansible](https://docs.ansible.com/ansible/latest/index.html) configures GitLab on an Environment's infrastructure. 
+[Ansible](https://docs.ansible.com/ansible/latest/index.html) configures GitLab on an Environment's infrastructure.
 
 This is achieved through getting VM info via the [`gcp_compute` Dynamic Inventory source](https://docs.ansible.com/ansible/latest/plugins/inventory/gcp_compute.html) and then running Ansible Playbooks & Roles against each depending on the VM Labels set via Terraform. Unlike Terraform Ansible doesn't require separate folders per Environment but does require a small config directory for each under `ansible/inventories/`
 

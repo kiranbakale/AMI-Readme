@@ -8,6 +8,21 @@
       when: 
         - omnibus_node
 
+    - name: Get GitLab json config file stats if it exists
+      stat:
+        path: "/opt/gitlab/embedded/nodes/{{ ansible_fqdn }}.json"
+      register: gitlab_json_config_file
+      tags: reconfigure
+
+    - name: Delete GitLab json config file if malformed
+      file:
+        path: "/opt/gitlab/embedded/nodes/{{ ansible_fqdn }}.json"
+        state: absent
+      when:
+        - gitlab_json_config_file.stat.exists
+        - gitlab_json_config_file.stat.size < 500
+      tags: reconfigure
+
     - name: Install system packages
       apt:
         name: ['aptitude', 'curl', 'openssh-server', 'ca-certificates', 'glances', 'nano', 'tzdata', 'postfix',
