@@ -1,6 +1,6 @@
 plugin: gcp_compute
 projects:
-  - gitlab-qa-distribution
+  - gitlab-qa-distribution-35632a
 filters:
 keyed_groups:
   - key: labels.gitlab_node_type
