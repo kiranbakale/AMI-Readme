@@ -1,6 +1,6 @@
 plugin: gcp_compute
 projects:
-  - gitlab-qa-resources
+  - gitlab-qa-distribution
 filters:
 keyed_groups:
   - key: labels.gitlab_node_type
@@ -9,7 +9,7 @@ keyed_groups:
     separator: ''
 scopes:
   - https://www.googleapis.com/auth/compute
-service_account_file: ../keys/distribution/gitlab-qa-3k-distribution-sa.json
+service_account_file: ../keys/distribution/gitlab-qa-distribution-sa.json
 auth_kind: serviceaccount
 hostnames:
   # List host by name instead of the default public ip

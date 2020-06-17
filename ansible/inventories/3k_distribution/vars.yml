@@ -1,8 +1,8 @@
 all:
   vars:
-    prefix: "gitlab-qa-3k-distribution"
-    project_name: "gitlab-qa-resources"
-    ansible_user: "sa_103174763821373924755"
-    ansible_ssh_private_key_file: "../keys/distribution/gitlab-qa-3k-distribution-ssh"
+    prefix: "omnibus-3k"
+    project_name: "gitlab-qa-distribution"
+    ansible_user: "sa_117401977288730813591"
+    ansible_ssh_private_key_file: "../keys/distribution/gitlab-qa-distribution-ssh"
     gitlab_license_file: "../keys/distribution/Gitlab.gitlab-license"
-    external_url: "http://34.74.35.184"
+    external_url: "http://104.196.38.24"
