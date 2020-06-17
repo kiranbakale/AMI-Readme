@@ -1,5 +1,5 @@
 variable "project" {
-  default = "gitlab-qa-distribution"
+  default = "gitlab-qa-distribution-35632a"
 }
 
 variable "credentials_file" {
