@@ -3,7 +3,7 @@ variable "project" {
 }
 
 variable "credentials_file" {
-  default = "../../keys/distribution/gitlab-qa-3k-distribution-sa.json"
+  default = "../../keys/distribution/gitlab-qa-distribution-sa.json"
 }
 
 variable "region" {
@@ -15,10 +15,13 @@ variable "zone" {
 }
 
 variable "prefix" {
-  default = "gitlab-qa-3k-distribution"
+  default = "omnibus-3k"
 }
 
 variable "machine_image" {
   default = "ubuntu-1804-lts"
 }
 
+variable "external_ip" {
+  default = "104.196.38.24"
+}
