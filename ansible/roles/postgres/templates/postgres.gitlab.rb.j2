@@ -1,6 +1,12 @@
 # Disable all components except PostgreSQL and Repmgr and Consul
 roles ['postgres_role']
 
+{% if install_patroni %}
+# install patroni
+{% else %}
+# install repmgr
+{% endif %}
+
 # PostgreSQL configuration
 postgresql['listen_address'] = '0.0.0.0'
 postgresql['hot_standby'] = 'on'
