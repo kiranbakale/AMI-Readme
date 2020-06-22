@@ -31,7 +31,7 @@
   shell: "gitlab-ctl repmgr cluster show 2>/dev/null"
   register: cluster_show
   ignore_errors: yes
-  when: not install_patroni
+  when: install_patroni is not defined or not install_patroni
   tags:
     - debug
 
@@ -47,7 +47,7 @@
   shell: "gitlab-ctl patroni members 2>/dev/null"
   register: patroni_members
   ignore_errors: yes
-  when: install_patroni
+  when: install_patroni is defined and install_patroni
   tags:
     - debug
   
@@ -65,7 +65,7 @@
   tags: postgres_secondary_standby
   when: 
     - "'postgres_secondary' in group_names"
-    - not install_patroni
+    - install_patroni is defined and not install_patroni
 
 - name: Enable secondary standby
   shell: "gitlab-ctl repmgr standby setup {{ postgres_primary_int_ip }} -w"
@@ -74,7 +74,7 @@
   when: 
     - "'postgres_secondary' in group_names"
     - postgres_secondary_standby_status.stdout == ''
-    - not install_patroni
+    - install_patroni is defined and not install_patroni
   failed_when:
     - postgres_secondary_standby_result.rc != 0
     - '"exists already" not in postgres_secondary_standby_result.stderr'
