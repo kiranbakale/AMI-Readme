@@ -44,7 +44,7 @@
     - db_migrate
   when: "'gitlab_rails_primary' in group_names"
 
-- name: Setup any GitLab Secondaries config files
+- name: Setup all GitLab Rails config files without DB Migrations
   template:
     src: templates/gitlab-rails.gitlab.rb.j2
     dest: /etc/gitlab/gitlab.rb
@@ -52,12 +52,10 @@
   retries: 3
   until: result is success
   tags: reconfigure
-  when: "'gitlab_rails_secondary' in group_names"
 
-- name: Reconfigure any GitLab Secondaries
+- name: Reconfigure all GitLab Rails
   shell: gitlab-ctl reconfigure
   tags: reconfigure
-  when: "'gitlab_rails_secondary' in group_names"
 
 - name: Restart GitLab
   command: gitlab-ctl stop && gitlab-ctl start
