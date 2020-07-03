@@ -23,6 +23,7 @@ resource "google_compute_instance" "gitlab" {
   }
 
   labels = {
+    gitlab_node_prefix = var.prefix
     gitlab_node_type = var.node_type
     gitlab_node_level = var.label_secondaries == true ? (count.index == 0 ? "${var.node_type}-primary" : "${var.node_type}-secondary") : ""
   }
