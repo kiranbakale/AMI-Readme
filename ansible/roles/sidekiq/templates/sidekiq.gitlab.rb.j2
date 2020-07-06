@@ -17,7 +17,7 @@ registry_external_url '{{ external_url_sanitised }}:4567'
 # Sidekiq Config
 sidekiq['enable'] = true
 sidekiq['listen_address'] = '0.0.0.0'
-sidekiq['concurrency'] = {{ sidekiq_max_concurrency }}
+sidekiq['max_concurrency'] = {{ sidekiq_max_concurrency }}
 
 # Ensure UIDs and GIDs match between servers for permissions via NFS
 user['uid'] = 9000
