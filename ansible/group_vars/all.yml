@@ -9,6 +9,7 @@ gitlab_secrets_storage: "{{ prefix }}-secrets-storage"
 gitlab_object_storage: "{{ prefix }}-object-storage"
 gitlab_admin_email: 'admin@example.com'
 gitlab_admin_password: '5iveL!fe'
+system_packages: "aptitude curl openssh-server ca-certificates glances nano tzdata ack-grep tree python-pip python3-pip nfs-common postfix jq"
 serviceaccount_filename: "serviceaccount.json"
 serviceaccount_path: "/etc/gitlab/{{ serviceaccount_filename }}"
 external_url_sanitised: '{{ external_url | regex_replace("\\/$", "") }}'
