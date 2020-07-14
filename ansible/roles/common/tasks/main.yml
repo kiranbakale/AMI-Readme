@@ -23,11 +23,14 @@
         - gitlab_json_config_file.stat.size < 500
       tags: reconfigure
 
+    - name: Update apt package information
+      command: apt-get update
+      tags: packages
+
     - name: Install system packages
-      apt:
-        name: ['aptitude', 'curl', 'openssh-server', 'ca-certificates', 'glances', 'nano', 'tzdata', 'postfix',
-              'ack-grep', 'tree', 'python-pip', 'python3-pip', 'nfs-common']
-        update_cache: yes
+      command: apt-get install -y {{ system_packages }}
+      environment: 
+        DEBIAN_FRONTEND: "noninteractive"
       tags: packages
 
     - name: Install python packages
@@ -89,8 +92,7 @@
         - gitlab_deb_package == ''
 
     - name: Install GitLab deb package
-      apt:
-        deb: "{{ gitlab_deb_package }}"
+      command: dpkg -i {{ gitlab_deb_package }} && apt-get install -f
       when:
         - omnibus_node
         - gitlab_deb_package != ''
@@ -105,8 +107,7 @@
         - omnibus_node
 
     - name: Update system packages to the latest version
-      apt:
-        upgrade: 'safe'
+      command: apt-get upgrade -y
       register: result
       retries: 1
       until: result is success
