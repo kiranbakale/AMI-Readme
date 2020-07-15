@@ -2,6 +2,7 @@ plugin: gcp_compute
 projects:
   - gitlab-qa-50k-193234
 filters:
+  - labels.gitlab_node_prefix = gitlab-qa-50k
 keyed_groups:
   - key: labels.gitlab_node_type
     separator: ''
