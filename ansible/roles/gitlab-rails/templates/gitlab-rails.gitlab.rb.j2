@@ -142,6 +142,7 @@ gitlab_rails['redis_sentinels'] = [
 gitlab_rails['redis_cache_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-cache'
 gitlab_rails['redis_queues_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
 gitlab_rails['redis_shared_state_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
+gitlab_rails['redis_actioncable_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
 
 gitlab_rails['redis_cache_sentinels'] = [
 {% for ip in redis_sentinel_cache_int_ips %}
@@ -154,6 +155,11 @@ gitlab_rails['redis_queues_sentinels'] = [
 {% endfor %}
 ]
 gitlab_rails['redis_shared_state_sentinels'] = [
+{% for ip in redis_sentinel_persistent_int_ips %}
+  {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
+{% endfor %}
+]
+gitlab_rails['redis_actioncable_sentinels'] = [
 {% for ip in redis_sentinel_persistent_int_ips %}
   {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
