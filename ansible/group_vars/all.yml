@@ -41,6 +41,7 @@ monitor_int_ip: "{{ (groups['monitor'] | map('extract', hostvars, ['networkInter
 
 # GitLab Postgres / PGBouncer
 postgres_primary_int_ip: "{{ (groups['postgres_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'postgres_primary' in groups else '' }}"
+postgres_primary_int_port: "5432"
 postgres_password: '37aca09f2f8ff04f27bdb2ed159ec81f'
 
 pgbouncer_password: '9fdf957895675ef0741f66811c8fa958'
