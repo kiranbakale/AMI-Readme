@@ -16,6 +16,24 @@ resource "google_compute_firewall" "gitlab_http_https" {
   target_tags   = ["${var.prefix}-web"]
 }
 
+resource "google_compute_firewall" "gitlab_ssh" {
+  name    = "${var.prefix}-gitlab-rails-firewall-rule-ssh"
+  network = "default"
+
+  description = "Allow access to GitLab SSH"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["2222"]
+  }
+
+  target_tags   = ["${var.prefix}-ssh"]
+}
+
 resource "google_compute_firewall" "monitor" {
   name    = "${var.prefix}-monitor-firewall-rule"
   network = "default"
