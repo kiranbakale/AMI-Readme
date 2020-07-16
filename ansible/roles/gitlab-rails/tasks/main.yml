@@ -33,7 +33,7 @@
     - install_patroni is defined and install_patroni
     - "'gitlab_rails_primary' in group_names"
 
-- name: Update Postgres Primary IP when using Patroni
+- name: Update Postgres Primary IP and Port when using Patroni
   set_fact:
     postgres_primary_int_ip: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
     postgres_primary_int_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
