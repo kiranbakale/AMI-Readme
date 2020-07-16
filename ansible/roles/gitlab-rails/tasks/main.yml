@@ -23,6 +23,27 @@
     gsutil cp gs://{{ gitlab_secrets_storage }}/{{ serviceaccount_filename }} {{ serviceaccount_path }} 2>/dev/null || true
   tags: secrets
 
+- name: Get Postgres Leader when using Patroni
+  shell: gitlab-ctl get-postgresql-primary
+  register: postgres_leader_int_address
+  tags: 
+    - reconfigure
+    - db_migrate
+  when: 
+    - install_patroni is defined and install_patroni
+    - "'gitlab_rails_primary' in group_names"
+
+- name: Update Postgres Primary IP and Port when using Patroni
+  set_fact:
+    postgres_primary_int_ip: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
+    postgres_primary_int_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
+  tags:
+    - reconfigure
+    - db_migrate
+  when: 
+    - install_patroni is defined and install_patroni
+    - "'gitlab_rails_primary' in group_names"
+
 - name: Setup GitLab Primary config file with DB Migrations
   template:
     src: templates/gitlab-rails.gitlab.rb.j2
