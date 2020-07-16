@@ -6,6 +6,14 @@ frontend http-in
 
     default_backend gitlab-rails
 
+frontend gitlab-ssh-in
+    bind *:2222
+    mode tcp
+    option tcplog
+    option clitcpka
+
+    default_backend gitlab-rails-ssh
+
 frontend prometheus
     bind *:9090
 
@@ -26,6 +34,15 @@ backend gitlab-rails
 
 {% for ip in gitlab_rails_int_ips %}
     server gitlab-rails{{loop.index}} {{ ip }}:80 check
+{% endfor %}
+
+backend gitlab-rails-ssh
+    mode tcp
+    option tcp-check
+    option srvtcpka
+
+{% for ip in gitlab_rails_int_ips %}
+    server gitlab-rails{{loop.index}} {{ ip }}:22 check
 {% endfor %}
 
 backend grafana

@@ -9,7 +9,7 @@ module "haproxy_external" {
   machine_image = "${var.machine_image}"
   external_ips = ["104.196.144.226"]
 
-  tags = ["${var.prefix}-web", "${var.prefix}-haproxy", "${var.prefix}-monitor"]
+  tags = ["${var.prefix}-web", "${var.prefix}-ssh", "${var.prefix}-haproxy", "${var.prefix}-monitor"]
 }
 
 output "haproxy_external" {
