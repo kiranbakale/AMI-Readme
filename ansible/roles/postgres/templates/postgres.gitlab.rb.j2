@@ -6,8 +6,8 @@ roles ['postgres_role']
 patroni['enable'] = true
 
 {% if groups['postgres'] | length > 1 %}
-patroni['postgresql']['max_wal_senders'] = "{{ ((groups | select('match', 'postgres_*') | join()) | length) + 1 }}"
-patroni['postgresql']['max_replication_slots'] = "{{ ((groups | select('match', 'postgres_*') | join()) | length) + 1 }}"
+patroni['postgresql']['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
+patroni['postgresql']['max_replication_slots'] = {{ (groups['postgres'] | length) + 1 }}
 {% endif %}
 
 {% else %}
@@ -16,8 +16,8 @@ postgresql['shared_preload_libraries'] = 'repmgr_funcs'
 repmgr['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 
 {% if groups['postgres'] | length > 1 %}
-postgresql['max_wal_senders'] = "{{ ((groups | select('match', 'postgres_*') | join()) | length) + 1 }}"
-postgresql['max_replication_slots'] = "{{ ((groups | select('match', 'postgres_*') | join()) | length) + 1 }}"
+postgresql['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
+postgresql['max_replication_slots'] = {{ (groups['postgres'] | length) + 1 }}
 repmgr['master_on_initialization'] = {{ postgres_repmgr_master }}
 {% endif %}
 
