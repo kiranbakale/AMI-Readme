@@ -81,7 +81,7 @@
       until: result is success
       when: 
         - omnibus_node
-      
+
     - name: Install GitLab repo package
       command: apt-get install {{ gitlab_repo_package }} -y --allow-downgrades
       args:
