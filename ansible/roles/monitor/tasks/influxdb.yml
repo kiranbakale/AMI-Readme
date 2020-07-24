@@ -42,8 +42,8 @@
 
 - name: Create database in InfluxDB
   shell: |
-    docker exec influxdb influx -execute "CREATE DATABASE gpt_results"
-    docker exec influxdb influx -execute "ALTER RETENTION POLICY "autogen" ON "gpt_results" DURATION 90d"
+    docker exec influxdb influx -execute "CREATE DATABASE gpt_results WITH DURATION 90d"
+    docker exec influxdb influx -execute "CREATE DATABASE sitespeed WITH DURATION 90d"
   tags:
     - reconfigure
     - restart
