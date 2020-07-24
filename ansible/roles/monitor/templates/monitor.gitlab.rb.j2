@@ -97,6 +97,13 @@ grafana['datasources'] = [
     'access' => 'proxy',
     'database' => 'gpt_results',
     'url' => '{{ external_url_sanitised }}:8086'
+  },
+  {
+    'name' => 'InfluxDB_sitespeed',
+    'type' => 'influxdb',
+    'access' => 'proxy',
+    'database' => 'sitespeed',
+    'url' => '{{ external_url_sanitised }}:8086'
   }
 ]
 
