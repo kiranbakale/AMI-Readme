@@ -18,11 +18,10 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 2,
-  "iteration": 1595612390205,
+  "id": 16,
+  "iteration": 1596131344234,
   "links": [
     {
-      "$$hashKey": "object:1339",
       "icon": "doc",
       "tags": [],
       "title": "GitLab Performance SiteSpeed",
@@ -68,6 +67,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pluginVersion": "7.1.0",
       "pointradius": 2,
@@ -130,7 +132,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:530",
           "colorMode": "warning",
           "fill": true,
           "line": false,
@@ -139,7 +140,6 @@
           "yaxis": "left"
         },
         {
-          "$$hashKey": "object:536",
           "colorMode": "ok",
           "fill": true,
           "line": false,
@@ -167,7 +167,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:245",
           "format": "ms",
           "label": "",
           "logBase": 1,
@@ -176,7 +175,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:246",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -226,6 +224,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pluginVersion": "7.1.0",
       "pointradius": 2,
@@ -288,7 +289,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:530",
           "colorMode": "warning",
           "fill": true,
           "line": false,
@@ -297,7 +297,6 @@
           "yaxis": "left"
         },
         {
-          "$$hashKey": "object:536",
           "colorMode": "ok",
           "fill": true,
           "line": false,
@@ -325,7 +324,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:245",
           "format": "ms",
           "label": "",
           "logBase": 1,
@@ -334,7 +332,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:246",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -384,6 +381,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pluginVersion": "7.1.0",
       "pointradius": 2,
@@ -464,7 +464,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:245",
           "format": "ms",
           "label": "",
           "logBase": 1,
@@ -473,7 +472,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:246",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -523,6 +521,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pluginVersion": "7.1.0",
       "pointradius": 2,
@@ -603,7 +604,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:245",
           "format": "ms",
           "label": "",
           "logBase": 1,
@@ -612,7 +612,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:246",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -643,7 +642,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
-        "w": 12,
+        "w": 8,
         "x": 0,
         "y": 18
       },
@@ -662,6 +661,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pluginVersion": "7.1.0",
       "pointradius": 2,
@@ -742,7 +744,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:245",
           "format": "ms",
           "label": "",
           "logBase": 1,
@@ -751,7 +752,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:246",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -782,8 +782,8 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
-        "w": 12,
-        "x": 12,
+        "w": 8,
+        "x": 8,
         "y": 18
       },
       "hiddenSeries": false,
@@ -801,6 +801,9 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pluginVersion": "7.1.0",
       "pointradius": 2,
@@ -881,7 +884,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:245",
           "format": "deckbytes",
           "label": "",
           "logBase": 1,
@@ -890,7 +892,171 @@
           "show": true
         },
         {
-          "$$hashKey": "object:246",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "InfluxDB_sitespeed",
+      "description": "Coach Performance Score (SCORE) given by SiteSpeed for the page. More about the Score https://www.sitespeed.io/documentation/coach/introduction/.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 18
+      },
+      "hiddenSeries": false,
+      "id": 8,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.0",
+      "pointradius": 2,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_test_name",
+          "groupBy": [
+            {
+              "params": [
+                "15m"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "test_name"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "coach_performance_score",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "median"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "test_name",
+              "operator": "=~",
+              "value": "/^$test_name$/"
+            }
+          ]
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "ok",
+          "fill": true,
+          "line": false,
+          "op": "lt",
+          "value": 100,
+          "yaxis": "left"
+        },
+        {
+          "colorMode": "warning",
+          "fill": true,
+          "line": false,
+          "op": "lt",
+          "value": 90,
+          "yaxis": "left"
+        },
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": false,
+          "op": "lt",
+          "value": 80,
+          "yaxis": "left"
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Coach Performance Score (SCORE)",
+      "tooltip": {
+        "shared": false,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percent",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -905,7 +1071,7 @@
       }
     }
   ],
-  "schemaVersion": 26,
+  "schemaVersion": 25,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -914,6 +1080,7 @@
         "allValue": null,
         "current": {
           "selected": true,
+          "tags": [],
           "text": "All",
           "value": [
             "$__all"
@@ -960,5 +1127,5 @@
   "timezone": "",
   "title": "GitLab Performance SiteSpeed results",
   "uid": "jH6yoWVMz",
-  "version": 22
+  "version": 1
 }
