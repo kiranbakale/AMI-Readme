@@ -11,6 +11,25 @@
 - name: Download secrets file
   shell: "gsutil cp gs://{{ gitlab_secrets_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
+  
+- name: Create Default Gitaly directory
+  file:
+    path: "/mnt/gitlab/default/repositories"
+    state: directory
+    mode: '2770'
+    owner: git
+    group: git
+  when: "'gitaly_primary' in group_names"
+  tags: reconfigure
+
+- name: Create Additional Gitaly directories
+  file:
+    path: "/mnt/gitlab/storage{{ gitaly_number }}/repositories"
+    state: directory
+    mode: '2770'
+    owner: git
+    group: git
+  tags: reconfigure
 
 - name: Reconfigure Gitaly
   shell: gitlab-ctl reconfigure
@@ -29,23 +48,6 @@
   shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_secrets_storage }}"
   tags: secrets
   run_once: true
-
-- name: Create Default Gitaly directory
-  file:
-    path: "/mnt/gitlab/default/repositories"
-    state: directory
-    mode: '0755'
-    owner: git
-    group: git
-  when: "'gitaly_primary' in group_names"
-
-- name: Create Additional Gitaly directories
-  file:
-    path: "/mnt/gitlab/storage{{ gitaly_number }}/repositories"
-    state: directory
-    mode: '0755'
-    owner: git
-    group: git
 
 - name: Create skip-auto-reconfigure file
   file:
