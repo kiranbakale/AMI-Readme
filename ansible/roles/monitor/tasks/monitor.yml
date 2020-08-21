@@ -9,6 +9,12 @@
   shell: "gsutil cp gs://{{ gitlab_secrets_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
 
+- name: Remove old GitLab Quality Grafana dashboards directory
+  file:
+    path: /opt/gitlab-quality/dashboards
+    state: absent
+  tags: reconfigure
+
 - name: Create GitLab Quality Grafana dashboards directory
   file:
     path: /opt/gitlab-quality/dashboards
