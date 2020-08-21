@@ -1,9 +1,5 @@
 ---
-- hosts: all:!ungrouped
-  roles:
-    - common
-  become: true
-
+- import_playbook: common.yml
 - import_playbook: haproxy.yml
 - import_playbook: gitlab-nfs.yml
 - import_playbook: consul.yml

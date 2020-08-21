@@ -27,9 +27,23 @@ This is achieved through getting VM info via the [`gcp_compute` Dynamic Inventor
 
 Playbooks & Roles are structured to cover GitLab nodes respectively. E.G. There are playbooks for `gitlab-rails`, `gitaly`, etc... You can see the current list under `ansible/roles/`.
 
-Examples of running Ansible to configure a GitLab instance can be found below. In this example we'll run all playbooks and roles against all nodes via the `all.yml` playbook:
+Examples of running Ansible to configure a GitLab instance can be found below.
+
+### Using ansible-playbook
+
+In this example we'll run all playbooks and roles against all nodes via the `all.yml` playbook:
 
 1. `cd` to the `ansible/` directory
 1. Create the Environment's inventory config under `ansible/inventories/` if it doesn't exist already. For convenience you should copy one of the existing projects inventories and update all files with the relevant info for the new environment.
 1. You then use the `ansible-playbook` command to run the playbook, specifying the intended environment's inventory as well - `ansible-playbook -i inventories/10k all.yml`
     ** If you only want to run a specific playbook & role against the respective VMs you switch out `all.yml` and replace it with the intended playbook, e.g. `gitlab-rails.yml`
+
+### Using bin/ansible-deployer (optional)
+
+The main difference with using the `ansible-deployer` script is that this command will run multiple playbooks in parallel. The script can either run all of the playbooks by default or a custom list as passed via the `-p` flag. It should be noted that due to the script running tasks in parallel, if any issues arise during setup then the playbooks would be better run sequentially via the [Using ansible-playbook](using-ansible-playbook) steps to help debug the problem(s).
+To run the script:
+
+1. Create the Environment's inventory config under `ansible/inventories/` if it doesn't exist already. For convenience you should copy one of the existing projects inventories and update all files with the relevant info for the new environment.
+1. You then use the `ansible-deployer` command to run the playbook, specifying the intended environment's inventory just the same as `ansible-playbook` - `./bin/ansible-deployer -i 10k`
+
+Due to running multiple commands in parallel the stdout of the ansible runner can get very messy, to alleviate this issue the stdout is suppressed and each playbook will create its own log file in `logs`.

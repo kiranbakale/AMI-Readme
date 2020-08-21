@@ -1,0 +1,5 @@
+---
+- hosts: all:!ungrouped
+  roles: 
+    - common
+  become: true
