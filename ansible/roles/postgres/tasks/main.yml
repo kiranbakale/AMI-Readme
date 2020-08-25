@@ -1,4 +1,14 @@
 ---
+- name: Check if Patroni was setup previously
+  stat:
+    path: /var/log/gitlab/patroni/current
+  register: patroni_check
+
+- name: Warn if attempting to use repmgr on a patroni setup
+  fail:
+    msg: Attempt detected to switch from Patroni to Repmgr. This is not supported and will result in data loss. Exiting...
+  when: patroni_check.stat.exists and (install_patroni is not defined or not install_patroni)
+
 - name: Setup GitLab config file
   template:
     src: templates/postgres.gitlab.rb.j2

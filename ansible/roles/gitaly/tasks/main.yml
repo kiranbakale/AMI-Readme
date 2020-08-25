@@ -12,6 +12,10 @@
   shell: "gsutil cp gs://{{ gitlab_secrets_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
   
+- name: Reconfigure Gitaly
+  shell: gitlab-ctl reconfigure
+  tags: reconfigure
+
 - name: Create Default Gitaly directory
   file:
     path: "/mnt/gitlab/default/repositories"
@@ -29,10 +33,6 @@
     mode: '2770'
     owner: git
     group: git
-  tags: reconfigure
-
-- name: Reconfigure Gitaly
-  shell: gitlab-ctl reconfigure
   tags: reconfigure
 
 - name: Restart Gitaly
