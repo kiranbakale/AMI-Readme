@@ -19,15 +19,21 @@
   file:
     path: /opt/gitlab-quality/dashboards
     state: directory
-  tags: reconfigure
+    mode: 0755
+  tags: 
+    - reconfigure
+    - dashboards
 
 - name: Copy GitLab Quality Grafana dashboards
   copy:
     src: "{{ item }}"
     dest: "/opt/gitlab-quality/dashboards"
+    mode: 0755
   with_fileglob:
     - files/*
-  tags: reconfigure
+  tags: 
+    - reconfigure
+    - dashboards
 
 - name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
@@ -44,6 +50,7 @@
   tags:
     - reconfigure
     - restart
+    - dashboards
 
 - name: Upload secrets file if missing
   shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_secrets_storage }}"
