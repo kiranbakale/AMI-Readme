@@ -31,6 +31,10 @@
       command: apt-get install -y {{ system_packages }}
       environment: 
         DEBIAN_FRONTEND: "noninteractive"
+      register: result
+      retries: 2
+      delay: 10
+      until: result is success
       tags: packages
 
     - name: Install python packages
