@@ -9,6 +9,7 @@ require 'open3'
 @root_dir = File.expand_path('../', __dir__)
 @ansible_dir = "#{@root_dir}/ansible"
 @log_dir = ""
+@tags = ""
 
 @opts = Optimist.options do
   banner "\nUsage: Ansible Deployer [options]"
@@ -17,11 +18,13 @@ require 'open3'
   opt :inventory, "Name of the Inventory file to use.", type: :string
   opt :environment_vars, "Semi-colon separated list of environment variables to pass to ansible-playbook command.", type: :string
   opt :playbooks, "Space separated list of playbooks to run, this will prevent all playbooks being run and only run the provided list.", type: :strings
+  opt :tags, "Comma separated list of tags to pass to the ansible-playbook command.", type: :string
   opt :help, 'Show help message'
 end
 
 def opt_check
   @opts[:environment_vars] = "ANSIBLE_HOST_KEY_CHECKING=False" if @opts[:environment_vars].nil?
+  @tags = "-t #{@opts[:tags]}" unless @opts[:tags].nil?
   return unless @opts[:inventory].nil?
 
   puts Rainbow("An Inventory file must be specified with the -i flag.").red
@@ -43,7 +46,7 @@ def run_playbooks(playbooks)
   playbooks.each do |playbook|
     threads << Thread.new do
       playbook_start_time = Time.now
-      _, _, status = Open3.capture3("(cd #{@ansible_dir} && #{@opts[:environment_vars]} ansible-playbook -i #{inventory_dir} #{@ansible_dir}/#{playbook}.yml) &> #{@log_dir}/#{playbook}.log")
+      _, _, status = Open3.capture3("(cd #{@ansible_dir} && #{@opts[:environment_vars]} ansible-playbook -i #{inventory_dir} #{@ansible_dir}/#{playbook}.yml #{@tags}) &> #{@log_dir}/#{playbook}.log")
       playbook_run_duration = ChronicDuration.output((Time.now - playbook_start_time).to_i, format: :long)
 
       if status.success?
