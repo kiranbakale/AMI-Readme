@@ -17,6 +17,7 @@ require 'open3'
   opt :inventory, "Name of the Inventory file to use.", type: :string
   opt :environment_vars, "Semi-colon separated list of environment variables to pass to ansible-playbook command.", type: :string
   opt :playbooks, "Space separated list of playbooks to run, this will prevent all playbooks being run and only run the provided list.", type: :strings
+  opt :tags, "Comma separated list of tags to pass to the ansible-playbook command.", type: :string
   opt :help, 'Show help message'
 end
 
@@ -34,6 +35,11 @@ def prepare_logs_dir
   FileUtils.mkdir_p @log_dir
 end
 
+def build_ansible_command(inventory, playbook)
+  command = "#{@opts[:environment_vars]} ansible-playbook -i #{inventory} #{@ansible_dir}/#{playbook}.yml"
+  command << " -t #{@opts[:tags]}" unless @opts[:tags].nil?
+end
+
 def run_playbooks(playbooks)
   inventory_dir = "#{@ansible_dir}/inventories/#{@opts[:inventory]}"
   threads = []
@@ -43,7 +49,9 @@ def run_playbooks(playbooks)
   playbooks.each do |playbook|
     threads << Thread.new do
       playbook_start_time = Time.now
-      _, _, status = Open3.capture3("(cd #{@ansible_dir} && #{@opts[:environment_vars]} ansible-playbook -i #{inventory_dir} #{@ansible_dir}/#{playbook}.yml) &> #{@log_dir}/#{playbook}.log")
+      ansible_command = build_ansible_command(inventory_dir, playbook)
+
+      _, _, status = Open3.capture3("(cd #{@ansible_dir} && #{ansible_command}) &> #{@log_dir}/#{playbook}.log")
       playbook_run_duration = ChronicDuration.output((Time.now - playbook_start_time).to_i, format: :long)
 
       if status.success?
