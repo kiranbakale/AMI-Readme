@@ -37,16 +37,6 @@
   tags: secrets
   run_once: true
 
-- name: Run vacuumdb
-  shell: /opt/gitlab/embedded/bin/vacuumdb --all --analyze-in-stages -h /var/opt/gitlab/postgresql
-  become: true
-  become_user: gitlab-psql
-  when: "'postgres_primary' in group_names"
-  tags:
-    - reconfigure
-    - restart
-    - vacuumdb
-
 - name: Show debug output of postgres cluster status
   block:
     - name: Debug capture output of 'gitlab-ctl repmgr cluster show'
