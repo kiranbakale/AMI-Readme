@@ -1,3 +1,14 @@
+
+- name: Wait for GitLab to be available
+  uri:
+    url: 'http://{{haproxy_external_int_ip}}/-/readiness'
+    timeout: 60
+  register: result
+  until: result.status == 200
+  retries: 20
+  delay: 5
+  tags: healthcheck
+
 - name: Configure Ultimate License
   import_tasks: license.yml
   when:
@@ -11,5 +22,9 @@
 
 - name: Configure Advanced Search with Elasticsearch
   import_tasks: elasticsearch.yml
-  when: "'elastic' in groups"
+  when: 
+    - "'elastic' in groups"
+    - gitlab_license_file is defined
+    - gitlab_license_plan is not defined
+
   tags: elasticsearch
