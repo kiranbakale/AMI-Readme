@@ -38,6 +38,8 @@ end
 def build_ansible_command(inventory, playbook)
   command = "#{@opts[:environment_vars]} ansible-playbook -i #{inventory} #{@ansible_dir}/#{playbook}.yml"
   command << " -t #{@opts[:tags]}" unless @opts[:tags].nil?
+
+  command
 end
 
 def run_playbooks(playbooks)

@@ -1,4 +1,3 @@
-
 - name: Wait for GitLab to be available
   uri:
     url: 'http://{{haproxy_external_int_ip}}/-/readiness'
@@ -26,5 +25,4 @@
     - "'elastic' in groups"
     - gitlab_license_file is defined
     - gitlab_license_plan is not defined
-
   tags: elasticsearch
