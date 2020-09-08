@@ -58,6 +58,7 @@ The builder requires several authentication keys to be generated and available i
 * [GCP Service Account](https://console.cloud.google.com/iam-admin/serviceaccounts) key
 * SSH key for [GCP OS Login](https://cloud.google.com/compute/docs/instances/managing-instance-access)
 * [GitLab license](https://about.gitlab.com/handbook/developer-onboarding/#working-on-gitlab-ee) key (Optional)
+* [GitLab initial root password](#gitlab-initial-root-password) (Optional)
 
 In this section we detail how to generate each.
 
@@ -100,6 +101,12 @@ A GitLab License key (Ultimate) may also be required depending on the GitLab fun
 To generate a key as a developer refer to the [handbook](https://about.gitlab.com/handbook/developer-onboarding/#working-on-gitlab-ee). An Ultimate license key is recommended to enable all features.
 
 After the key is generated you can point the builder to configure the environment with it by setting the `gitlab_license_file` variable to its relative path in the Ansible inventory `vars.yml` file.
+
+### GitLab Initial Root Password
+
+An initial password for the GitLab root user can be provided by creating a file with the name `gitlab_root_password` in the [`keys`](../keys) directory. The file should just contain the password to use and nothing else. If you would prefer a random password to be generated then you do not create this file, if the file is not present then a random 15 character password will be generated and the `gitlab_root_password` file will be created in the [`keys`](../keys) directory.
+
+This password will only take effect for new environment builds. For existing environments, the password used during the first build will still be used.
 
 ## Static External IP
 

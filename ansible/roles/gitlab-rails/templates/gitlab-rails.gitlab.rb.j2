@@ -18,7 +18,7 @@ unicorn['worker_processes'] = {{ gitlab_rails_unicorn_workers }}
 unicorn['listen'] = '0.0.0.0'
 {% endif %}
 
-gitlab_rails['initial_root_password'] = '{{ gitlab_admin_password }}'
+gitlab_rails['initial_root_password'] = '{{ gitlab_initial_root_password }}'
 gitlab_rails['gitlab_default_projects_features_builds'] = false
 gitlab_rails['gitlab_shell_ssh_port'] = 2222
 

@@ -8,7 +8,8 @@ gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('ht
 gitlab_secrets_storage: "{{ prefix }}-secrets-storage"
 gitlab_object_storage: "{{ prefix }}-object-storage"
 gitlab_admin_email: 'admin@example.com'
-gitlab_admin_password: '5iveL!fe'
+gitlab_password_file: '{% if gitlab_root_password_file is defined %}{{ gitlab_root_password_file }}{% else %}../keys/performance/gitlab_root_password{% endif %}'
+gitlab_initial_root_password: "{{ lookup('password', '{{ gitlab_password_file }} length=15') }}"
 system_packages: "aptitude curl openssh-server ca-certificates glances nano tzdata ack-grep tree python-pip python3-pip nfs-common postfix jq"
 serviceaccount_filename: "serviceaccount.json"
 serviceaccount_path: "/etc/gitlab/{{ serviceaccount_filename }}"
