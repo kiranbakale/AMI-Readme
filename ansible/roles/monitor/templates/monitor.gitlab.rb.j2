@@ -52,7 +52,7 @@ prometheus['scrape_configs'] = [
 
 # Enable Grafana
 grafana['enable'] = true
-grafana['admin_password'] = '{{ gitlab_admin_password }}'
+grafana['admin_password'] = '{{ gitlab_initial_root_password }}'
 grafana['disable_login_form'] = false
 grafana['env'] = {
   'GF_AUTH_ANONYMOUS_ENABLED' => true,
