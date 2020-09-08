@@ -1,3 +1,4 @@
+/*
 module "jaeger" {
   source = "../modules/gitlab_gcp_instance"
 
@@ -32,3 +33,4 @@ resource "google_compute_firewall" "jaeger" {
 output "jaeger" {
   value = module.jaeger
 }
+*/

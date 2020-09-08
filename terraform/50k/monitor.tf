@@ -7,8 +7,6 @@ module "monitor" {
 
   machine_type = "n1-highcpu-4"
   machine_image = "${var.machine_image}"
-
-  tags = ["${var.prefix}-web", "${var.prefix}-monitor"]
 }
 
 output "monitor" {
