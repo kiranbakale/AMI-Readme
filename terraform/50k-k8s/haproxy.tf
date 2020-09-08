@@ -14,22 +14,3 @@ module "haproxy_internal" {
 output "haproxy_internal" {
   value = module.haproxy_internal
 }
-
-resource "google_compute_firewall" "haproxy_stats" {
-  ## firewall rules enabling the load balancer health checks
-  name    = "${var.prefix}-haproxy-stats-firewall-rule"
-  network = "default"
-
-  description = "Allow HAProxy Stats access"
-
-  allow {
-    protocol = "icmp"
-  }
-
-  allow {
-    protocol = "tcp"
-    ports    = ["1936"]
-  }
-
-  target_tags   = ["${var.prefix}-haproxy"]
-}

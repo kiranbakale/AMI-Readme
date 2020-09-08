@@ -8,8 +8,6 @@ module "gitlab_rails" {
   machine_type = "n1-highcpu-32"
   machine_image = "${var.machine_image}"
   label_secondaries = true
-
-  tags = ["${var.prefix}-web", "${var.prefix}-ssh"]
 }
 
 resource "google_compute_instance_group" "gitlab_rails" {

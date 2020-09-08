@@ -11,8 +11,6 @@ module "elastic" {
   machine_type = "n1-highcpu-8"
   machine_image = "${var.machine_image}"
   label_secondaries = true
-
-  tags = ["${var.prefix}-web", "${var.prefix}-elastic"]
 }
 
 output "elastic" {

@@ -34,6 +34,24 @@ resource "google_compute_firewall" "gitlab_ssh" {
   target_tags   = ["${var.prefix}-ssh"]
 }
 
+resource "google_compute_firewall" "haproxy_stats" {
+  name    = "${var.prefix}-haproxy-stats-firewall-rule"
+  network = "default"
+
+  description = "Allow HAProxy Stats access"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["1936"]
+  }
+
+  target_tags   = ["${var.prefix}-haproxy"]
+}
+
 resource "google_compute_firewall" "monitor" {
   name    = "${var.prefix}-monitor-firewall-rule"
   network = "default"
