@@ -32,7 +32,7 @@
       environment: 
         DEBIAN_FRONTEND: "noninteractive"
       register: result
-      retries: 2
+      retries: 5
       delay: 10
       until: result is success
       tags: packages
@@ -115,6 +115,16 @@
       register: result
       retries: 1
       until: result is success
+      tags: packages
+
+    - name: Autoremove any unneeded packages
+      command: apt-get autoremove -y
+      register: result
+      retries: 1
+      until: result is success
+      tags: 
+        - packages
+        - autoremove
 
     - set_fact:
         common_performed: true
