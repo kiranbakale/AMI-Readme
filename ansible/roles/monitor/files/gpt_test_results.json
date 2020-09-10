@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1598017184449,
+  "iteration": 1599767199170,
   "links": [],
   "panels": [
     {
@@ -74,7 +74,7 @@
           "groupBy": [
             {
               "params": [
-                "1h"
+                "1m"
               ],
               "type": "time"
             },
@@ -121,6 +121,7 @@
       ],
       "thresholds": [
         {
+          "$$hashKey": "object:97",
           "colorMode": "warning",
           "fill": true,
           "line": true,
@@ -129,6 +130,7 @@
           "yaxis": "left"
         },
         {
+          "$$hashKey": "object:98",
           "colorMode": "ok",
           "fill": true,
           "line": true,
@@ -233,7 +235,7 @@
           "groupBy": [
             {
               "params": [
-                "1h"
+                "1m"
               ],
               "type": "time"
             },
@@ -280,6 +282,7 @@
       ],
       "thresholds": [
         {
+          "$$hashKey": "object:183",
           "colorMode": "warning",
           "fill": true,
           "fillColor": "rgba(50, 116, 217, 0.2)",
@@ -290,6 +293,7 @@
           "yaxis": "left"
         },
         {
+          "$$hashKey": "object:184",
           "colorMode": "ok",
           "fill": true,
           "line": true,
@@ -394,7 +398,7 @@
           "groupBy": [
             {
               "params": [
-                "1h"
+                "1m"
               ],
               "type": "time"
             },
@@ -536,7 +540,7 @@
           "groupBy": [
             {
               "params": [
-                "1h"
+                "1m"
               ],
               "type": "time"
             },
@@ -697,7 +701,7 @@
           "groupBy": [
             {
               "params": [
-                "1h"
+                "1m"
               ],
               "type": "time"
             },
@@ -744,6 +748,7 @@
       ],
       "thresholds": [
         {
+          "$$hashKey": "object:418",
           "colorMode": "ok",
           "fill": true,
           "line": true,
@@ -943,5 +948,5 @@
   "timezone": "",
   "title": "GPT Test results",
   "uid": "J0ysCtCWz",
-  "version": 2387
+  "version": 2382
 }
