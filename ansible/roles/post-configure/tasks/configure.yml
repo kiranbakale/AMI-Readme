@@ -14,7 +14,7 @@
     status_code: 200, 201
     body_format: json
 
-- name: Disable Rate Limits
+- name: Disable Limits
   uri:
     url: '{{ external_url_sanitised }}/api/v4/application/settings'
     method: PUT
@@ -23,6 +23,7 @@
     body:
       issues_create_limit: 0
       raw_blob_request_limit: 0
+      max_import_size: 0
     status_code: 200, 201
     body_format: json
 
