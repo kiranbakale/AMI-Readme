@@ -32,8 +32,8 @@
       environment: 
         DEBIAN_FRONTEND: "noninteractive"
       register: result
-      retries: 5
-      delay: 10
+      retries: 10
+      delay: 20
       until: result is success
       tags: packages
 
