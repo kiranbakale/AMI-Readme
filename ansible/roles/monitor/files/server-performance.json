@@ -15,6 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
+  "id": 15,
   "links": [],
   "panels": [
     {
@@ -699,7 +700,8 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, node_filesystem_size_bytes{device!~'rootfs'} - node_filesystem_free_bytes{device!~'rootfs'})  * on(instance) group_left(nodename)(node_uname_info)",
+          "expr": "(node_filesystem_size_bytes{device!~'rootfs'} - node_filesystem_free_bytes{device!~'rootfs'}) * on(instance) group_left(nodename)(node_uname_info) != 0",
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "{{nodename}}",
           "refId": "A"
@@ -2848,7 +2850,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:150",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -2857,7 +2858,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:151",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -3147,5 +3147,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 1
+  "version": 3
 }
