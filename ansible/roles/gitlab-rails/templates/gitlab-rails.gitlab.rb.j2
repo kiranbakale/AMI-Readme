@@ -7,14 +7,11 @@ registry_external_url '{{ external_url_sanitised }}:4567'
 unicorn['enable'] = false
 puma['enable'] = true
 
-puma['worker_processes'] = {{ gitlab_rails_puma_workers }}
-puma['max_threads'] = {{ gitlab_rails_puma_threads }}
 puma['listen'] = '0.0.0.0'
 {% elif gitlab_rails_webserver == 'unicorn' %} 
 unicorn['enable'] = true
 puma['enable'] = false
 
-unicorn['worker_processes'] = {{ gitlab_rails_unicorn_workers }}
 unicorn['listen'] = '0.0.0.0'
 {% endif %}
 
