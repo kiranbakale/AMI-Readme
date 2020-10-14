@@ -1,4 +1,4 @@
-gitaly_number: "{{ ansible_hostname | regex_search('\\d+$') }}"
+gitaly_number: "{{ ansible_hostname | regex_search('gitaly-(\\d+)', '\\1') | first }}"
 gitaly_ruby_num_workers: "{{ (ansible_processor_vcpus * 0.2) | round | int }}"
 
 swap_file_state: absent

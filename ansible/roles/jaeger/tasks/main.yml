@@ -1,4 +1,13 @@
 ---
+- name: Mount GitLab NFS
+  mount:
+    fstype: nfs
+    opts: defaults,nofail,lookupcache=positive
+    state: mounted
+    src: "{{ gitlab_nfs_int_ip }}:{{ gitlab_nfs_path }}"
+    path: "{{ gitlab_nfs_path }}"
+  tags: nfs
+
 - name: Remove old Jaeger container
   docker_container:
     name: jaeger
