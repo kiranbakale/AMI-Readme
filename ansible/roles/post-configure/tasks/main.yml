@@ -24,5 +24,5 @@
   when: 
     - "'elastic' in groups"
     - gitlab_license_file is defined
-    - gitlab_license_plan is not defined
+    - gitlab_license_plan is defined
   tags: elasticsearch

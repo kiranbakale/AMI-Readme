@@ -1,4 +1,13 @@
 ---
+- name: Mount GitLab NFS
+  mount:
+    fstype: nfs
+    opts: defaults,nofail,lookupcache=positive
+    state: mounted
+    src: "{{ gitlab_nfs_int_ip }}:{{ gitlab_nfs_path }}"
+    path: "{{ gitlab_nfs_path }}"
+  tags: nfs
+
 - name: Update Ulimit Open Files
   pam_limits:
     domain: '*'
@@ -13,8 +22,8 @@
     dest: /etc/gitlab/gitlab.rb
   tags: reconfigure
 
-- name: Download secrets file
-  shell: "gsutil cp gs://{{ gitlab_secrets_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
+- name: Copy secrets file from NFS
+  shell: "cp {{ gitlab_nfs_path }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
 
 - name: Reconfigure PgBouncer
@@ -33,8 +42,8 @@
     - reconfigure
     - restart
 
-- name: Upload secrets file if missing
-  shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_secrets_storage }}"
+- name: Copy secrets file to NFS if missing
+  shell: "cp -n /etc/gitlab/gitlab-secrets.json {{ gitlab_nfs_path }}"
   tags: secrets
   run_once: true
 

@@ -1,5 +1,6 @@
 all:
   vars:
+    cloud_provider: "gcp"
     prefix: "gitlab-qa-5k"
     project_name: "gitlab-qa-5k-0ee8fa"
     ansible_user: "sa_117413207790422770954"

@@ -23,11 +23,15 @@
     dest: /etc/gitlab/gitlab.rb
   tags: reconfigure
 
-- name: Download secrets files
-  shell: |
-    gsutil cp gs://{{ gitlab_secrets_storage }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true
-    gsutil cp gs://{{ gitlab_secrets_storage }}/{{ serviceaccount_filename }} {{ serviceaccount_path }} 2>/dev/null || true
+- name: Copy secrets file from NFS
+  shell: "cp {{ gitlab_nfs_path }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
+
+- name: Download GCP service account file
+  shell: "gsutil cp gs://{{ gitlab_secrets_storage }}/{{ serviceaccount_filename }} {{ serviceaccount_path }} 2>/dev/null || true"
+  tags: secrets
+  when: 
+    - cloud_provider == 'gcp'
 
 - name: Reconfigure Sidekiq
   shell: gitlab-ctl reconfigure
@@ -47,8 +51,8 @@
 #  shell: gitlab-ctl hup sidekiq
 #  tags: reload
 
-- name: Upload secrets file if missing
-  shell: "gsutil cp -n /etc/gitlab/gitlab-secrets.json gs://{{ gitlab_secrets_storage }}"
+- name: Copy secrets file to NFS if missing
+  shell: "cp -n /etc/gitlab/gitlab-secrets.json {{ gitlab_nfs_path }}"
   tags: secrets
   run_once: true
 

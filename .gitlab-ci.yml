@@ -56,7 +56,7 @@ ansible:
     - apk add -u --no-cache build-base openssh-client ca-certificates ansible tar py3-pip python3-dev
     - chmod 700 ansible
     - cd ansible
-    - pip3 install -U -r requirements/ansible-python-packages.txt
+    - pip3 install -r requirements/ansible-python-packages.txt
     - ansible-galaxy install -r requirements/ansible-roles.yml
     - ansible-playbook -i inventories/$ENVIRONMENT_NAME all.yml
   only:
