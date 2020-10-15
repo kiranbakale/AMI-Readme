@@ -7,6 +7,7 @@ module "haproxy_external" {
   node_count = 1
   
   subnet_id = azurerm_subnet.gitlab.id
+  vm_admin_username = "${var.vm_admin_username}"
   ssh_public_key_file_path = "${var.ssh_public_key_file_path}"
   size = "Standard_F2s_v2"
   external_ip_ids = ["${data.azurerm_public_ip.haproxy_external_ip.id}"]
@@ -32,6 +33,7 @@ module "haproxy_internal" {
   node_count = 1
   
   subnet_id = azurerm_subnet.gitlab.id
+  vm_admin_username = "${var.vm_admin_username}"
   ssh_public_key_file_path = "${var.ssh_public_key_file_path}"
   size = "Standard_F2s_v2"
 }

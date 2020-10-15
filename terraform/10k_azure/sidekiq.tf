@@ -7,6 +7,7 @@ module "sidekiq" {
   node_count = 4
 
   subnet_id = azurerm_subnet.gitlab.id
+  vm_admin_username = "${var.vm_admin_username}"
   ssh_public_key_file_path = "${var.ssh_public_key_file_path}"
   size = "Standard_D4s_v3"
 }

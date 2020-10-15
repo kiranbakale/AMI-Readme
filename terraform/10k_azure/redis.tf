@@ -7,6 +7,7 @@ module "redis_cache" {
   node_count = 3
 
   subnet_id = azurerm_subnet.gitlab.id
+  vm_admin_username = "${var.vm_admin_username}"
   ssh_public_key_file_path = "${var.ssh_public_key_file_path}"
   size = "Standard_D4s_v3"
   label_secondaries = true
@@ -25,6 +26,7 @@ module "redis_sentinel_cache" {
   node_count = 3
 
   subnet_id = azurerm_subnet.gitlab.id
+  vm_admin_username = "${var.vm_admin_username}"
   ssh_public_key_file_path = "${var.ssh_public_key_file_path}"
   size = "Standard_B1ms"
   label_secondaries = true
@@ -43,6 +45,7 @@ module "redis_persistent" {
   node_count = 3
 
   subnet_id = azurerm_subnet.gitlab.id
+  vm_admin_username = "${var.vm_admin_username}"
   ssh_public_key_file_path = "${var.ssh_public_key_file_path}"
   size = "Standard_D4s_v3"
   label_secondaries = true
@@ -61,6 +64,7 @@ module "redis_sentinel_persistent" {
   node_count = 3
 
   subnet_id = azurerm_subnet.gitlab.id
+  vm_admin_username = "${var.vm_admin_username}"
   ssh_public_key_file_path = "${var.ssh_public_key_file_path}"
   size = "Standard_B1ms"
   label_secondaries = true

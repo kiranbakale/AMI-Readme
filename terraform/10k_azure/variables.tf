@@ -14,6 +14,10 @@ variable "prefix" {
   default = "gitlab-qa-10k"
 }
 
+variable "vm_admin_username" {
+  default = "gitlab-qa"
+}
+
 variable "ssh_public_key_file_path" {
   default = "../../keys/performance/gitlab-qa-gcp-ssh.pub"
 }
