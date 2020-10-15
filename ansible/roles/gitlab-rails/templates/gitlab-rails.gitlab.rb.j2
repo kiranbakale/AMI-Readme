@@ -1,7 +1,7 @@
 roles ['application_role']
 
 external_url '{{ external_url_sanitised }}'
-registry_external_url '{{ external_url_sanitised }}:4567'
+registry['enable'] = false
 
 {% if gitlab_rails_webserver == 'puma' %}
 unicorn['enable'] = false
@@ -27,8 +27,6 @@ user['uid'] = 9000
 user['gid'] = 9000
 web_server['uid'] = 9001
 web_server['gid'] = 9001
-registry['uid'] = 9003
-registry['gid'] = 9003
 
 nginx['enable'] = true
 nginx['status']['options'] = {
@@ -46,7 +44,7 @@ nginx['status']['options'] = {
  gitlab_rails['object_store']['enabled'] = true
  gitlab_rails['object_store']['proxy_download'] = true
 
-### Provider-specific connection settings and registry
+### Provider-specific connection settings
 {% include 'object_storage.' + cloud_provider + '.rb.j2' %}
 
  gitlab_rails['object_store']['objects']['artifacts']['bucket'] = "{{ gitlab_object_storage }}"

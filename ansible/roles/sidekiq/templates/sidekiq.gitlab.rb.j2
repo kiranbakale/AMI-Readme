@@ -7,12 +7,11 @@ postgres_exporter['enable'] = false
 postgresql['enable'] = false
 prometheus['enable'] = false
 grafana['enable'] = false
+registry['enable'] = false
 redis['enable'] = false
 redis_exporter['enable'] = false
 unicorn['enable'] = false
 puma['enable'] = false
-
-registry_external_url '{{ external_url_sanitised }}:4567'
 
 # Sidekiq Config
 sidekiq['enable'] = true
@@ -24,8 +23,6 @@ user['uid'] = 9000
 user['gid'] = 9000
 web_server['uid'] = 9001
 web_server['gid'] = 9001
-registry['uid'] = 9003
-registry['gid'] = 9003
 
 # Monitoring
 consul['enable'] = true
@@ -43,7 +40,7 @@ node_exporter['listen_address'] = '0.0.0.0:9100'
  gitlab_rails['object_store']['enabled'] = true
  gitlab_rails['object_store']['proxy_download'] = true
 
-### Provider-specific connection settings and registry
+### Provider-specific connection settings
 {% include 'object_storage.' + cloud_provider + '.rb.j2' %}
 
  gitlab_rails['object_store']['objects']['artifacts']['bucket'] = "{{ gitlab_object_storage }}"
