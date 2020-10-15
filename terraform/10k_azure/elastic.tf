@@ -10,6 +10,7 @@ module "elastic" {
   disk_size = "512"
 
   subnet_id = azurerm_subnet.gitlab.id
+  vm_admin_username = "${var.vm_admin_username}"
   ssh_public_key_file_path = "${var.ssh_public_key_file_path}"
   size = "Standard_F16s_v2"
   label_secondaries = true

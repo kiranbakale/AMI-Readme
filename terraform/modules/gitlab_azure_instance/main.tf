@@ -37,10 +37,10 @@ resource "azurerm_linux_virtual_machine" "gitlab" {
   location = var.location
   size = var.size
   # The username of the local administrator used for the Virtual Machine.
-  admin_username = "gitlab-qa"
+  admin_username = var.vm_admin_username
 
   admin_ssh_key {
-    username   = "gitlab-qa"
+    username   = var.vm_admin_username
     public_key = file(var.ssh_public_key_file_path)
   }
 

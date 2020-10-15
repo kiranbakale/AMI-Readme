@@ -3,6 +3,7 @@ variable "node_type" {}
 variable "resource_group_name" {}
 variable "subnet_id" {}
 variable "ssh_public_key_file_path" {}
+variable "vm_admin_username" {}
 
 variable "location" {
   default = "eastus2"

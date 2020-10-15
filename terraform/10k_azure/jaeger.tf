@@ -7,6 +7,7 @@ module "jaeger" {
   node_count = 0
 
   subnet_id = azurerm_subnet.gitlab.id
+  vm_admin_username = "${var.vm_admin_username}"
   ssh_public_key_file_path = "${var.ssh_public_key_file_path}"
   size = "Standard_D2s_v3"
 }

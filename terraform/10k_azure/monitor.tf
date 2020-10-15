@@ -7,6 +7,7 @@ module "monitor" {
   node_count = 1
 
   subnet_id = azurerm_subnet.gitlab.id
+  vm_admin_username = "${var.vm_admin_username}"
   ssh_public_key_file_path = "${var.ssh_public_key_file_path}"
   size = "Standard_F4s_v2"
 }
