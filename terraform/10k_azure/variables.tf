@@ -19,7 +19,7 @@ variable "vm_admin_username" {
 }
 
 variable "ssh_public_key_file_path" {
-  default = "../../keys/performance/gitlab-qa-gcp-ssh.pub"
+  default = "../../keys/performance/gitlab-qa-ssh.pub"
 }
 
 variable "source_image_reference" {
