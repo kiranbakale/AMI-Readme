@@ -11,7 +11,7 @@ stages:
     - apk add -u --no-cache git-crypt
     - echo "$GIT_CRYPT_KEY" | base64 -d > /tmp/git-crypt.key
     - git-crypt unlock /tmp/git-crypt.key
-    - chmod 600 keys/performance/gitlab-qa-gcp-ssh
+    - chmod 600 keys/performance/gitlab-qa-ssh
   variables:
     GCLOUD_SERVICEACCOUNT_KEY_PATH: keys/performance/serviceaccount-$ENVIRONMENT_NAME.json
   only:
