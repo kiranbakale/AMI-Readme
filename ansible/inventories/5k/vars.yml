@@ -8,3 +8,4 @@ all:
     gitlab_license_file: "../keys/performance/Gitlab.gitlab-license"
     external_url: "http://5k.testbed.gitlab.net"
     redis_separated: false
+    install_patroni: true

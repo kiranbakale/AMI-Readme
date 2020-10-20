@@ -38,19 +38,19 @@ nginx['status']['options'] = {
 # Storage Config
 ## Object Storage - consolidated object storage configuration
 
- gitlab_rails['object_store']['enabled'] = true
- gitlab_rails['object_store']['proxy_download'] = true
+gitlab_rails['object_store']['enabled'] = true
+gitlab_rails['object_store']['proxy_download'] = true
 
 ### Provider-specific connection settings
 {% include 'object_storage.' + cloud_provider + '.rb.j2' %}
 
- gitlab_rails['object_store']['objects']['artifacts']['bucket'] = "{{ gitlab_object_storage }}"
- gitlab_rails['object_store']['objects']['external_diffs']['bucket'] = "{{ gitlab_object_storage }}"
- gitlab_rails['object_store']['objects']['lfs']['bucket'] = "{{ gitlab_object_storage }}"
- gitlab_rails['object_store']['objects']['uploads']['bucket'] = "{{ gitlab_object_storage }}"
- gitlab_rails['object_store']['objects']['packages']['bucket'] = "{{ gitlab_object_storage }}"
- gitlab_rails['object_store']['objects']['dependency_proxy']['bucket'] = "{{ gitlab_object_storage }}"
- gitlab_rails['object_store']['objects']['terraform_state']['bucket'] = "{{ gitlab_object_storage }}"
+gitlab_rails['object_store']['objects']['artifacts']['bucket'] = "{{ gitlab_object_storage }}"
+gitlab_rails['object_store']['objects']['external_diffs']['bucket'] = "{{ gitlab_object_storage }}"
+gitlab_rails['object_store']['objects']['lfs']['bucket'] = "{{ gitlab_object_storage }}"
+gitlab_rails['object_store']['objects']['uploads']['bucket'] = "{{ gitlab_object_storage }}"
+gitlab_rails['object_store']['objects']['packages']['bucket'] = "{{ gitlab_object_storage }}"
+gitlab_rails['object_store']['objects']['dependency_proxy']['bucket'] = "{{ gitlab_object_storage }}"
+gitlab_rails['object_store']['objects']['terraform_state']['bucket'] = "{{ gitlab_object_storage }}"
 
 ## NFS
 gitlab_rails['uploads_directory'] = '{{ gitlab_nfs_path }}/uploads'
