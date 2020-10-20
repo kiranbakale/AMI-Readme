@@ -54,8 +54,3 @@
     path: /etc/gitlab/skip-auto-reconfigure
     state: touch
     mode: u=rw,g=r,o=r
-
-- name: Copy secrets file to NFS if missing
-  shell: "cp -n /etc/gitlab/gitlab-secrets.json {{ gitlab_nfs_path }}"
-  tags: secrets
-  run_once: true
