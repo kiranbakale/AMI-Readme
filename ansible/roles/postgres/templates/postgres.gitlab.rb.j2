@@ -8,12 +8,16 @@ patroni['enable'] = true
 {% if groups['postgres'] | length > 1 %}
 patroni['postgresql']['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
 patroni['postgresql']['max_replication_slots'] = {{ (groups['postgres'] | length) + 1 }}
+
+patroni['use_pg_rewind'] = true
 {% endif %}
 
 {% else %}
 # Enable Repmgr
 postgresql['shared_preload_libraries'] = 'repmgr_funcs'
 repmgr['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
+postgresql['wal_level'] = 'replica'
+postgresql['hot_standby'] = 'on'
 
 {% if groups['postgres'] | length > 1 %}
 postgresql['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
@@ -25,16 +29,15 @@ repmgr['master_on_initialization'] = {{ postgres_repmgr_master }}
 
 # PostgreSQL configuration
 postgresql['listen_address'] = '0.0.0.0'
-postgresql['hot_standby'] = 'on'
-postgresql['wal_level'] = 'replica'
 postgresql['max_connections'] = 330
-
-gitlab_rails['auto_migrate'] = false
+postgresql['wal_log_hints'] = 'on'
 
 postgresql['pgbouncer_user_password'] = "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
 postgresql['sql_user_password'] = "{{ (postgres_password + 'gitlab') | md5 }}"
 
 postgresql['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
+
+gitlab_rails['auto_migrate'] = false
 
 # Consul
 consul['services'] = %w(postgresql)
