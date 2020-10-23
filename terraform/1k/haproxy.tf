@@ -7,7 +7,7 @@ module "haproxy_external" {
   
   machine_type = "n1-highcpu-2"
   machine_image = "${var.machine_image}"
-  external_ips = ["35.196.18.43"]
+  external_ips = ["35.194.64.140"]
 
   tags = ["${var.prefix}-web", "${var.prefix}-ssh", "${var.prefix}-haproxy", "${var.prefix}-monitor"]
 }
