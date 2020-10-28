@@ -5,6 +5,7 @@ all:
     project_name: "gitlab-qa-10k-cd77c7"
     ansible_user: "sa_118232495832059550504"
     ansible_ssh_private_key_file: "../keys/performance/gitlab-qa-ssh"
+    service_account_file: "../keys/performance/serviceaccount-10k.json"
     gitlab_license_file: "../keys/performance/Gitlab.gitlab-license"
     external_url: "http://10k.testbed.gitlab.net"
     install_patroni: true

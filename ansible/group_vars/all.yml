@@ -5,7 +5,6 @@ swap_swappiness: '10'
 gitlab_deb_package: "{{ lookup('env','GITLAB_DEB_PACKAGE')}}" # Optional if installing by direct deb
 gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default('gitlab-ee', true) }}"
 gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh', true) }}"
-gitlab_secrets_storage: "{{ prefix }}-secrets-storage"
 gitlab_object_storage: "{{ prefix }}-object-storage"
 gitlab_admin_email: 'admin@example.com'
 gitlab_password_file: '{% if gitlab_root_password_file is defined %}{{ gitlab_root_password_file }}{% else %}../keys/performance/gitlab_root_password{% endif %}'

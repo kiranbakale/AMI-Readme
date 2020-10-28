@@ -5,5 +5,6 @@ all:
     project_name: "gitlab-qa-50k-193234"
     ansible_user: "sa_108219765658867996347"
     ansible_ssh_private_key_file: "../keys/performance/gitlab-qa-ssh"
+    service_account_file: "../keys/performance/serviceaccount-50k.json"
     gitlab_license_file: "../keys/performance/Gitlab.gitlab-license"
     external_url: "http://50k.testbed.gitlab.net"
