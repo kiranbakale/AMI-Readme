@@ -1,19 +1,3 @@
-# Secrets Bucket
-module "gitlab_secrets_storage" {
-  source = "../modules/gitlab_gcp_storage_bucket"
-
-  prefix = "${var.prefix}"
-  project = "${var.project}"
-
-  storage_type = "secrets"
-}
-
-resource "google_storage_bucket_object" "serviceaccount" {
-  name = "serviceaccount.json"
-  source = var.credentials_file
-  bucket = module.gitlab_secrets_storage.name
-}
-
 # LFS Bucket
 module "gitlab_lfs_storage" {
   source = "../modules/gitlab_gcp_storage_bucket"
