@@ -5,7 +5,7 @@
     body:
       grant_type: password
       username: '{{ gitlab_admin_email }}'
-      password: '{{ gitlab_initial_root_password }}'
+      password: '{{ gitlab_root_password }}'
     status_code: 200
     body_format: json
     return_content: yes

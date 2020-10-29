@@ -8,21 +8,31 @@
   delay: 5
   tags: healthcheck
 
-- name: Configure Ultimate License
-  import_tasks: license.yml
-  when:
-    - gitlab_license_file is defined
-    - gitlab_license_plan is not defined
-  tags: license
+- name: GitLab Root Password check
+  fail:
+    msg: "GitLab Root Password is empty. Post Configure steps will be skipped. Refer to docs for more info - https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/master/docs/prep_toolkit.md#gitlab-initial-root-password "
+  ignore_errors: yes
+  when: gitlab_root_password == ''
+  tags: config-check
 
-- name: Configure any required settings via API
-  import_tasks: configure.yml
-  tags: reconfigure
+- name: Do GitLab post configuration
+  block:
+    - name: Configure Ultimate License
+      import_tasks: license.yml
+      when:
+        - gitlab_license_file is defined
+        - gitlab_license_plan is not defined
+      tags: license
 
-- name: Configure Advanced Search with Elasticsearch
-  import_tasks: elasticsearch.yml
-  when: 
-    - "'elastic' in groups"
-    - gitlab_license_file is defined
-    - gitlab_license_plan is defined
-  tags: elasticsearch
+    - name: Configure any required settings via API
+      import_tasks: configure.yml
+      tags: reconfigure
+
+    - name: Configure Advanced Search with Elasticsearch
+      import_tasks: elasticsearch.yml
+      when: 
+        - "'elastic' in groups"
+        - gitlab_license_file is defined
+        - gitlab_license_plan is defined
+      tags: elasticsearch
+  when: gitlab_root_password != ''

@@ -1,9 +1,0 @@
-all:
-  vars:
-    prefix: "gitlab-qa-50k-k8s"
-    project_name: "gitlab-qa-50k-k8s-799916"
-    ansible_user: "sa_102383608907735752952"
-    ansible_ssh_private_key_file: "../keys/performance/gitlab-qa-ssh"
-    service_account_file: "../keys/performance/serviceaccount-50k-k8s.json"
-    gitlab_license_file: "../keys/performance/Gitlab.gitlab-license"
-    external_url: "http://104.196.169.158"
