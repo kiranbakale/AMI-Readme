@@ -15,7 +15,9 @@ puma['enable'] = false
 unicorn['listen'] = '0.0.0.0'
 {% endif %}
 
-gitlab_rails['initial_root_password'] = '{{ gitlab_initial_root_password }}'
+{% if gitlab_root_password != '' %}
+gitlab_rails['initial_root_password'] = "{{ gitlab_root_password }}"
+{% endif %}
 gitlab_rails['gitlab_default_projects_features_builds'] = false
 gitlab_rails['gitlab_shell_ssh_port'] = 2222
 

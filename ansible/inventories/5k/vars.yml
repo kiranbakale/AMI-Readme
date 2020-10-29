@@ -6,6 +6,7 @@ all:
     ansible_user: "sa_117413207790422770954"
     ansible_ssh_private_key_file: "../keys/performance/gitlab-qa-ssh"
     service_account_file: "../keys/performance/serviceaccount-5k.json"
+    gitlab_root_password_file: "../keys/performance/gitlab_root_password"
     gitlab_license_file: "../keys/performance/Gitlab.gitlab-license"
     external_url: "http://5k.testbed.gitlab.net"
     redis_separated: false

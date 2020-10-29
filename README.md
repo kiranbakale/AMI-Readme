@@ -1,33 +1,36 @@
-# GitLab Performance Environment Builder
+# GitLab Environment Toolkit
 
-Terraform and Ansible toolkit for building and updating GitLab [Reference Architecture](https://docs.gitlab.com/ee/administration/scaling/#reference-architectures) environments (latest version) on Google Cloud Platform (GCP) or Microsoft Azure for large scale setup validation and performance testing.
+The GitLab Environment Toolkit (`GET`), formally known as the Performance Environment Builder, is a collection of tools with a simple purpose - to deploy [GitLab Omnibus](https://gitlab.com/gitlab-org/omnibus-gitlab) at scale as per our [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures).
 
-At the time of writing we have the following environments that are currently being built and maintained with this toolkit:
+Created and maintained by the Quality team the Toolkit, built with [Terraform](https://www.terraform.io/) and [Ansible](https://docs.ansible.com/ansible/latest/index.html), supports provisioning and configuring machines respectively with the following features:
 
-* [1k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-1k-0917a1)
-* [2k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-2k-ca9f9e)
-* [5k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-5k-0ee8fa)
-* [10k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-10k-cd77c7)
-* [25k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-25k-bc38fe)
-* [50k](https://console.cloud.google.com/home/dashboard?project=gitlab-qa-50k-193234)
+* Support for deploying all [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) sizes dynamically from [1k](https://docs.gitlab.com/ee/administration/reference_architectures/1k_users.html) to [50k](https://docs.gitlab.com/ee/administration/reference_architectures/50k_users.html).
+* GCP and Azure cloud provider support
+* Upgrades
+* Release and nightly Omnibus builds support
+* Advanced search with Elasticsearch
+* Load Balancing and Monitoring setup
+* Support for new and incoming features such as Patroni
 
-The Toolkit consists of two industry standard tools:
+Originally built to help define the official [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) and enable performance testing against those with the [GPT](https://gitlab.com/gitlab-org/quality/performance), the Quality team use this Toolkit pretty much daily and it's now open to be used by other teams \ users to enable them to deploy GitLab at scale in the recommended way.
 
-* [Terraform](https://www.terraform.io/) - To provision environment infrastructure
-* [Ansible](https://docs.ansible.com/ansible/latest/index.html) - To configure GitLab on the provisioned infrastructure
+## How It Works
+
+At a high level the Toolkit is designed to be as simple as possible. A high level overview of how it works is as follows:
+
+* Machines are provisioned as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) with Terraform with Labels added to each for Ansible to then identify
+* Ansible, through identifying each machine by its Labels, will intelligently go through them in the GitLab install order. On each it will install and configure Omnibus to setup the intended component as required. Further to this Ansible will ignore missing machines allow for more dynamic setups (e.g. an environment without Elasticsearch, or a small 1k environment with a smaller amount of nodes).
+* Additional tasks are also performed as required such as setting GitLab config through API, Load Balancer setup and additional monitoring setup.
 
 ## Documentation
-
-GCP:
 
 * [Preparing the toolkit](docs/prep_toolkit.md)
 * [Building environment(s)](docs/building_environments.md)
 
-Azure:
+## Issues or Feature Requests
 
-* [Preparing the toolkit](docs/azure/prep_toolkit.md)
-* [Building environment(s)](docs/azure/building_environments.md)
+Everyone is welcome to open new Issues or Feature Requests (or to upvote existing ones) over on our tracker [here](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues).
 
-## Raising Issues
+Work in progress can also be seen on our [board](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/boards).
 
-For any Issues with the builder please raise them on our main [performance project](https://gitlab.com/gitlab-org/quality/performance/-/issues).
+To contact the team you can also reach out on Slack [#gitlab-environment-toolkit](https://gitlab.slack.com/archives/C01DE8TA545) channel.
