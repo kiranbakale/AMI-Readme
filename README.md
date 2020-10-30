@@ -1,6 +1,6 @@
 # GitLab Environment Toolkit
 
-The GitLab Environment Toolkit (`GET`), formally known as the Performance Environment Builder, is a collection of tools with a simple purpose - to deploy [GitLab Omnibus](https://gitlab.com/gitlab-org/omnibus-gitlab) at scale as per our [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures).
+The GitLab Environment Toolkit (`GET`), formerly known as the Performance Environment Builder, is a collection of tools with a simple purpose - to deploy [GitLab Omnibus](https://gitlab.com/gitlab-org/omnibus-gitlab) at scale as per our [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures).
 
 Created and maintained by the Quality team the Toolkit, built with [Terraform](https://www.terraform.io/) and [Ansible](https://docs.ansible.com/ansible/latest/index.html), supports provisioning and configuring machines respectively with the following features:
 
