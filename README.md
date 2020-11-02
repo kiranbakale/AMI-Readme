@@ -12,6 +12,8 @@ Created and maintained by the Quality team the Toolkit, built with [Terraform](h
 * Load Balancing and Monitoring setup
 * Support for new and incoming features such as Patroni
 
+**Note:** At this time the GitLab Environment Toolkit supports GitLab version `13.2.0` and upwards. To get support for older versions please let us know by upvoting the [related issue](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/35).
+
 Originally built to help define the official [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) and enable performance testing against those with the [GPT](https://gitlab.com/gitlab-org/quality/performance), the Quality team use this Toolkit pretty much daily and it's now open to be used by other teams to enable them to deploy GitLab at scale in the recommended way.
 
 ## How It Works
