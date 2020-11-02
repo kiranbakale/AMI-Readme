@@ -12,7 +12,7 @@ Created and maintained by the Quality team the Toolkit, built with [Terraform](h
 * Load Balancing and Monitoring setup
 * Support for new and incoming features such as Patroni
 
-Originally built to help define the official [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) and enable performance testing against those with the [GPT](https://gitlab.com/gitlab-org/quality/performance), the Quality team use this Toolkit pretty much daily and it's now open to be used by other teams \ users to enable them to deploy GitLab at scale in the recommended way.
+Originally built to help define the official [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) and enable performance testing against those with the [GPT](https://gitlab.com/gitlab-org/quality/performance), the Quality team use this Toolkit pretty much daily and it's now open to be used by other teams to enable them to deploy GitLab at scale in the recommended way.
 
 ## How It Works
 
@@ -31,6 +31,9 @@ At a high level the Toolkit is designed to be as simple as possible. A high leve
 
 Everyone is welcome to open new Issues or Feature Requests (or to upvote existing ones) over on our tracker [here](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues).
 
-Work in progress can also be seen on our [board](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/boards).
+Further information:
 
-To contact the team you can also reach out on Slack [#gitlab-environment-toolkit](https://gitlab.slack.com/archives/C01DE8TA545) channel.
+* Work in progress can also be seen on our [board](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/boards).
+* Issues relating directly to the [Reference Architectures can be found in their own project](https://gitlab.com/gitlab-org/quality/reference-architectures).
+* Issues relating to the previous incarnation of Performance Environment Builder can be found on the old generic performance issue tracker [here](https://gitlab.com/gitlab-org/quality/performance/-/issues?scope=all&utf8=%E2%9C%93&state=closed).
+* To contact the team you can also reach out on Slack [#gitlab-environment-toolkit](https://gitlab.slack.com/archives/C01DE8TA545) channel.
