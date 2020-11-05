@@ -14,6 +14,7 @@ patroni['use_pg_rewind'] = true
 
 {% else %}
 # Enable Repmgr
+postgresql['version'] = 11
 postgresql['shared_preload_libraries'] = 'repmgr_funcs'
 repmgr['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 postgresql['wal_level'] = 'replica'
