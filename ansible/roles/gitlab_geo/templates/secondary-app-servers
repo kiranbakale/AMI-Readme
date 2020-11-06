@@ -1,0 +1,6 @@
+geo_secondary_role['enable'] = true
+gitlab_rails['geo_node_name'] = 'Secondary Site'
+
+geo_secondary['db_host'] = '{{ geo_secondary_site_postgres_int_ip }}'
+geo_secondary['db_password'] = '{{ postgres_password }}'
+geo_postgresql['enable'] = false

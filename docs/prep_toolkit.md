@@ -2,6 +2,7 @@
 
 * [**GitLab Environment Toolkit - Preparing the toolkit**](prep_toolkit.md)
 * [GitLab Environment Toolkit - Building environments](building_environments.md)
+* [GitLab Environment Toolkit - Building an environment with Geo](building_geo_environments.md)
 
 To start using the Toolkit to build environments you'll need to do some required preparation for the toolkit both locally as well as on your target cloud provider.
 

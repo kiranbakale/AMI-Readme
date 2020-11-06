@@ -1,0 +1,12 @@
+- name: Primary App Servers - Add new config
+  blockinfile:
+    path: /etc/gitlab/gitlab.rb
+    block: "{{ lookup('template', '../templates/primary-app-servers') }}"
+    marker: "# {mark} geo config block - primary-app-servers"
+
+- name: Primary App Servers - Run gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
+
+- name: Primary App Servers - Set geo primary node
+  command: gitlab-ctl set-geo-primary-node
+  when: "'gitlab_rails_primary' in group_names"

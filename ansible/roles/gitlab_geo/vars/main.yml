@@ -1,0 +1,10 @@
+geo_secondary_site_postgres_int_ip: "{{ (groups['geo_secondary_site_postgres_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) }}"
+geo_primary_site_postgres_int_ip: "{{ (groups['geo_primary_site_postgres_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) }}"
+
+geo_secondary_site_rails_primary_int_ip: "{{ (groups['geo_secondary_site_gitlab_rails_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) }}"
+geo_secondary_site_rails_secondary_int_ips: "{{ (groups['geo_secondary_site_gitlab_rails_secondary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP')) | list }}"
+
+geo_secondary_site_sidekiq_primary_int_ip: "{{ (groups['geo_secondary_site_sidekiq_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) }}"
+geo_secondary_site_sidekiq_secondary_int_ips: "{{ (groups['geo_secondary_site_sidekiq_secondary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP')) | list }}"
+
+tracking_db_md5_auth: "['{{ geo_secondary_site_rails_primary_int_ip }}/32'{% for ip in geo_secondary_site_rails_secondary_int_ips %}, '{{ ip }}/32'{% endfor %}, '{{ geo_secondary_site_sidekiq_primary_int_ip }}/32'{% for ip in geo_secondary_site_sidekiq_secondary_int_ips %}, '{{ ip }}/32'{% endfor %}]"

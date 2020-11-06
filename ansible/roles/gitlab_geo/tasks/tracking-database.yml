@@ -1,0 +1,25 @@
+- name: Secondary Geo - Add new config
+  blockinfile:
+    path: /etc/gitlab/gitlab.rb
+    block: "{{ lookup('template', '../templates/secondary-geo') }}"
+    marker: "# {mark} geo config block - secondary-geo"
+
+- name: Tracking Database - Add new config
+  blockinfile:
+    path: /etc/gitlab/gitlab.rb
+    block: "{{ lookup('template', '../templates/tracking-database') }}"
+    marker: "# {mark} geo config block - tracking-database"
+
+- name: Tracking Database - Run gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
+
+- name: Tracking Database - Run gitlab-ctl restart for updates to take effect
+  command: gitlab-ctl restart
+
+# Workaround
+# The first reconfigure enables the Geo PostgreSQL database but doesn't set the password for the gitlab_geo user.
+# The password is only being set as part of the second reconfigure.
+# GitLab Issue: https://gitlab.com/gitlab-org/gitlab/-/issues/276216
+# GET Issue to remove: https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/37
+- name: Tracking Database - Run gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure

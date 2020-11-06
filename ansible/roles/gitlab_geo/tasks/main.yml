@@ -1,0 +1,94 @@
+- name: Configure the primary app servers
+  import_tasks: primary-app-servers.yml
+  tags:
+    - primary-app-servers
+    - primary
+  when:
+    - "'gitlab_rails' in group_names or 'sidekiq' in group_names"
+    - "'geo_primary_site' in group_names"
+
+- name: Set Geo database replication password
+  import_tasks: set-geo-replication-password.yml
+  tags:
+    - set-geo-replication-password
+    - primary
+  when:
+    - "'postgres_primary' in group_names"
+    - "'geo_primary_site' in group_names"
+
+- name: Configure the primary database
+  import_tasks: primary-database.yml
+  tags:
+    - primary-database
+    - primary
+  when:
+    - "'postgres_primary' in group_names"
+    - "'geo_primary_site' in group_names"
+
+- name: Copy gitlab-secrets from primary site to secondary
+  import_tasks: copy-secrets.yml
+  tags: copy-secrets
+
+- name: Configure the secondary database
+  import_tasks: secondary-database.yml
+  tags:
+    - secondary-database
+    - secondary
+  when:
+    - "'postgres_primary' in group_names"
+    - "'geo_secondary_site' in group_names"
+
+- name: Configure the main read-only replica PostgreSQL database on the secondary node
+  import_tasks: read-only-replica.yml
+  tags:
+    - read-only-replica
+    - secondary
+  when:
+    - "'postgres_primary' in group_names"
+    - "'geo_secondary_site' in group_names"
+
+- name: Configure the tracking database on the secondary node
+  import_tasks: tracking-database.yml
+  tags:
+    - tracking-database
+    - secondary
+  when:
+    - "'postgres_primary' in group_names"
+    - "'geo_secondary_site' in group_names"
+
+- name: Configure the frontend application servers on the secondary node
+  import_tasks: secondary-frontend-app-servers.yml
+  tags:
+    - secondary-frontend-app-servers
+    - secondary
+  when:
+    - "'gitlab_rails' in group_names"
+    - "'geo_secondary_site' in group_names"
+
+- name: Add secondary Geo site to tracking database
+  import_tasks: add-site-name.yml
+  tags:
+    - add-site-name
+    - secondary
+  when:
+    - "'gitlab_rails_primary' in group_names"
+    - "'geo_primary_site' in group_names"
+
+- name: Configure backend application servers
+  import_tasks: secondary-backend-app-servers.yml
+  tags:
+    - secondary-backend-app-servers
+    - secondary
+  when:
+    - "'sidekiq' in group_names"
+    - "'geo_secondary_site' in group_names"
+
+- name: Trust secondary applications
+  import_tasks: set-trusted.yml
+  tags:
+    - primary
+    - secondary
+    - set-trusted
+  when:
+    - "'gitlab_rails_primary' in group_names"
+    - "'geo_primary_site' in group_names"
