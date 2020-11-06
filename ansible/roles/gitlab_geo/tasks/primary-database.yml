@@ -1,0 +1,14 @@
+- name: Primary Database - Add new settings
+  blockinfile:
+    path: /etc/gitlab/gitlab.rb
+    block: "{{ lookup('template', '../templates/primary-database') }}"
+    marker: "# {mark} geo config block - primary-database"
+
+- name: Primary Database - Run gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
+
+- name: Primary Database - Restart Postgres
+  command: gitlab-ctl restart
+
+- name: Primary Database - Fetch psql certificate
+  fetch: src=~gitlab-psql/data/server.crt dest=tmp/ flat=yes

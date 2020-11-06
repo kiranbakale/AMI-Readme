@@ -39,3 +39,11 @@ variable "scopes" {
   type = list(string)
   default = []
 }
+
+variable "geo_site" {
+  default = null
+}
+
+variable "geo_deployment" {
+  default = null
+}

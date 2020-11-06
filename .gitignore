@@ -6,3 +6,4 @@ secrets.auto.tfvars
 .terraform/
 logs/
 ansible/test.yml
+ansible/tmp/

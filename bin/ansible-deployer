@@ -9,6 +9,7 @@ require 'open3'
 @root_dir = File.expand_path('../', __dir__)
 @ansible_dir = "#{@root_dir}/ansible"
 @log_dir = ""
+@tags = ""
 
 @opts = Optimist.options do
   banner "\nUsage: Ansible Deployer [options]"
@@ -23,6 +24,7 @@ end
 
 def opt_check
   @opts[:environment_vars] = "ANSIBLE_HOST_KEY_CHECKING=False" if @opts[:environment_vars].nil?
+  @tags = "-t #{@opts[:tags]}" unless @opts[:tags].nil?
   return unless @opts[:inventory].nil?
 
   puts Rainbow("An Inventory file must be specified with the -i flag.").red

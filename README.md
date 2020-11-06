@@ -37,6 +37,7 @@ Note that the Toolkit currently has the following requirements (with related iss
 
 * [Preparing the toolkit](docs/prep_toolkit.md)
 * [Building environment(s)](docs/building_environments.md)
+* [Building environments with Geo](docs/building_geo_environments.md)
 
 ## Issues or Feature Requests
 

@@ -1,0 +1,30 @@
+- name: Copy psql certificate
+  copy: src=tmp/server.crt dest=/tmp/
+
+- name: Install certificate
+  command: |
+    install -D \
+            -o gitlab-psql \
+            -g gitlab-psql \
+            -m 0400 \
+            -T /tmp/server.crt ~gitlab-psql/.postgresql/root.crt
+
+- name: Secondary database - Add new config
+  blockinfile:
+    path: /etc/gitlab/gitlab.rb
+    block: "{{ lookup('template', '../templates/secondary-geo') }}"
+    marker: "# {mark} geo config block - secondary-geo"
+
+- name: Secondary Database - Run gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
+
+- name: Secondary Database - Restart Postgres
+  command: gitlab-ctl restart
+
+- name: Secondary Database - Replicate geo database
+  expect:
+    command: gitlab-ctl replicate-geo-database --slot-name={{ inventory_hostname | regex_replace("-", "_") }} --host={{ geo_primary_site_postgres_int_ip }} --force
+    responses:
+      (.*)Confirmation: "replicate"
+      (.*)Enter the password for gitlab_replicator@(.*): "{{ postgres_password }}"
+    timeout: 60

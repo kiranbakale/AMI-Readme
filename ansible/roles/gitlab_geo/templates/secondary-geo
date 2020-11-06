@@ -1,0 +1,2 @@
+geo_secondary_role['enable'] = true
+gitlab_rails['geo_node_name'] = 'Secondary Site'

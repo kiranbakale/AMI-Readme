@@ -1,0 +1,3 @@
+geo_primary_role['enable'] = true
+
+postgresql['md5_auth_cidr_addresses'] = ['{{ ansible_default_ipv4.address }}/32', '{{ geo_secondary_site_postgres_int_ip }}/32']
