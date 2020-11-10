@@ -7,11 +7,11 @@ variable "credentials_file" {
 }
 
 variable "region" {
-  default = "us-east4"
+  default = "us-east1"
 }
 
 variable "zone" {
-  default = "us-east4-a"
+  default = "us-east1-c"
 }
 
 variable "prefix" {
@@ -21,4 +21,3 @@ variable "prefix" {
 variable "machine_image" {
   default = "ubuntu-1804-lts"
 }
-
