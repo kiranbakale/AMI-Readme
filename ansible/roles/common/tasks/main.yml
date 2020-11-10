@@ -24,7 +24,9 @@
       tags: reconfigure
 
     - name: Update apt package information
-      command: apt-get update
+      command:
+        cmd: apt-get update
+        warn: false
       tags: packages
 
     - name: Install system packages
