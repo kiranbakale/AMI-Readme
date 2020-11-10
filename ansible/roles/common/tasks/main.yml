@@ -1,6 +1,9 @@
 ---
 - name: Perform Common Tasks
   block:
+    - name: Populate service facts
+      service_facts:
+
     - name: Add GitLab repository GPG key
       apt_key:
         url: https://gitlab-org.gitlab.io/omnibus-gitlab/gitlab_new_gpg.key
@@ -45,6 +48,7 @@
         extra_args: --upgrade
       tags: packages
 
+    # https://about.gitlab.com/blog/2019/11/15/tracking-down-missing-tcp-keepalives/
     - name: Configure TCP keepalive settings
       sysctl:
         name: net.ipv4.tcp_keepalive_time
@@ -127,6 +131,22 @@
       tags: 
         - packages
         - autoremove
+
+    - name: Configure sshguard whitelist if present
+      block:
+        - name: Add internal cidr to sshguard whitelist
+          lineinfile:
+            path: /etc/sshguard/whitelist
+            regexp: "^{{ internal_cidr_16 }}$"
+            line: "{{ internal_cidr_16 }}"
+          register: sshguard_whitelist
+
+        - name: Restart sshguard
+          service:
+            name: sshguard
+            state: restarted
+          when: sshguard_whitelist.changed
+      when: "'sshguard' in services"
 
     - set_fact:
         common_performed: true
