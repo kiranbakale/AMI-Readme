@@ -15,6 +15,7 @@ serviceaccount_path: "/etc/gitlab/{{ serviceaccount_filename }}"
 external_url_sanitised: '{{ external_url | regex_replace("\\/$", "") }}'
 internal_ip_lookup: { gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0]}
 external_ip_lookup: { gcp: ['networkInterfaces', 0, 'accessConfigs', 0, 'natIP'], azure: ['public_ipv4_addresses', 0] }
+internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
 
 # Consul
 consul_int_ips: "{{ (groups['consul'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'consul' in groups else [] }}"
@@ -36,7 +37,6 @@ gitaly_token: 'abc123secret'
 # GitLab NFS
 gitlab_nfs_int_ip: "{{ groups['gitlab_nfs'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') }}"
 gitlab_nfs_path: "/mnt/gitlab-nfs"
-gitlab_nfs_export_cidr: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
 
 # GitLab Monitor
 monitor_int_ip: "{{ (groups['monitor'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'monitor' in groups else '' }}"
