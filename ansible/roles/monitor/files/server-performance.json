@@ -25,7 +25,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -56,9 +57,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -154,7 +156,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -185,9 +188,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -270,7 +274,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -301,9 +306,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -370,7 +376,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -402,9 +409,10 @@
       "links": [],
       "nullPointMode": "null as zero",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -514,7 +522,8 @@
       "error": false,
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -546,9 +555,10 @@
       "maxPerRow": 2,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -656,7 +666,8 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -687,9 +698,10 @@
       "links": [],
       "nullPointMode": "null as zero",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -755,7 +767,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -786,9 +799,10 @@
       "links": [],
       "nullPointMode": "null as zero",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -814,9 +828,10 @@
           "refId": "A"
         },
         {
-          "expr": "(irate(node_disk_io_time_seconds_total[5m])) * on(instance) group_left(nodename) (node_uname_info)",
+          "expr": "(rate(node_disk_io_time_seconds_total[1m])) * on(instance) group_left(nodename) (node_uname_info)",
           "format": "time_series",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Disk Usage Time - {{nodename}}",
           "refId": "D"
@@ -842,6 +857,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:205",
           "format": "s",
           "label": null,
           "logBase": 1,
@@ -850,6 +866,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:206",
           "format": "decbytes",
           "label": null,
           "logBase": 1,
@@ -871,7 +888,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -902,14 +920,16 @@
       "links": [],
       "nullPointMode": "null as zero",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
       "seriesOverrides": [
         {
+          "$$hashKey": "object:39",
           "alias": "/Disk IOPS Read Rate.*/i",
           "transform": "negative-Y"
         }
@@ -919,18 +939,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(sum by (instance) (irate(node_disk_reads_completed_total[2m]))) * on(instance) group_left(nodename) (node_uname_info)",
+          "expr": "(sum by (instance) (rate(node_disk_reads_completed_total[1m]))) * on(instance) group_left(nodename) (node_uname_info)",
           "format": "time_series",
           "hide": false,
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Disk IOPS Read Rate - {{nodename}}",
           "refId": "C"
         },
         {
-          "expr": "(sum by (instance) (irate(node_disk_writes_completed_total[2m]))) * on(instance) group_left(nodename) (node_uname_info)",
+          "expr": "(sum by (instance) (rate(node_disk_writes_completed_total[1m]))) * on(instance) group_left(nodename) (node_uname_info)",
           "format": "time_series",
           "hide": false,
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Disk IOPS Write Rate - {{nodename}}",
           "refId": "D"
         }
@@ -955,6 +977,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:46",
           "format": "iops",
           "label": "IOPS read (-) / write (+)",
           "logBase": 1,
@@ -963,6 +986,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:47",
           "format": "decbytes",
           "label": null,
           "logBase": 1,
@@ -984,7 +1008,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -1015,14 +1040,16 @@
       "links": [],
       "nullPointMode": "null as zero",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
       "seriesOverrides": [
         {
+          "$$hashKey": "object:148",
           "alias": "/Disk Read Rate.*/i",
           "transform": "negative-Y"
         }
@@ -1032,18 +1059,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(sum by (instance) (irate(node_disk_read_bytes_total[2m]))) * on(instance) group_left(nodename) (node_uname_info)",
+          "expr": "(sum by (instance) (rate(node_disk_read_bytes_total[1m]))) * on(instance) group_left(nodename) (node_uname_info)",
           "format": "time_series",
           "hide": false,
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Disk Read Rate - {{nodename}}",
           "refId": "C"
         },
         {
-          "expr": "(sum by (instance) (irate(node_disk_written_bytes_total[2m]))) * on(instance) group_left(nodename) (node_uname_info)",
+          "expr": "(sum by (instance) (rate(node_disk_written_bytes_total[1m]))) * on(instance) group_left(nodename) (node_uname_info)",
           "format": "time_series",
           "hide": false,
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Disk Write Rate - {{nodename}}",
           "refId": "D"
         }
@@ -1068,6 +1097,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:155",
           "format": "decbytes",
           "label": "Bytes read (-) / write (+)",
           "logBase": 1,
@@ -1076,6 +1106,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:156",
           "format": "decbytes",
           "label": null,
           "logBase": 1,
@@ -1097,7 +1128,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -1129,9 +1161,10 @@
       "maxPerRow": 6,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1207,7 +1240,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -1238,9 +1272,10 @@
       "links": [],
       "nullPointMode": "null as zero",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1306,7 +1341,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -1337,9 +1373,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1427,7 +1464,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -1458,10 +1496,10 @@
       "links": [],
       "nullPointMode": "null as zero",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "6.3.5",
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1552,7 +1590,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -1582,10 +1621,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1659,7 +1696,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -1689,10 +1727,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1784,7 +1820,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -1814,10 +1851,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1883,7 +1918,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -1913,10 +1949,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1982,7 +2016,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -2012,10 +2047,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2082,7 +2115,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -2112,10 +2146,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2182,7 +2214,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -2212,10 +2245,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2288,7 +2319,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -2318,10 +2350,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2387,7 +2417,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -2417,10 +2448,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2487,7 +2516,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -2517,10 +2547,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2586,7 +2614,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -2616,10 +2645,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2689,7 +2716,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -2721,10 +2749,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2791,7 +2817,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -2823,10 +2850,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null as zero",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2894,7 +2919,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -2925,10 +2951,8 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3007,7 +3031,8 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -3038,10 +3063,8 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.3.1",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -3124,7 +3147,7 @@
     }
   ],
   "refresh": "10s",
-  "schemaVersion": 25,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -3162,5 +3185,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 4
+  "version": 8
 }
