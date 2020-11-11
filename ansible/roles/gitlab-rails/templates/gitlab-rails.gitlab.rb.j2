@@ -8,7 +8,7 @@ unicorn['enable'] = false
 puma['enable'] = true
 
 puma['listen'] = '0.0.0.0'
-{% elif gitlab_rails_webserver == 'unicorn' %} 
+{% elif gitlab_rails_webserver == 'unicorn' %}
 unicorn['enable'] = true
 puma['enable'] = false
 
@@ -67,7 +67,7 @@ consul['configuration'] = {
 {% if 'consul' not in groups and 'gitlab_rails_primary' in group_names %}
   server: true,
   bootstrap_expect: 1    # Non HA leader
-{% endif -%} 
+{% endif -%}
 }
 consul['monitoring_service_discovery'] = true
 
@@ -76,14 +76,14 @@ gitlab_rails['monitoring_whitelist'] = ['0.0.0.0/0']
 gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
 
 # Components Config
-{% if 'redis' in groups %} 
+{% if 'redis' in groups %}
 ## Redis - Combined Queues (External)
 {% if groups['redis'] | length == 1 %}
 ### Redis Single Node
 gitlab_rails['redis_port'] = '{{ redis_port }}'
 gitlab_rails['redis_host'] = '{{ redis_primary_int_ip }}'
 gitlab_rails['redis_password'] = '{{ redis_password }}'
-{% elif groups['redis'] | length > 1 %} 
+{% elif groups['redis'] | length > 1 %}
 ### Redis Multi Node
 redis['master_name'] = 'gitlab-redis'
 redis['master_password'] = '{{ redis_password }}'
@@ -147,7 +147,7 @@ gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['db_host'] = '{{ postgres_primary_int_ip }}'
 gitlab_rails['db_port'] = '{{ postgres_primary_int_port }}'
 gitlab_rails['auto_migrate'] = {{ (true if 'gitlab_rails_primary' in group_names else false) | lower }}
-{% else %} 
+{% else %}
 gitlab_rails['db_host'] = "{{ haproxy_internal_int_ip }}"
 gitlab_rails['db_port'] = 6432
 gitlab_rails['auto_migrate'] = false
@@ -157,6 +157,9 @@ gitlab_rails['auto_migrate'] = false
 postgresql['enable'] = true
 postgresql['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 postgres_exporter['listen_address'] = '0.0.0.0:9187'
+{% if postgres_version is defined %}
+postgresql['version'] = {{ postgres_version }}
+{% endif %}
 {% endif %}
 
 {% if 'monitor' in groups %}
