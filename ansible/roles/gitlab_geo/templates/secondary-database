@@ -1,0 +1,13 @@
+geo_secondary_role['enable'] = true
+gitlab_rails['geo_node_name'] = 'Secondary Site'
+
+gitlab_rails['db_password'] = "{{ postgres_password }}"
+
+postgresql['sql_user_password'] = "{{ (postgres_password + 'gitlab') | md5 }}"
+postgresql['listen_address'] = "{{ geo_secondary_site_postgres_int_ip }}"
+
+postgresql['md5_auth_cidr_addresses'] = ['127.0.0.1/32', '{{ geo_secondary_site_postgres_int_ip }}/32']
+
+{% if 'gitlab_rails' in group_names %}
+postgresql['max_connections'] = 330
+{% endif %}

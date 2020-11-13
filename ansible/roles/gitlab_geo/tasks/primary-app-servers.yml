@@ -9,4 +9,4 @@
 
 - name: Primary App Servers - Set geo primary node
   command: gitlab-ctl set-geo-primary-node
-  when: "'gitlab_rails_primary' in group_names"
+  when: ('gitlab_rails_primary' in group_names)

@@ -1,3 +1,12 @@
+- name: Secondary database - Stop puma/sidekiq for single node
+  block:
+    - name: Secondary Database - Run gitlab-ctl stop puma
+      command: gitlab-ctl stop puma
+
+    - name: Secondary Database - Run gitlab-ctl stop sidekiq
+      command: gitlab-ctl stop sidekiq
+  when: ('gitlab_rails' in group_names and 'postgres_primary' not in groups)
+
 - name: Copy psql certificate
   copy:
     src: tmp/server.crt
@@ -15,8 +24,8 @@
 - name: Secondary database - Add new config
   blockinfile:
     path: /etc/gitlab/gitlab.rb
-    block: "{{ lookup('template', '../templates/secondary-geo') }}"
-    marker: "# {mark} geo config block - secondary-geo"
+    block: "{{ lookup('template', '../templates/secondary-database') }}"
+    marker: "# {mark} geo config block - secondary-database"
 
 - name: Secondary Database - Run gitlab-ctl reconfigure
   command: gitlab-ctl reconfigure

@@ -2,17 +2,13 @@ plugin: gcp_compute
 projects:
   - gitlab-qa-distribution-35632a
 filters:
-  - labels.gitlab_geo_deployment = geo-test
+  - labels.gitlab_node_prefix = geo-10k-1k-primary
 keyed_groups:
   - key: labels.gitlab_node_type
     separator: ''
   - key: labels.gitlab_node_level
     separator: ''
   - key: labels.gitlab_node_prefix
-    separator: ''
-  - key: labels.gitlab_geo_site
-    separator: ''
-  - key: labels.gitlab_geo_full_role
     separator: ''
 scopes:
   - https://www.googleapis.com/auth/compute

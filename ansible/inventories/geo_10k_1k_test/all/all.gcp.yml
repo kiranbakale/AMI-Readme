@@ -1,0 +1,27 @@
+plugin: gcp_compute
+projects:
+  - gitlab-qa-distribution-35632a
+filters:
+  - labels.gitlab_geo_deployment = geo-10k-1k-test
+keyed_groups:
+  - key: labels.gitlab_node_type
+    separator: ''
+  - key: labels.gitlab_node_level
+    separator: ''
+  - key: labels.gitlab_node_prefix
+    separator: ''
+  - key: labels.gitlab_geo_site
+    separator: ''
+  - key: labels.gitlab_geo_full_role
+    separator: ''
+scopes:
+  - https://www.googleapis.com/auth/compute
+service_account_file: ../keys/distribution/gitlab-qa-distribution-sa.json
+auth_kind: serviceaccount
+hostnames:
+  # List host by name instead of the default public ip
+  - name
+compose:
+  # Set an inventory parameter to use the Public IP address to connect to the host
+  # For Private ip use "networkInterfaces[0].networkIP"
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP
