@@ -8,7 +8,7 @@
       apt_key:
         url: https://gitlab-org.gitlab.io/omnibus-gitlab/gitlab_new_gpg.key
         state: present
-      when: 
+      when:
         - omnibus_node
 
     - name: Get GitLab json config file stats if it exists
@@ -34,7 +34,7 @@
 
     - name: Install system packages
       command: apt-get install -y {{ system_packages }}
-      environment: 
+      environment:
         DEBIAN_FRONTEND: "noninteractive"
       register: result
       retries: 20
@@ -89,14 +89,14 @@
       retries: 2
       delay: 10
       until: result is success
-      when: 
+      when:
         - omnibus_node
 
     - name: Install GitLab repo package
       command: apt-get install {{ gitlab_repo_package }} -y --allow-downgrades
       args:
         warn: false
-      when: 
+      when:
         - omnibus_node
         - gitlab_repo_package != ''
         - gitlab_deb_package == ''
@@ -106,6 +106,19 @@
       when:
         - omnibus_node
         - gitlab_deb_package != ''
+
+    # Allows GET to run on a node after running gitlab-ctl cleanse. The current behavior of cleanse is to
+    # delete the /etc/gitlab folder, this will cause an error when we try to copy files to the dir.
+    # GitLab Issue: https://gitlab.com/gitlab-org/omnibus-gitlab/-/issues/5814
+    - name: Ensures /etc/gitlab dir exists with correct permissions
+      file:
+        path: /etc/gitlab
+        owner: root
+        group: root
+        mode:  0775
+        state: directory
+      when:
+        - omnibus_node
 
     - name: Lock GitLab package updates
       command: apt-mark hold gitlab-ee
@@ -128,7 +141,7 @@
       register: result
       retries: 1
       until: result is success
-      tags: 
+      tags:
         - packages
         - autoremove
 
