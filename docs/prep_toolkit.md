@@ -1,8 +1,8 @@
 # Preparing the toolkit
 
-* [**GitLab Environment Toolkit - Preparing the toolkit**](prep_toolkit.md)
-* [GitLab Environment Toolkit - Building environments](building_environments.md)
-* [GitLab Environment Toolkit - Building an environment with Geo](building_geo_environments.md)
+- [**GitLab Environment Toolkit - Preparing the toolkit**](prep_toolkit.md)
+- [GitLab Environment Toolkit - Building environments](building_environments.md)
+- [GitLab Environment Toolkit - Building an environment with Geo](building_geo_environments.md)
 
 To start using the Toolkit to build environments you'll need to do some required preparation for the toolkit both locally as well as on your target cloud provider.
 
@@ -26,13 +26,13 @@ Once you know what version to install proceed to Install Terraform on your runne
 
 Install Ansible on your runner machine as per the official [Ansible Install Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
 
-Ansible also requires some dependencies to be installed. You'll need to install python package dependencies on your machine along with some community roles from [Ansible Galaxy](https://galaxy.ansible.com/home) that allow for convenient deployment of some third party applications.
+Ansible also requires some dependencies to be installed. You'll need to install Python package dependencies on your machine along with some community roles from [Ansible Galaxy](https://galaxy.ansible.com/home) that allow for convenient deployment of some third party applications.
 
 To do this you only have to run the following before running Ansible:
 
 1. `cd` to the `ansible/` directory
-1. First install the python packages via `pip install -r requirements/ansible-python-packages.txt`.
-    * Note it's expected you already have Python and its package manager pip installed. Additionally you may have the Python3 version of pip installed, `pip3`, and you should replace accordingly.
+1. First install the Python packages via `pip install -r requirements/ansible-python-packages.txt`.
+    - Note it's expected you already have Python and its package manager pip installed. Additionally you may have the Python3 version of pip installed, `pip3`, and you should replace accordingly.
 1. Next, run the following command to install the roles - `ansible-galaxy install -r requirements/ansible-roles.yml`
 1. Note that if you're on a Mac OS machine you also need to install `gnu-tar` - `brew install gnu-tar`
 
@@ -40,8 +40,8 @@ To do this you only have to run the following before running Ansible:
 
 Then for the target Cloud Platform we recommend installing the following tools respectively:
 
-* GCP - [GCloud Install Guide](https://cloud.google.com/sdk/install)
-* Azure - [Azure CLI Install Guide](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+- GCP - [GCloud Install Guide](https://cloud.google.com/sdk/install)
+- Azure - [Azure CLI Install Guide](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 
 ## 2. Setup Resources on target Cloud Platform
 
@@ -69,15 +69,15 @@ For each Cloud Platform the above can be done as follows:
 
 ### GCP - Create Storage Bucket
 
-* Create a standard GCP storage bucket on the intended environment's project for its Terraform State named as `<env_short_name>-terraform-state`. For example the 10k's State bucket is named `10k-terraform-state`.
-* Configure the environment's `main.tf` to point to and use this bucket as Terraform's State location. For example here is the 10k environment's [main.tf](terraform/10k/main.tf) file with backend config.
-  * If the Terraform config files are yet to created for the environment then this can wait until the next stage where this will be done.
+- Create a standard GCP storage bucket on the intended environment's project for its Terraform State named as `<env_short_name>-terraform-state`. For example the 10k's State bucket is named `10k-terraform-state`.
+- Configure the environment's `main.tf` to point to and use this bucket as Terraform's State location. For example here is the 10k environment's [main.tf](terraform/10k/main.tf) file with backend config.
+  - If the Terraform config files are yet to created for the environment then this can wait until the next stage where this will be done.
 
 ### Azure - Create Storage Blob Container
 
-* [Create a storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create) in the intended environment's resource group. The default settings in the Azure are fine to use, however the name field should only contain lowercase letters and numbers. For example the 10k's storage account is named `gitlab10k`.
-* Create a [blob container](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blobs-introduction#containers) named as `<env_short_name>-terraform-state` under the new storage account to store Terraform State. For example, `10k-terraform-state`.
-* Configure the environment's `main.tf` to point to and use this container as Terraform's State location. This is an example of the 10k environment's `main.tf` file with backend config:
+- [Create a storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create) in the intended environment's resource group. The default settings in the Azure are fine to use, however the name field should only contain lowercase letters and numbers. For example the 10k's storage account is named `gitlab10k`.
+- Create a [blob container](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blobs-introduction#containers) named as `<env_short_name>-terraform-state` under the new storage account to store Terraform State. For example, `10k-terraform-state`.
+- Configure the environment's `main.tf` to point to and use this container as Terraform's State location. This is an example of the 10k environment's `main.tf` file with backend config:
 
 <details>
 <summary><code>main.tf</code> example</summary>
@@ -114,24 +114,24 @@ terraform {
 
 </details>
 
-* Specify storage account name in `storage_account_name` variable in the environment's `variables.tf` file. For example here is the 10k environment's [variables.tf](../../terraform/10k_azure/variables.tf) file with backend config.
-* Specify storage account name in `azure_storage_account_name` variable in the environment's Ansible inventory `object-storage.yml` file. For example, here is the Azure-based 10k environment's [object-storage.yml](../../ansible/inventories/10k_azure/object-storage.yml) file.
-* Copy Access key from the Storage account and save it under `azure_storage_access_key` variable in the environment's Ansible inventory `object-storage.yml` file. For example, here is the Azure-based 10k environment's [object-storage.yml](../../ansible/inventories/10k_azure/object-storage.yml) file.
-  * This file should be **encrypted** when the Azure credentials will be in place, this procedure will be covered [below](#azure-service-principal).
+- Specify storage account name in `storage_account_name` variable in the environment's `variables.tf` file. For example here is the 10k environment's [variables.tf](../../terraform/10k_azure/variables.tf) file with backend config.
+- Specify storage account name in `azure_storage_account_name` variable in the environment's Ansible inventory `object-storage.yml` file. For example, here is the Azure-based 10k environment's [object-storage.yml](../../ansible/inventories/10k_azure/object-storage.yml) file.
+- Copy Access key from the Storage account and save it under `azure_storage_access_key` variable in the environment's Ansible inventory `object-storage.yml` file. For example, here is the Azure-based 10k environment's [object-storage.yml](../../ansible/inventories/10k_azure/object-storage.yml) file.
+  - This file should be **encrypted** when the Azure credentials will be in place, this procedure will be covered [below](#azure-service-principal).
 
 ## 4. Generate Cloud Authentication Keys
 
 Each of the tools in this Toolkit, and even GitLab itself, all require authentication to be configured in various formats as follows:
 
-* Direct authentication with Cloud Platform (Terraform, Ansible) *GCP Service Account, Azure Service Principal*
-* SSH authentication with machines (Ansible) *SSH Key*
-* Authentication with Cloud Platform Object Storage (Terraform, GitLab) *GCP Service Account, Azure Storage Account*
+- Direct authentication with Cloud Platform (Terraform, Ansible) *GCP Service Account, Azure Service Principal*
+- SSH authentication with machines (Ansible) *SSH Key*
+- Authentication with Cloud Platform Object Storage (Terraform, GitLab) *GCP Service Account, Azure Storage Account*
 
 To complicate matters further sometimes these keys need to be given in a specific type or format depending on tool, Cloud Platform or GitLab requirements. As such you should be aware of the following notes before proceeding:
 
-* Where possible we attempt to make this as streamlined as we can but it's still an involved process as security typically involves various steps.
-* As a general focus we try to go with the default of authentication keys being added to the [`keys`](../keys) folder in an encrypted fashion (Quality are currently using [`git-crypt`](https://github.com/AGWA/git-crypt) for this, if you wish to commit your own keys please reach out and we can configure the encryption for you).
-* As mentioned above in some cases keys are required directly in config files depending on the tool. When this is required it will be called out in these docs and these files are recommended to be encrypted as well.
+- Where possible we attempt to make this as streamlined as we can but it's still an involved process as security typically involves various steps.
+- As a general focus we try to go with the default of authentication keys being added to the [`keys`](../keys) folder in an encrypted fashion (Quality are currently using [`git-crypt`](https://github.com/AGWA/git-crypt) for this, if you wish to commit your own keys please reach out and we can configure the encryption for you).
+- As mentioned above in some cases keys are required directly in config files depending on the tool. When this is required it will be called out in these docs and these files are recommended to be encrypted as well.
 
 **Note: [We're looking at improving this process where possible in the future](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/22)**
 
@@ -141,31 +141,31 @@ To configure everything as detailed above, follow the steps below for the select
 
 Each environment is recommended to have its own project on GCP. Terraform and Ansible both require a [Service Account](https://cloud.google.com/iam/docs/understanding-service-accounts) to be created. If this is a new project without a Service Account then you can create one as follows if you're an admin:
 
-* Head to the [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) page. Be sure to check that the correct project is selected in the dropdown at the top of the page.
-* Proceed to create an account with a descriptive name like `gitlab-qa` with the `Compute OS Admin Login`, `Editor` and `Kubernetes Engine Admin` roles.
-* On the last page there will be the option to generate a key. Select to do so with the `JSON` format and save it a reachable location that will be configured in both of the tools later.
-  * If this is for a live environment the key should be added to the [`keys`](../keys) directory in this project with a reasonable naming convention like `serviceaccount-<project-name>.json`, e.g. `serviceaccount-10k.json`.
-* Finish creating the user
+- Head to the [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) page. Be sure to check that the correct project is selected in the dropdown at the top of the page.
+- Proceed to create an account with a descriptive name like `gitlab-qa` with the `Compute OS Admin Login`, `Editor` and `Kubernetes Engine Admin` roles.
+- On the last page there will be the option to generate a key. Select to do so with the `JSON` format and save it a reachable location that will be configured in both of the tools later.
+  - If this is for a live environment the key should be added to the [`keys`](../keys) directory in this project with a reasonable naming convention like `serviceaccount-<project-name>.json`, e.g. `serviceaccount-10k.json`.
+- Finish creating the user
 
 Once the key has been saved you need to configure both Terraform and Ansible to use it as follows:
 
-* Terraform - For each environment there are two places the Service Account key location needs to be configured, one for the State object storage and the other for the main GCP access. Configure the location in the `main.tf` and `variables.tf` files with the relative path. For `variables.tf` the path should be saved under the variable name of `credentials_file`.
-  * As an example you can refer to the current environment projects. For example the 10k environment's [`main.tf`](../terraform/10k/main.tf) and [`variables.tf`](../terraform/10k/variables.tf) files.
-* Ansible - The files relative path location only needs to be configured once for each environment in the inventory file under the variable name `service_account_file`.
-  * For example, look to the 10k Ansible inventory file, [`10k.gcp.yml`](../ansible/inventories/10k/10k.gcp.yml).
+- Terraform - For each environment there are two places the Service Account key location needs to be configured, one for the State object storage and the other for the main GCP access. Configure the location in the `main.tf` and `variables.tf` files with the relative path. For `variables.tf` the path should be saved under the variable name of `credentials_file`.
+  - As an example you can refer to the current environment projects. For example the 10k environment's [`main.tf`](../terraform/10k/main.tf) and [`variables.tf`](../terraform/10k/variables.tf) files.
+- Ansible - The files relative path location only needs to be configured once for each environment in the inventory file under the variable name `service_account_file`.
+  - For example, look to the 10k Ansible inventory file, [`10k.gcp.yml`](../ansible/inventories/10k/10k.gcp.yml).
 
 #### Configuring SSH OS Login for Service Account
 
 In addition to creating the Service Account and saving the key we need to also setup [OS Login](https://cloud.google.com/compute/docs/instances/managing-instance-access) for the account to enable SSH access to the created VMs on GCP, which is required by Ansible. This is done as follows:
 
-* Generate an SSH key pair and store it in the [`keys`](../keys) directory.
-* With the `gcloud` command set it to point at your intended project - `gcloud config set project <project-id>`
-  * Note that you need the project's ID here and not the name. This can be seen on the home page for the project.
-* Now login as the Service Account user via it's key created in the last step - `gcloud auth activate-service-account --key-file=serviceaccount-<project-name>.json`
-* Proceed to add the project's public SSH key to the account - `gcloud compute os-login ssh-keys add --key-file=<SSH key>.pub`
-* Next you need to get the actual Service Account SSH username for Ansible. This is in the format of `sa_<ID>`. The ID can be obtained with the following command - `gcloud iam service-accounts describe gitlab-qa@<project-id>.iam.gserviceaccount.com --format='value(uniqueId)'`. Take the ID from this command and add it to the Ansible inventory `vars.yml` file under `ansible_user` in the format `sa_<ID>`.
-* For the private key this also needs to be configured in the Ansible inventory `vars.yml` by setting `ansible_ssh_private_key_file` to the relative path of the private key file.
-* Finish with switching gcloud back to be logged in as your account `gcloud config set account <account-email-address>`
+- Generate an SSH key pair and store it in the [`keys`](../keys) directory.
+- With the `gcloud` command set it to point at your intended project - `gcloud config set project <project-id>`
+  - Note that you need the project's ID here and not the name. This can be seen on the home page for the project.
+- Now login as the Service Account user via it's key created in the last step - `gcloud auth activate-service-account --key-file=serviceaccount-<project-name>.json`
+- Proceed to add the project's public SSH key to the account - `gcloud compute os-login ssh-keys add --key-file=<SSH key>.pub`
+- Next you need to get the actual Service Account SSH username for Ansible. This is in the format of `sa_<ID>`. The ID can be obtained with the following command - `gcloud iam service-accounts describe gitlab-qa@<project-id>.iam.gserviceaccount.com --format='value(uniqueId)'`. Take the ID from this command and add it to the Ansible inventory `vars.yml` file under `ansible_user` in the format `sa_<ID>`.
+- For the private key this also needs to be configured in the Ansible inventory `vars.yml` by setting `ansible_ssh_private_key_file` to the relative path of the private key file.
+- Finish with switching gcloud back to be logged in as your account `gcloud config set account <account-email-address>`
 
 SSH access should now be enabled on the Service Account and this will be used by Ansible to SSH login each VM. More info on OS Login and how it's configured can be found [here](https://alex.dzyoba.com/blog/gcp-ansible-service-account/).
 
@@ -177,8 +177,8 @@ Currently, Quality are using an existing Service Principal that was created by I
 
 Once the Service Principal credentials have been acquired, you need to configure both Terraform and Ansible to use it as follows. Due to restrictions in both tools requiring the secrets to be hardcoded in their respective credentials files we strongly recommend **encrypting** these files before committing:
 
-* Terraform - For each environment there are two places the Service Principal credentials needs to be configured, one for the State object storage and the other for the main Azure access. Configure the credentials in the `main.tf` path.
-  * As an example you can refer to the current environment projects. For example the 10k environment's `main.tf`:
+- Terraform - For each environment there are two places the Service Principal credentials needs to be configured, one for the State object storage and the other for the main Azure access. Configure the credentials in the `main.tf` path.
+  - As an example you can refer to the current environment projects. For example the 10k environment's `main.tf`:
 
 <details>
 <summary><code>main.tf</code> example</summary>
@@ -215,8 +215,8 @@ terraform {
 
 </details>
 
-* Ansible - The Service Principal credentials need to be configured once for each environment in the inventory file.
-  * For example, look to the 10k Ansible inventory file, `10k.azure_rm.yml`:
+- Ansible - The Service Principal credentials need to be configured once for each environment in the inventory file.
+  - For example, look to the 10k Ansible inventory file, `10k.azure_rm.yml`:
 
 <details>
 <summary><code>10k.azure_rm.yml</code> example</summary>
@@ -245,24 +245,24 @@ keyed_groups:
 
 </details>
 
-* With all secrets in place, we need to [encrypt](https://github.com/AGWA/git-crypt) the data to protect secret data. Ensure that `.gitattributes` file exists both under the environment's Terraform directory and Ansible inventory directory.
-* Run `git-crypt status` and ensure that [`main.tf`](../../terraform/10k_azure/main.tf), [`10k.azure_rm.yml`](../ansible/inventories/10k_azure/10k.azure_rm.yml) and [`object-storage.yml`](../../ansible/inventories/10k_azure/object-storage.yml) are encrypted.
+- With all secrets in place, we need to [encrypt](https://github.com/AGWA/git-crypt) the data to protect secret data. Ensure that `.gitattributes` file exists both under the environment's Terraform directory and Ansible inventory directory.
+- Run `git-crypt status` and ensure that [`main.tf`](../../terraform/10k_azure/main.tf), [`10k.azure_rm.yml`](../ansible/inventories/10k_azure/10k.azure_rm.yml) and [`object-storage.yml`](../../ansible/inventories/10k_azure/object-storage.yml) are encrypted.
 
 #### Configuring SSH Access for VMs
 
 In addition to creating the Service Principal and saving the credentials we need to also setup [SSH Access](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys) for the VMs to enable SSH access, which is required by Ansible. This is done as follows:
 
-* Generate an SSH key pair following the [official guide](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys#create-an-ssh-key-pair).
-* Store the SSH key pair in the [`keys`](../../keys) directory.
-* Public key needs to be configured in the environment's Terraform module `variables.tf` file by setting `ssh_public_key_file_path` to the relative path of the private key file.
-* Private key needs to be configured in the Ansible inventory `vars.yml` by setting `ansible_ssh_private_key_file` to the relative path of the private key file.
+- Generate an SSH key pair following the [official guide](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys#create-an-ssh-key-pair).
+- Store the SSH key pair in the [`keys`](../../keys) directory.
+- Public key needs to be configured in the environment's Terraform module `variables.tf` file by setting `ssh_public_key_file_path` to the relative path of the private key file.
+- Private key needs to be configured in the Ansible inventory `vars.yml` by setting `ansible_ssh_private_key_file` to the relative path of the private key file.
 
 ## 5. Generate GitLab Authentication Config
 
 In addition to the Cloud authentication keys above GitLab itself needs authentication config as well:
 
-* GitLab's initial root password (GitLab, Ansible) *Password File*
-* (Optional) [GitLab license](https://about.gitlab.com/handbook/developer-onboarding/#working-on-gitlab-ee) (GitLab, Ansible) *License File*
+- GitLab's initial root password (GitLab, Ansible) *Password File*
+- (Optional) [GitLab license](https://about.gitlab.com/handbook/developer-onboarding/#working-on-gitlab-ee) (GitLab, Ansible) *License File*
 
 ### GitLab Initial Root Password
 
@@ -286,12 +286,12 @@ A static external IP is also required to be generated manually outside of Terraf
 
 The static IP can be generated depending on the Cloud Platform as follows:
 
-* GCP - [Reserving a static external IP address](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address)
-  * Use the default options when given a choice
-  * Ensure IP has unique name
-* Azure - [Create a public IP address using the Azure portal](https://docs.microsoft.com/en-us/azure/virtual-network/create-public-ip-portal?tabs=option-create-public-ip-standard-zones)
-  * Attach the IP to your Resource Group and select the [*Standard* SKU](https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses#standard) to ensure that the allocation is static.
-  * Ensure IP has unique name
+- GCP - [Reserving a static external IP address](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address)
+  - Use the default options when given a choice
+  - Ensure IP has unique name
+- Azure - [Create a public IP address using the Azure portal](https://docs.microsoft.com/en-us/azure/virtual-network/create-public-ip-portal?tabs=option-create-public-ip-standard-zones)
+  - Attach the IP to your Resource Group and select the [*Standard* SKU](https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses#standard) to ensure that the allocation is static.
+  - Ensure IP has unique name
 
 Once IP is available take note of the IP address itself as it will need to be added to the specific `HAProxy` Terraform script as the `external_ips` variable under the `haproxy_external` module. You can refer to the existing environment scripts for reference, e.g. as shown [here in the 10k environment's HAProxy script](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/blob/master/terraform/10k/haproxy.tf).
 
