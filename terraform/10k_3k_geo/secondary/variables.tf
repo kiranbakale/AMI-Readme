@@ -23,7 +23,7 @@ variable "machine_image" {
 }
 
 variable "external_ip" {
-  default = "34.91.88.231"
+  default = "34.91.14.241"
 }
 
 variable "geo_site" {
@@ -31,5 +31,5 @@ variable "geo_site" {
 }
 
 variable "geo_deployment" {
-  default = "geo-test"
+  default = "geo-10k-3k-test"
 }

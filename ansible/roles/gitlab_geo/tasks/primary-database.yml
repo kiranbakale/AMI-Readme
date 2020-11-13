@@ -4,6 +4,31 @@
     block: "{{ lookup('template', '../templates/primary-database') }}"
     marker: "# {mark} geo config block - primary-database"
 
+- name: Primary Database - Disable auto_migrate and re-enable for single node
+  block:
+    - name: Disable auto_migrate
+      vars:
+        db_migrate: false
+      blockinfile:
+        path: /etc/gitlab/gitlab.rb
+        block: "{{ lookup('template', '../templates/set-auto-migrate') }}"
+        marker: "# {mark} geo config block - auto-migrate"
+
+    - name: Primary Database - Run gitlab-ctl reconfigure
+      command: gitlab-ctl reconfigure
+
+    - name: Primary Database - Restart Postgres
+      command: gitlab-ctl restart
+
+    - name: Enable auto_migrate
+      vars:
+        db_migrate: true
+      blockinfile:
+        path: /etc/gitlab/gitlab.rb
+        block: "{{ lookup('template', '../templates/set-auto-migrate') }}"
+        marker: "# {mark} geo config block - auto-migrate"
+  when: ('gitlab_rails' in group_names and 'postgres_primary' not in groups)
+
 - name: Primary Database - Run gitlab-ctl reconfigure
   command: gitlab-ctl reconfigure
 

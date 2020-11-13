@@ -32,9 +32,7 @@ my-geo-deployment
     └── secondary
 ```
 
-After this it is recommended to copy an existing reference architecture for the primary and secondary folders. You could copy the 25k reference architecture to use as your primary site and the 3k for your secondary, or use 5k for both your primary and secondary sites, the Geo process will work for any multi-node combination with the same steps.
-
->Currently 1k and 2k environments are not supported.
+After this it is recommended to copy an existing reference architecture for the primary and secondary folders. You could copy the 25k reference architecture to use as your primary site and the 3k for your secondary, or use 5k for both your primary and secondary sites, the Geo process will work for any combination with the same steps.
 
 The main steps for [GitLab Environment Toolkit - Building environments](building_environments.md) should be followed when creating a new Terraform project.
 

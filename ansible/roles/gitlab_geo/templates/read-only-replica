@@ -1,4 +1,6 @@
 postgresql['md5_auth_cidr_addresses'] = ['{{ geo_secondary_site_postgres_int_ip }}/32', '{{ geo_secondary_site_postgres_int_ip }}/32']
 gitlab_rails['db_password'] = '{{ postgres_password }}'
 
+{% if 'geo_secondary_site_sidekiq_primary' in groups %}
 geo_logcursor['enable'] = false
+{% endif %}
