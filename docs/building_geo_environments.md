@@ -1,26 +1,26 @@
 # Building an environment with Geo
 
-* [GitLab Environment Toolkit - Preparing the toolkit](prep_toolkit.md)
-* [GitLab Environment Toolkit - Building environments](building_environments.md)
-* [**GitLab Environment Toolkit - Building an environment with Geo**](building_geo_environments.md)
+- [GitLab Environment Toolkit - Preparing the toolkit](prep_toolkit.md)
+- [GitLab Environment Toolkit - Building environments](building_environments.md)
+- [**GitLab Environment Toolkit - Building an environment with Geo**](building_geo_environments.md)
 
 [[_TOC_]]
 
 When provisioning a Geo deployment there are a few differences to a single environment that need to be made throughout the process to allow the GitLab Environment Toolkit to properly manage the deployment:
 
-* Both environments should share the same admin credentials. For example in the case of GCP the same Service Account.
-* The GitLab license is shared between the 2 sites. This means the license only needs to be applied to the primary site.
+- Both environments should share the same admin credentials. For example in the case of GCP the same Service Account.
+- The GitLab license is shared between the 2 sites. This means the license only needs to be applied to the primary site.
 
 As shown above, for the most part, the process is mostly the same as when creating a single environment and as such the [GitLab Environment Toolkit - Preparing the toolkit](prep_toolkit.md) steps will need to be followed before creating a Geo deployment.
 
 The process used to build the environments follows the documentation for [Geo for multiple nodes](https://docs.gitlab.com/ee/administration/geo/replication/multiple_servers.html). The high level steps that will be followed are:
 
 1. Provision 2 environments with Terraform
-    * Each environment will share some common labels to identify them as being part of the same Geo deployment
-    * One environment will be identified as being a Primary site and one will be a Secondary
-2. Configure the environments with Ansible
-    * Each environment will work as a separate environment until Geo is configured
-3. Configure Geo on the Primary and Secondary sites
+    - Each environment will share some common labels to identify them as being part of the same Geo deployment
+    - One environment will be identified as being a Primary site and one will be a Secondary
+1. Configure the environments with Ansible
+    - Each environment will work as a separate environment until Geo is configured
+1. Configure Geo on the Primary and Secondary sites
 
 ## Terraform
 
@@ -71,8 +71,8 @@ These changes will need to be made in both the `primary` and `secondary` folders
 
 Next we need to modify the `variables.tf` files to set the 2 new variables.
 
-* `geo_site` is used to identify if a machine belongs to the primary or secondary site.
-* `geo_deployment` is used to identify that a primary and secondary site belong to the same Geo deployment.
+- `geo_site` is used to identify if a machine belongs to the primary or secondary site.
+- `geo_deployment` is used to identify that a primary and secondary site belong to the same Geo deployment.
 
 It should also be noted that the existing `prefix` variable should still be unique to each Terraform project and shouldn't be shared across a Geo deployment.
 If copying the `variables.tf` from another environment you will need to update the `credentials` parameter to now account for the extra subfolder.
