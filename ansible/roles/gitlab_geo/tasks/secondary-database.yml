@@ -1,5 +1,8 @@
 - name: Copy psql certificate
-  copy: src=tmp/server.crt dest=/tmp/
+  copy:
+    src: tmp/server.crt
+    dest: /tmp/
+    mode: 0400
 
 - name: Install certificate
   command: |
@@ -23,7 +26,11 @@
 
 - name: Secondary Database - Replicate geo database
   expect:
-    command: gitlab-ctl replicate-geo-database --slot-name={{ inventory_hostname | regex_replace("-", "_") }} --host={{ geo_primary_site_postgres_int_ip }} --force
+    command: |
+      gitlab-ctl replicate-geo-database \
+        --slot-name={{ inventory_hostname | regex_replace("-", "_") }} \
+        --host={{ geo_primary_site_postgres_int_ip }} \
+        --force
     responses:
       (.*)Confirmation: "replicate"
       (.*)Enter the password for gitlab_replicator@(.*): "{{ postgres_password }}"
