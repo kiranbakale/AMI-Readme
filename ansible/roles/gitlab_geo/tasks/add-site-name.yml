@@ -1,3 +1,3 @@
 - name: Add Site Name - Add Geo secondary site to tracking db
   command: |
-    gitlab-rails runner "GeoNode.find_or_create_by(name: 'Secondary Site', url: '{{ secondary_external_url }}')"
+    gitlab-rails runner "GeoNode.find_or_create_by(name: '{{ geo_secondary_site_name }}', url: '{{ secondary_external_url }}')"
