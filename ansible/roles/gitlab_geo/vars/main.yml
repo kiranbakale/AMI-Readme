@@ -1,3 +1,9 @@
+geo_primary_site_gitlab_rails_nodename: "{{ (groups['geo_primary_site_gitlab_rails_primary'] | map('extract', hostvars, ['ansible_nodename']) | join('')) }}"
+geo_secondary_site_gitlab_rails_nodename: "{{ (groups['geo_secondary_site_gitlab_rails_primary'] | map('extract', hostvars, ['ansible_nodename']) | join('')) }}"
+
+geo_primary_site_name: "Primary Site - {{ hostvars[geo_primary_site_gitlab_rails_nodename]['labels']['gitlab_node_prefix'] }}"
+geo_secondary_site_name: "Secondary Site - {{ hostvars[geo_secondary_site_gitlab_rails_nodename]['labels']['gitlab_node_prefix'] }}"
+
 geo_secondary_site_postgres_group_name: "{{ 'geo_secondary_site_postgres_primary' if 'geo_secondary_site_postgres_primary' in groups else 'geo_secondary_site_gitlab_rails_primary' }}"
 geo_secondary_site_postgres_int_ip: "{{
                                       (groups[geo_secondary_site_postgres_group_name] |

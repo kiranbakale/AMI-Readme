@@ -1,2 +1,2 @@
 geo_primary_role['enable'] = true
-gitlab_rails['geo_node_name'] = 'Primary Site'
+gitlab_rails['geo_node_name'] = "{{ geo_primary_site_name }}"

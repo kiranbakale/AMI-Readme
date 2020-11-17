@@ -1,5 +1,5 @@
 geo_secondary_role['enable'] = true
-gitlab_rails['geo_node_name'] = 'Secondary Site'
+gitlab_rails['geo_node_name'] = "{{ geo_secondary_site_name }}"
 
 gitlab_rails['db_password'] = "{{ postgres_password }}"
 
