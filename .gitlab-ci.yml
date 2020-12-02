@@ -25,7 +25,7 @@ start:
     - unset CLOUDSDK_CORE_PROJECT
     - gcloud auth activate-service-account --key-file=$GCLOUD_SERVICEACCOUNT_KEY_PATH
     - gcloud config set project $GCP_PROJECT_NAME
-    - echo "Starting VMs on GCP project '$GCP_PROJECT_NAME'"
+    - echo "Starting VMs on GCP project '$GCP_PROJECT_NAME' in zone '$GCLOUD_ZONE'"
     - gcloud compute instances start --zone $GCLOUD_ZONE $(gcloud compute instances list --format='value(name)' --filter="labels.gitlab_node_prefix ~ $GCP_GITLAB_NODE_PREFIX$")
     - sleep 60
   only:
@@ -71,7 +71,7 @@ stop:
     - unset CLOUDSDK_CORE_PROJECT
     - gcloud auth activate-service-account --key-file=$GCLOUD_SERVICEACCOUNT_KEY_PATH
     - gcloud config set project $GCP_PROJECT_NAME
-    - echo "Stopping VMs on GCP project '$GCP_PROJECT_NAME'"
+    - echo "Stopping VMs on GCP project '$GCP_PROJECT_NAME' in zone '$GCLOUD_ZONE'"
     - gcloud compute instances stop --zone $GCLOUD_ZONE $(gcloud compute instances list --format='value(name)' --filter="labels.gitlab_node_prefix ~ $GCP_GITLAB_NODE_PREFIX$ AND -name ~ monitor-|haproxy-external-\d+$")
   only:
     variables:
