@@ -99,13 +99,24 @@
       when:
         - omnibus_node
         - gitlab_repo_package != ''
-        - gitlab_deb_package == ''
+        - gitlab_host_deb_path == ''
+
+    - name: Copy GitLab deb package
+      copy:
+        src: "{{ gitlab_host_deb_path }}"
+        dest: "{{ gitlab_target_deb_path }}"
+        mode: 0755
+        force: no
+      when: 
+        - omnibus_node
+        - gitlab_host_deb_path != ''
 
     - name: Install GitLab deb package
-      command: dpkg -i {{ gitlab_deb_package }} && apt-get install -f
+      apt:
+        deb: "{{ gitlab_target_deb_path }}"
       when:
         - omnibus_node
-        - gitlab_deb_package != ''
+        - gitlab_host_deb_path != ''
 
     # Allows GET to run on a node after running gitlab-ctl cleanse. The current behavior of cleanse is to
     # delete the /etc/gitlab folder, this will cause an error when we try to copy files to the dir.

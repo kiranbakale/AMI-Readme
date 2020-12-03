@@ -31,6 +31,8 @@ For example, there are playbooks for `gitlab-rails`, `gitaly`, etc... You can se
 
 The Toolkit provides two ways of running Ansible through its Playbooks - through its native `ansible-playbook` command or optionally through a convenience script, `ansible-deployer`, that we've created that will attempt to run through all of the playbooks quicker through parallelization.
 
+> By default the Toolkit will deploy the latest GitLab Nightly package. To use a different GitLab package repository please set the `GITLAB_REPO_SCRIPT_URL` environment variable. To install a custom GitLab package please specify an absolute path to a local GitLab Debian file on the host machine running Ansible using the `GITLAB_HOST_DEB_PATH` environment variable.
+
 ### Running with ansible-playbook
 
 The `all.yml` playbook is the entry point for running Ansible on every machine. It's a "runner" playbook in that it will go through each specific component's playbook in order. It can be run with `ansible-playbook` as follows:
