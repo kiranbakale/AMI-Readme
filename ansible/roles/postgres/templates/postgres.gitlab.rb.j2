@@ -21,9 +21,11 @@ patroni['use_pg_rewind'] = true
 postgresql['version'] = 11
 {% endif %}
 postgresql['shared_preload_libraries'] = 'repmgr_funcs'
-repmgr['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 postgresql['wal_level'] = 'replica'
 postgresql['hot_standby'] = 'on'
+
+repmgr['host'] = '{{ ansible_default_ipv4.address }}'
+repmgr['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 
 {% if groups['postgres'] | length > 1 %}
 postgresql['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
