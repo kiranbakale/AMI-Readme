@@ -4,7 +4,7 @@ resource "aws_s3_bucket" "gitlab_object_storage" {
 }
 
 resource "aws_iam_role" "gitlab_s3_role" {
-  name = "gitlab_s3_role"
+  name = "${var.prefix}-s3-role"
 
   assume_role_policy = <<EOF
 {
@@ -24,7 +24,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "gitlab_s3_policy" {
-  name = "gitlab_s3_policy"
+  name = "${var.prefix}-s3-policy"
   role = aws_iam_role.gitlab_s3_role.id
 
   policy = <<EOF
@@ -42,6 +42,6 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "gitlab_s3_profile" {
-  name = "gitlab_s3_profile"
+  name = "${var.prefix}-s3-profile"
   role = aws_iam_role.gitlab_s3_role.name
 }

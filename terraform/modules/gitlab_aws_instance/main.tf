@@ -20,6 +20,12 @@ resource "aws_instance" "gitlab" {
     gitlab_geo_deployment = var.geo_deployment
     gitlab_geo_full_role = var.geo_site == null ? null : (count.index == 0 ? "${var.geo_site}-${var.node_type}-primary" : "${var.geo_site}-${var.node_type}-secondary")
   }
+
+  lifecycle {
+    ignore_changes = [
+      ami
+    ]
+  }
 }
 
 resource "aws_eip_association" "gitlab" {
