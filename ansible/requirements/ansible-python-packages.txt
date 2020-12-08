@@ -2,3 +2,5 @@ google-auth
 requests
 netaddr
 ansible[azure]
+boto3
+botocore

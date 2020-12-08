@@ -2,8 +2,10 @@
 /.vscode
 *.tfstate
 *.tfstate.backup
+*.tfstate.lock.info
 secrets.auto.tfvars
 .terraform/
 logs/
 ansible/test.yml
 ansible/tmp/
+.tool-versions
