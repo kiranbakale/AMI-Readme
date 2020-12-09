@@ -1,2 +1,0 @@
-10k.aws_ec2.yml filter=git-crypt diff=git-crypt
-.gitattributes !filter !diff
