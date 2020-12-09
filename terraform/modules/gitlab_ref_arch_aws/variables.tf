@@ -20,7 +20,7 @@ variable "consul_disk_size" { default = null }
 variable "elastic_node_count" { default = 0 }
 variable "elastic_instance_type" { default = "" }
 variable "elastic_disk_type" { default = null }
-variable "elastic_disk_size" { default = null }
+variable "elastic_disk_size" { default = "500" }
 
 variable "gitaly_node_count" { default = 0 }
 variable "gitaly_instance_type" { default = "" }
