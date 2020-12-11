@@ -1,8 +1,5 @@
 # Disable all components except PostgreSQL and Repmgr and Consul
 roles ['postgres_role']
-{% if postgres_version is defined %}
-postgresql['version'] = {{ postgres_version }}
-{% endif %}
 
 {% if install_patroni is defined and install_patroni %}
 # Enable Patroni
@@ -13,13 +10,14 @@ patroni['postgresql']['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 
 patroni['postgresql']['max_replication_slots'] = {{ (groups['postgres'] | length) + 1 }}
 
 patroni['use_pg_rewind'] = true
+
+{% if postgres_version is defined %}
+postgresql['version'] = {{ postgres_version }}
+{% endif %}
 {% endif %}
 
 {% else %}
 # Enable Repmgr
-{% if postgres_version is not defined %}
-postgresql['version'] = 11
-{% endif %}
 postgresql['shared_preload_libraries'] = 'repmgr_funcs'
 postgresql['wal_level'] = 'replica'
 postgresql['hot_standby'] = 'on'
@@ -31,6 +29,10 @@ repmgr['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 postgresql['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
 postgresql['max_replication_slots'] = {{ (groups['postgres'] | length) + 1 }}
 repmgr['master_on_initialization'] = {{ postgres_repmgr_master }}
+{% endif %}
+
+{% if postgres_version is not defined %}
+postgresql['version'] = 11
 {% endif %}
 
 {% endif %}

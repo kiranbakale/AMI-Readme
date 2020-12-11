@@ -10,3 +10,4 @@ all:
     gitlab_license_file: "../keys/performance/Gitlab.gitlab-license"
     external_url: "http://10k.testbed.gitlab.net"
     install_patroni: true
+    postgres_version: 12
