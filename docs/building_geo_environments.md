@@ -11,7 +11,7 @@ When provisioning a Geo deployment there are a few differences to a single envir
 - Both environments should share the same admin credentials. For example in the case of GCP the same Service Account.
 - The GitLab license is shared between the 2 sites. This means the license only needs to be applied to the primary site.
 
-As shown above, for the most part, the process is mostly the same as when creating a single environment and as such the [GitLab Environment Toolkit - Preparing the toolkit](prep_toolkit.md) steps will need to be followed before creating a Geo deployment.
+As shown above, for the most part, the process is the same as when creating a single environment and as such the [GitLab Environment Toolkit - Preparing the toolkit](prep_toolkit.md) steps will need to be followed before creating a Geo deployment.
 
 The process used to build the environments follows the documentation for [Geo for multiple nodes](https://docs.gitlab.com/ee/administration/geo/replication/multiple_servers.html). The high level steps that will be followed are:
 
@@ -38,7 +38,7 @@ The main steps for [GitLab Environment Toolkit - Building environments](building
 
 Once you have copied the desired architecture sizes we will need to modify all the `.tf` files to allow for Geo. The first step is to add 2 new labels to each of our machines to help identify them as belonging to our Geo deployment and if it is part of the primary or secondary site.
 
-> You do not need to add the label fields the files `firewall.tf`, `main.tf`, `storage.tf` or `variables.tf`. These files do not create new machines and as such do not require labels.
+> You do not need to add the label fields to the `firewall.tf`, `main.tf`, `storage.tf` or `variables.tf` files. These files do not create new machines and as such do not require labels.
 
 In each of the `.tf` files that need altering there will be at least one code block identified as a module, some files may contain more than one and the labels should be added to both. In here we add 2 new lines at the end of the module. Each module will also contain a `source` property, the path used here will be incorrect if you've followed the folder structure above. You will need to add an additional `../` to the path as we are now using sub-folders. The example below shows the correct path.
 These changes will need to be made in both the `primary` and `secondary` folders:
@@ -165,7 +165,7 @@ When updating the secondaries `variables.tf` you can change the `region` and `zo
 
 Finally we will need to update the `main.tf` file, the only change required for Geo is only required if using the subfolder file structure. The `credentials` path will need to be updated to account for the sub-folders.
 
-> At the moment [multi-node PostgreSQL](https://docs.gitlab.com/ee/administration/geo/replication/multiple_servers.html#step-2-configure-the-main-read-only-replica-postgresql-database-on-the-secondary-node) is not supported on the secondary site and as such the `node_count` in `postgres.tf` should be set to 1 in the secondary config.
+> Alpha support for [multi-node PostgreSQL](https://gitlab.com/groups/gitlab-org/-/epics/2536) with Patroni is currently in development. When using repmgr on the secondary site the `node_count` in `postgres.tf` should be set to 1 for the secondary sites config. When using Patroni, this can be left at its original value.
 
 Once each site is configured we can run the `terraform apply` command against each project. You can run this command against the primary and secondary sites at the same time.
 

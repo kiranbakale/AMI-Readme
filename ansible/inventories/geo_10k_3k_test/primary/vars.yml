@@ -8,5 +8,5 @@ all:
     service_account_file: "../keys/distribution/gitlab-qa-distribution-sa.json"
     gitlab_license_file: "../keys/distribution/Gitlab.gitlab-license"
     external_url: "http://35.185.82.31"
-    install_patroni: false
+    install_patroni: true
     gitlab_root_password_file: "../keys/distribution/gitlab_root_password"

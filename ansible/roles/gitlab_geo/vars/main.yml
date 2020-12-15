@@ -1,10 +1,14 @@
-geo_primary_site_gitlab_rails_nodename: "{{ (groups['geo_primary_site_gitlab_rails_primary'] | sort | map('extract', hostvars, ['ansible_nodename']) | join('')) }}"
-geo_secondary_site_gitlab_rails_nodename: "{{ (groups['geo_secondary_site_gitlab_rails_primary'] | sort | map('extract', hostvars, ['ansible_nodename']) | join('')) }}"
+geo_secondary_site_postgres_group_name: "{{ 'geo_secondary_site_postgres_primary' if 'geo_secondary_site_postgres_primary' in groups else 'geo_secondary_site_gitlab_rails_primary' }}"
+geo_primary_site_postgres_group_name: "{{ 'geo_primary_site_postgres_primary' if 'geo_primary_site_postgres_primary' in groups else 'geo_primary_site_gitlab_rails_primary' }}"
+geo_secondary_site_sidekiq_primary_group_name: "{{ 'geo_secondary_site_sidekiq_primary' if 'geo_secondary_site_sidekiq_primary' in groups else 'geo_secondary_site_gitlab_rails_primary' }}"
+
+geo_primary_site_gitlab_rails_nodename: "{{ (groups['geo_primary_site_gitlab_rails_primary'] | map('extract', hostvars, ['ansible_nodename']) | join('')) }}"
+geo_secondary_site_gitlab_rails_nodename: "{{ (groups['geo_secondary_site_gitlab_rails_primary'] | map('extract', hostvars, ['ansible_nodename']) | join('')) }}"
+geo_secondary_site_postgres_primary_nodename: "{{ (groups[geo_secondary_site_postgres_group_name] | map('extract', hostvars, ['ansible_nodename']) | join('')) }}"
 
 geo_primary_site_name: "Primary Site - {{ hostvars[geo_primary_site_gitlab_rails_nodename]['labels']['gitlab_node_prefix'] }}"
 geo_secondary_site_name: "Secondary Site - {{ hostvars[geo_secondary_site_gitlab_rails_nodename]['labels']['gitlab_node_prefix'] }}"
 
-geo_secondary_site_postgres_group_name: "{{ 'geo_secondary_site_postgres_primary' if 'geo_secondary_site_postgres_primary' in groups else 'geo_secondary_site_gitlab_rails_primary' }}"
 geo_secondary_site_postgres_int_ip: "{{
                                       (groups[geo_secondary_site_postgres_group_name] |
                                       sort |
@@ -14,7 +18,6 @@ geo_secondary_site_postgres_int_ip: "{{
                                       join(''))
                                     }}"
 
-geo_primary_site_postgres_group_name: "{{ 'geo_primary_site_postgres_primary' if 'geo_primary_site_postgres_primary' in groups else 'geo_primary_site_gitlab_rails_primary' }}"
 geo_primary_site_postgres_int_ip: "{{
                                     (groups[geo_primary_site_postgres_group_name] |
                                     sort |
@@ -43,7 +46,6 @@ geo_secondary_site_rails_secondary_int_ips: "{{
                                               if 'geo_secondary_site_gitlab_rails_secondary' in groups else ''
                                             }}"
 
-geo_secondary_site_sidekiq_primary_group_name: "{{ 'geo_secondary_site_sidekiq_primary' if 'geo_secondary_site_sidekiq_primary' in groups else 'geo_secondary_site_gitlab_rails_primary' }}"
 geo_secondary_site_sidekiq_primary_int_ip: "{{
                                              (groups['geo_secondary_site_sidekiq_primary'] |
                                              sort |

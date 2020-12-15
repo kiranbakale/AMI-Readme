@@ -31,9 +31,21 @@
 
 - name: Primary Database - Run gitlab-ctl reconfigure
   command: gitlab-ctl reconfigure
+  register: result
+  retries: 2
+  delay: 10
+  until: result is success
 
 - name: Primary Database - Restart Postgres
   command: gitlab-ctl restart
 
+- name: Primary Database - Ensure Postgres leader after reconfigure
+  import_tasks: set-postgres-leader.yml
+  tags: primary-postgres-leader
+  when:
+    - ('postgres_primary' in group_names)
+    - install_patroni is defined and install_patroni
+
 - name: Primary Database - Fetch psql certificate
   fetch: src=~gitlab-psql/data/server.crt dest=tmp/ flat=yes
+  when: ('postgres_primary' in group_names)
