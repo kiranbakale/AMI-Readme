@@ -7,11 +7,11 @@ variable "credentials_file" {
 }
 
 variable "region" {
-  default = "europe-west4"
+  default = "europe-west2"
 }
 
 variable "zone" {
-  default = "europe-west4-a"
+  default = "europe-west2-a"
 }
 
 variable "prefix" {
@@ -23,7 +23,7 @@ variable "machine_image" {
 }
 
 variable "external_ip" {
-  default = "34.91.14.241"
+  default = "35.246.18.45"
 }
 
 variable "geo_site" {

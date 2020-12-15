@@ -1,6 +1,3 @@
-# if we don't have a geo_primary_site_postgres_primary then we are assuming that this is a single node machine.
-# this means we don't have to set the primary role as thats already been done but we do need to set some
-# extra config that would usually be set on the postgres node, but not on a single.
 {% if 'geo_primary_site_postgres_primary' in groups %}
 geo_primary_role['enable'] = true
 {% else %}
@@ -10,4 +7,11 @@ postgresql['sql_user_password'] = "{{ (postgres_password + 'gitlab') | md5 }}"
 postgresql['listen_address'] = "{{ geo_primary_site_postgres_int_ip }}"
 postgresql['max_replication_slots'] = 1
 {% endif %}
-postgresql['md5_auth_cidr_addresses'] = ['127.0.0.1/32', '{{ ansible_default_ipv4.address }}/32', '{{ geo_secondary_site_postgres_int_ip }}/32']
+postgresql['md5_auth_cidr_addresses'] = ['0.0.0.0/0']
+
+{% if install_patroni is defined and install_patroni %}
+patroni['replication_slots'] = {
+    'geo_secondary' => { 'type' => 'physical' }
+}
+postgresql['sql_replication_password'] = '{{ (postgres_password + 'gitlab_replicator') | md5 }}'
+{% endif %}

@@ -1,8 +1,6 @@
-- name: Secondary Geo - Add new config
-  blockinfile:
-    path: /etc/gitlab/gitlab.rb
-    block: "{{ lookup('template', '../templates/secondary-database') }}"
-    marker: "# {mark} geo config block - secondary-database"
+- name: Tracking Database - Ensure Postgres leader after reconfigure
+  import_tasks: set-postgres-leader.yml
+  when: install_patroni is defined and install_patroni
 
 - name: Tracking Database - Add new config
   blockinfile:
