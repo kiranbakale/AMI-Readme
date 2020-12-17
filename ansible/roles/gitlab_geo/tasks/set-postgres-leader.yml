@@ -5,9 +5,7 @@
 # GitLab Issue: https://gitlab.com/gitlab-org/omnibus-gitlab/-/issues/5829
 
 - name: "Set Postgres Leader - Get current Patroni leader"
-  shell: |
-    set -eo pipefail
-    gitlab-ctl patroni members | grep Leader | cut -d '|' -f 3 | awk '{$1=$1};1'
+  shell: gitlab-ctl patroni members | grep Leader | cut -d '|' -f 3 | awk '{$1=$1};1'
   register: patroni_leader
 
 # Tells Patroni to switch its leader to match our postgres_primary

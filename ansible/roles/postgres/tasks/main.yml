@@ -77,9 +77,7 @@
       tags: debug
 
 - name: Check secondary standby status
-  shell: |
-    set -eo pipefail
-    gitlab-ctl repmgr cluster show 2>/dev/null | grep -E 'standby \| {{ ansible_hostname }}') || echo ""
+  shell: (gitlab-ctl repmgr cluster show 2>/dev/null | grep -E 'standby \| {{ ansible_hostname }}') || echo ""
   register: postgres_secondary_standby_status
   tags: postgres_secondary_standby
   when:
