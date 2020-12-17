@@ -9,7 +9,6 @@ gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default('gitlab-e
 gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh', true) }}"
 gitlab_object_storage: "{{ prefix }}-object-storage"
 gitlab_admin_email: 'admin@example.com'
-gitlab_root_password: "{{ lookup('password', '{{ gitlab_root_password_file }} length=15') if gitlab_root_password_file is defined else '' }}"
 system_packages: "aptitude curl openssh-server ca-certificates glances nano tzdata ack-grep tree python3-pip nfs-common postfix jq"
 serviceaccount_filename: "serviceaccount.json"
 serviceaccount_path: "/etc/gitlab/{{ serviceaccount_filename }}"
@@ -20,7 +19,6 @@ internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/p
 
 # Consul
 consul_int_ips: "{{ (groups['consul'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'consul' in groups else [] }}"
-consul_password: '0a6da13ae1754357b71ba1ac6c6caa6b'
 
 # HAProxy / Network
 haproxy_internal_int_ip: "{{ (groups['haproxy_internal'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_internal' in groups else ''}}"
@@ -33,7 +31,6 @@ gitlab_rails_int_ips: "{{ groups['gitlab_rails'] | sort | map('extract', hostvar
 # Gitaly
 gitaly_primary_int_ip: "{{ (groups['gitaly_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'gitaly_primary' in groups else '' }}"
 gitaly_secondary_int_ips: "{{ (groups['gitaly_secondary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'gitaly_secondary' in groups else [] }}"
-gitaly_token: 'abc123secret'
 
 # GitLab NFS
 gitlab_nfs_int_ip: "{{ groups['gitlab_nfs'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') }}"
@@ -45,15 +42,12 @@ monitor_int_ip: "{{ (groups['monitor'] | sort | map('extract', hostvars, interna
 # GitLab Postgres / PGBouncer
 postgres_primary_int_ip: "{{ (groups['postgres_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'postgres_primary' in groups else '' }}"
 postgres_primary_int_port: "5432"
-postgres_password: '37aca09f2f8ff04f27bdb2ed159ec81f'
 
-pgbouncer_password: '9fdf957895675ef0741f66811c8fa958'
 pgbouncer_int_ips: "{{ (groups['pgbouncer'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'pgbouncer' in groups else [] }}"
 
 # GitLab Redis
 redis_port: 6379
 redis_sentinel_port: 26379
-redis_password: 'rae5ceiH3sheeGohz2la'
 
 redis_primary_int_ip: "{{ (groups['redis_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'redis' in groups else '' }}"
 redis_sentinel_int_ips: "{{ (groups['redis_sentinel'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis_sentinel' in groups else [] }}"
