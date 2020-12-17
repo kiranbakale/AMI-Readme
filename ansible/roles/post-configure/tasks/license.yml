@@ -29,5 +29,5 @@
   when: license_response.json == None
 
 - name: Save License Plan
-  set_fact: 
+  set_fact:
     gitlab_license_plan: '{{ configure_license_response.json.plan if license_response.json == None else license_response.json.plan }}'

@@ -6,7 +6,7 @@
 
 - name: "Set Postgres Leader - Get current Patroni leader"
   shell: |
-    set -e pipefail
+    set -eo pipefail
     gitlab-ctl patroni members | grep Leader | cut -d '|' -f 3 | awk '{$1=$1};1'
   register: patroni_leader
 

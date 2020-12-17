@@ -13,7 +13,7 @@
     path: /etc/ssh/sshd_config
     regexp: "^{{ item.setting }}="
     line: "{{ item.setting }}={{ item.value }}"
-  with_items: 
+  with_items:
     - { setting: 'AuthorizedKeysCommand', value: '/opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell-authorized-keys-check git %u %k'}
     - { setting: 'AuthorizedKeysCommandUser', value: 'git'}
 
@@ -27,10 +27,10 @@
     dest: "{{ serviceaccount_path }}"
     mode: 0755
   tags: secrets
-  when: 
+  when:
     - cloud_provider == 'gcp'
 
-- name: External database related tasks 
+- name: External database related tasks
   block:
   - name: Patroni required tasks
     block:
@@ -47,14 +47,14 @@
       shell: gitlab-ctl reconfigure
       tags:
         - reconfigure
-    
+
     - name: Get Postgres Leader when using Patroni
       shell: gitlab-ctl get-postgresql-primary
       register: postgres_leader_int_address
-      tags: 
+      tags:
         - reconfigure
         - db_migrate
-      
+
     - name: Update Postgres Primary IP and Port when using Patroni
       set_fact:
         postgres_primary_int_ip: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
@@ -62,7 +62,7 @@
       tags:
         - reconfigure
         - db_migrate
-    when: 
+    when:
       - install_patroni is defined and install_patroni
       - "'gitlab_rails_primary' in group_names"
 
@@ -75,7 +75,7 @@
     register: result
     retries: 3
     until: result is success
-    tags: 
+    tags:
       - reconfigure
       - db_migrate
     when: "'gitlab_rails_primary' in group_names"

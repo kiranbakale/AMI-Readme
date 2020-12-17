@@ -23,6 +23,6 @@
     dest: /etc/exports
 
 - name: restart nfs server
-  service: 
+  service:
     name: nfs-kernel-server
     state: restarted

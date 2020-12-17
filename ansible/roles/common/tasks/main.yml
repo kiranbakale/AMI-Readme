@@ -41,7 +41,7 @@
       tags: packages
 
     - name: Install system packages
-      command: apt-get install -y {{ system_packages }}
+      command: apt-get install -y {{ system_packages }} # noqa 303
       environment:
         DEBIAN_FRONTEND: "noninteractive"
       register: result
@@ -115,7 +115,7 @@
         dest: "{{ gitlab_target_deb_path }}"
         mode: 0755
         force: no
-      when: 
+      when:
         - omnibus_node
         - gitlab_host_deb_path != ''
 
@@ -149,14 +149,14 @@
         - omnibus_node
 
     - name: Update system packages to the latest version
-      command: apt-get upgrade -y
+      command: apt-get upgrade -y # noqa 303
       register: result
       retries: 1
       until: result is success
       tags: packages
 
     - name: Autoremove any unneeded packages
-      command: apt-get autoremove -y
+      command: apt-get autoremove -y # noqa 303
       register: result
       retries: 1
       until: result is success
@@ -180,6 +180,7 @@
           when: sshguard_whitelist.changed
       when: "'sshguard' in services"
 
-    - set_fact:
+    - name: Mark common has run
+      set_fact:
         common_performed: true
   when: common_performed is not defined

@@ -1,2 +1,11 @@
+exclude_paths:
+  - ${HOME}/.ansible/roles/
 skip_list:
   - '301'  # Commands should not change things if nothing needs doing'
+  - '204'  # Lines should be no longer than 160 char
+  - '106'  # Role name {} does not match ``^[a-z][a-z0-9_]+$`` pattern
+  - '602'  # Don't compare to empty string, https://github.com/ansible-community/ansible-lint/issues/457
+  - '701'  # meta/main.yml should contain relevant info
+  - '208'  # File permissions unset or incorrect
+  - '305'  # Use shell only when shell functionality is required - to be reenabled
+  

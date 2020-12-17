@@ -1,5 +1,16 @@
 # Preparing the toolkit
 
+---
+**NOTE**
+
+The GitLab Environment Toolkit is in **Alpha** (`v1.0.0-alpha`) and work is currently under way for its main release.
+
+As such, **this documentation is currently out of date** but we aim to have this updated soon.
+
+For more information about this release please refer to this [Epic](https://gitlab.com/groups/gitlab-org/-/epics/5061).
+
+---
+
 - [**GitLab Environment Toolkit - Preparing the toolkit**](prep_toolkit.md)
 - [GitLab Environment Toolkit - Building environments](building_environments.md)
 - [GitLab Environment Toolkit - Building an environment with Geo](building_geo_environments.md)
