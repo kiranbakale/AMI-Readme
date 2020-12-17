@@ -33,7 +33,7 @@ To do this you only have to run the following before running Ansible:
 1. `cd` to the `ansible/` directory
 1. First install the Python packages via `pip install -r requirements/ansible-python-packages.txt`.
     - Note it's expected you already have Python and its package manager pip installed. Additionally you may have the Python3 version of pip installed, `pip3`, and you should replace accordingly.
-1. Next, run the following command to install the roles - `ansible-galaxy install -r requirements/ansible-roles.yml`
+1. Next, run the following command to install the roles - `ansible-galaxy install -r requirements/ansible-galaxy-requirements.yml`
 1. Note that if you're on a Mac OS machine you also need to install `gnu-tar` - `brew install gnu-tar`
 
 ### Cloud Platform Tools

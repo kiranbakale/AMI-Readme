@@ -1,3 +1,0 @@
-10k.azure_rm.yml filter=git-crypt diff=git-crypt
-object-storage.yml filter=git-crypt diff=git-crypt
-.gitattributes !filter !diff

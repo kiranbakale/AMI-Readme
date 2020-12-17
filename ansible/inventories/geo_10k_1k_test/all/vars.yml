@@ -1,8 +1,0 @@
-all:
-  vars:
-    project_name: "gitlab-qa-distribution"
-    ansible_user: "sa_117401977288730813591"
-    service_account_file: "../../keys/distribution/gitlab-qa-distribution-sa.json"
-    ansible_ssh_private_key_file: "../keys/distribution/gitlab-qa-distribution-ssh"
-    external_url: "http://35.237.219.211"
-    secondary_external_url: "http://34.91.88.231"

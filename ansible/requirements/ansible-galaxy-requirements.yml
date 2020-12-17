@@ -1,0 +1,7 @@
+roles:
+- cloudalchemy.node-exporter
+- geerlingguy.docker
+- geerlingguy.swap
+
+collections:
+- google.cloud

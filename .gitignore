@@ -9,3 +9,11 @@ logs/
 ansible/test.yml
 ansible/tmp/
 .tool-versions
+terraform/environments/*
+!terraform/environments/README.md
+ansible/inventories/*
+!ansible/inventories/README.md
+keys/*
+!keys/README.md
+config/*
+!config/README.md
