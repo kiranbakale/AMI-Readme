@@ -13,6 +13,6 @@
   tags: oauth
 
 - name: Save OAuth Token
-  set_fact: 
+  set_fact:
     gitlab_oauth_token: '{{ oauth_response.json.access_token }}'
   tags: oauth

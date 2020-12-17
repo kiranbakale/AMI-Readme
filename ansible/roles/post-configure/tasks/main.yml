@@ -1,6 +1,6 @@
 - name: Wait for GitLab to be available
   uri:
-    url: '{{external_url}}/-/readiness'
+    url: '{{ external_url }}/-/readiness'
     timeout: 60
   register: result
   until: result.status == 200
@@ -30,7 +30,7 @@
 
     - name: Configure Advanced Search with Elasticsearch
       import_tasks: elasticsearch.yml
-      when: 
+      when:
         - "'elastic' in groups"
         - gitlab_license_file is defined
         - gitlab_license_plan is defined

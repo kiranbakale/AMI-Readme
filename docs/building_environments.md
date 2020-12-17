@@ -1,5 +1,16 @@
 # Building environment(s)
 
+---
+**NOTE**
+
+The GitLab Environment Toolkit is in **Alpha** (`v1.0.0-alpha`) and work is currently under way for its main release.
+
+As such, **this documentation is currently out of date** but we aim to have this updated soon.
+
+For more information about this release please refer to this [Epic](https://gitlab.com/groups/gitlab-org/-/epics/5061).
+
+---
+
 - [GitLab Environment Toolkit - Preparing the toolkit](prep_toolkit.md)
 - [**GitLab Environment Toolkit - Building environments**](building_environments.md)
 - [GitLab Environment Toolkit - Building an environment with Geo](building_geo_environments.md)
@@ -18,7 +29,7 @@ With the [Toolkit prepared](prep_toolkit.md) you can proceed to build your envir
 1. In the environment's Terraform directory (e.g. `terraform/10k`), start by [initializing](https://www.terraform.io/docs/commands/init.html) the environment's Terraform scripts with `terraform init`.
 1. You can next optionally run `terraform plan` to view the current state of the environment and what will be changed if you proceed to apply.
 1. To apply any changes run `terraform apply` and select yes
-    * **Warning - running this command will likely apply changes to shared infrastructure. Only run this command if you have permission to do so.**
+    - **Warning - running this command will likely apply changes to shared infrastructure. Only run this command if you have permission to do so.**
 
 ## 2. Configuring GitLab on the Environment with Ansible
 

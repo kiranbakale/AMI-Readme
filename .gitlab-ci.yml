@@ -1,0 +1,35 @@
+stages:
+  - check
+
+#########################
+##     Lint Checks     ##
+#########################
+
+check:tflint:
+  stage: check
+  image: alpine
+  before_script:
+    - apk add curl
+    - curl -L "$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip && unzip tflint.zip -d /usr/bin
+  script:
+    - cd terraform
+    - tflint
+  only:
+    - master
+    - merge_requests
+  except:
+    - schedules
+    - tags
+
+check:ansible-lint:
+  stage: check
+  image: pipelinecomponents/ansible-lint
+  script:
+    - cd ansible
+    - ansible-lint
+  only:
+    - master
+    - merge_requests
+  except:
+    - schedules
+    - tags

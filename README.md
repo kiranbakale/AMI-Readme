@@ -1,4 +1,15 @@
-# GitLab Environment Toolkit
+# GitLab Environment Toolkit (`v1.0.0-alpha`)
+
+---
+**NOTE**
+
+The GitLab Environment Toolkit is in **Alpha** (`v1.0.0-alpha`) and work is currently under way for its main release.
+
+As such, **this documentation is currently out of date** but we aim to have this updated soon.
+
+For more information about this release please refer to this [Epic](https://gitlab.com/groups/gitlab-org/-/epics/5061).
+
+---
 
 The GitLab Environment Toolkit (`GET`), formerly known as the Performance Environment Builder, is a collection of tools with a simple focused purpose - to deploy [GitLab Omnibus](https://gitlab.com/gitlab-org/omnibus-gitlab) at scale as defined by our [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures).
 

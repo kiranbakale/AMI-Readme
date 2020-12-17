@@ -54,7 +54,7 @@
       register: env_settings_response
 
     - name: Save Environment Settings
-      set_fact: 
+      set_fact:
         gitlab_environment_settings: '{{ env_settings_response.json }}'
   when: gitlab_license_plan == 'ultimate'
 
@@ -65,7 +65,7 @@
     headers:
       Authorization: 'Bearer {{ gitlab_oauth_token }}'
     body:
-      elasticsearch_url: "{{ elasticsearch_urls | join(',')}}"
+      elasticsearch_url: "{{ elasticsearch_urls | join(',') }}"
       elasticsearch_shards: "{{ elasticsearch_shards }}"
       elasticsearch_replicas: "{{ elasticsearch_replicas }}"
     status_code: 200, 201
@@ -84,7 +84,7 @@
         headers:
           Authorization: 'Bearer {{ gitlab_oauth_token }}'
         body:
-          elasticsearch_url: "{{ elasticsearch_urls | join(',')}}"
+          elasticsearch_url: "{{ elasticsearch_urls | join(',') }}"
           elasticsearch_indexing: true
         status_code: 200, 201
         body_format: json
@@ -104,7 +104,7 @@
       until: "(index_status_result.stdout | regex_search('[0-9]+\\.[0-9]+') | float > 90.0) or '(0/0 projects)' in index_status_result.stdout"
   when:
     - gitlab_license_plan == 'ultimate'
-    - gitlab_environment_settings.elasticsearch_indexing != true
+    - not gitlab_environment_settings.elasticsearch_indexing
 
 - name: Get and save Environment Settings
   block:
@@ -120,7 +120,7 @@
     register: env_settings_response
 
   - name: Save Environment Settings
-    set_fact: 
+    set_fact:
       gitlab_environment_settings: '{{ env_settings_response.json }}'
   when: gitlab_license_plan == 'ultimate'
 
@@ -136,4 +136,4 @@
     body_format: json
   when:
     - gitlab_license_plan == 'ultimate'
-    - gitlab_environment_settings.elasticsearch_search != true
+    - not gitlab_environment_settings.elasticsearch_search

@@ -19,12 +19,12 @@
 - name: Start Elasticsearch container(s)
   docker_container:
     name: elasticsearch
-    image: "{{ elasticsearch_docker_image }}:{{elastic_version}}"
+    image: "{{ elasticsearch_docker_image }}:{{ elastic_version }}"
     pull: yes
     restart_policy: always
     state: started
     env:
-      ES_JAVA_OPTS: "-Xms{{elasticsearch_heap_size}}m -Xmx{{elasticsearch_heap_size}}m"
+      ES_JAVA_OPTS: "-Xms{{ elasticsearch_heap_size }}m -Xmx{{ elasticsearch_heap_size }}m"
       bootstrap.memory_lock: 'true'
       cluster.initial_master_nodes: "{{ elastic_int_ips | join(',') }}"
       discovery.seed_hosts: "{{ elastic_int_ips | join(',') }}"
@@ -62,7 +62,7 @@
 - name: Start Kibana container
   docker_container:
     name: kibana
-    image: "{{ kibana_docker_image }}:{{elastic_version}}"
+    image: "{{ kibana_docker_image }}:{{ elastic_version }}"
     pull: yes
     restart_policy: always
     state: started

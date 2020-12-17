@@ -56,9 +56,9 @@
       tags: debug
 
     - name: Debug show output of 'gitlab-ctl repmgr cluster show'
-      debug: 
+      debug:
         msg: "{{ cluster_show.stdout }}"
-      when: 
+      when:
         - cluster_show.stdout is defined
       tags: debug
 
@@ -68,19 +68,21 @@
       ignore_errors: yes
       when: install_patroni is defined and install_patroni
       tags: debug
-      
+
     - name: Debug show output of 'gitlab-ctl patroni members'
-      debug: 
+      debug:
         msg: "{{ patroni_members.stdout }}"
-      when: 
+      when:
         - patroni_members.stdout is defined
       tags: debug
 
 - name: Check secondary standby status
-  shell: (gitlab-ctl repmgr cluster show 2>/dev/null | grep -E 'standby \| {{ ansible_hostname }}') || echo ""
+  shell: |
+    set -eo pipefail
+    gitlab-ctl repmgr cluster show 2>/dev/null | grep -E 'standby \| {{ ansible_hostname }}') || echo ""
   register: postgres_secondary_standby_status
   tags: postgres_secondary_standby
-  when: 
+  when:
     - "'postgres_secondary' in group_names"
     - install_patroni is not defined or not install_patroni
 
@@ -88,7 +90,7 @@
   shell: "gitlab-ctl repmgr standby setup {{ postgres_primary_int_ip }} -w"
   register: postgres_secondary_standby_result
   tags: postgres_secondary_standby
-  when: 
+  when:
     - "'postgres_secondary' in group_names"
     - install_patroni is not defined or not install_patroni
     - postgres_secondary_standby_status.stdout == ''
