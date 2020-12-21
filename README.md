@@ -1,9 +1,12 @@
 # GitLab Environment Toolkit (`v1.0.0-alpha`)
 
+> Requires [GitLab Premium](https://about.gitlab.com/pricing/) or above.
+> Released under the [GitLab EE license](LICENSE).
+
 ---
 **NOTE**
 
-The GitLab Environment Toolkit is in **Alpha** (`v1.0.0-alpha`) and work is currently under way for its main release.
+The GitLab Environment Toolkit is in **Alpha** (`v1.0.0-alpha`) and work is currently under way for its main release. We do not recommend using it for production use at this time.
 
 As such, **this documentation is currently out of date** but we aim to have this updated soon.
 
