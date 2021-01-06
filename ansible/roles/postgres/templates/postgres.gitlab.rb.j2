@@ -9,8 +9,6 @@ patroni['enable'] = true
 patroni['postgresql']['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
 patroni['postgresql']['max_replication_slots'] = {{ (groups['postgres'] | length) + 1 }}
 
-patroni['use_pg_rewind'] = true
-
 {% if postgres_version is defined %}
 postgresql['version'] = {{ postgres_version }}
 {% endif %}
@@ -39,8 +37,7 @@ postgresql['version'] = 11
 
 # PostgreSQL configuration
 postgresql['listen_address'] = '0.0.0.0'
-postgresql['max_connections'] = 330
-postgresql['wal_log_hints'] = 'on'
+postgresql['max_connections'] = 500
 
 postgresql['pgbouncer_user_password'] = "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
 postgresql['sql_user_password'] = "{{ (postgres_password + 'gitlab') | md5 }}"
@@ -60,8 +57,4 @@ consul['monitoring_service_discovery'] =  true
 
 # Monitoring
 postgres_exporter['listen_address'] = '0.0.0.0:9187'
-postgres_exporter["env"] = {
-  "SSL_CERT_DIR" => "/opt/gitlab/embedded/ssl/certs/",
-  "DATA_SOURCE_NAME" => "user=gitlab-psql host=localhost database=postgres sslmode=disable"
-}
 node_exporter['listen_address'] = '0.0.0.0:9100'
