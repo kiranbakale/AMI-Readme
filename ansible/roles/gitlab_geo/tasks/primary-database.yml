@@ -47,5 +47,4 @@
     - install_patroni is defined and install_patroni
 
 - name: Primary Database - Fetch psql certificate
-  fetch: src=~gitlab-psql/data/server.crt dest=tmp/ flat=yes
-  when: ('postgres_primary' in group_names)
+  fetch: src=~gitlab-psql/data/server.crt dest={{ local_tmp }} flat=yes
