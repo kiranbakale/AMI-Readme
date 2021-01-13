@@ -9,7 +9,7 @@
 
 - name: Copy psql certificate
   copy:
-    src: tmp/server.crt
+    src: "{{ local_tmp }}server.crt"
     dest: /tmp/
     mode: 0400
 
