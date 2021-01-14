@@ -1,4 +1,4 @@
-roles ['{{ "redis_master_role" if (group_names | select("match", ".*_primary") | list | count > 0) else "redis_slave_role" }}']
+roles ['{{ "redis_master_role" if (group_names | select("match", ".*_primary") | list | count > 0) else "redis_replica_role" }}']
 
 redis['bind'] = '0.0.0.0'
 redis['port'] = {{ redis_port }}

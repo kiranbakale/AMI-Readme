@@ -1,0 +1,29 @@
+# Disable all components except PostgreSQL and Repmgr and Consul
+roles ['postgres_role']
+
+repmgr['enable'] = false
+patroni['enable'] = false
+
+{% if postgres_version is defined %}
+postgresql['version'] = {{ postgres_version }}
+{% endif %}
+
+# PostgreSQL configuration
+postgresql['listen_address'] = '0.0.0.0'
+postgresql['sql_user_password'] = "{{ (praefect_postgres_password + 'praefect') | md5 }}"
+postgresql['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
+postgresql['shared_preload_libraries'] = 'pg_stat_statements'
+
+gitlab_rails['auto_migrate'] = false
+
+# Consul
+consul['enable'] = true
+consul['configuration'] = {
+  bind_addr: '{{ ansible_default_ipv4.address }}',
+  retry_join: %w({{ (consul_int_ips if 'consul' in groups else gitlab_rails_int_ips) | join(' ') }})
+}
+consul['monitoring_service_discovery'] =  true
+
+# Monitoring
+postgres_exporter['listen_address'] = '0.0.0.0:9187'
+node_exporter['listen_address'] = '0.0.0.0:9100'

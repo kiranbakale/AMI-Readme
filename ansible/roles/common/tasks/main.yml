@@ -54,7 +54,9 @@
       pip:
         name: ['requests', 'google-auth', 'netaddr', 'openshift', 'PyYAML', 'docker', 'pexpect']
         extra_args: --upgrade
-      tags: packages
+      tags:
+        - packages
+        - reconfigure
 
     # https://about.gitlab.com/blog/2019/11/15/tracking-down-missing-tcp-keepalives/
     - name: Configure TCP keepalive settings

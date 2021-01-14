@@ -9,6 +9,7 @@ patroni['enable'] = true
 patroni['postgresql']['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
 patroni['postgresql']['max_replication_slots'] = {{ (groups['postgres'] | length) + 1 }}
 
+postgresql['shared_preload_libraries'] = 'pg_stat_statements'
 {% if postgres_version is defined %}
 postgresql['version'] = {{ postgres_version }}
 {% endif %}
@@ -16,7 +17,7 @@ postgresql['version'] = {{ postgres_version }}
 
 {% else %}
 # Enable Repmgr
-postgresql['shared_preload_libraries'] = 'repmgr_funcs'
+postgresql['shared_preload_libraries'] = 'repmgr_funcs, pg_stat_statements'
 postgresql['wal_level'] = 'replica'
 postgresql['hot_standby'] = 'on'
 

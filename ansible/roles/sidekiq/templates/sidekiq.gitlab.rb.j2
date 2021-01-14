@@ -122,7 +122,20 @@ gitlab_rails['env'] = {
 }
 
 # Gitaly
+{% if 'praefect' in groups %}
+## Gitaly Cluster (External)
+gitaly['enable'] = false
+git_data_dirs({
+  "default" => {
+    "gitaly_address" => "tcp://{{ haproxy_internal_int_ip }}:2305",
+    "gitaly_token" => '{{ praefect_external_token }}'
+  }
+})
+{% elif 'gitaly' in groups %}
+## Gitaly (External)
+gitaly['enable'] = false
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
+
 git_data_dirs({
   'default' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_int_ip }}:8075' },
   'storage1' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_int_ip }}:8075' },
@@ -130,3 +143,4 @@ git_data_dirs({
   "storage{{loop.index + 1}}" => { 'gitaly_address' => 'tcp://{{ gitaly_secondary_ip }}:8075' },
 {% endfor %}
 })
+{% endif %}

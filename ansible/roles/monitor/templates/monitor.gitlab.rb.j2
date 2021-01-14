@@ -46,14 +46,26 @@ prometheus['scrape_configs'] = [
 {% endfor %}
       ],
     ],
-  }
+  },
+{% endif %}
+{% if 'praefect' in groups %}
+  {
+    'job_name': 'praefect',
+    'static_configs' => [
+      'targets' => [
+{% for ip in praefect_int_ips %}
+        "{{ ip }}:9652",
+{% endfor %}
+      ],
+    ],
+  },
 {% endif %}
 ]
 
 # Enable Grafana
 grafana['enable'] = true
-{% if gitlab_root_password != '' %}
-gitlab_rails['initial_root_password'] = "{{ gitlab_root_password | regex_escape() }}"
+{% if grafana_password != '' %}
+grafana['admin_password'] = "{{ grafana_password | regex_escape() }}"
 {% endif %}
 grafana['disable_login_form'] = false
 grafana['env'] = {

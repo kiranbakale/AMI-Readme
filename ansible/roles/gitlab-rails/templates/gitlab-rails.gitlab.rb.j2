@@ -178,7 +178,16 @@ gitlab_workhorse['env'] = {
 }
 {% endif %}
 
-{% if 'gitaly' in groups %}
+{% if 'gitaly' in groups and 'praefect' in groups %}
+## Gitaly Cluster (External)
+gitaly['enable'] = false
+git_data_dirs({
+  "default" => {
+    "gitaly_address" => "tcp://{{ haproxy_internal_int_ip }}:2305",
+    "gitaly_token" => '{{ praefect_external_token }}'
+  }
+})
+{% elif 'gitaly' in groups %}
 ## Gitaly (External)
 gitaly['enable'] = false
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
