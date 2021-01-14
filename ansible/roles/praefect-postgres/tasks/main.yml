@@ -1,0 +1,25 @@
+---
+- name: Setup GitLab config file
+  template:
+    src: templates/praefect_postgres.gitlab.rb.j2
+    dest: /etc/gitlab/gitlab.rb
+  tags: reconfigure
+
+- name: Reconfigure Praefect PostgreSQL
+  shell: gitlab-ctl reconfigure
+  tags: reconfigure
+
+- name: Restart Praefect PostgreSQL
+  command: gitlab-ctl restart
+  register: result
+  retries: 2
+  until: result is success
+  tags:
+    - reconfigure
+    - restart
+
+- name: Create skip-auto-reconfigure file
+  file:
+    path: /etc/gitlab/skip-auto-reconfigure
+    state: touch
+    mode: u=rw,g=r,o=r

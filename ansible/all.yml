@@ -6,6 +6,8 @@
 - import_playbook: postgres.yml
 - import_playbook: pgbouncer.yml
 - import_playbook: redis.yml
+- import_playbook: praefect-postgres.yml
+- import_playbook: praefect.yml
 - import_playbook: gitaly.yml
 - import_playbook: gitlab-rails.yml
 - import_playbook: sidekiq.yml

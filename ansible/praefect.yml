@@ -1,0 +1,5 @@
+---
+- hosts: praefect
+  roles:
+    - praefect
+  become: true
