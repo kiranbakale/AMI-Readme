@@ -64,7 +64,7 @@ prometheus['scrape_configs'] = [
 
 # Enable Grafana
 grafana['enable'] = true
-{% if grafana_password != '' %}
+{% if grafana_password is defined and grafana_password != '' %}
 grafana['admin_password'] = "{{ grafana_password | regex_escape() }}"
 {% endif %}
 grafana['disable_login_form'] = false
