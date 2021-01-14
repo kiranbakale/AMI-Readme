@@ -37,3 +37,7 @@
       signup_enabled: false
     status_code: 200, 201
     body_format: json
+
+- name: Enable Distributed Reads for Gitaly Cluster
+  command: gitlab-rails runner "Feature.enable(:gitaly_distributed_reads)"
+  when: "'praefect' in groups"

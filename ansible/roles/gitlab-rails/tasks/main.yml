@@ -88,11 +88,6 @@
     when: "'gitlab_rails_primary' in group_names"
   when: "'postgres' in groups"
 
-- name: Enable Feature Flags (GitLab Primary)
-  command: gitlab-rails runner "Feature.enable(:gitaly_distributed_reads)"
-  tags: reconfigure
-  when: "'gitlab_rails_primary' in group_names"
-
 - name: Setup all GitLab Rails config files
   template:
     src: templates/gitlab-rails.gitlab.rb.j2
