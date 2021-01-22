@@ -19,12 +19,12 @@ variable "consul_disk_size" { default = null }
 
 variable "elastic_node_count" { default = 0 }
 variable "elastic_machine_type" { default = "" }
-variable "elastic_disk_type" { default = null }
+variable "elastic_disk_type" { default = "pd-ssd" }
 variable "elastic_disk_size" { default = "500" }
 
 variable "gitaly_node_count" { default = 0 }
 variable "gitaly_machine_type" { default = "" }
-variable "gitaly_disk_type" { default = null }
+variable "gitaly_disk_type" { default = "pd-ssd" }
 variable "gitaly_disk_size" { default = "500" }
 
 variable "gitlab_nfs_node_count" { default = 0 }
