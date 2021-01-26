@@ -4,10 +4,6 @@ roles ['postgres_role']
 repmgr['enable'] = false
 patroni['enable'] = false
 
-{% if postgres_version is defined %}
-postgresql['version'] = {{ postgres_version }}
-{% endif %}
-
 # PostgreSQL configuration
 postgresql['listen_address'] = '0.0.0.0'
 postgresql['sql_user_password'] = "{{ (praefect_postgres_password + 'praefect') | md5 }}"
