@@ -5,11 +5,6 @@
   delegate_facts: true
   with_items: "{{ groups['elastic'] }}"
 
-- name: Generate OAuth Token if not present
-  include_tasks: oauth-token.yml
-  when: gitlab_oauth_token is not defined
-  tags: oauth
-
 - name: Configure Ultimate License
   include_tasks: license.yml
   when: gitlab_license_plan is not defined
@@ -27,7 +22,7 @@
         url: '{{ external_url_sanitised }}/api/v4/application/settings'
         method: PUT
         headers:
-          Authorization: 'Bearer {{ gitlab_oauth_token }}'
+          PRIVATE-TOKEN: '{{ access_token_key }}'
         body:
           elasticsearch_url: ""
           elasticsearch_shards: "5"
@@ -47,7 +42,7 @@
         url: '{{ external_url_sanitised }}/api/v4/application/settings'
         method: GET
         headers:
-          Authorization: 'Bearer {{ gitlab_oauth_token }}'
+          PRIVATE-TOKEN: '{{ access_token_key }}'
         status_code: 200, 201
         body_format: json
         return_content: yes
@@ -63,7 +58,7 @@
     url: '{{ external_url_sanitised }}/api/v4/application/settings'
     method: PUT
     headers:
-      Authorization: 'Bearer {{ gitlab_oauth_token }}'
+      PRIVATE-TOKEN: '{{ access_token_key }}'
     body:
       elasticsearch_url: "{{ elasticsearch_urls | join(',') }}"
       elasticsearch_shards: "{{ elasticsearch_shards }}"
@@ -82,7 +77,7 @@
         url: '{{ external_url_sanitised }}/api/v4/application/settings'
         method: PUT
         headers:
-          Authorization: 'Bearer {{ gitlab_oauth_token }}'
+          PRIVATE-TOKEN: '{{ access_token_key }}'
         body:
           elasticsearch_url: "{{ elasticsearch_urls | join(',') }}"
           elasticsearch_indexing: true
@@ -113,7 +108,7 @@
       url: '{{ external_url_sanitised }}/api/v4/application/settings'
       method: GET
       headers:
-        Authorization: 'Bearer {{ gitlab_oauth_token }}'
+        PRIVATE-TOKEN: '{{ access_token_key }}'
       status_code: 200, 201
       body_format: json
       return_content: yes
@@ -129,7 +124,7 @@
     url: '{{ external_url_sanitised }}/api/v4/application/settings'
     method: PUT
     headers:
-      Authorization: 'Bearer {{ gitlab_oauth_token }}'
+      PRIVATE-TOKEN: '{{ access_token_key }}'
     body:
       elasticsearch_search: true
     status_code: 200, 201
