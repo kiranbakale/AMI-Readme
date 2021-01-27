@@ -15,6 +15,27 @@
   when: gitlab_root_password == ''
   tags: config-check
 
+- name: Generate Access Token
+  shell: |
+    gitlab-rails runner "
+      existingToken = PersonalAccessToken.find_by_token('{{ access_token_key }}')
+
+      if existingToken == nil
+        token=User.find_by_username('{{ access_token_user }}').
+                   personal_access_tokens.create(
+                     scopes: {{ access_token_scopes }},
+                     name: 'GitLab Environment Toolkit API Token'
+                   )
+        token.set_token('{{ access_token_key }}')
+        token.save!
+      end
+    "
+  tags:
+    - access_token
+    - license
+    - reconfigure
+    - elasticsearch
+
 - name: Do GitLab post configuration
   block:
     - name: Configure Ultimate License
@@ -36,3 +57,20 @@
         - gitlab_license_plan is defined
       tags: elasticsearch
   when: gitlab_root_password != ''
+
+- name: Remove Access Token
+  block:
+    - name: Revoke Access Token
+      shell: |
+        gitlab-rails runner "PersonalAccessToken.find_by_token('{{ access_token_key }}').revoke!"
+
+    - name: Remove saved Access Token
+      file: path=tmp/access-token state=absent
+      delegate_to: localhost
+      become: false
+  tags:
+  - access_token
+  - license
+  - reconfigure
+  - elasticsearch
+

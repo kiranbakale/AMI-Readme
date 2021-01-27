@@ -1,14 +1,9 @@
-- name: Generate OAuth Token if not present
-  include_tasks: oauth-token.yml
-  when: gitlab_oauth_token is not defined
-  tags: oauth
-
 - name: Get License Plan
   uri:
     url: '{{ external_url_sanitised }}/api/v4/license'
     method: GET
     headers:
-      Authorization: 'Bearer {{ gitlab_oauth_token }}'
+      PRIVATE-TOKEN: '{{ access_token_key }}'
     status_code: 200
     body_format: json
     return_content: yes
@@ -19,7 +14,7 @@
     url: '{{ external_url_sanitised }}/api/v4/license'
     method: POST
     headers:
-      Authorization: 'Bearer {{ gitlab_oauth_token }}'
+      PRIVATE-TOKEN: '{{ access_token_key }}'
     body:
       license: "{{ lookup('file', gitlab_license_file) }}"
     status_code: 200, 201
