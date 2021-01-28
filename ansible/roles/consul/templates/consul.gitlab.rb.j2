@@ -8,7 +8,7 @@ consul['configuration'] = {
   retry_join: %w({{ consul_int_ips | join(' ') }}),
   bind_addr: '{{ ansible_default_ipv4.address }}'
 }
-consul['monitoring_service_discovery'] =  true
+consul['monitoring_service_discovery'] = true
 node_exporter['listen_address'] = '0.0.0.0:9100'
 
 {% if (groups | select('match', '^redis_sentinel.*') | list | count == 0) %}
