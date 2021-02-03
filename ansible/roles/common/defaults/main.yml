@@ -1,0 +1,5 @@
+gitlab_host_deb_path: "{{ lookup('env','GITLAB_HOST_DEB_PATH')}}" # Specify absolute path to the local deb package on host
+gitlab_target_deb_path: "{{ lookup('env','GITLAB_TARGET_DEB_PATH') | default('/tmp/' + (gitlab_host_deb_path | basename), true)}}"
+
+gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default('gitlab-ee', true) }}"
+gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh', true) }}"
