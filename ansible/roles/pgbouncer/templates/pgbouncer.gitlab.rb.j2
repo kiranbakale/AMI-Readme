@@ -5,7 +5,7 @@ roles ['pgbouncer_role']
 pgbouncer['admin_users'] = %w(pgbouncer gitlab-consul)
 pgbouncer['users'] = {
   'gitlab-consul': {
-    password: "{{ (consul_password + 'gitlab-consul') | md5 }}"
+    password: "{{ ((consul_database_password | default(consul_password)) + 'gitlab-consul') | md5 }}"
   },
   'pgbouncer': {
     password: "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"

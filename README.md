@@ -1,40 +1,38 @@
-# GitLab Environment Toolkit (`v1.0.0-alpha`)
+# GitLab Environment Toolkit (`v1.0.0-beta`)
 
 > Requires [GitLab Premium](https://about.gitlab.com/pricing/) or above.
 > Released under the [GitLab EE license](LICENSE).
 
 ---
-**NOTE**
+<table>
+    <tr>
+        <td><img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/></td>
+        <td>The GitLab Environment Toolkit is in **Beta** (`v1.0.0-beta`) and work is currently under way for its main release. We do not recommend using it for production use at this time.<br/><br/>As such, <b>this documentation is still under construction</b> but we aim to have it completed soon.</td>
+    </tr>
 
-The GitLab Environment Toolkit is in **Alpha** (`v1.0.0-alpha`) and work is currently under way for its main release. We do not recommend using it for production use at this time.
-
-As such, **this documentation is currently out of date** but we aim to have this updated soon.
-
-For more information about this release please refer to this [Epic](https://gitlab.com/groups/gitlab-org/-/epics/5061).
+</table>
 
 ---
 
 The GitLab Environment Toolkit (`GET`), formerly known as the Performance Environment Builder, is a collection of tools with a simple focused purpose - to deploy [GitLab Omnibus](https://gitlab.com/gitlab-org/omnibus-gitlab) at scale as defined by our [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures).
 
-Created and maintained by the Quality team the Toolkit, built with [Terraform](https://www.terraform.io/) and [Ansible](https://docs.ansible.com/ansible/latest/index.html), supports provisioning and configuring machines respectively with the following features:
+Created and maintained by the Quality Enablement team the Toolkit, built with [Terraform](https://www.terraform.io/) and [Ansible](https://docs.ansible.com/ansible/latest/index.html), supports provisioning and configuring machines respectively with the following features:
 
 - Support for deploying all [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) sizes dynamically from [1k](https://docs.gitlab.com/ee/administration/reference_architectures/1k_users.html) to [50k](https://docs.gitlab.com/ee/administration/reference_architectures/50k_users.html).
-- GCP and Azure cloud provider support
+- GCP, AWS and Azure cloud provider support
 - Upgrades
 - Release and nightly Omnibus builds support
 - Advanced search with Elasticsearch
-- Load Balancing and Monitoring setup
-- Support for new and incoming features such as Patroni
+- Built in Load Balancing and Monitoring (Prometheus, Grafana) setup
 
-Originally built to help define the official [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) and enable performance testing against those with the [GPT](https://gitlab.com/gitlab-org/quality/performance), the Quality team use this Toolkit pretty much daily and it's now open to be used by other teams to enable them to deploy GitLab at scale in the recommended way.
+Originally built to help define the official [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) and enable performance testing against those with the [GPT](https://gitlab.com/gitlab-org/quality/performance), the Toolkit has been opened to be used by other teams to enable them to deploy GitLab at scale in the recommended way.
 
 ## How It Works
 
-At a high level the Toolkit is designed to be as simple as possible. A high level overview of how it works is as follows:
+At a high level the Toolkit is designed to be as straightforward as possible. A high level overview of how it works is as follows:
 
-- Machines are provisioned as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) with Terraform with Labels added to each for Ansible to then identify.
-- Ansible, through identifying each machine by its Labels, will intelligently go through them in the GitLab install order. On each it will install and configure Omnibus to setup the intended component as required. Further to this Ansible will ignore missing machines allow for more dynamic setups (e.g. an environment without Elasticsearch, or a small 1k environment with a smaller amount of nodes).
-- Additional tasks are also performed as required such as setting GitLab config through API, Load Balancer setup and additional monitoring setup.
+- Machines are _provisioned_ as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) with Terraform. Part of this provisioning includes adding specific labels / tags to each machine for Ansible to then use to identify.
+- Machines are _configured_ with Ansible. Through identifying each machine by its Labels, Ansible will intelligently go through them in the correct install order. On each it will install and configure Omnibus to setup the intended component as required. The Ansible scripts have been designed to handle certain dynamic setups depending on what machines have been provisioned (e.g. an environment without Elasticsearch, or a 2k environment with a smaller amount of nodes). Additional tasks are also performed as required such as setting GitLab config through API or Load Balancer and Monitoring setup.
 
 ## Requirements
 
@@ -45,13 +43,14 @@ Note that the Toolkit currently has the following requirements (with related iss
   - Note that additionally at this time GET supports clean Ubuntu installs and may work with existing ones but this is not guaranteed at this time.
   - Admin access to the OS is also required by GET to install various dependencies
 - Types of environment: The Toolkit is designed to deploy the official GitLab [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) as environments.
-  - It may be possible to make small tweaks to these in a limited fashion, such as increasing the number of nodes or their specs, but this is generally unrecommended at this time.
+  - Advanced usage is possible where users can make tweaks to the environments as desired, such as increasing the number of nodes or their specs, but this is generally unrecommended.
 
 ## Documentation
 
-- [Preparing the toolkit](docs/prep_toolkit.md)
-- [Building environment(s)](docs/building_environments.md)
-- [Building environments with Geo](docs/building_geo_environments.md)
+- [Preparing the environment](docs/environment_prep.md)
+- [Provisioning the environment with Terraform](docs/environment_provision.md)
+- [Configuring the environment with Ansible](docs/environment_configure.md)
+- [Advanced environment setups](docs/environment_advanced.md)
 
 ## Issues or Feature Requests
 
