@@ -77,6 +77,3 @@ consul['monitoring_service_discovery'] = true
 # Monitoring
 praefect['prometheus_listen_addr'] = '0.0.0.0:9652'
 node_exporter['listen_address'] = '0.0.0.0:9100'
-
-# Workaround for Sidekiq Cluster which is enabling by default
-sidekiq['enable'] = false
