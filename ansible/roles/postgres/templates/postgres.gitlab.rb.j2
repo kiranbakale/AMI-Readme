@@ -1,11 +1,11 @@
 # Disable all components except PostgreSQL and Repmgr and Consul
 roles ['postgres_role']
 
+{% if groups['postgres'] | length > 1 %}
 {% if install_patroni is defined and install_patroni %}
 # Enable Patroni
 patroni['enable'] = true
 
-{% if groups['postgres'] | length > 1 %}
 patroni['postgresql']['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
 patroni['postgresql']['max_replication_slots'] = {{ (groups['postgres'] | length) + 1 }}
 
@@ -15,7 +15,6 @@ patroni['remove_data_directory_on_diverged_timelines'] = {{ patroni_remove_data_
 postgresql['shared_preload_libraries'] = 'pg_stat_statements'
 {% if postgres_version is defined %}
 postgresql['version'] = {{ postgres_version }}
-{% endif %}
 {% endif %}
 
 {% else %}
@@ -27,21 +26,26 @@ postgresql['hot_standby'] = 'on'
 repmgr['host'] = '{{ ansible_default_ipv4.address }}'
 repmgr['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 
-{% if groups['postgres'] | length > 1 %}
 postgresql['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
 postgresql['max_replication_slots'] = {{ (groups['postgres'] | length) + 1 }}
 repmgr['master_on_initialization'] = {{ postgres_repmgr_master }}
-{% endif %}
 
 postgresql['version'] = 11
 
+{% endif %}
+
+{% else %}
+repmgr['enable'] = false
+patroni['enable'] = false
 {% endif %}
 
 # PostgreSQL configuration
 postgresql['listen_address'] = '0.0.0.0'
 postgresql['max_connections'] = 500
 
+{% if 'pgbouncer' in groups %}
 postgresql['pgbouncer_user_password'] = "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
+{% endif %}
 postgresql['sql_user_password'] = "{{ (postgres_password + 'gitlab') | md5 }}"
 
 postgresql['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
@@ -49,7 +53,9 @@ postgresql['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 gitlab_rails['auto_migrate'] = false
 
 # Consul
+{% if groups['postgres'] | length > 1 %}
 consul['services'] = %w(postgresql)
+{% endif %}
 consul['enable'] = true
 consul['configuration'] = {
   bind_addr: '{{ ansible_default_ipv4.address }}',
