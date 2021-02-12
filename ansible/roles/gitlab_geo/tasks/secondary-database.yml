@@ -22,10 +22,9 @@
             -T /tmp/server.crt ~gitlab-psql/.postgresql/root.crt
 
 - name: Secondary database - Add new config
-  blockinfile:
-    path: /etc/gitlab/gitlab.rb
-    block: "{{ lookup('template', '../templates/secondary-database') }}"
-    marker: "# {mark} geo config block - secondary-database"
+  template:
+    src: templates/secondary-database.rb.j2
+    dest: /etc/gitlab/gitlab.geo.secondary-database.rb
 
 - name: Secondary database - Remove existing cluster information for Patroni
   import_tasks: secondary-database-patroni-workaround.yml

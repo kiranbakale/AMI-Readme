@@ -3,10 +3,9 @@
   when: install_patroni is defined and install_patroni
 
 - name: Read-only Replica - Add new config
-  blockinfile:
-    path: /etc/gitlab/gitlab.rb
-    block: "{{ lookup('template', '../templates/read-only-replica') }}"
-    marker: "# {mark} geo config block - read-only-replica"
+  template:
+    src: templates/read-only-replica.rb.j2
+    dest: /etc/gitlab/gitlab.geo.read-only-replica.rb
 
 - name: Read-only Replica - Run gitlab-ctl reconfigure
   command: gitlab-ctl reconfigure
