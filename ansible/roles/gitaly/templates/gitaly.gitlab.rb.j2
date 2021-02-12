@@ -83,3 +83,8 @@ git_data_dirs({
   "storage{{ gitaly_number }}" => { 'path' => "/mnt/gitlab/storage{{ gitaly_number }}" },
 })
 {% endif %}
+
+confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.*.rb"))
+confs.each { |conf|
+  from_file conf
+}

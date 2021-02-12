@@ -26,3 +26,8 @@ node_exporter['listen_address'] = '0.0.0.0:9100'
 
 pgbouncer_exporter['enable'] = true
 pgbouncer_exporter['listen_address'] = '0.0.0.0:9188'
+
+confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.*.rb"))
+confs.each { |conf|
+  from_file conf
+}

@@ -57,14 +57,14 @@ gitlab_rails['shared_path'] = '{{ gitlab_nfs_path }}/shared'
 gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
 
 # Components Config
-{% if 'redis' in groups %} 
+{% if 'redis' in groups %}
 ## Redis - Combined Queues (External)
 {% if groups['redis'] | length == 1 %}
 ### Redis Single Node
 gitlab_rails['redis_port'] = '{{ redis_port }}'
 gitlab_rails['redis_host'] = '{{ redis_primary_int_ip }}'
 gitlab_rails['redis_password'] = '{{ redis_password }}'
-{% elif groups['redis'] | length > 1 %} 
+{% elif groups['redis'] | length > 1 %}
 ### Redis Multi Node
 redis['master_name'] = 'gitlab-redis'
 redis['master_password'] = '{{ redis_password }}'
@@ -144,3 +144,8 @@ git_data_dirs({
 {% endfor %}
 })
 {% endif %}
+
+confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.*.rb"))
+confs.each { |conf|
+  from_file conf
+}

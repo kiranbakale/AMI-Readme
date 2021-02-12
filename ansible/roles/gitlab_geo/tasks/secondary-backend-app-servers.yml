@@ -1,8 +1,7 @@
 - name: Secondary Backend App Servers - Add new config
-  blockinfile:
-    path: /etc/gitlab/gitlab.rb
-    block: "{{ lookup('template', '../templates/secondary-app-servers') }}"
-    marker: "# {mark} geo config block - secondary-backend-app-servers"
+  template:
+    src: templates/secondary-app-servers.rb.j2
+    dest: /etc/gitlab/gitlab.geo.secondary-app-servers.rb
 
 - name: Secondary Backend App Servers - Run gitlab-ctl reconfigure
   command: gitlab-ctl reconfigure

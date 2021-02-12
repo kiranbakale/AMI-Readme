@@ -22,3 +22,8 @@ redis['master_ip'] = '{{ redis_primary_int_ip }}'
 redis['master_password'] = '{{ redis_password }}'
 redis['port'] = {{ redis_port }}
 {% endif %}
+
+confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.*.rb"))
+confs.each { |conf|
+  from_file conf
+}

@@ -152,3 +152,8 @@ redis_exporter['enable'] = false
 sidekiq['enable'] = false
 unicorn['enable'] = false
 puma['enable'] = false
+
+confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.*.rb"))
+confs.each { |conf|
+  from_file conf
+}

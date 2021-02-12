@@ -206,3 +206,8 @@ git_data_dirs({
 gitaly['enable'] = true
 gitaly['prometheus_listen_addr'] = "0.0.0.0:9236"
 {% endif %}
+
+confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.*.rb"))
+confs.each { |conf|
+  from_file conf
+}
