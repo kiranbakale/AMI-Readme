@@ -36,6 +36,9 @@ nginx['status']['options'] = {
 {% endif -%}
 }
 
+### External merge request diffs - store outdated diffs in object storage
+gitlab_rails['external_diffs_when'] = 'outdated'
+
 # Storage Config
 ## Object Storage - consolidated object storage configuration
 
