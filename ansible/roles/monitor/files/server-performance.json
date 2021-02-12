@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 14,
+  "id": 15,
   "links": [],
   "panels": [
     {
@@ -61,7 +61,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -192,7 +192,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -284,7 +284,7 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
-        "w": 8,
+        "w": 12,
         "x": 0,
         "y": 17
       },
@@ -310,7 +310,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -386,9 +386,110 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
-        "w": 8,
-        "x": 8,
+        "w": 12,
+        "x": 12,
         "y": 17
+      },
+      "hiddenSeries": false,
+      "id": 6,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.7",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(irate(gitlab_transaction_duration_seconds_count{controller!=''}[1m])) by (controller, action) > 0",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "{{controller}} - {{action}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Controller - Action Requests",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 29
       },
       "hiddenSeries": false,
       "id": 14,
@@ -413,7 +514,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -533,9 +634,9 @@
       "grid": {},
       "gridPos": {
         "h": 12,
-        "w": 8,
-        "x": 16,
-        "y": 17
+        "w": 12,
+        "x": 12,
+        "y": 29
       },
       "hiddenSeries": false,
       "id": 19,
@@ -559,7 +660,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -678,7 +779,7 @@
         "h": 14,
         "w": 12,
         "x": 0,
-        "y": 29
+        "y": 41
       },
       "hiddenSeries": false,
       "id": 26,
@@ -702,7 +803,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -779,7 +880,7 @@
         "h": 14,
         "w": 12,
         "x": 12,
-        "y": 29
+        "y": 41
       },
       "hiddenSeries": false,
       "id": 20,
@@ -803,7 +904,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -898,7 +999,7 @@
         "h": 14,
         "w": 12,
         "x": 0,
-        "y": 43
+        "y": 55
       },
       "hiddenSeries": false,
       "id": 21,
@@ -922,7 +1023,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1015,7 +1116,7 @@
         "h": 14,
         "w": 12,
         "x": 12,
-        "y": 43
+        "y": 55
       },
       "hiddenSeries": false,
       "id": 34,
@@ -1039,7 +1140,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1132,7 +1233,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 57
+        "y": 69
       },
       "hiddenSeries": false,
       "id": 23,
@@ -1157,7 +1258,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1238,234 +1339,10 @@
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 57
-      },
-      "hiddenSeries": false,
-      "id": 6,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "max",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "nullPointMode": "null as zero",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.3.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum(irate(gitlab_transaction_duration_seconds_count{controller!=''}[1m])) by (controller, action) > 0",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{controller}} - {{action}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Controller - Action Requests",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "GitLab Omnibus",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 14,
-        "w": 12,
-        "x": 0,
-        "y": 69
-      },
-      "hiddenSeries": false,
-      "id": 25,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "max",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.3.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "label_replace(sum by (instance)(puma_active_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "Puma Active Connections - {{nodename}}",
-          "refId": "A"
-        },
-        {
-          "expr": "label_replace(sum by (instance)(puma_queued_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "Puma Queued Connections - {{nodename}}",
-          "refId": "B"
-        },
-        {
-          "expr": "label_replace(sum by (instance)(unicorn_active_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "Unicorn Active Connections - {{nodename}}",
-          "refId": "C"
-        },
-        {
-          "expr": "label_replace(sum by (instance)(unicorn_queued_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "Unicorn Queued Connections - {{nodename}}",
-          "refId": "D"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Webserver Metrics",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": null,
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "percent",
-          "label": null,
-          "logBase": 1,
-          "max": "100",
-          "min": "0",
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "GitLab Omnibus",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 14,
         "w": 12,
         "x": 12,
         "y": 69
@@ -1492,7 +1369,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1594,10 +1471,10 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 83
+        "y": 81
       },
       "hiddenSeries": false,
-      "id": 27,
+      "id": 25,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1618,7 +1495,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1628,25 +1505,39 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "label_replace(sum by (instance)(pg_stat_activity_count), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "expr": "label_replace(sum by (instance)(puma_active_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
           "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "Activity Count - {{nodename}}",
+          "legendFormat": "Puma Active Connections - {{nodename}}",
           "refId": "A"
         },
         {
-          "expr": "label_replace(sum by (instance)(pg_replication_lag), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "hide": true,
+          "expr": "label_replace(sum by (instance)(puma_queued_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "Replication Lag - {{nodename}}",
+          "legendFormat": "Puma Queued Connections - {{nodename}}",
           "refId": "B"
+        },
+        {
+          "expr": "label_replace(sum by (instance)(unicorn_active_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Unicorn Active Connections - {{nodename}}",
+          "refId": "C"
+        },
+        {
+          "expr": "label_replace(sum by (instance)(unicorn_queued_connections), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Unicorn Queued Connections - {{nodename}}",
+          "refId": "D"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Postgres Metrics",
+      "title": "Webserver Metrics",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1703,7 +1594,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 83
+        "y": 81
       },
       "hiddenSeries": false,
       "id": 28,
@@ -1727,7 +1618,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1824,13 +1715,223 @@
         },
         "overrides": []
       },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 93
+      },
+      "hiddenSeries": false,
+      "id": 27,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.7",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "label_replace(sum by (instance)(pg_stat_activity_count), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Activity Count - {{nodename}}",
+          "refId": "A"
+        },
+        {
+          "expr": "label_replace(sum by (instance)(pg_replication_lag), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "hide": true,
+          "intervalFactor": 2,
+          "legendFormat": "Replication Lag - {{nodename}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Postgres Metrics",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 93
+      },
+      "hiddenSeries": false,
+      "id": 7,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "max",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.7",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(irate(gitlab_sql_duration_seconds_count[30s]))",
+          "format": "time_series",
+          "intervalFactor": 2,
+          "legendFormat": "SQL Transactions",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "SQL Transactions",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "GitLab Omnibus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 95
+        "y": 105
       },
       "hiddenSeries": false,
       "id": 8,
@@ -1854,7 +1955,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1931,10 +2032,10 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 95
+        "y": 105
       },
       "hiddenSeries": false,
-      "id": 7,
+      "id": 13,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -1955,7 +2056,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1965,10 +2066,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(irate(gitlab_sql_duration_seconds_count[30s]))",
+          "expr": "histogram_quantile(0.95, sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket[5m])) by (le))",
           "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "SQL Transactions",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "Workhorse p95 HTTP Req Duration",
           "refId": "A"
         }
       ],
@@ -1976,7 +2078,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "SQL Transactions",
+      "title": "Workhorse p95",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2032,7 +2134,7 @@
         "h": 14,
         "w": 12,
         "x": 0,
-        "y": 107
+        "y": 117
       },
       "hiddenSeries": false,
       "id": 12,
@@ -2056,7 +2158,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2134,10 +2236,10 @@
         "h": 14,
         "w": 12,
         "x": 12,
-        "y": 107
+        "y": 117
       },
       "hiddenSeries": false,
-      "id": 13,
+      "id": 16,
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -2145,7 +2247,7 @@
         "max": true,
         "min": false,
         "show": true,
-        "sort": "max",
+        "sort": "current",
         "sortDesc": true,
         "total": false,
         "values": true
@@ -2158,7 +2260,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2168,11 +2270,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(gitlab_workhorse_http_request_duration_seconds_bucket[5m])) by (le))",
+          "expr": "label_replace(irate(ruby_gc_duration_seconds_count[5m]), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
           "format": "time_series",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Workhorse p95 HTTP Req Duration",
+          "intervalFactor": 2,
+          "legendFormat": "{{nodename}}",
           "refId": "A"
         }
       ],
@@ -2180,7 +2281,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Workhorse p95",
+      "title": "Ruby GC Cycles",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2236,7 +2337,7 @@
         "h": 14,
         "w": 12,
         "x": 0,
-        "y": 121
+        "y": 131
       },
       "hiddenSeries": false,
       "id": 9,
@@ -2260,7 +2361,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2338,216 +2439,13 @@
         },
         "overrides": []
       },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 14,
-        "w": 12,
-        "x": 12,
-        "y": 121
-      },
-      "hiddenSeries": false,
-      "id": 16,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "current",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "nullPointMode": "null as zero",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.3.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "label_replace(irate(ruby_gc_duration_seconds_count[5m]), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{nodename}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Ruby GC Cycles",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "GitLab Omnibus",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 14,
-        "w": 12,
-        "x": 0,
-        "y": 135
-      },
-      "hiddenSeries": false,
-      "id": 29,
-      "legend": {
-        "alignAsTable": true,
-        "avg": false,
-        "current": true,
-        "max": true,
-        "min": false,
-        "show": true,
-        "sort": "max",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "links": [],
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.3.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "label_replace(sum by (instance)(ruby_memory_bytes), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
-          "format": "time_series",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "{{nodename}}",
-          "refId": "F"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Ruby Memory Used",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "percent",
-          "label": "",
-          "logBase": 1,
-          "max": "100",
-          "min": "0",
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "GitLab Omnibus",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": []
-        },
-        "overrides": []
-      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 14,
         "w": 12,
         "x": 12,
-        "y": 135
+        "y": 131
       },
       "hiddenSeries": false,
       "id": 5,
@@ -2571,7 +2469,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2648,7 +2546,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 149
+        "y": 145
       },
       "hiddenSeries": false,
       "id": 35,
@@ -2672,7 +2570,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2753,7 +2651,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 149
+        "y": 145
       },
       "hiddenSeries": false,
       "id": 38,
@@ -2777,7 +2675,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2859,7 +2757,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 161
+        "y": 157
       },
       "hiddenSeries": false,
       "id": 37,
@@ -2885,7 +2783,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2964,7 +2862,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 161
+        "y": 157
       },
       "hiddenSeries": false,
       "id": 36,
@@ -2990,7 +2888,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3068,7 +2966,7 @@
         "h": 13,
         "w": 24,
         "x": 0,
-        "y": 173
+        "y": 169
       },
       "hiddenSeries": false,
       "id": 31,
@@ -3093,7 +2991,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3183,7 +3081,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 186
+        "y": 182
       },
       "hiddenSeries": false,
       "id": 33,
@@ -3208,7 +3106,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.3",
+      "pluginVersion": "7.3.7",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -3290,7 +3188,7 @@
       }
     }
   ],
-  "refresh": "10s",
+  "refresh": false,
   "schemaVersion": 26,
   "style": "dark",
   "tags": [],
@@ -3298,8 +3196,8 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
-    "to": "now"
+    "from": "2021-02-11T01:28:19.156Z",
+    "to": "2021-02-11T02:45:47.669Z"
   },
   "timepicker": {
     "refresh_intervals": [
