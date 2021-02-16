@@ -20,6 +20,10 @@ gitlab_rails['initial_root_password'] = "{{ gitlab_root_password }}"
 {% endif %}
 gitlab_rails['gitlab_shell_ssh_port'] = 2222
 
+{% if gitlab_shell_token != '' %}
+gitlab_shell['secret_token'] = "{{ gitlab_shell_token }}"
+{% endif %}
+
 # Ensure UIDs and GIDs match between servers for permissions via NFS
 user['uid'] = 9000
 user['gid'] = 9000
