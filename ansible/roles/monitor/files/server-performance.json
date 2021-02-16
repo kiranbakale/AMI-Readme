@@ -3188,7 +3188,7 @@
       }
     }
   ],
-  "refresh": false,
+  "refresh": "10s",
   "schemaVersion": 26,
   "style": "dark",
   "tags": [],
@@ -3196,8 +3196,8 @@
     "list": []
   },
   "time": {
-    "from": "2021-02-11T01:28:19.156Z",
-    "to": "2021-02-11T02:45:47.669Z"
+    "from": "now-1h",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -3227,5 +3227,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 1
+  "version": 2
 }
