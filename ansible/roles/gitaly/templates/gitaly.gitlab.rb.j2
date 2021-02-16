@@ -41,6 +41,10 @@ gitlab_rails['auto_migrate'] = false
 # balancer.
 gitlab_rails['internal_api_url'] = '{{ external_url_sanitised }}'
 
+{% if gitlab_shell_token != '' %}
+gitlab_shell['secret_token'] = "{{ gitlab_shell_token }}"
+{% endif %}
+
 # Make Gitaly accept connections on all network interfaces. You must use
 # firewalls to restrict access to this address/port.
 gitaly['listen_addr'] = "0.0.0.0:8075"
