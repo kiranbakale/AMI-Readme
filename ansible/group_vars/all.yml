@@ -29,11 +29,11 @@ gitaly_primary_int_ip: "{{ (groups['gitaly_primary'] | sort | map('extract', hos
 gitaly_secondary_int_ips: "{{ (groups['gitaly_secondary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'gitaly_secondary' in groups else [] }}"
 
 # Praefect
-praefect_primary_int_ip: "{{ (groups['praefect_primary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'praefect_primary' in groups else '' }}"
-praefect_secondary_int_ips: "{{ (groups['praefect_secondary'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | list) if 'praefect_secondary' in groups else [] }}"
-praefect_int_ips: "{{ (groups['praefect'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | list) if 'praefect' in groups else [] }}"
+praefect_primary_int_ip: "{{ (groups['praefect_primary'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_primary' in groups else '' }}"
+praefect_secondary_int_ips: "{{ (groups['praefect_secondary'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'praefect_secondary' in groups else [] }}"
+praefect_int_ips: "{{ (groups['praefect'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'praefect' in groups else [] }}"
 
-praefect_postgres_int_ip: "{{ (groups['praefect_postgres'] | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) if 'praefect_postgres_primary' in groups else '' }}"
+praefect_postgres_int_ip: "{{ (groups['praefect_postgres'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_postgres_primary' in groups else '' }}"
 praefect_postgres_dbname: 'praefect_production'
 praefect_postgres_username: 'praefect'
 

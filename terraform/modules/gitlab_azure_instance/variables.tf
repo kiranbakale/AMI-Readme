@@ -18,7 +18,7 @@ variable "tags" {
   default = []
 }
 
-variable "external_ip_ids" {
+variable "external_ip_names" {
   type = list(string)
   default = []
 }
@@ -30,10 +30,10 @@ variable "size" {
 variable "source_image_reference" {
   type = map
   default = {
-      "publisher"  = "Canonical"
-      "offer"  = "UbuntuServer"
-      "sku"  = "18.04-LTS"
-      "version"  = "latest"
+    "publisher"  = "Canonical"
+    "offer"  = "UbuntuServer"
+    "sku"  = "18.04-LTS"
+    "version"  = "latest"
   }
 }
 
@@ -51,4 +51,12 @@ variable "label_secondaries" {
 
 variable "network_security_group" {
   default = ""
+}
+
+variable "geo_site" {
+  default = null
+}
+
+variable "geo_deployment" {
+  default = null
 }

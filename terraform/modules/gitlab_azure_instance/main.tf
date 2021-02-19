@@ -1,5 +1,16 @@
+data "azurerm_public_ip" "gitlab_external_ips" {
+  name = each.key
+  resource_group_name = var.resource_group_name
+
+  for_each = toset(var.external_ip_names)
+}
+
+locals {
+  external_ip_ids = [for ip in data.azurerm_public_ip.gitlab_external_ips : ip.id]
+}
+
 resource "azurerm_public_ip" "gitlab" {
-  count = length(var.external_ip_ids) == 0 ? var.node_count : 0
+  count = length(local.external_ip_ids) == 0 ? var.node_count : 0
   name = "${var.prefix}-${var.node_type}-ip-${count.index + 1}"
   resource_group_name = var.resource_group_name
   location = var.location
@@ -19,15 +30,15 @@ resource "azurerm_network_interface" "gitlab" {
     name = "${var.prefix}-${var.node_type}-internal-ip-configuration-${count.index + 1}"
     subnet_id = var.subnet_id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = length(var.external_ip_ids) == 0 ? azurerm_public_ip.gitlab[count.index].id : var.external_ip_ids[count.index]
+    public_ip_address_id = length(local.external_ip_ids) == 0 ? azurerm_public_ip.gitlab[count.index].id : local.external_ip_ids[count.index]
   }
 }
 
 # Connect the security group to the network interface
 resource "azurerm_network_interface_security_group_association" "gitlab" {
-    count = length(var.network_security_group) == 0 ? 0 : 1
-    network_interface_id = azurerm_network_interface.gitlab[count.index].id
-    network_security_group_id = var.network_security_group.id
+  count = min(1, var.node_count, length(var.network_security_group))
+  network_interface_id = azurerm_network_interface.gitlab[count.index].id
+  network_security_group_id = var.network_security_group.id
 }
 
 resource "azurerm_linux_virtual_machine" "gitlab" {
