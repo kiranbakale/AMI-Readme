@@ -1,6 +1,8 @@
 google-auth
 requests
 netaddr
-ansible[azure]
 boto3
 botocore
+
+# Azure CLI requirements
+-r https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt

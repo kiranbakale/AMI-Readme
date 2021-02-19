@@ -19,7 +19,7 @@ variable "iam_instance_profile" {
 }
 
 variable "instance_type" {
-  default = "t2.micro"
+  default = "t3.micro"
 }
 
 variable "security_group_ids" {
