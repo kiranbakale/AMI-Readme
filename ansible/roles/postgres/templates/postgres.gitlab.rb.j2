@@ -1,4 +1,4 @@
-# Disable all components except PostgreSQL and Repmgr and Consul
+# Disable all components except PostgreSQL, Patroni/Repmgr and Consul
 roles ['postgres_role']
 
 {% if groups['postgres'] | length > 1 %}
@@ -53,10 +53,10 @@ postgresql['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 gitlab_rails['auto_migrate'] = false
 
 # Consul
+consul['enable'] = true
 {% if groups['postgres'] | length > 1 %}
 consul['services'] = %w(postgresql)
 {% endif %}
-consul['enable'] = true
 consul['configuration'] = {
   bind_addr: '{{ ansible_default_ipv4.address }}',
   retry_join: %w({{ (consul_int_ips if 'consul' in groups else gitlab_rails_int_ips) | join(' ') }})

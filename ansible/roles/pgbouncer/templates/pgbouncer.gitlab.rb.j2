@@ -2,7 +2,8 @@
 roles ['pgbouncer_role']
 
 # Configure Pgbouncer
-pgbouncer['admin_users'] = %w(pgbouncer gitlab-consul)
+
+{% if groups['postgres'] | length > 1 %}
 pgbouncer['users'] = {
   'gitlab-consul': {
     password: "{{ ((consul_database_password | default(consul_password)) + 'gitlab-consul') | md5 }}"
@@ -11,11 +12,24 @@ pgbouncer['users'] = {
     password: "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
   }
 }
+{% else %}
+pgbouncer['admin_users'] = %w(pgbouncer gitlab-consul)
+pgbouncer['databases'] = {
+  gitlabhq_production: {
+    host: "{{ postgres_primary_int_ip }}",
+    user: "pgbouncer",
+    password: "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
+  }
+}
+{% endif %}
+
 pgbouncer['max_db_connections'] = 150
 
 # Configure Consul agent
-consul['watchers'] = %w(postgresql)
 consul['enable'] = true
+{% if groups['postgres'] | length > 1 %}
+consul['watchers'] = %w(postgresql)
+{% endif %}
 consul['configuration'] = {
   bind_addr: '{{ ansible_default_ipv4.address }}',
   retry_join: %w({{ (consul_int_ips if 'consul' in groups else gitlab_rails_int_ips) | join(' ') }})
