@@ -118,7 +118,7 @@ The `all` inventory is very similar to the `primary` and `secondary`, it allows 
 
 #### `vars.yml`
 
-Add the line `secondary_external_url` which needs to match the `external_url` in the `secondary` inventory vars file. You can also remove the properties: `cloud_provider`, `prefix`, `gitlab_license_file`, `install_patroni` and `gitlab_root_password_file`. These are not used when configuring Geo and as such should only be set in the `primary` and `secondary` inventories.
+Add the line `secondary_external_url` which needs to match the `external_url` in the `secondary` inventory vars file. You can also remove the properties: `cloud_provider`, `prefix`, `gitlab_license_file`, `postgres_replication_manager` and `gitlab_root_password_file`. These are not used when configuring Geo and as such should only be set in the `primary` and `secondary` inventories.
 
 #### `all.gcp.yml`
 
@@ -179,7 +179,7 @@ One of the changes with Postgres 12 was the switch to Patroni over Repmgr as the
 Configuring either Postgres 11 or Repmgr can be done as follows:
 
 - Postgres 11 - Set `postgres_version` in the inventory variables to `11`, e.g. `postgres_version: 11`. Patroni or Repmgr can be used here but note the advice below on switching replication managers for existing setups.
-- Repmgr - Set the `install_patroni` inventory variable to `false`. This can only be used with Postgres 11.
+- Repmgr - Set the `postgres_replication_manager` inventory variable to `repmgr`. This can only be used with Postgres 11.
 
 Like Gitaly Cluster, this guidance is only for new installs. You must note the following for existing installs:
 

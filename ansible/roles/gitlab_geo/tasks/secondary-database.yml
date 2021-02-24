@@ -29,7 +29,7 @@
 - name: Secondary database - Remove existing cluster information for Patroni
   import_tasks: secondary-database-patroni-workaround.yml
   when:
-    - install_patroni is defined and install_patroni
+    - postgres_replication_manager == 'patroni'
 
 - name: Secondary Database - Run gitlab-ctl reconfigure
   command: gitlab-ctl reconfigure
@@ -50,5 +50,5 @@
       (.*)Enter the password for gitlab_replicator@(.*): "{{ postgres_password }}"
     timeout: 300
   when:
-    - install_patroni is not defined or not install_patroni
+    - postgres_replication_manager != 'patroni'
     - ('postgres_primary' in group_names or ('gitlab_rails' in group_names and 'geo_secondary_site_postgres_primary' not in groups))

@@ -69,7 +69,7 @@
         - reconfigure
         - db_migrate
     when:
-      - install_patroni is defined and install_patroni
+      - postgres_replication_manager == 'patroni'
       - "'gitlab_rails_primary' in group_names"
 
   - name: Setup GitLab Primary config file with DB Migrations

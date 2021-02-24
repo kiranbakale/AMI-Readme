@@ -2,7 +2,7 @@
 roles ['postgres_role']
 
 {% if groups['postgres'] | length > 1 %}
-{% if install_patroni is defined and install_patroni %}
+{% if postgres_replication_manager == 'patroni' %}
 # Enable Patroni
 patroni['enable'] = true
 
@@ -13,11 +13,8 @@ patroni['remove_data_directory_on_rewind_failure'] = {{ patroni_remove_data_dire
 patroni['remove_data_directory_on_diverged_timelines'] = {{ patroni_remove_data_directory_on_diverged_timelines | lower }}
 
 postgresql['shared_preload_libraries'] = 'pg_stat_statements'
-{% if postgres_version is defined %}
-postgresql['version'] = {{ postgres_version }}
-{% endif %}
 
-{% else %}
+{% elif postgres_replication_manager == 'rempmgr' %}
 # Enable Repmgr
 postgresql['shared_preload_libraries'] = 'repmgr_funcs, pg_stat_statements'
 postgresql['wal_level'] = 'replica'
@@ -28,15 +25,19 @@ repmgr['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 
 postgresql['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
 postgresql['max_replication_slots'] = {{ (groups['postgres'] | length) + 1 }}
-repmgr['master_on_initialization'] = {{ postgres_repmgr_master }}
-
-postgresql['version'] = 11
+repmgr['master_on_initialization'] = {{ (true if 'postgres_primary' in group_names else false) | lower }}
 
 {% endif %}
 
 {% else %}
 repmgr['enable'] = false
 patroni['enable'] = false
+{% endif %}
+
+{% if postgres_version is defined %}
+postgresql['version'] = postgres_version
+{% elif postgres_replication_manager == 'rempmgr' %}
+postgresql['version'] = 11
 {% endif %}
 
 # PostgreSQL configuration
