@@ -16,7 +16,7 @@
 - name: Warn if attempting to use repmgr on a patroni setup
   fail:
     msg: Attempt detected to switch from Patroni to Repmgr. This is not supported and will result in data loss. Exiting...
-  when: patroni_check.stat.exists and (install_patroni is not defined or not install_patroni)
+  when: patroni_check.stat.exists and (postgres_replication_manager != 'patroni')
 
 - name: Setup GitLab config file
   template:
@@ -52,7 +52,7 @@
       shell: "gitlab-ctl repmgr cluster show 2>/dev/null"
       register: cluster_show
       ignore_errors: yes
-      when: install_patroni is not defined or not install_patroni
+      when: postgres_replication_manager != 'patroni'
       tags: debug
 
     - name: Debug show output of 'gitlab-ctl repmgr cluster show'
@@ -66,7 +66,7 @@
       shell: "gitlab-ctl patroni members 2>/dev/null"
       register: patroni_members
       ignore_errors: yes
-      when: install_patroni is defined and install_patroni
+      when: postgres_replication_manager == 'patroni'
       tags: debug
 
     - name: Debug show output of 'gitlab-ctl patroni members'
@@ -82,7 +82,7 @@
   tags: postgres_secondary_standby
   when:
     - "'postgres_secondary' in group_names"
-    - install_patroni is not defined or not install_patroni
+    - postgres_replication_manager != 'patroni'
 
 - name: Enable secondary standby
   shell: "gitlab-ctl repmgr standby setup {{ postgres_primary_int_ip }} -w"
@@ -90,7 +90,7 @@
   tags: postgres_secondary_standby
   when:
     - "'postgres_secondary' in group_names"
-    - install_patroni is not defined or not install_patroni
+    - postgres_replication_manager != 'patroni'
     - postgres_secondary_standby_status.stdout == ''
   failed_when:
     - postgres_secondary_standby_result.rc != 0

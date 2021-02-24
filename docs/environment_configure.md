@@ -59,6 +59,8 @@ As mentioned there are various ways variables can be configured. The Toolkit use
 - Group Vars - Variables that are shared between Roles. Most variables can be found here such as IP lists, etc...
 - Environment Variables - The Playbooks have been configured to use certain env vars if available.
 
+It's worth noting the Toolkit tweaks the default group variable precedence to better allow for different configurations per environment's inventory. Inventory group variables take a higher precedence here than playbook ones.
+
 Hopefully with this overview it's clearer how Ansible in the Toolkit works. Below we detail how to setup and use it.
 
 ## 1. Install Ansible
@@ -168,7 +170,6 @@ all:
     gitlab_license_file: "<gitlab_license_file_path>"
 
     # Component Settings
-    install_patroni: true
     patroni_remove_data_directory_on_rewind_failure: false
     patroni_remove_data_directory_on_diverged_timelines: false
 
@@ -199,7 +200,6 @@ General settings are config used across the playbooks to configure GitLab:
 
 Component Settings are specific component for GitLab components, e.g. Postgres:
 
-- `install_patroni` - A flag to install Patroni instead of Repmgr as the controller for Postgres. Unless installing GitLab older than `13.8.0` this should remain as true.
 - `patroni_remove_data_directory_on_rewind_failure` - A specific Patroni flag that enables resetting of database data on a secondary node if attempts to sync with the primary can't be achieved. **This may lead to data loss**, refer to the [GitLab Postgres documentation](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#customizing-patroni-failover-behavior) for further info.
 - `patroni_remove_data_directory_on_rewind_failure` - A specific Patroni flag that enables resetting of database data on a secondary node if timelines have diverged with the primary. **This may lead to data loss**, refer to the [GitLab Postgres documentation](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#customizing-patroni-failover-behavior) for further info.
 

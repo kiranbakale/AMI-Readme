@@ -1,3 +1,0 @@
-access_token_user: 'root'
-access_token_key: "{{ lookup('password', 'tmp/access-token chars=ascii_lowercase,digits length=20') }}"
-access_token_scopes: "[:api]"

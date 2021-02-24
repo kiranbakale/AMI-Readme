@@ -1,6 +1,6 @@
 - name: Read-only Replica - Ensure Postgres leader after reconfigure
   import_tasks: set-postgres-leader.yml
-  when: install_patroni is defined and install_patroni
+  when: postgres_replication_manager == 'patroni'
 
 - name: Read-only Replica - Add new config
   template:

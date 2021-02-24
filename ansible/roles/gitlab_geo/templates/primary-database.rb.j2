@@ -9,7 +9,7 @@ postgresql['max_replication_slots'] = 1
 {% endif %}
 postgresql['md5_auth_cidr_addresses'] = ['0.0.0.0/0']
 
-{% if install_patroni is defined and install_patroni %}
+{% if postgres_replication_manager == 'patroni' %}
 patroni['replication_slots'] = {
     'geo_secondary' => { 'type' => 'physical' }
 }
