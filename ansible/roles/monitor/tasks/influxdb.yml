@@ -31,7 +31,7 @@
 
 - name: Wait for InfluxDB to be available
   uri:
-    url: 'http://127.0.0.1:8086/ping?verbose=true'
+    url: 'http://127.0.0.1:8086/health'
   register: result
   until: result.status == 200
   retries: 10
@@ -39,6 +39,7 @@
   tags:
     - reconfigure
     - restart
+    - health
 
 - name: Create database in InfluxDB
   shell: |
