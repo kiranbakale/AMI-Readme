@@ -17,7 +17,7 @@
 - name: Start InfluxDB Docker
   docker_container:
     name: influxdb
-    image: influxdb:alpine
+    image: influxdb:1.8-alpine
     pull: yes
     restart_policy: always
     state: started
