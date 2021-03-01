@@ -57,7 +57,7 @@ monitor_int_ip: "{{ (groups['monitor'] | sort | map('extract', hostvars, interna
 # GitLab Postgres / PGBouncer
 postgres_primary_int_ip: "{{ (groups['postgres_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'postgres_primary' in groups else '' }}"
 postgres_primary_int_port: "5432"
-postgres_replication_manager: "patroni"
+postgres_replication_manager: "{{ 'patroni' if (groups['postgres'] | length > 1 ) else 'none' }}"
 
 pgbouncer_int_ips: "{{ (groups['pgbouncer'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'pgbouncer' in groups else [] }}"
 
