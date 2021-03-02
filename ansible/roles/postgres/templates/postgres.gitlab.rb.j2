@@ -14,7 +14,7 @@ patroni['remove_data_directory_on_diverged_timelines'] = {{ patroni_remove_data_
 
 postgresql['shared_preload_libraries'] = 'pg_stat_statements'
 
-{% elif postgres_replication_manager == 'rempmgr' %}
+{% elif postgres_replication_manager == 'repmgr' %}
 # Enable Repmgr
 postgresql['shared_preload_libraries'] = 'repmgr_funcs, pg_stat_statements'
 postgresql['wal_level'] = 'replica'
@@ -36,7 +36,7 @@ patroni['enable'] = false
 
 {% if postgres_version is defined %}
 postgresql['version'] = postgres_version
-{% elif postgres_replication_manager == 'rempmgr' %}
+{% elif postgres_replication_manager == 'repmgr' %}
 postgresql['version'] = 11
 {% endif %}
 
