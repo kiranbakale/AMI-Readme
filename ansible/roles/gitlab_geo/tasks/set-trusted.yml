@@ -1,3 +1,0 @@
-- name: Set secondary application as trusted in Primary
-  command: |
-    gitlab-rails runner "Doorkeeper::Application.find_by_name('Geo node: {{ secondary_external_url }}/').update(trusted: true)"
