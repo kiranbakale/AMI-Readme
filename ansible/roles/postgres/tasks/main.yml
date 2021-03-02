@@ -28,8 +28,27 @@
   shell: "cp {{ gitlab_nfs_path }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
 
-- name: Reconfigure PostgreSQL
-  shell: gitlab-ctl reconfigure
+- name: Reconfigure PostgreSQL with failover error handling
+  block:
+    - name: Reconfigure PostgreSQL
+      command: gitlab-ctl reconfigure
+  rescue:
+    - name: Reset Transaction Log on assumed Patroni failover error
+      command: /opt/gitlab/embedded/bin/pg_resetwal -f /var/opt/gitlab/postgresql/data
+      become_user: gitlab-psql
+      when: postgres_replication_manager == 'patroni'
+
+    - name: Wait for Replication to finish
+      command: gitlab-ctl patroni members
+      register: patroni_member_status
+      until: '"creating replica" not in patroni_member_status.stdout'
+      retries: 60
+      delay: 5
+      when: postgres_replication_manager == 'patroni'
+
+    - name: Reconfigure PostgreSQL
+      command: gitlab-ctl reconfigure
+      when: postgres_replication_manager == 'patroni'
   tags: reconfigure
 
 - name: Restart PostgreSQL
