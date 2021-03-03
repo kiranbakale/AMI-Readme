@@ -18,7 +18,7 @@
     body:
       issues_create_limit: 0
       raw_blob_request_limit: 0
-      max_import_size: 10240 # https://gitlab.com/gitlab-org/gitlab/-/issues/259801
+      max_import_size: 10240  # https://gitlab.com/gitlab-org/gitlab/-/issues/259801
     status_code: 200, 201
     body_format: json
 

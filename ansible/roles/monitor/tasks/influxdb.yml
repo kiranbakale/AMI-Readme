@@ -18,7 +18,7 @@
   docker_container:
     name: influxdb
     image: influxdb:1.8-alpine
-    pull: yes
+    pull: true
     restart_policy: always
     state: started
     memory: "{{ influxdb_memory_limit }}m"

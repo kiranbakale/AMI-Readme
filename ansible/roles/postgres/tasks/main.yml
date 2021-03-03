@@ -70,7 +70,7 @@
     - name: Debug capture output of 'gitlab-ctl repmgr cluster show'
       shell: "gitlab-ctl repmgr cluster show 2>/dev/null"
       register: cluster_show
-      ignore_errors: yes
+      ignore_errors: true
       when: postgres_replication_manager != 'patroni'
       tags: debug
 
@@ -84,7 +84,7 @@
     - name: Debug capture output of 'gitlab-ctl patroni members'
       shell: "gitlab-ctl patroni members 2>/dev/null"
       register: patroni_members
-      ignore_errors: yes
+      ignore_errors: true
       when: postgres_replication_manager == 'patroni'
       tags: debug
 

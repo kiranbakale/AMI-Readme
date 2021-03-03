@@ -1,5 +1,5 @@
 ---
-  - hosts: all
-    roles:
-      - gitlab_geo
-    become: true
+- hosts: all
+  roles:
+    - gitlab_geo
+  become: true

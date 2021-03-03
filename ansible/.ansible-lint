@@ -1,12 +1,12 @@
 exclude_paths:
   - ${HOME}/.ansible/roles/
 skip_list:
-  - '106'  # Role name {} does not match ``^[a-z][a-z0-9_]+$`` pattern
-  - '204'  # Lines should be no longer than 160 char
-  - '208'  # File permissions unset or incorrect
-  - '301'  # Commands should not change things if nothing needs doing'
-  - '305'  # Use shell only when shell functionality is required - to be reenabled
-  - '306'  # Shells that use pipes should set the pipefail option
-  - '602'  # Don't compare to empty string, https://github.com/ansible-community/ansible-lint/issues/457
-  - '701'  # meta/main.yml should contain relevant info
-  
+  - role-name  # Role name {} does not match ``^[a-z][a-z0-9_]+$`` pattern
+  - risky-file-permissions  # Lines should be no longer than 160 char
+  - no-changed-when  # File permissions unset or incorrect
+  - command-instead-of-shell  # Commands should not change things if nothing needs doing'
+  - risky-shell-pipe  # Use shell only when shell functionality is required - to be reenabled
+  - empty-string-compare  # Shells that use pipes should set the pipefail option
+  - meta-no-info  # Don't compare to empty string, https://github.com/ansible-community/ansible-lint/issues/457
+  - command-instead-of-module  # meta/main.yml should contain relevant info
+  - line-length

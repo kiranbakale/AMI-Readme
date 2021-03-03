@@ -1,8 +1,8 @@
 roles:
-- cloudalchemy.node_exporter
-- geerlingguy.docker
-- geerlingguy.swap
+  - cloudalchemy.node_exporter
+  - geerlingguy.docker
+  - geerlingguy.swap
 
 collections:
-- google.cloud
-- azure.azcollection
+  - google.cloud
+  - azure.azcollection

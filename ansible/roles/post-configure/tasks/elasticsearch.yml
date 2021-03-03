@@ -45,7 +45,7 @@
           PRIVATE-TOKEN: '{{ access_token_key }}'
         status_code: 200, 201
         body_format: json
-        return_content: yes
+        return_content: true
       register: env_settings_response
 
     - name: Save Environment Settings
@@ -103,20 +103,20 @@
 
 - name: Get and save Environment Settings
   block:
-  - name: Get Environment Settings
-    uri:
-      url: '{{ external_url_sanitised }}/api/v4/application/settings'
-      method: GET
-      headers:
-        PRIVATE-TOKEN: '{{ access_token_key }}'
-      status_code: 200, 201
-      body_format: json
-      return_content: yes
-    register: env_settings_response
+    - name: Get Environment Settings
+      uri:
+        url: '{{ external_url_sanitised }}/api/v4/application/settings'
+        method: GET
+        headers:
+          PRIVATE-TOKEN: '{{ access_token_key }}'
+        status_code: 200, 201
+        body_format: json
+        return_content: true
+      register: env_settings_response
 
-  - name: Save Environment Settings
-    set_fact:
-      gitlab_environment_settings: '{{ env_settings_response.json }}'
+    - name: Save Environment Settings
+      set_fact:
+        gitlab_environment_settings: '{{ env_settings_response.json }}'
   when: gitlab_license_plan == 'ultimate'
 
 - name: Enable Elasticsearch Search
