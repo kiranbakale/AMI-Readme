@@ -38,60 +38,60 @@
 
 - name: External database related tasks
   block:
-  - name: Patroni required tasks
-    block:
-    - name: Setup GitLab Rails Primary config file without DB Migrations when using Patroni
+    - name: Patroni required tasks
+      block:
+        - name: Setup GitLab Rails Primary config file without DB Migrations when using Patroni
+          template:
+            src: templates/gitlab-rails.gitlab.rb.j2
+            dest: /etc/gitlab/gitlab.rb
+          register: result
+          retries: 3
+          until: result is success
+          tags: reconfigure
+
+        - name: Reconfigure GitLab Primary to enable get-postgresql-primary when using Patroni
+          shell: gitlab-ctl reconfigure
+          tags:
+            - reconfigure
+
+        - name: Get Postgres Leader when using Patroni
+          shell: gitlab-ctl get-postgresql-primary
+          register: postgres_leader_int_address
+          tags:
+            - reconfigure
+            - db_migrate
+
+        - name: Update Postgres Primary IP and Port when using Patroni
+          set_fact:
+            postgres_primary_int_ip: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
+            postgres_primary_int_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
+          tags:
+            - reconfigure
+            - db_migrate
+      when:
+        - postgres_replication_manager == 'patroni'
+        - "'gitlab_rails_primary' in group_names"
+
+    - name: Setup GitLab Primary config file with DB Migrations
       template:
         src: templates/gitlab-rails.gitlab.rb.j2
         dest: /etc/gitlab/gitlab.rb
+      vars:
+        db_migrate: true
       register: result
       retries: 3
       until: result is success
-      tags: reconfigure
+      tags:
+        - reconfigure
+        - db_migrate
+      when: "'gitlab_rails_primary' in group_names"
 
-    - name: Reconfigure GitLab Primary to enable get-postgresql-primary when using Patroni
+    - name: Reconfigure GitLab Primary
       shell: gitlab-ctl reconfigure
       tags:
         - reconfigure
-
-    - name: Get Postgres Leader when using Patroni
-      shell: gitlab-ctl get-postgresql-primary
-      register: postgres_leader_int_address
-      tags:
-        - reconfigure
         - db_migrate
-
-    - name: Update Postgres Primary IP and Port when using Patroni
-      set_fact:
-        postgres_primary_int_ip: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
-        postgres_primary_int_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
-      tags:
-        - reconfigure
-        - db_migrate
-    when:
-      - postgres_replication_manager == 'patroni'
-      - "'gitlab_rails_primary' in group_names"
-
-  - name: Setup GitLab Primary config file with DB Migrations
-    template:
-      src: templates/gitlab-rails.gitlab.rb.j2
-      dest: /etc/gitlab/gitlab.rb
-    vars:
-      db_migrate: true
-    register: result
-    retries: 3
-    until: result is success
-    tags:
-      - reconfigure
-      - db_migrate
-    when: "'gitlab_rails_primary' in group_names"
-
-  - name: Reconfigure GitLab Primary
-    shell: gitlab-ctl reconfigure
-    tags:
-      - reconfigure
-      - db_migrate
-    when: "'gitlab_rails_primary' in group_names"
+      when: "'gitlab_rails_primary' in group_names"
   when: "'postgres' in groups"
 
 - name: Setup all GitLab Rails config files

@@ -1,7 +1,7 @@
 - name: "Set Postgres Leader - Get current Patroni leader"
   shell: gitlab-ctl patroni members | grep Leader | grep {{ ansible_fqdn }}
   register: patroni_leader
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: "Set Postgres Leader - Set postgres_primary to be Patroni leader"
   command: gitlab-ctl patroni switchover --candidate "{{ ansible_fqdn }}"

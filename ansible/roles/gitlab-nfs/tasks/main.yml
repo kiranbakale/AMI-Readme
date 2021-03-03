@@ -2,7 +2,7 @@
 - name: Install NFS Server
   apt:
     name: ['nfs-kernel-server']
-    update_cache: yes
+    update_cache: true
 
 - name: Disable NFS Server Delegation
   shell: |

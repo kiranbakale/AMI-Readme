@@ -1,14 +1,15 @@
 ---
 - hosts: all:!ungrouped
-  become: yes
+  become: true
 
   tasks:
-  - debug: 
+  - debug:
       msg: "{{ error }}"
 
-  - shell: "ack -s '{{ error }}' /var/log/gitlab || true" 
+  - name: Search for error string
+    shell: "ack -s '{{ error }}' /var/log/gitlab || true"
     register: output
     ignore_errors: true
 
-  - debug: 
+  - debug:
       msg: "{{ output.stdout_lines }}"

@@ -8,11 +8,11 @@ internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/p
 # Cloud specific
 serviceaccount_filename: "serviceaccount.json"
 serviceaccount_path: "/etc/gitlab/{{ serviceaccount_filename }}"
-internal_ip_lookup: { gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address']}
-external_ip_lookup: { gcp: ['networkInterfaces', 0, 'accessConfigs', 0, 'natIP'], azure: ['public_ipv4_addresses', 0], aws: ['public_ip_address']}
+internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address']}
+external_ip_lookup: {gcp: ['networkInterfaces', 0, 'accessConfigs', 0, 'natIP'], azure: ['public_ipv4_addresses', 0], aws: ['public_ip_address']}
 
 # GitLab
-gitlab_host_deb_path: "{{ lookup('env','GITLAB_HOST_DEB_PATH')}}" # Specify absolute path to the local deb package on host
+gitlab_host_deb_path: "{{ lookup('env','GITLAB_HOST_DEB_PATH')}}"  # Specify absolute path to the local deb package on host
 gitlab_target_deb_path: "{{ lookup('env','GITLAB_TARGET_DEB_PATH') | default('/tmp/' + (gitlab_host_deb_path | basename), true)}}"
 gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default('gitlab-ee', true) }}"
 gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh', true) }}"

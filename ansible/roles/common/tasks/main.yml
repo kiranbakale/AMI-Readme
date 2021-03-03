@@ -41,7 +41,7 @@
       tags: packages
 
     - name: Install system packages
-      command: apt-get install -y {{ system_packages }} # noqa 303
+      command: apt-get install -y {{ system_packages }}  # noqa command-instead-of-module
       environment:
         DEBIAN_FRONTEND: "noninteractive"
       register: result
@@ -63,9 +63,9 @@
       sysctl:
         name: net.ipv4.tcp_keepalive_time
         value: '300'
-        sysctl_set: yes
+        sysctl_set: true
         state: present
-        reload: yes
+        reload: true
       tags: sysctl
 
     # Removes the official release repo if it's present as we typically want to stick with Nightly
@@ -82,7 +82,7 @@
       get_url:
         url: "{{ gitlab_repo_script_url }}"
         dest: /tmp/gitlab_install_repository.sh
-        force: yes
+        force: true
       register: repo_file
       when:
         - omnibus_node
@@ -116,7 +116,7 @@
         src: "{{ gitlab_host_deb_path }}"
         dest: "{{ gitlab_target_deb_path }}"
         mode: 0755
-        force: no
+        force: false
       when:
         - omnibus_node
         - gitlab_host_deb_path != ''
@@ -136,7 +136,7 @@
         path: /etc/gitlab
         owner: root
         group: root
-        mode:  0775
+        mode: 0775
         state: directory
       when:
         - omnibus_node
@@ -151,14 +151,14 @@
         - omnibus_node
 
     - name: Update system packages to the latest version
-      command: apt-get upgrade -y # noqa 303
+      command: apt-get upgrade -y  # noqa command-instead-of-module
       register: result
       retries: 1
       until: result is success
       tags: packages
 
     - name: Autoremove any unneeded packages
-      command: apt-get autoremove -y # noqa 303
+      command: apt-get autoremove -y  # noqa command-instead-of-module
       register: result
       retries: 1
       until: result is success

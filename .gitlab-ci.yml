@@ -25,6 +25,7 @@ check:ansible-lint:
   stage: check
   image: pipelinecomponents/ansible-lint
   script:
+    - chmod 700 ansible
     - cd ansible
     - ansible-lint
   only:
