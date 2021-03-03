@@ -1,5 +1,5 @@
 roles:
-- cloudalchemy.node-exporter
+- cloudalchemy.node_exporter
 - geerlingguy.docker
 - geerlingguy.swap
 
