@@ -1,27 +1,44 @@
 # Ansible
 ansible_python_interpreter: auto
-swap_file_size_mb: '2048'
-swap_swappiness: '10'
+swap_file_size_mb: "2048"
+swap_swappiness: "10"
 system_packages: "aptitude curl openssh-server ca-certificates glances nano tzdata ack-grep tree python3-pip nfs-common postfix jq"
 internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
 
 # Cloud specific
-serviceaccount_filename: "serviceaccount.json"
-serviceaccount_path: "/etc/gitlab/{{ serviceaccount_filename }}"
 internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address']}
 external_ip_lookup: {gcp: ['networkInterfaces', 0, 'accessConfigs', 0, 'natIP'], azure: ['public_ipv4_addresses', 0], aws: ['public_ip_address']}
 
-# GitLab
-gitlab_host_deb_path: "{{ lookup('env','GITLAB_HOST_DEB_PATH')}}"  # Specify absolute path to the local deb package on host
-gitlab_target_deb_path: "{{ lookup('env','GITLAB_TARGET_DEB_PATH') | default('/tmp/' + (gitlab_host_deb_path | basename), true)}}"
-gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default('gitlab-ee', true) }}"
-gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh', true) }}"
+## GCP
+gcp_service_account_host_file: "{{ service_account_file | default('', true) }}"
+gcp_service_account_target_file: "/etc/gitlab/serviceaccount.json"
+gcp_project: "{{ project_name | default('', true) }}"
+gcp_zone: ""
 
-external_url_sanitised: '{{ external_url | regex_replace("\\/$", "") }}'
+# GitLab
+gitlab_version: ""
+gitlab_edition: "gitlab-ee"
+## Set to env var, package with version wildcard or just latest
+gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default(gitlab_edition + '=' + gitlab_version + '*' if gitlab_version != '' else 'gitlab-ee', true) }}"
+gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh', true) }}"
+## Specify absolute path to the local deb package on host
+gitlab_deb_host_path: "{{ lookup('env','GITLAB_HOST_DEB_PATH')}}"
+gitlab_deb_target_path: "{{ lookup('env','GITLAB_TARGET_DEB_PATH') | default('/tmp/' + (gitlab_deb_host_path | basename), true)}}"
+
+external_url_sanitised: "{{ external_url | regex_replace('\\/$', '') }}"
 omnibus_node: true
-gitlab_admin_email: 'admin@example.com'
-gitlab_object_storage: "{{ prefix }}-object-storage"
-gitlab_shell_token: ''
+gitlab_admin_email: "admin@example.com"
+
+# Object Storage Buckets
+# Will be switched to separate buckets by default in future release
+gitlab_object_storage_artifacts_bucket: "{{ prefix }}-object-storage"
+gitlab_object_storage_backups_bucket: "{{ prefix }}-object-storage"
+gitlab_object_storage_dependency_proxy_bucket: "{{ prefix }}-object-storage"
+gitlab_object_storage_external_diffs_bucket: "{{ prefix }}-object-storage"
+gitlab_object_storage_lfs_bucket: "{{ prefix }}-object-storage"
+gitlab_object_storage_packages_bucket: "{{ prefix }}-object-storage"
+gitlab_object_storage_terraform_state_bucket: "{{ prefix }}-object-storage"
+gitlab_object_storage_uploads_bucket: "{{ prefix }}-object-storage"
 
 # Consul
 consul_int_ips: "{{ (groups['consul'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'consul' in groups else [] }}"
@@ -44,8 +61,8 @@ praefect_secondary_int_ips: "{{ (groups['praefect_secondary'] | map('extract', h
 praefect_int_ips: "{{ (groups['praefect'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'praefect' in groups else [] }}"
 
 praefect_postgres_int_ip: "{{ (groups['praefect_postgres'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_postgres_primary' in groups else '' }}"
-praefect_postgres_dbname: 'praefect_production'
-praefect_postgres_username: 'praefect'
+praefect_postgres_dbname: "praefect_production"
+praefect_postgres_username: "praefect"
 
 # GitLab NFS
 gitlab_nfs_int_ip: "{{ groups['gitlab_nfs'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') }}"
@@ -75,7 +92,22 @@ redis_persistent_primary_int_ip: "{{ (groups['redis_persistent_primary'] | sort 
 redis_sentinel_persistent_int_ips: "{{ (groups['redis_sentinel_persistent'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis_sentinel_persistent' in groups else [] }}"
 
 # Sidekiq
-sidekiq_max_concurrency: 25
+sidekiq_max_concurrency: 10
+
+# GitLab Hybrid Environments
+kubeconfig_setup: true
+
+gitlab_charts_release_namespace: default
+gitlab_charts_webservice_limits_memory_gb: 5
+gitlab_charts_webservice_requests_memory_gb: 4.5
+gitlab_charts_webservice_requests_cpu: 4
+gitlab_charts_webservice_max_replicas: ""
+gitlab_charts_webservice_min_replicas: ""
+gitlab_charts_sidekiq_limits_memory_gb: 4
+gitlab_charts_sidekiq_requests_memory_gb: 2
+gitlab_charts_sidekiq_requests_cpu: 1
+gitlab_charts_sidekiq_max_replicas: ""
+gitlab_charts_sidekiq_min_replicas: ""
 
 # Jaeger Distributed Tracing
 jaeger_int_ip: "{{ (groups['jaeger'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'jaeger' in groups else '' }}"
@@ -87,3 +119,8 @@ elastic_int_ips: "{{ (groups['elastic'] | sort | map('extract', hostvars, intern
 elasticsearch_urls: "{{ (elastic_int_ips | map('regex_replace', '^(.*)$', 'http://\\1:9200') | list) if elastic_int_ips | length > 0 else [] }}"
 elasticsearch_replicas: "{{ 1 if (groups['elastic'] | length > 1 ) else 0 }}"
 elasticsearch_shards: "{{ (((groups['elastic'] | sort | map('extract', hostvars, ['ansible_processor_vcpus']) | list | sum) / (elasticsearch_replicas | int + 1)) | round | int) if 'elastic' in groups else 0 }}"
+
+# Post Configure
+access_token_user: "root"
+access_token_key: "{{ lookup('password', 'tmp/access-token chars=ascii_lowercase,digits length=20') }}"
+access_token_scopes: "[:api]"

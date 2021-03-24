@@ -13,9 +13,26 @@
 - name: Clean out previous Elasticsearch configuration and index
   block:
     - name: Delete old Elasticsearch index
-      shell: |
-        gitlab-rake gitlab:elastic:delete_index
-        gitlab-rake gitlab:elastic:clear_index_status
+      block:
+        - name: Delete old Elasticsearch index for GitLab via GitLab Rails
+          command: |
+            gitlab-rake gitlab:elastic:delete_index
+            gitlab-rake gitlab:elastic:clear_index_status
+          delegate_to: "{{ groups['gitlab_rails'][0] }}"
+          delegate_facts: true
+          become: true
+          when: "'gitlab_rails' in groups"
+
+        - name: Delete old Elasticsearch index for GitLab via GitLab Task Runner pod
+          community.kubernetes.k8s_exec:
+            pod: "{{ task_runner_pod }}"
+            namespace: "{{ gitlab_charts_release_namespace }}"
+            command: |
+              gitlab-rake gitlab:elastic:delete_index
+              gitlab-rake gitlab:elastic:clear_index_status
+          when:
+            - task_runner_pod is defined
+            - "'gitlab_rails' not in groups"
 
     - name: Unconfigure Elasticsearch settings
       uri:
@@ -70,7 +87,22 @@
 - name: Configure Elasticsearch Index
   block:
     - name: Create empty index for GitLab
-      shell: gitlab-rake gitlab:elastic:create_empty_index
+      block:
+        - name: Create empty index for GitLab via GitLab Rails
+          command: gitlab-rake gitlab:elastic:create_empty_index
+          delegate_to: "{{ groups['gitlab_rails'][0] }}"
+          delegate_facts: true
+          become: true
+          when: "'gitlab_rails' in groups"
+
+        - name: Create empty index for GitLab via GitLab Task Runner pod
+          community.kubernetes.k8s_exec:
+            pod: "{{ task_runner_pod }}"
+            namespace: "{{ gitlab_charts_release_namespace }}"
+            command: gitlab-rake gitlab:elastic:create_empty_index
+          when:
+            - task_runner_pod is defined
+            - "'gitlab_rails' not in groups"
 
     - name: Enable GitLab Elasticsearch indexing setting
       uri:
@@ -89,14 +121,48 @@
       until: elasticsearch_status_result.status == 200 or elasticsearch_status_result.status == 201
 
     - name: Index all GitLab projects
-      shell: gitlab-rake gitlab:elastic:index_projects
+      block:
+        - name: Index all GitLab projects via GitLab Rails
+          command: gitlab-rake gitlab:elastic:index_projects
+          delegate_to: "{{ groups['gitlab_rails'][0] }}"
+          delegate_facts: true
+          become: true
+          when: "'gitlab_rails' in groups"
+
+        - name: Index all GitLab projects via GitLab Task Runner pod
+          community.kubernetes.k8s_exec:
+            pod: "{{ task_runner_pod }}"
+            namespace: "{{ gitlab_charts_release_namespace }}"
+            command: gitlab-rake gitlab:elastic:index_projects
+          when:
+            - task_runner_pod is defined
+            - "'gitlab_rails' not in groups"
 
     - name: Wait until indexing is complete
-      shell: gitlab-rake gitlab:elastic:index_projects_status
-      register: index_status_result
-      retries: 20
-      delay: 10
-      until: "(index_status_result.stdout | regex_search('[0-9]+\\.[0-9]+') | float > 90.0) or '(0/0 projects)' in index_status_result.stdout"
+      block:
+        - name: Wait until indexing is complete via GitLab Rails
+          command: gitlab-rake gitlab:elastic:index_projects_status
+          delegate_to: "{{ groups['gitlab_rails'][0] }}"
+          delegate_facts: true
+          become: true
+          register: index_status_result
+          retries: 20
+          delay: 10
+          until: "(index_status_result.stdout | regex_search('[0-9]+\\.[0-9]+') | float > 90.0) or '(0/0 projects)' in index_status_result.stdout"
+          when: "'gitlab_rails' in groups"
+
+        - name: Wait until indexing is complete via GitLab Task Runner pod
+          community.kubernetes.k8s_exec:
+            pod: "{{ task_runner_pod }}"
+            namespace: "{{ gitlab_charts_release_namespace }}"
+            command: gitlab-rake gitlab:elastic:index_projects_status
+          register: index_status_result
+          retries: 20
+          delay: 10
+          until: "(index_status_result.stdout | regex_search('[0-9]+\\.[0-9]+') | float > 90.0) or '(0/0 projects)' in index_status_result.stdout"
+          when:
+            - task_runner_pod is defined
+            - "'gitlab_rails' not in groups"
   when:
     - gitlab_license_plan == 'ultimate'
     - not gitlab_environment_settings.elasticsearch_indexing

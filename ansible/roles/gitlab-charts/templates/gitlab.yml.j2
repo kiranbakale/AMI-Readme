@@ -1,0 +1,172 @@
+gitlab:
+  webservice:
+    maxReplicas: "{{ gitlab_charts_webservice_max_replicas if gitlab_charts_webservice_max_replicas != '' else webservice_pods }}"
+    minReplicas: "{{ gitlab_charts_webservice_min_replicas if gitlab_charts_webservice_min_replicas != '' else webservice_pods }}"
+    hpa:
+      targetAverageValue: 1.5
+    resources:
+      limits:
+        memory: "{{ gitlab_charts_webservice_limits_memory_gb }}G"
+      requests:
+        cpu: "{{ gitlab_charts_webservice_requests_cpu }}"
+        memory: "{{ gitlab_charts_webservice_requests_memory_gb }}G"
+    workerProcesses: "{{ gitlab_charts_webservice_requests_cpu }}"
+    ingress:
+      proxyBodySize: 2G  # Bigger file uploads, e.g. imports
+    nodeSelector:
+      workload: webservice
+  sidekiq:
+    maxReplicas: "{{ gitlab_charts_sidekiq_max_replicas if gitlab_charts_sidekiq_max_replicas != '' else sidekiq_pods }}"
+    minReplicas: "{{ gitlab_charts_sidekiq_min_replicas if gitlab_charts_sidekiq_min_replicas != '' else sidekiq_pods }}"
+    concurrency: "{{ sidekiq_max_concurrency }}"
+    hpa:
+      targetAverageValue: 700m
+    resources:
+      limits:
+        memory: "{{ gitlab_charts_sidekiq_limits_memory_gb }}G"
+      requests:
+        cpu: "{{ gitlab_charts_sidekiq_requests_cpu }}"
+        memory: "{{ gitlab_charts_sidekiq_requests_memory_gb }}G"
+    nodeSelector:
+      workload: sidekiq
+  task-runner:
+    backups:
+      objectStorage:
+        backend: gcs
+        config:
+          gcpProject: "{{ gcp_project }}"
+          secret: gitlab-backups-object-storage-key
+          key: key
+  migrations:
+{% if 'postgres' in groups %}
+    psql:
+      host: "{{ postgres_primary_int_ip }}"
+      password:
+        secret: gitlab-postgres-password
+        key: password
+      port: "{{ postgres_primary_int_port }}"
+{% else %}
+    enabled: false
+{% endif %}
+
+global:
+  appConfig:
+    object_store:
+      enabled: true
+      connection:
+        secret: gitlab-object-storage-key
+        key: key
+    artifacts:
+      bucket: "{{ gitlab_object_storage_artifacts_bucket }}"
+    backups:
+      bucket: "{{ gitlab_object_storage_backups_bucket }}"
+    dependencyProxy:
+      bucket: "{{ gitlab_object_storage_dependency_proxy_bucket }}"
+    externalDiffs:
+      bucket: "{{ gitlab_object_storage_external_diffs_bucket }}"
+      when: outdated
+    lfs:
+      bucket: "{{ gitlab_object_storage_lfs_bucket }}"
+    packages:
+      bucket: "{{ gitlab_object_storage_packages_bucket }}"
+    terraformState:
+      bucket: "{{ gitlab_object_storage_terraform_state_bucket }}"
+    uploads:
+      bucket: "{{ gitlab_object_storage_uploads_bucket }}"
+  initialRootPassword:
+    secret: gitlab-initial-root-password
+    key: password
+  shell:
+    authToken:
+      secret: gitlab-shell-token
+      key: password
+  railsSecrets:
+    secret: gitlab-rails-secrets
+  gitaly:
+    authToken:
+      secret: gitlab-praefect-external-token
+      key: password
+    enabled: false # Gitaly runs outside of cluster
+    external:
+    - name: default
+      hostname: "{{ haproxy_internal_int_ip }}"
+      port: 2305
+      tlsEnabled: false
+  grafana:
+    enabled: true
+  hosts:
+    domain: "{{ external_url | regex_replace('^https?:\/\/') }}"
+    externalIP: "{{ external_ip }}"
+    https: false
+    gitlab:
+      name: "{{ external_url | regex_replace('^https?:\/\/') }}"
+  ingress:
+    configureCertmanager: false
+    tls:
+      enabled: false
+  minio:
+    enabled: false
+  psql:
+    host: "{{ haproxy_internal_int_ip }}"
+    password:
+      secret: gitlab-postgres-password
+      key: password
+    port: 6432
+  redis:
+    cache:
+      host: gitlab-redis-cache
+      password:
+        secret: gitlab-redis-password
+        key: password
+      sentinels:
+{% for ip in redis_sentinel_cache_int_ips %}
+      - host: '{{ ip }}'
+{% endfor %}
+    host: gitlab-redis-persistent
+    password:
+      secret: gitlab-redis-password
+      key: password
+    sentinels:
+{% for ip in redis_sentinel_persistent_int_ips %}
+      - host: '{{ ip }}'
+{% endfor %}
+
+# https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
+gitlab-runner:
+  install: false
+
+grafana:
+  nodeSelector:
+    workload: ""
+nginx-ingress:
+  controller:
+    nodeSelector:
+      workload: ""
+  defaultBackend:
+    nodeSelector:
+      workload: ""
+prometheus:
+  alertmanager:
+    nodeSelector:
+      workload: ""
+  install: true
+  kubeStateMetrics:
+    nodeSelector:
+      workload: ""
+  nodeExporter:
+    nodeSelector:
+      workload: ""
+  pushgateway:
+    nodeSelector:
+      workload: ""
+  server:
+    nodeSelector:
+      workload: ""
+
+# Run outside of cluster
+redis:
+  install: false
+registry:
+  enabled: false
+postgresql:
+  install: false

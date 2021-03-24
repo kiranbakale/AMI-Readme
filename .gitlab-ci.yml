@@ -23,7 +23,7 @@ check:tflint:
 
 check:ansible-lint:
   stage: check
-  image: pipelinecomponents/ansible-lint
+  image: quay.io/ansible/toolset
   script:
     - chmod 700 ansible
     - cd ansible

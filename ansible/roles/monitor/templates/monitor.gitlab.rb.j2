@@ -131,6 +131,7 @@ consul['monitoring_service_discovery'] = true
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
 
+nginx['enable'] = true
 nginx['status']['options'] = {
   "server_tokens" => "off",
   "access_log" => "off",
@@ -144,7 +145,6 @@ alertmanager['enable'] = false
 gitaly['enable'] = false
 gitlab_exporter['enable'] = false
 gitlab_workhorse['enable'] = false
-nginx['enable'] = true
 postgres_exporter['enable'] = false
 postgresql['enable'] = false
 redis['enable'] = false

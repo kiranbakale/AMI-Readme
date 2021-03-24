@@ -1,0 +1,101 @@
+---
+- name: Configure kubeconfig credentials
+  import_tasks: kubeconfig.yml
+  tags:
+    - reconfigure
+    - charts
+    - kubeconfig
+
+- name: Configure chart secrets
+  import_tasks: secrets.yml
+  tags:
+    - reconfigure
+    - charts
+
+- name: Gather facts for external omnibus postgres
+  block:
+    - name: Get latest Postgres Leader
+      command: gitlab-ctl get-postgresql-primary
+      register: postgres_leader_int_address
+      delegate_to: "{{ groups['postgres'][0] }}"
+      delegate_facts: true
+      become: true
+
+    - name: Update Postgres Primary IP and Port
+      set_fact:
+        postgres_primary_int_ip: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
+        postgres_primary_int_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
+  when:
+    - "'postgres' in groups"
+    - postgres_replication_manager == 'patroni'
+  tags:
+    - reconfigure
+    - charts
+
+- name: Gather facts for Node Pools
+  block:
+    - name: Gather all Node Pool Info
+      community.kubernetes.k8s_info:
+        kind: Node
+      register: node_info
+
+    - name: Set Node Pool capacity facts
+      set_fact:
+        webservice_cpus: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'webservice') | map(attribute='status.capacity.cpu') | map('int') | sum }}"
+        sidekiq_cpus: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'sidekiq') | map(attribute='status.capacity.cpu') | map('int') | sum }}"
+
+    - name: Set Node Pool capacity facts
+      set_fact:
+        webservice_cpus: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'webservice') | map(attribute='status.capacity.cpu') | map('int') | sum }}"
+        webservice_memory: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'webservice') | map(attribute='status.capacity.memory') | map('regex_replace', '[a-zA-Z]') | map('int') | sum }}"
+        sidekiq_cpus: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'sidekiq') | map(attribute='status.capacity.cpu') | map('int') | sum }}"
+        sidekiq_memory: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'sidekiq') | map(attribute='status.capacity.memory') | map('regex_replace', '[a-zA-Z]') | map('int') | sum }}"
+
+    - name: Set Pod Counts
+      set_fact:
+        # K8s reports memory in Kibibytes
+        webservice_pods: "{{ [((webservice_memory | int) * 1.024 / 1024 / 1024 / gitlab_charts_webservice_limits_memory_gb * 0.9), ((webservice_cpus | int) / 4 * 0.9)] | map('int') | min }}"
+        sidekiq_pods: "{{ [((sidekiq_memory | int) * 1.024 / 1024 / 1024 / gitlab_charts_sidekiq_limits_memory_gb * 0.8), ((sidekiq_cpus | int) * 0.8)] | map('int') | min }}"
+  tags:
+    - reconfigure
+    - charts
+
+- name: Add GitLab Charts repo
+  community.kubernetes.helm_repository:
+    name: gitlab
+    repo_url: "https://charts.gitlab.io/"
+  tags:
+    - reconfigure
+    - charts
+
+- name: Get GitLab Charts version if App version specified
+  # Helm doesn't allow installs by app_version - https://github.com/helm/helm/issues/8194
+  block:
+    - name: Get all GitLab Charts versions
+      command: helm search repo gitlab/gitlab -l -o json
+      register: gitlab_charts_versions
+
+    - name: Match GitLab Charts version to App version
+      set_fact:
+        gitlab_charts_version: "{{ (gitlab_charts_versions.stdout | from_json | selectattr('name', 'equalto', 'gitlab/gitlab') | selectattr('app_version', 'equalto', gitlab_version))[0].version }}"
+
+    - name: Show GitLab Charts Version
+      debug:
+        msg: "Charts version for {{ gitlab_version }} is {{ gitlab_charts_version }}"
+  when: gitlab_version != ""
+  tags:
+    - reconfigure
+    - charts
+    - charts_version
+
+- name: Install GitLab Charts
+  community.kubernetes.helm:
+    name: gitlab
+    chart_ref: gitlab/gitlab
+    chart_version: "{{ gitlab_charts_version | default(None) }}"
+    update_repo_cache: true
+    release_namespace: "{{ gitlab_charts_release_namespace }}"
+    values: "{{ lookup('template', 'templates/gitlab.yml.j2') | from_yaml }}"
+  tags:
+    - reconfigure
+    - charts
