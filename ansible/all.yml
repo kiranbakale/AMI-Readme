@@ -11,6 +11,7 @@
 - import_playbook: gitaly.yml
 - import_playbook: gitlab-rails.yml
 - import_playbook: sidekiq.yml
+- import_playbook: gitlab-charts.yml
 - import_playbook: monitor.yml
 - import_playbook: elastic.yml
 - import_playbook: post-configure.yml

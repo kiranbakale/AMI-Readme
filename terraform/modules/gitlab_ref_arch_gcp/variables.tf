@@ -11,6 +11,10 @@ variable "default_disk_type" { default = "pd-standard" }
 
 variable "project" { default = null }
 
+# To be change in the future to the below by default as a breaking change
+# ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"]
+variable "object_storage_buckets" { default = ["object-storage"] }
+
 # Machines
 variable "consul_node_count" { default = 0 }
 variable "consul_machine_type" { default = "" }
@@ -102,3 +106,20 @@ variable "sidekiq_node_count" { default = 0 }
 variable "sidekiq_machine_type" { default = "" }
 variable "sidekiq_disk_type" { default = null }
 variable "sidekiq_disk_size" { default = null }
+
+# Kubernetes \ Helm
+
+variable "webservice_node_pool_count" { default = 0 }
+variable "webservice_node_pool_machine_type" { default = "" }
+variable "webservice_node_pool_disk_type" { default = null }
+variable "webservice_node_pool_disk_size" { default = null }
+
+variable "sidekiq_node_pool_count" { default = 0 }
+variable "sidekiq_node_pool_machine_type" { default = "" }
+variable "sidekiq_node_pool_disk_type" { default = null }
+variable "sidekiq_node_pool_disk_size" { default = null }
+
+variable "supporting_node_pool_count" { default = 0 }
+variable "supporting_node_pool_machine_type" { default = "" }
+variable "supporting_node_pool_disk_type" { default = null }
+variable "supporting_node_pool_disk_size" { default = null }

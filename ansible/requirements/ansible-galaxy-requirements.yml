@@ -6,3 +6,4 @@ roles:
 collections:
   - google.cloud
   - azure.azcollection
+  - community.kubernetes

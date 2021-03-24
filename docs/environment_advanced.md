@@ -188,18 +188,9 @@ Like Gitaly Cluster, this guidance is only for new installs. You must note the f
 
 ## Configure stateful components for a Hybrid Cloud Native Deployment
 
+<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
+
 An alternative supported GitLab environment setup is the 
 [Hybrid Cloud Native Deployment](https://docs.gitlab.com/ee/administration/reference_architectures/#configuring-select-components-with-cloud-native-helm). In this setup, _stateless_ components such as GitLab Rails, Sidekiq, and GitLab Shell are shifted to Kubernetes, via our official [Helm charts](https://docs.gitlab.com/charts/) while _stateful_ components continue to be deployed using Omnibus via the Toolkit (as running stateful GitLab components in Kubernetes is _not recommend_ at large scale).
 
-Helm can be viewed as the equivalent of this Toolkit for Kubernetes deployments. The Toolkit can be used to setup all of the stateful components and then Helm for the stateless components. For the former, this is done simply by not provisioning the Rails and Sidekiq nodes (External HAProxy should also be removed as load balancer is done in Kubernetes) with the Toolkit. If these nodes aren't present the Toolkit automatically configure the environment as required. After these are set up, the stateless Webservice (Rails) and Sidekiq pods can be deployed with [Helm](https://docs.gitlab.com/charts/).
-
-The general process in detail for a Hybrid Cloud Native Deployment is as follows:
-
-1. [Provision environment with Terraform](environment_provision.md)
-    - Remove Rails, Sidekiq, and External HAProxy nodes `environment.tf`.
-    - For optimal performance the stateful and stateless components should all be in the same region/zone.
-1. [Configure the stateful components with Ansible](environment_configure.md)
-    - Specify `gitlab_shell_token` under the Passwords and Secrets section in the [Environment config file](environment_configure.md#environment-config-varsyml).
-      - Note that the passwords set here should be used as part of the Helm setup to create your [GitLab Kubernetes Secrets](https://docs.gitlab.com/charts/installation/secrets.html).
-    - [Map the GitLab version in stateful components](environment_configure.md#selecting-what-gitlab-version-to-install) with the [Chart version](https://docs.gitlab.com/charts/installation/version_mappings.html) that will be deployed in the Kubernetes cluster.
-1. [Configure the stateless components with Helm](https://docs.gitlab.com/charts/) into Kubernetes. Specific guidance on how to do this, for example on sizing, can be found in the relevant sized Reference Architecture documentation, for example here are the [10k docs](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-deployment-optional).
+Full support for deploying these Hybrid environments is being added to the Toolkit. These docs will be updated in due course.

@@ -33,10 +33,6 @@
     status_code: 200, 201
     body_format: json
 
-- name: Enable Distributed Reads for Gitaly Cluster
-  command: gitlab-rails runner "Feature.enable(:gitaly_distributed_reads)"
-  when: "'praefect' in groups"
-
 - name: Disable Write to "authorized_keys" file setting
   uri:
     url: '{{ external_url_sanitised }}/api/v4/application/settings'

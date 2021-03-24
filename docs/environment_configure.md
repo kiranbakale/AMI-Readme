@@ -230,11 +230,11 @@ Below are examples of the file depending on host provider with all config and de
 all:
   vars:
     project_name: "< gcp_project_id >"
-    service_account_file: "<service_account_file_path>"
+    gcp_service_account_host_file: "<gcp_service_account_host_file_path>"
 ```
 
 - `project_name` - ID of the GCP project. Used for Object Storage configuration.
-- `service_account_file` - Local path to the Service Account file. This is the same one created in [Setup Provider Authentication - Service Account](environment_prep.md#3-setup-provider-authentication-service-account). The Toolkit uses this to configure GitLab's Object Storage access.
+- `gcp_service_account_host_file` - Local path to the Service Account file. This is the same one created in [Setup Provider Authentication - Service Account](environment_prep.md#3-setup-provider-authentication-service-account). The Toolkit uses this to configure GitLab's Object Storage access.
 
 **Amazon Web Services (Coming Soon)**
 
@@ -246,12 +246,12 @@ all:
 
 ### Selecting what GitLab version to install
 
-By default the Toolkit will deploy the latest [GitLab EE Nightly package](https://packages.gitlab.com/gitlab/nightly-builds) via its repo.
+By default the Toolkit will deploy the latest [GitLab EE package](https://packages.gitlab.com/gitlab/gitlab-ee) via its repo.
 
 The Toolkit can install other GitLab versions from `13.2.0` onwards through two different methods:
 
 - Repo - A different repo and package can be specified via the two inventory variables `gitlab_repo_script_url` and `gitlab_repo_package` respectively. The Toolkit will first install the repo via the script provided and then install the package.
-- Deb file - The Toolkit can install a deb file directly. This can be done by setting the `gitlab_host_deb_path` in the inventory variables, which should be set to the local path (on the same machine running Ansible) for the GitLab Debian file. An additional variable, `gitlab_target_deb_path` configures where Ansible should copy the Debian file onto the targets before installing but this is set to `/tmp` by default and doesn't need changed.
+- Deb file - The Toolkit can install a deb file directly. This can be done by setting the `gitlab_deb_host_path` in the inventory variables, which should be set to the local path (on the same machine running Ansible) for the GitLab Debian file. An additional variable, `gitlab_deb_target_path` configures where Ansible should copy the Debian file onto the targets before installing but this is set to `/tmp` by default and doesn't need changed.
 
 ### Further Config Examples
 

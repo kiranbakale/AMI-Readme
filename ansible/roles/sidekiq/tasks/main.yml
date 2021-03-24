@@ -20,8 +20,8 @@
 
 - name: Copy GCP service account file
   copy:
-    src: "{{ service_account_file }}"
-    dest: "{{ serviceaccount_path }}"
+    src: "{{ gcp_service_account_host_file }}"
+    dest: "{{ gcp_service_account_target_file }}"
     mode: 0755
   tags: secrets
   when:

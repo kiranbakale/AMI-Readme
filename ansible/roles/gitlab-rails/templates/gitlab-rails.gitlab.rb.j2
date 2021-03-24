@@ -20,10 +20,6 @@ gitlab_rails['initial_root_password'] = "{{ gitlab_root_password }}"
 {% endif %}
 gitlab_rails['gitlab_shell_ssh_port'] = 2222
 
-{% if gitlab_shell_token != '' %}
-gitlab_shell['secret_token'] = "{{ gitlab_shell_token }}"
-{% endif %}
-
 # Ensure UIDs and GIDs match between servers for permissions via NFS
 user['uid'] = 9000
 user['gid'] = 9000
@@ -50,15 +46,23 @@ gitlab_rails['object_store']['enabled'] = true
 gitlab_rails['object_store']['proxy_download'] = true
 
 ### Provider-specific connection settings
-{% include 'object_storage.' + cloud_provider + '.rb.j2' %}
+gitlab_rails['object_store']['connection'] = {
+  {{ lookup('template', 'object_storage.' + cloud_provider + '.rb.j2') | indent(width=2) }}
+}
 
-gitlab_rails['object_store']['objects']['artifacts']['bucket'] = "{{ gitlab_object_storage }}"
-gitlab_rails['object_store']['objects']['external_diffs']['bucket'] = "{{ gitlab_object_storage }}"
-gitlab_rails['object_store']['objects']['lfs']['bucket'] = "{{ gitlab_object_storage }}"
-gitlab_rails['object_store']['objects']['uploads']['bucket'] = "{{ gitlab_object_storage }}"
-gitlab_rails['object_store']['objects']['packages']['bucket'] = "{{ gitlab_object_storage }}"
-gitlab_rails['object_store']['objects']['dependency_proxy']['bucket'] = "{{ gitlab_object_storage }}"
-gitlab_rails['object_store']['objects']['terraform_state']['bucket'] = "{{ gitlab_object_storage }}"
+gitlab_rails['object_store']['objects']['artifacts']['bucket'] = "{{ gitlab_object_storage_artifacts_bucket }}"
+gitlab_rails['object_store']['objects']['dependency_proxy']['bucket'] = "{{ gitlab_object_storage_dependency_proxy_bucket }}"
+gitlab_rails['object_store']['objects']['external_diffs']['bucket'] = "{{ gitlab_object_storage_external_diffs_bucket }}"
+gitlab_rails['object_store']['objects']['lfs']['bucket'] = "{{ gitlab_object_storage_lfs_bucket }}"
+gitlab_rails['object_store']['objects']['packages']['bucket'] = "{{ gitlab_object_storage_packages_bucket }}"
+gitlab_rails['object_store']['objects']['terraform_state']['bucket'] = "{{ gitlab_object_storage_terraform_state_bucket }}"
+gitlab_rails['object_store']['objects']['uploads']['bucket'] = "{{ gitlab_object_storage_uploads_bucket }}"
+
+## Object Storage - separated backups storage
+gitlab_rails['backup_upload_connection'] = {
+  {{ lookup('template', 'object_storage.' + cloud_provider + '.rb.j2') | indent(width=2) }}
+}
+gitlab_rails['backup_upload_remote_directory'] = "{{ gitlab_object_storage_backups_bucket }}"
 
 ## NFS
 gitlab_rails['uploads_directory'] = '{{ gitlab_nfs_path }}/uploads'

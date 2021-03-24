@@ -15,35 +15,90 @@
   when: gitlab_root_password == ''
   tags: config-check
 
-- name: Generate Access Token
-  shell: |
-    gitlab-rails runner "
-      existingToken = PersonalAccessToken.find_by_token('{{ access_token_key }}')
+- name: Get details for GitLab Charts Task Runner Pod if present
+  block:
+    - name: Check for Task Runner pod
+      community.kubernetes.k8s_info:
+        kind: Pod
+        label_selectors:
+          - app = task-runner
+      register: task_runner_pod_list
 
-      if existingToken == nil
-        token=User.find_by_username('{{ access_token_user }}').
-                   personal_access_tokens.create(
-                     scopes: {{ access_token_scopes }},
-                     name: 'GitLab Environment Toolkit API Token'
-                   )
-        token.set_token('{{ access_token_key }}')
-        token.save!
-      end
-    "
+    - name: Save Task Runner pod name
+      set_fact:
+        task_runner_pod: "{{ task_runner_pod_list | json_query('resources[0].metadata.name') }}"
+      when: task_runner_pod_list.resources | length != 0
+  when:
+    - "'gitlab_cluster' in groups"
+    - "'gitlab_rails' not in groups"
   tags:
     - access_token
+    - generate_access_token
+    - remove_access_token
     - license
     - reconfigure
     - elasticsearch
 
-- name: Do GitLab post configuration
+- name: Generate Access Token
+  block:
+    - name: Generate Access Token via GitLab Rails
+      command: |
+        gitlab-rails runner "
+          existingToken = PersonalAccessToken.find_by_token('{{ access_token_key }}')
+
+          if existingToken == nil
+            token=User.find_by_username('{{ access_token_user }}').
+                      personal_access_tokens.create(
+                        scopes: {{ access_token_scopes }},
+                        name: 'GitLab Environment Toolkit API Token'
+                      )
+            token.set_token('{{ access_token_key }}')
+            token.save!
+          end
+        "
+      delegate_to: "{{ groups['gitlab_rails'][0] }}"
+      delegate_facts: true
+      become: true
+      when: "'gitlab_rails' in groups"
+
+    - name: Generate Access Token via GitLab Charts Task Runner Pod
+      community.kubernetes.k8s_exec:
+        pod: "{{ task_runner_pod }}"
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        command: |
+          gitlab-rails runner "
+            existingToken = PersonalAccessToken.find_by_token('{{ access_token_key }}')
+
+            if existingToken == nil
+              token=User.find_by_username('{{ access_token_user }}').
+                        personal_access_tokens.create(
+                          scopes: {{ access_token_scopes }},
+                          name: 'GitLab Environment Toolkit API Token'
+                        )
+              token.set_token('{{ access_token_key }}')
+              token.save!
+            end
+          "
+      when:
+        - task_runner_pod is defined
+        - "'gitlab_rails' not in groups"
+  tags:
+    - access_token
+    - generate_access_token
+    - license
+    - reconfigure
+    - elasticsearch
+
+- name: Perform GitLab post configuration
   block:
     - name: Configure Ultimate License
       import_tasks: license.yml
       when:
         - gitlab_license_file is defined
         - gitlab_license_plan is not defined
-      tags: license
+      tags:
+        - license
+        - elasticsearch
 
     - name: Configure any required settings via API
       import_tasks: configure.yml
@@ -60,16 +115,31 @@
 
 - name: Remove Access Token
   block:
-    - name: Revoke Access Token
-      shell: |
+    - name: Remove Access Token via GitLab Rails
+      command: |
         gitlab-rails runner "PersonalAccessToken.find_by_token('{{ access_token_key }}').revoke!"
+      delegate_to: "{{ groups['gitlab_rails'][0] }}"
+      delegate_facts: true
+      become: true
+      when: "'gitlab_rails' in groups"
 
-    - name: Remove saved Access Token
+    - name: Remove Access Token via GitLab Charts Task Runner Pod
+      community.kubernetes.k8s_exec:
+        pod: "{{ task_runner_pod }}"
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        command: |
+          gitlab-rails runner "PersonalAccessToken.find_by_token('{{ access_token_key }}').revoke!"
+      when:
+        - task_runner_pod is defined
+        - "'gitlab_rails' not in groups"
+
+    - name: Remove saved Access Token generation file
       file: path=tmp/access-token state=absent
       delegate_to: localhost
       become: false
   tags:
     - access_token
+    - remove_access_token
     - license
     - reconfigure
     - elasticsearch
