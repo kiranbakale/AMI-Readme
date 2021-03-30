@@ -15,9 +15,10 @@
     - name: Delete old Elasticsearch index
       block:
         - name: Delete old Elasticsearch index for GitLab via GitLab Rails
-          command: |
-            gitlab-rake gitlab:elastic:delete_index
-            gitlab-rake gitlab:elastic:clear_index_status
+          command: "{{ item }}"
+          loop:
+            - gitlab-rake gitlab:elastic:delete_index
+            - gitlab-rake gitlab:elastic:clear_index_status
           delegate_to: "{{ groups['gitlab_rails'][0] }}"
           delegate_facts: true
           become: true
@@ -27,9 +28,10 @@
           community.kubernetes.k8s_exec:
             pod: "{{ task_runner_pod }}"
             namespace: "{{ gitlab_charts_release_namespace }}"
-            command: |
-              gitlab-rake gitlab:elastic:delete_index
-              gitlab-rake gitlab:elastic:clear_index_status
+            command: "{{ item }}"
+          loop:
+            - gitlab-rake gitlab:elastic:delete_index
+            - gitlab-rake gitlab:elastic:clear_index_status
           when:
             - task_runner_pod is defined
             - "'gitlab_rails' not in groups"
@@ -48,6 +50,10 @@
         status_code: 200, 201
         body_format: json
       when: gitlab_license_plan == 'ultimate'
+
+    - name: Pause for 1 min for old Elasticsearch index to clear
+      pause:
+        minutes: 1
   when:
     - gitlab_license_plan == 'ultimate'
     - elasticsearch_clean_install == 'true'
