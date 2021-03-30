@@ -54,7 +54,7 @@
     - name: Set Pod Counts
       set_fact:
         # K8s reports memory in Kibibytes
-        webservice_pods: "{{ [((webservice_memory | int) * 1.024 / 1024 / 1024 / gitlab_charts_webservice_limits_memory_gb * 0.9), ((webservice_cpus | int) / 4 * 0.9)] | map('int') | min }}"
+        webservice_pods: "{{ [((webservice_memory | int) * 1.024 / 1024 / 1024 / gitlab_charts_webservice_limits_memory_gb * 0.95), ((webservice_cpus | int) / gitlab_charts_webservice_requests_cpu * 0.95)] | map('int') | min }}"
         sidekiq_pods: "{{ [((sidekiq_memory | int) * 1.024 / 1024 / 1024 / gitlab_charts_sidekiq_limits_memory_gb * 0.8), ((sidekiq_cpus | int) * 0.8)] | map('int') | min }}"
   tags:
     - reconfigure
