@@ -3,7 +3,7 @@ gitlab:
     maxReplicas: "{{ gitlab_charts_webservice_max_replicas if gitlab_charts_webservice_max_replicas != '' else webservice_pods }}"
     minReplicas: "{{ gitlab_charts_webservice_min_replicas if gitlab_charts_webservice_min_replicas != '' else webservice_pods }}"
     hpa:
-      targetAverageValue: 1.5
+      targetAverageValue: 1600
     resources:
       limits:
         memory: "{{ gitlab_charts_webservice_limits_memory_gb }}G"
@@ -12,7 +12,7 @@ gitlab:
         memory: "{{ gitlab_charts_webservice_requests_memory_gb }}G"
     workerProcesses: "{{ gitlab_charts_webservice_requests_cpu }}"
     ingress:
-      proxyBodySize: 2G  # Bigger file uploads, e.g. imports
+      proxyBodySize: 0  # Bigger file uploads, e.g. imports
     nodeSelector:
       workload: webservice
   sidekiq:

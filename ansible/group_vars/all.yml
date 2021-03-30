@@ -98,8 +98,8 @@ sidekiq_max_concurrency: 10
 kubeconfig_setup: true
 
 gitlab_charts_release_namespace: default
-gitlab_charts_webservice_limits_memory_gb: 5
-gitlab_charts_webservice_requests_memory_gb: 4.5
+gitlab_charts_webservice_limits_memory_gb: 5.25
+gitlab_charts_webservice_requests_memory_gb: 5
 gitlab_charts_webservice_requests_cpu: 4
 gitlab_charts_webservice_max_replicas: ""
 gitlab_charts_webservice_min_replicas: ""
