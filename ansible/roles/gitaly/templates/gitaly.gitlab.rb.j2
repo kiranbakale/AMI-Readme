@@ -69,7 +69,7 @@ gitaly['auth_token'] = "{{ praefect_internal_token }}"
 
 git_data_dirs({
   "gitaly-{{ gitaly_number }}" => {
-    "path" => "/var/opt/gitlab/git-data"
+    "path" => "{{ gitaly_cluster_storage_path }}"
   }
 })
 
@@ -78,9 +78,9 @@ gitaly['auth_token'] = "{{ gitaly_token }}"
 
 git_data_dirs({
 {% if 'gitaly_primary' in group_names %}
-  "default" => { "path" => "/mnt/gitlab/default" },
+  "default" => { "path" => "{{ gitaly_sharded_storage_path }}/default" },
 {% endif %}
-  "storage{{ gitaly_number }}" => { 'path' => "/mnt/gitlab/storage{{ gitaly_number }}" },
+  "storage{{ gitaly_number }}" => { 'path' => "{{ gitaly_sharded_storage_path }}/storage{{ gitaly_number }}" },
 })
 {% endif %}
 
