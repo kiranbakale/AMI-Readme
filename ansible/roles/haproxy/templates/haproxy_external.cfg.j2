@@ -39,10 +39,11 @@ backend gitlab-rails
 backend gitlab-rails-ssh
     mode tcp
     option tcp-check
+    option httpchk GET /-/readiness
     option srvtcpka
 
 {% for ip in gitlab_rails_int_ips %}
-    server gitlab-rails{{loop.index}} {{ ip }}:22 check
+    server gitlab-rails{{loop.index}} {{ ip }}:22 check port 80 inter 3s fall 1
 {% endfor %}
 
 backend grafana
@@ -58,9 +59,9 @@ backend prometheus
 backend influxdb
     option httpchk GET /ping
 
-    server influxdb {{ monitor_int_ip }}:8086 check 
+    server influxdb {{ monitor_int_ip }}:8086 check
 
 backend kibana
     option httpchk GET /api/status
 
-    server kibana {{ elastic_primary_int_ip }}:5601 check 
+    server kibana {{ elastic_primary_int_ip }}:5601 check
