@@ -86,3 +86,11 @@
   when:
     - ('sidekiq' in group_names)
     - ('geo_secondary_site' in group_names)
+
+- name: Enable object storage replication on all secondary sites
+  command: |
+    gitlab-rails runner "GeoNode.secondary_nodes.each { |n| n.update(sync_object_storage: true) }"
+  when:
+    - ('geo_primary_site' in group_names)
+    - ('gitlab_rails_primary' in group_names)
+  tags: post-configure
