@@ -25,23 +25,26 @@
   shell: gitlab-ctl reconfigure
   tags: reconfigure
 
-- name: Create Default Gitaly directory
+- name: Create Default Gitaly Sharded directory
   file:
-    path: "/mnt/gitlab/default/repositories"
+    path: "{{ gitaly_sharded_storage_path }}/default/repositories"
     state: directory
     mode: '2770'
     owner: git
     group: git
-  when: "'gitaly_primary' in group_names"
+  when:
+    - "'gitaly_primary' in group_names"
+    - "'praefect' not in groups"
   tags: reconfigure
 
-- name: Create Additional Gitaly directories
+- name: Create Additional Gitaly Sharded directories
   file:
-    path: "/mnt/gitlab/storage{{ gitaly_number }}/repositories"
+    path: "{{ gitaly_sharded_storage_path }}/storage{{ gitaly_number }}/repositories"
     state: directory
     mode: '2770'
     owner: git
     group: git
+  when: "'praefect' not in groups"
   tags: reconfigure
 
 - name: Restart Gitaly
