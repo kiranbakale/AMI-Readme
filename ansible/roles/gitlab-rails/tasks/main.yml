@@ -58,25 +58,23 @@
   block:
     - name: Gather facts for external omnibus postgres
       block:
-        - name: Get latest Postgres Leader
+        - name: Get latest Postgres primary
           command: gitlab-ctl get-postgresql-primary
           register: postgres_leader_int_address
           delegate_to: "{{ groups['postgres'][0] }}"
           delegate_facts: true
           become: true
 
-        - name: Update Postgres Primary IP and Port
+        - name: Update Postgres primary IP and Port
           set_fact:
             postgres_primary_int_ip: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
             postgres_primary_int_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
-      when:
-        - "'gitlab_rails_primary' in group_names"
-        - postgres_replication_manager == 'patroni'
+      when: postgres_replication_manager == 'patroni'
       tags:
         - reconfigure
         - db_migrate
 
-    - name: Setup GitLab Primary config file with DB Migrations
+    - name: Setup GitLab deploy node config file with DB Migrations
       template:
         src: templates/gitlab-rails.gitlab.rb.j2
         dest: /etc/gitlab/gitlab.rb
@@ -88,15 +86,14 @@
       tags:
         - reconfigure
         - db_migrate
-      when: "'gitlab_rails_primary' in group_names"
 
-    - name: Reconfigure GitLab Primary
+    - name: Reconfigure GitLab deploy node
       shell: gitlab-ctl reconfigure
       tags:
         - reconfigure
         - db_migrate
-      when: "'gitlab_rails_primary' in group_names"
   when: "'postgres' in groups"
+  run_once: true
 
 - name: Setup all GitLab Rails config files
   template:

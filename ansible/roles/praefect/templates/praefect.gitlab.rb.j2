@@ -47,6 +47,8 @@ praefect['database_user'] = '{{ praefect_postgres_username }}'
 praefect['database_password'] = '{{ praefect_postgres_password }}'
 praefect['database_dbname'] = '{{ praefect_postgres_dbname }}'
 
+praefect['auto_migrate'] = {{ (true if db_migrate is defined and db_migrate == true else false) | lower }}
+
 praefect['virtual_storages'] = {
   'default' => {
     'gitaly-1' => {
