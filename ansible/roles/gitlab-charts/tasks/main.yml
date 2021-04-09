@@ -42,20 +42,17 @@
     - name: Set Node Pool capacity facts
       set_fact:
         webservice_cpus: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'webservice') | map(attribute='status.capacity.cpu') | map('int') | sum }}"
-        sidekiq_cpus: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'sidekiq') | map(attribute='status.capacity.cpu') | map('int') | sum }}"
-
-    - name: Set Node Pool capacity facts
-      set_fact:
-        webservice_cpus: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'webservice') | map(attribute='status.capacity.cpu') | map('int') | sum }}"
         webservice_memory: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'webservice') | map(attribute='status.capacity.memory') | map('regex_replace', '[a-zA-Z]') | map('int') | sum }}"
         sidekiq_cpus: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'sidekiq') | map(attribute='status.capacity.cpu') | map('int') | sum }}"
         sidekiq_memory: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'sidekiq') | map(attribute='status.capacity.memory') | map('regex_replace', '[a-zA-Z]') | map('int') | sum }}"
 
     - name: Set Pod Counts
       set_fact:
-        # K8s reports memory in Kibibytes
-        webservice_pods: "{{ [((webservice_memory | int) * 1.024 / 1024 / 1024 / gitlab_charts_webservice_limits_memory_gb * 0.95), ((webservice_cpus | int) / gitlab_charts_webservice_requests_cpu * 0.95)] | map('int') | min }}"
-        sidekiq_pods: "{{ [((sidekiq_memory | int) * 1.024 / 1024 / 1024 / gitlab_charts_sidekiq_limits_memory_gb * 0.8), ((sidekiq_cpus | int) * 0.8)] | map('int') | min }}"
+        # Calculate maximum pod count by either the max that can fit in 95% of available CPUs or Memory
+        # Memory: K8s reports memory in KiB which needs to be converted to GB
+        # CPU: Can be fractional, e.g. 0.5, so converted to whole numbers by multiplying by a 100 to allow correct division
+        webservice_pods: "{{ [((webservice_memory | int) * 1.024 / 1024 / 1024 / gitlab_charts_webservice_limits_memory_gb * 0.95), ((webservice_cpus | int * 100) / (gitlab_charts_webservice_requests_cpu * 100) * 0.95)] | map('int') | min }}"
+        sidekiq_pods: "{{ [((sidekiq_memory | int) * 1.024 / 1024 / 1024 / gitlab_charts_sidekiq_limits_memory_gb * 0.95), ((sidekiq_cpus | int * 100) / (gitlab_charts_sidekiq_requests_cpu * 100) * 0.95)] | map('int') | min }}"
   tags:
     - reconfigure
     - charts

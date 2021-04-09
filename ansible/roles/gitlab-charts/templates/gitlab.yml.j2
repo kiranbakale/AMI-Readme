@@ -1,7 +1,7 @@
 gitlab:
   webservice:
     maxReplicas: "{{ gitlab_charts_webservice_max_replicas if gitlab_charts_webservice_max_replicas != '' else webservice_pods }}"
-    minReplicas: "{{ gitlab_charts_webservice_min_replicas if gitlab_charts_webservice_min_replicas != '' else webservice_pods }}"
+    minReplicas: "{{ gitlab_charts_webservice_min_replicas if gitlab_charts_webservice_min_replicas != '' else (webservice_pods | int * gitlab_charts_webservice_min_replicas_scaler) | int }}"
     hpa:
       targetAverageValue: 1600
     resources:
@@ -17,7 +17,7 @@ gitlab:
       workload: webservice
   sidekiq:
     maxReplicas: "{{ gitlab_charts_sidekiq_max_replicas if gitlab_charts_sidekiq_max_replicas != '' else sidekiq_pods }}"
-    minReplicas: "{{ gitlab_charts_sidekiq_min_replicas if gitlab_charts_sidekiq_min_replicas != '' else sidekiq_pods }}"
+    minReplicas: "{{ gitlab_charts_sidekiq_min_replicas if gitlab_charts_sidekiq_min_replicas != '' else (sidekiq_pods | int * gitlab_charts_sidekiq_min_replicas_scaler) | int }}"
     concurrency: "{{ sidekiq_max_concurrency }}"
     hpa:
       targetAverageValue: 700m
