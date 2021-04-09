@@ -1,4 +1,4 @@
-# Advanced environment setups
+# Advanced - Customizations
 
 ---
 <table>
@@ -13,7 +13,8 @@
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
-- [**GitLab Environment Toolkit - Advanced environment setups**](environment_advanced.md)
+- [**GitLab Environment Toolkit - Advanced - Customizations**](environment_advanced.md)
+  - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 
 The Toolkit by default will deploy the latest version of the selected [Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/). However, it can also support other advanced setups such as Geo or different component makeups such as Gitaly Sharded.
 
@@ -185,12 +186,3 @@ Like Gitaly Cluster, this guidance is only for new installs. You must note the f
 
 - Attempting to switch replication manage is only supported *once* from Repmgr to Patroni. Attempting to switch from Patroni to Repmgr will **break the environment irrevocably**.
 - [Switching from Postgres 11 to 12 is supported when Patroni is the replication manager](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#upgrading-postgresql-major-version-in-a-patroni-cluster) but this is a manual process that must be done directly unless on a single 1k installation. Once the upgrade process is done you must remove the `postgres_version` variable from your inventory variables.
-
-## Configure stateful components for a Hybrid Cloud Native Deployment
-
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
-
-An alternative supported GitLab environment setup is the 
-[Hybrid Cloud Native Deployment](https://docs.gitlab.com/ee/administration/reference_architectures/#configuring-select-components-with-cloud-native-helm). In this setup, _stateless_ components such as GitLab Rails, Sidekiq, and GitLab Shell are shifted to Kubernetes, via our official [Helm charts](https://docs.gitlab.com/charts/) while _stateful_ components continue to be deployed using Omnibus via the Toolkit (as running stateful GitLab components in Kubernetes is _not recommend_ at large scale).
-
-Full support for deploying these Hybrid environments is being added to the Toolkit. These docs will be updated in due course.

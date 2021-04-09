@@ -19,6 +19,7 @@ The GitLab Environment Toolkit (`GET`), formerly known as the Performance Enviro
 Created and maintained by the Quality Enablement team the Toolkit, built with [Terraform](https://www.terraform.io/) and [Ansible](https://docs.ansible.com/ansible/latest/index.html), supports provisioning and configuring machines respectively with the following features:
 
 - Support for deploying all [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) sizes dynamically from [1k](https://docs.gitlab.com/ee/administration/reference_architectures/1k_users.html) to [50k](https://docs.gitlab.com/ee/administration/reference_architectures/50k_users.html).
+- Support for deploying Cloud Native Hybrid variants of the Reference Architectures (GCP only at this time).
 - GCP, AWS and Azure cloud provider support
 - Upgrades
 - Release and nightly Omnibus builds support
@@ -47,10 +48,11 @@ Note that the Toolkit currently has the following requirements (with related iss
 
 ## Documentation
 
-- [Preparing the environment](docs/environment_prep.md)
-- [Provisioning the environment with Terraform](docs/environment_provision.md)
-- [Configuring the environment with Ansible](docs/environment_configure.md)
-- [Advanced environment setups](docs/environment_advanced.md)
+- [GitLab Environment Toolkit - Preparing the environment](docs/environment_prep.md)
+- [GitLab Environment Toolkit - Provisioning the environment with Terraform](docs/environment_provision.md)
+- [GitLab Environment Toolkit - Configuring the environment with Ansible](docs/environment_configure.md)
+- [GitLab Environment Toolkit - Advanced - Customizations](docs/environment_advanced.md)
+  - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](docs/environment_advanced_hybrid.md)
 
 ## Issues or Feature Requests
 
