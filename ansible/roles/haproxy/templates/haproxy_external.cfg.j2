@@ -19,10 +19,10 @@ frontend prometheus
 
     default_backend prometheus
 
-frontend influxdb
-    bind *:8086
+frontend influxdb_exporter
+    bind *:9122
 
-    default_backend influxdb
+    default_backend influxdb_exporter
 
 frontend kibana
     bind *:5601
@@ -56,10 +56,10 @@ backend prometheus
 
     server prometheus {{ monitor_int_ip }}:9090 check
 
-backend influxdb
+backend influxdb_exporter
     option httpchk GET /ping
 
-    server influxdb {{ monitor_int_ip }}:8086 check
+    server influxdb_exporter {{ monitor_int_ip }}:9122 check 
 
 backend kibana
     option httpchk GET /api/status

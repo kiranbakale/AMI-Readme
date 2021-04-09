@@ -18,8 +18,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 16,
-  "iteration": 1596131344234,
+  "iteration": 1617718071156,
   "links": [
     {
       "icon": "doc",
@@ -36,11 +35,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB_sitespeed",
+      "datasource": "GitLab Omnibus",
       "description": "LCP reports the render time of the largest image or text block visible within the viewport. Recommended target - 2500ms.",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -68,10 +68,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.1.0",
+      "pluginVersion": "7.4.2",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -81,57 +81,16 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$tag_test_name",
-          "groupBy": [
-            {
-              "params": [
-                "15m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "test_name"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "LCP",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "median"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "test_name",
-              "operator": "=~",
-              "value": "/^$test_name$/"
-            }
-          ]
+          "expr": "avg(avg_over_time(LCP{test_name =~ \"$test_name\"}[$__interval])) by (test_name)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{test_name}}",
+          "refId": "A"
         }
       ],
       "thresholds": [
         {
+          "$$hashKey": "object:130",
           "colorMode": "warning",
           "fill": true,
           "line": false,
@@ -140,6 +99,7 @@
           "yaxis": "left"
         },
         {
+          "$$hashKey": "object:131",
           "colorMode": "ok",
           "fill": true,
           "line": false,
@@ -167,6 +127,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:112",
           "format": "ms",
           "label": "",
           "logBase": 1,
@@ -175,6 +136,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:113",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -193,11 +155,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB_sitespeed",
+      "datasource": "GitLab Omnibus",
       "description": "Total Blocking Time (TBT) measures the total amount of time where the main thread was blocked for long enough to prevent input responsiveness. Recommended target - 300ms.",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -225,10 +188,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.1.0",
+      "pluginVersion": "7.4.2",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -238,57 +201,16 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$tag_test_name",
-          "groupBy": [
-            {
-              "params": [
-                "15m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "test_name"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "TBT",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "test_name",
-              "operator": "=~",
-              "value": "/^$test_name$/"
-            }
-          ]
+          "expr": "avg(avg_over_time(TBT{test_name =~ \"$test_name\"}[$__interval])) by (test_name)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{test_name}}",
+          "refId": "A"
         }
       ],
       "thresholds": [
         {
+          "$$hashKey": "object:353",
           "colorMode": "warning",
           "fill": true,
           "line": false,
@@ -297,6 +219,7 @@
           "yaxis": "left"
         },
         {
+          "$$hashKey": "object:354",
           "colorMode": "ok",
           "fill": true,
           "line": false,
@@ -324,6 +247,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:335",
           "format": "ms",
           "label": "",
           "logBase": 1,
@@ -332,6 +256,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:336",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -350,11 +275,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB_sitespeed",
+      "datasource": "GitLab Omnibus",
       "description": "FCP measures the time from when the page starts loading to when any part of the page's content is rendered on the screen",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -382,10 +308,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.1.0",
+      "pluginVersion": "7.4.2",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -395,56 +321,42 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$tag_test_name",
-          "groupBy": [
-            {
-              "params": [
-                "15m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "test_name"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "FCP",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "test_name",
-              "operator": "=~",
-              "value": "/^$test_name$/"
-            }
-          ]
+          "expr": "avg(avg_over_time(FCP{test_name =~ \"$test_name\"}[$__interval])) by (test_name)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{test_name}}",
+          "refId": "A"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "$$hashKey": "object:519",
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 4000,
+          "yaxis": "left"
+        },
+        {
+          "$$hashKey": "object:525",
+          "colorMode": "warning",
+          "fill": true,
+          "line": true,
+          "op": "lt",
+          "value": 4000,
+          "yaxis": "left"
+        },
+        {
+          "$$hashKey": "object:531",
+          "colorMode": "ok",
+          "fill": true,
+          "line": true,
+          "op": "lt",
+          "value": 2000,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
@@ -464,6 +376,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:422",
           "format": "ms",
           "label": "",
           "logBase": 1,
@@ -472,6 +385,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:423",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -490,11 +404,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB_sitespeed",
+      "datasource": "GitLab Omnibus",
       "description": "Last Visual Change (LVC) measures the time when something for the last time changes within the viewport.",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -522,10 +437,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.1.0",
+      "pluginVersion": "7.4.2",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -535,53 +450,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$tag_test_name",
-          "groupBy": [
-            {
-              "params": [
-                "15m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "test_name"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "LVC",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "test_name",
-              "operator": "=~",
-              "value": "/^$test_name$/"
-            }
-          ]
+          "expr": "avg(avg_over_time(LVC{test_name =~ \"$test_name\"}[$__interval])) by (test_name)",
+          "interval": "",
+          "legendFormat": "{{test_name}}",
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -604,6 +476,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:497",
           "format": "ms",
           "label": "",
           "logBase": 1,
@@ -612,6 +485,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:498",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -630,11 +504,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB_sitespeed",
+      "datasource": "GitLab Omnibus",
       "description": "Speed Index (SI) measures how quickly content is visually displayed during page load.",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -662,10 +537,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.1.0",
+      "pluginVersion": "7.4.2",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -675,56 +550,42 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$tag_test_name",
-          "groupBy": [
-            {
-              "params": [
-                "15m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "test_name"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "speed_index",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "test_name",
-              "operator": "=~",
-              "value": "/^$test_name$/"
-            }
-          ]
+          "expr": "avg(avg_over_time(speed_index{test_name =~ \"$test_name\"}[$__interval])) by (test_name)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{test_name}}",
+          "refId": "A"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "$$hashKey": "object:597",
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 5800,
+          "yaxis": "left"
+        },
+        {
+          "$$hashKey": "object:603",
+          "colorMode": "warning",
+          "fill": true,
+          "line": true,
+          "op": "lt",
+          "value": 5800,
+          "yaxis": "left"
+        },
+        {
+          "$$hashKey": "object:609",
+          "colorMode": "ok",
+          "fill": true,
+          "line": true,
+          "op": "lt",
+          "value": 2300,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
@@ -744,6 +605,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:572",
           "format": "ms",
           "label": "",
           "logBase": 1,
@@ -752,6 +614,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:573",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -770,11 +633,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB_sitespeed",
+      "datasource": "GitLab Omnibus",
       "description": "The Transfer Size (TFR SIZE) over the wire in KB. Helps to evaluate response page size.",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -802,10 +666,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.1.0",
+      "pluginVersion": "7.4.2",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -815,53 +679,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$tag_test_name",
-          "groupBy": [
-            {
-              "params": [
-                "15m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "test_name"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "transfer_size",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "test_name",
-              "operator": "=~",
-              "value": "/^$test_name$/"
-            }
-          ]
+          "expr": "avg(avg_over_time(transfer_size{test_name =~ \"$test_name\"}[$__interval])) by (test_name)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{test_name}}",
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -884,6 +706,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:647",
           "format": "deckbytes",
           "label": "",
           "logBase": 1,
@@ -892,6 +715,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:648",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -910,11 +734,12 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB_sitespeed",
+      "datasource": "GitLab Omnibus",
       "description": "Coach Performance Score (SCORE) given by SiteSpeed for the page. More about the Score https://www.sitespeed.io/documentation/coach/introduction/.",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -942,10 +767,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.1.0",
+      "pluginVersion": "7.4.2",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -955,57 +780,16 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$tag_test_name",
-          "groupBy": [
-            {
-              "params": [
-                "15m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "test_name"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "coach_performance_score",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "median"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "test_name",
-              "operator": "=~",
-              "value": "/^$test_name$/"
-            }
-          ]
+          "expr": "avg(avg_over_time(coach_performance_score{test_name =~ \"$test_name\"}[$__interval])) by (test_name)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{test_name}}",
+          "refId": "A"
         }
       ],
       "thresholds": [
         {
+          "$$hashKey": "object:740",
           "colorMode": "ok",
           "fill": true,
           "line": false,
@@ -1014,6 +798,7 @@
           "yaxis": "left"
         },
         {
+          "$$hashKey": "object:741",
           "colorMode": "warning",
           "fill": true,
           "line": false,
@@ -1022,6 +807,7 @@
           "yaxis": "left"
         },
         {
+          "$$hashKey": "object:742",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -1049,6 +835,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:722",
           "format": "percent",
           "label": "",
           "logBase": 1,
@@ -1057,6 +844,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:723",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1071,7 +859,7 @@
       }
     }
   ],
-  "schemaVersion": 25,
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1080,21 +868,27 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
-          "text": "All",
+          "text": [
+            "All"
+          ],
           "value": [
             "$__all"
           ]
         },
-        "datasource": "InfluxDB_sitespeed",
-        "definition": "SHOW TAG VALUES WITH KEY = \"test_name\"",
+        "datasource": "GitLab Omnibus",
+        "definition": "label_values({__name__=~\"LCP|TBT|FCP\", test_name=~\"^web.*\"}, test_name)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "Tests",
         "multi": true,
         "name": "test_name",
         "options": [],
-        "query": "SHOW TAG VALUES WITH KEY = \"test_name\"",
+        "query": {
+          "query": "label_values({__name__=~\"LCP|TBT|FCP\", test_name=~\"^web.*\"}, test_name)",
+          "refId": "StandardVariableQuery"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1127,5 +921,5 @@
   "timezone": "",
   "title": "GitLab Performance SiteSpeed results",
   "uid": "jH6yoWVMz",
-  "version": 1
+  "version": 3
 }

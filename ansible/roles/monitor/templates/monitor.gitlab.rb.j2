@@ -60,6 +60,12 @@ prometheus['scrape_configs'] = [
     ],
   },
 {% endif %}
+  {
+    'job_name': 'influxdb',
+    'static_configs' => [
+      'targets' => ["{{ monitor_int_ip }}:9122"],
+     ],
+  },
 ]
 
 # Enable Grafana
@@ -104,20 +110,6 @@ grafana['datasources'] = [
     'type' => 'prometheus',
     'access' => 'proxy',
     'url' => 'http://localhost:9090'
-  },
-  {
-    'name' => 'InfluxDB',
-    'type' => 'influxdb',
-    'access' => 'proxy',
-    'database' => 'gpt_results',
-    'url' => '{{ external_url_sanitised }}:8086'
-  },
-  {
-    'name' => 'InfluxDB_sitespeed',
-    'type' => 'influxdb',
-    'access' => 'proxy',
-    'database' => 'sitespeed',
-    'url' => '{{ external_url_sanitised }}:8086'
   }
 ]
 
