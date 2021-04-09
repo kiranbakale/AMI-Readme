@@ -56,7 +56,7 @@ resource "google_compute_firewall" "monitor" {
   name    = "${var.prefix}-monitor-firewall-rule"
   network = "default"
 
-  description = "Allow Prometheus and InfluxDB access"
+  description = "Allow Prometheus and InfluxDB exporter access"
 
   allow {
     protocol = "icmp"
@@ -64,7 +64,7 @@ resource "google_compute_firewall" "monitor" {
 
   allow {
     protocol = "tcp"
-    ports    = ["8086", "9090", "5601"]
+    ports    = ["9122", "9090", "5601"]
   }
 
   target_tags   = ["${var.prefix}-monitor"]

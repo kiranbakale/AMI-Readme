@@ -1,0 +1,28 @@
+---
+- name: Setup Prometheus InfluxDB exporter
+  block:
+    - name: Remove old Prometheus InfluxDB exporter container
+      docker_container:
+        name: influxdb_exporter
+        state: absent
+
+    - name: Start Prometheus InfluxDB exporter Docker
+      docker_container:
+        name: influxdb_exporter
+        image: prom/influxdb-exporter
+        pull: true
+        restart_policy: always
+        state: started
+        ports: ['9122:9122']
+
+    - name: Wait for Prometheus InfluxDB exporter to be available
+      uri:
+        url: 'http://127.0.0.1:9122/health'
+      register: result
+      until: result.status == 200
+      retries: 10
+      delay: 3
+  tags:
+    - reconfigure
+    - restart
+    - influxdb

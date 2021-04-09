@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1599767199170,
+  "iteration": 1617717804052,
   "links": [],
   "panels": [
     {
@@ -23,7 +23,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB",
+      "datasource": "GitLab Omnibus",
       "description": "The 90th percentile of Time To First Byte (TTFB) in ms grouped by test",
       "fieldConfig": {
         "defaults": {
@@ -57,10 +57,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.1.0",
+      "pluginVersion": "7.4.2",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -70,53 +70,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "[[tag_test_name]]",
-          "groupBy": [
-            {
-              "params": [
-                "1m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "test_name"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "ttfb_p90",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "test_name",
-              "operator": "=~",
-              "value": "/^$test_name$/"
-            }
-          ]
+          "expr": "avg(avg_over_time(ttfb_p90{test_name =~ \"$test_name\"}[$__interval])) by (test_name)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{test_name}}",
+          "queryType": "randomWalk",
+          "refId": "A"
         }
       ],
       "thresholds": [
@@ -148,6 +107,7 @@
         "sort": 0,
         "value_type": "individual"
       },
+      "transformations": [],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -158,6 +118,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:91",
           "format": "ms",
           "label": null,
           "logBase": 1,
@@ -166,6 +127,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:92",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -184,7 +146,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB",
+      "datasource": "GitLab Omnibus",
       "description": "The average Time To First Byte (TTFB) in ms grouped by test",
       "fieldConfig": {
         "defaults": {
@@ -218,10 +180,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.1.0",
+      "pluginVersion": "7.4.2",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -231,53 +193,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "[[tag_test_name]]",
-          "groupBy": [
-            {
-              "params": [
-                "1m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "test_name"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "ttfb_avg",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "test_name",
-              "operator": "=~",
-              "value": "/^$test_name$/"
-            }
-          ]
+          "expr": "avg(avg_over_time(ttfb_avg{test_name =~ \"$test_name\"}[$__interval])) by (test_name)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{test_name}}",
+          "queryType": "randomWalk",
+          "refId": "A"
         }
       ],
       "thresholds": [
@@ -321,6 +242,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:394",
           "format": "ms",
           "label": null,
           "logBase": 1,
@@ -329,6 +251,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:395",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -347,7 +270,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB",
+      "datasource": "GitLab Omnibus",
       "description": "Requests Per Second(RPS) achieved by each test",
       "fieldConfig": {
         "defaults": {
@@ -381,10 +304,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.1.0",
+      "pluginVersion": "7.4.2",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -394,53 +317,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "[[tag_test_name]]",
-          "groupBy": [
-            {
-              "params": [
-                "1m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "test_name"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "rps_result",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "test_name",
-              "operator": "=~",
-              "value": "/^$test_name$/"
-            }
-          ]
+          "expr": "avg(avg_over_time(rps_result{test_name =~ \"$test_name\"}[$__interval])) by (test_name)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{test_name}}",
+          "queryType": "randomWalk",
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -463,6 +345,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:488",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -471,6 +354,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:489",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -489,7 +373,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB",
+      "datasource": "GitLab Omnibus",
       "description": "The percentage of requests made by the test that returned a successful status (HTTP Code 200 / 201 returned) along with its passing threshold.",
       "fieldConfig": {
         "defaults": {
@@ -523,10 +407,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.1.0",
+      "pluginVersion": "7.4.2",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -536,53 +420,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "[[tag_test_name]]",
-          "groupBy": [
-            {
-              "params": [
-                "1m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "test_name"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "success_rate",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "test_name",
-              "operator": "=~",
-              "value": "/^$test_name$/"
-            }
-          ]
+          "expr": "avg(avg_over_time(success_rate{test_name =~ \"$test_name\"}[$__interval])) by (test_name)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{test_name}}",
+          "queryType": "randomWalk",
+          "refId": "A"
         }
       ],
       "thresholds": [
@@ -597,11 +440,11 @@
         },
         {
           "$$hashKey": "object:280",
-          "colorMode": "critical",
+          "colorMode": "warning",
           "fill": true,
           "line": false,
-          "op": "gt",
-          "value": 95,
+          "op": "lt",
+          "value": 99,
           "yaxis": "left"
         }
       ],
@@ -624,14 +467,16 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:664",
           "format": "short",
           "label": null,
           "logBase": 1,
-          "max": null,
+          "max": "100",
           "min": null,
           "show": true
         },
         {
+          "$$hashKey": "object:665",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -650,7 +495,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB",
+      "datasource": "GitLab Omnibus",
       "description": "Overall Test Results Score grouped by GitLab version ",
       "fieldConfig": {
         "defaults": {
@@ -684,10 +529,10 @@
       "linewidth": 1,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.1.0",
+      "pluginVersion": "7.4.2",
       "pointradius": 3,
       "points": true,
       "renderer": "flot",
@@ -697,62 +542,30 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "GitLab version: [[tag_gitlab_version]] - [[tag_gitlab_revision]]",
-          "groupBy": [
-            {
-              "params": [
-                "1m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "gitlab_version"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "gitlab_revision"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "score",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
+          "expr": "avg(avg_over_time(score{test_name =~ \"$test_name\"}[$__interval])) by (gitlab_version, gitlab_revision)",
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "GitLab version: {{gitlab_version}} - {{gitlab_revision}}",
+          "queryType": "randomWalk",
+          "refId": "A"
         }
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:418",
+          "$$hashKey": "object:318",
           "colorMode": "ok",
           "fill": true,
           "line": true,
           "op": "gt",
+          "value": 90,
+          "yaxis": "left"
+        },
+        {
+          "$$hashKey": "object:324",
+          "colorMode": "warning",
+          "fill": true,
+          "line": true,
+          "op": "lt",
           "value": 90,
           "yaxis": "left"
         }
@@ -776,6 +589,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:888",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -784,6 +598,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:889",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -798,7 +613,7 @@
       }
     },
     {
-      "datasource": "InfluxDB",
+      "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -845,45 +660,17 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "7.0.3",
+      "pluginVersion": "7.4.2",
       "targets": [
         {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "score",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
+          "expr": "avg(avg_over_time(score{test_name =~ \"$test_name\"}[$__interval]))",
+          "interval": "",
+          "legendFormat": "",
+          "queryType": "randomWalk",
+          "refId": "A"
         }
       ],
       "timeFrom": null,
@@ -893,7 +680,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 25,
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -902,20 +689,27 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "All",
+          "text": [
+            "All"
+          ],
           "value": [
             "$__all"
           ]
         },
-        "datasource": "InfluxDB",
-        "definition": "SHOW TAG VALUES WITH KEY = \"test_name\"",
+        "datasource": "GitLab Omnibus",
+        "definition": "label_values(test_name)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": "Tests",
         "multi": true,
         "name": "test_name",
         "options": [],
-        "query": "SHOW TAG VALUES WITH KEY = \"test_name\"",
+        "query": {
+          "query": "label_values(test_name)",
+          "refId": "StandardVariableQuery"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -948,5 +742,5 @@
   "timezone": "",
   "title": "GPT Test results",
   "uid": "J0ysCtCWz",
-  "version": 2382
+  "version": 3
 }

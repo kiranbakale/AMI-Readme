@@ -67,8 +67,8 @@ resource "aws_security_group" "gitlab_external_haproxy_stats" {
 resource "aws_security_group" "gitlab_external_monitor" {
   name = "${var.prefix}-external-monitor"
   ingress {
-    from_port   = 8086
-    to_port     = 8086
+    from_port   = 9122
+    to_port     = 9122
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
