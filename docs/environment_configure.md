@@ -13,7 +13,8 @@
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [**GitLab Environment Toolkit - Configuring the environment with Ansible**](environment_configure.md)
-- [GitLab Environment Toolkit - Advanced environment setups](environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Customizations](environment_advanced.md)
+  - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 
 With [Ansible](https://docs.ansible.com/ansible/latest/index.html) you can automatically configure provisioned machines.
 
@@ -154,7 +155,9 @@ The structure of these files are flexible, ansible will merge all YAML files tha
 
 ### Environment config - `vars.yml`
 
-Starting with the main environment config file, `vars.yml`, which should be saved alongside the Dynamic Inventory file. Here's an example of the file with all config and descriptions below. Items in `<>` brackets need to be replaced with your config:
+Starting with the main environment config file, `vars.yml`, which should be saved alongside the Dynamic Inventory file.
+
+Here's an example of the file with all standard config and descriptions below. Items in `<>` brackets need to be replaced with your config. It's worth noting that this is config for a standard install and further variables may be required for more advanced deployments, where applicable we detail these under the relevant section in our [Advanced docs sections](environment_advanced.md). 
 
 ```yml
 all:
@@ -162,11 +165,15 @@ all:
     # Ansible Settings
     ansible_user: "<ssh_username>"
     ansible_ssh_private_key_file: "<private_ssh_key_path>"
-    
-    # General Settings
+
+    # Cloud Settings
     cloud_provider: "gcp"
+    gcp_project: "<gcp_project_id>"
+    gcp_service_account_host_file: "<gcp_service_account_host_file_path>"
+
+    # General Settings
     prefix: "<environment_prefix>"
-    external_url: "<external_url_or_ip>"
+    external_url: "<external_url>"
     gitlab_license_file: "<gitlab_license_file_path>"
 
     # Component Settings
@@ -191,11 +198,16 @@ Ansible Settings are specific config for Ansible to be able to connect to the ma
 - `ansible_user` - The SSH username that Ansible should use to SSH into the machines with. Previously created in the [Setup SSH Authentication - SSH OS Login for Service Account](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-service-account) step.
 - `ansible_ssh_private_key_file` - Path to the private SSH key file previously created in the [Setup SSH Authentication - SSH OS Login for Service Account](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-service-account) step.
 
-General settings are config used across the playbooks to configure GitLab:
+Cloud settings are specific config relating to the cloud provider is running on. They're used primarily for the parts of the environment that require direct configuration on the provider, e.g. Object Storage.
 
 - `cloud_provider` - Toolkit specific variable, used to dynamically configure cloud provider specific areas such as Object Storage.
+- `gcp_project` - ID of the GCP project. Note this must be the Project's unique ID and not just the name
+- `gcp_service_account_host_file` - Local path to the Service Account file. This is the same one created in [Setup Provider Authentication - Service Account](environment_prep.md#3-setup-provider-authentication-service-account). The Toolkit uses this to configure GitLab's Object Storage access.
+
+General settings are config used across the playbooks to configure GitLab:
+
 - `prefix` - The configured prefix for the environment as set in Terraform.
-- `external_url` - External URL or IP that will be the main address for the environment. Previously created in the [Create Static External IP](environment_prep.md#6-create-static-external-ip) step.
+- `external_url` - External URL that will be the main address for the environment. This can be a DNS hostname you've configured to point to the IP you created on the [Create Static External IP](environment_prep.md#6-create-static-external-ip) step or the IP itself in URL form, e.g. `http://1.2.3.4`.
 - `gitlab_license_file` - Local path to a valid GitLab License file. Toolkit will upload the license to the environment. Note that this is an optional setting.
 
 Component Settings are specific component for GitLab components, e.g. Postgres:
@@ -218,29 +230,11 @@ Passwords and Secrets settings are what they suggest - all of the various passwo
 
 Note that this documentation doesn't provide instructions on how to keep these values safe but this is recommended in line with your security requirements.
 
-### Object Storage config - `object-storage-vars.yml`
-
-Next is the object storage config file, `object-storage-vars.yml`. Like the main `vars.yml` file this should be saved along side the Dynamic Inventory.
-
-Below are examples of the file depending on host provider with all config and descriptions below. Items in `<>` brackets need to be replaced with your config:
-
-**Google Cloud Platform (GCP)**
-
-```yaml
-all:
-  vars:
-    project_name: "< gcp_project_id >"
-    gcp_service_account_host_file: "<gcp_service_account_host_file_path>"
-```
-
-- `project_name` - ID of the GCP project. Used for Object Storage configuration.
-- `gcp_service_account_host_file` - Local path to the Service Account file. This is the same one created in [Setup Provider Authentication - Service Account](environment_prep.md#3-setup-provider-authentication-service-account). The Toolkit uses this to configure GitLab's Object Storage access.
-
-**Amazon Web Services (Coming Soon)**
+### Amazon Web Services (Coming Soon)
 
 <img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
 
-**Azure (Coming Soon)**
+### Azure (Coming Soon)
 
 <img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
 
@@ -253,11 +247,11 @@ The Toolkit can install other GitLab versions from `13.2.0` onwards through two 
 - Repo - A different repo and package can be specified via the two inventory variables `gitlab_repo_script_url` and `gitlab_repo_package` respectively. The Toolkit will first install the repo via the script provided and then install the package.
 - Deb file - The Toolkit can install a deb file directly. This can be done by setting the `gitlab_deb_host_path` in the inventory variables, which should be set to the local path (on the same machine running Ansible) for the GitLab Debian file. An additional variable, `gitlab_deb_target_path` configures where Ansible should copy the Debian file onto the targets before installing but this is set to `/tmp` by default and doesn't need changed.
 
-### Further Config Examples
+### Full config list and further examples
 
-The Quality team actively uses the Toolkit daily to build and test various environments, including at least one of each Reference Architecture size.
+All Ansible config can be viewed directly in the project under the [`group_vars`](../ansible/group_vars) folder. Most config will be found in the [`all.yml`](../ansible/group_vars/all.yml) file, where config applies to all machines. Additional config that only needs to apply to select machines can be found under specific group names under this folder. As mentioned earlier, we may also refer to additional variables in detail later in these docs under the [Advanced sections](environment_advanced.md) where they are applicable.
 
-These are stored on a different project and can be viewed [here](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit-configs/quality) for further reference (although note some files are encrypted to protect secrets).
+The Quality team actively uses the Toolkit daily to build and test various environments, including at least one of each Reference Architecture size. These are stored on a different project and can be viewed [here](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit-configs/quality) for further reference (although note some files are encrypted to protect secrets).
 
 ## 3. Configure
 

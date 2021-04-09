@@ -1,11 +1,17 @@
-# Ansible
+################################################################################
+## Ansible Settings
+################################################################################
+
 ansible_python_interpreter: auto
 swap_file_size_mb: "2048"
 swap_swappiness: "10"
 system_packages: "aptitude curl openssh-server ca-certificates glances nano tzdata ack-grep tree python3-pip nfs-common postfix jq"
 internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
 
-# Cloud specific
+################################################################################
+## Cloud Provider Settings
+################################################################################
+
 internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address']}
 external_ip_lookup: {gcp: ['networkInterfaces', 0, 'accessConfigs', 0, 'natIP'], azure: ['public_ipv4_addresses', 0], aws: ['public_ip_address']}
 
@@ -15,7 +21,10 @@ gcp_service_account_target_file: "/etc/gitlab/serviceaccount.json"
 gcp_project: "{{ project_name | default('', true) }}"
 gcp_zone: ""
 
-# GitLab
+################################################################################
+## GitLab Install Settings
+################################################################################
+
 gitlab_version: ""
 gitlab_edition: "gitlab-ee"
 ## Set to env var, package with version wildcard or just latest
@@ -30,7 +39,7 @@ omnibus_node: true
 gitlab_admin_email: "admin@example.com"
 
 # Object Storage Buckets
-# Will be switched to separate buckets by default in future release
+## Will be switched to separate buckets by default in future release
 gitlab_object_storage_artifacts_bucket: "{{ prefix }}-object-storage"
 gitlab_object_storage_backups_bucket: "{{ prefix }}-object-storage"
 gitlab_object_storage_dependency_proxy_bucket: "{{ prefix }}-object-storage"
@@ -40,13 +49,12 @@ gitlab_object_storage_packages_bucket: "{{ prefix }}-object-storage"
 gitlab_object_storage_terraform_state_bucket: "{{ prefix }}-object-storage"
 gitlab_object_storage_uploads_bucket: "{{ prefix }}-object-storage"
 
+################################################################################
+## GitLab Component Settings (Omnibus)
+################################################################################
+
 # Consul
 consul_int_ips: "{{ (groups['consul'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'consul' in groups else [] }}"
-
-# HAProxy
-haproxy_internal_int_ip: "{{ (groups['haproxy_internal'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_internal' in groups else ''}}"
-haproxy_external_int_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
-haproxy_external_ext_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, external_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
 
 # GitLab Rails (Application nodes)
 gitlab_rails_int_ips: "{{ (groups['gitlab_rails'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'gitlab_rails_primary' in groups else [] }}"
@@ -63,10 +71,6 @@ praefect_int_ips: "{{ (groups['praefect'] | map('extract', hostvars, internal_ip
 praefect_postgres_int_ip: "{{ (groups['praefect_postgres'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_postgres_primary' in groups else '' }}"
 praefect_postgres_dbname: "praefect_production"
 praefect_postgres_username: "praefect"
-
-# GitLab NFS
-gitlab_nfs_int_ip: "{{ groups['gitlab_nfs'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') }}"
-gitlab_nfs_path: "/mnt/gitlab-nfs"
 
 # GitLab Monitor
 monitor_int_ip: "{{ (groups['monitor'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'monitor' in groups else '' }}"
@@ -94,23 +98,18 @@ redis_sentinel_persistent_int_ips: "{{ (groups['redis_sentinel_persistent'] | so
 # Sidekiq
 sidekiq_max_concurrency: 10
 
-# GitLab Hybrid Environments
-kubeconfig_setup: true
+################################################################################
+## GitLab Component Settings (Non-Omnibus)
+################################################################################
 
-gitlab_charts_release_namespace: default
-gitlab_charts_webservice_limits_memory_gb: 5.25
-gitlab_charts_webservice_requests_memory_gb: 5
-gitlab_charts_webservice_requests_cpu: 4
-gitlab_charts_webservice_max_replicas: ""
-gitlab_charts_webservice_min_replicas: ""
-gitlab_charts_sidekiq_limits_memory_gb: 4
-gitlab_charts_sidekiq_requests_memory_gb: 2
-gitlab_charts_sidekiq_requests_cpu: 1
-gitlab_charts_sidekiq_max_replicas: ""
-gitlab_charts_sidekiq_min_replicas: ""
+# HAProxy
+haproxy_internal_int_ip: "{{ (groups['haproxy_internal'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_internal' in groups else ''}}"
+haproxy_external_int_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
+haproxy_external_ext_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, external_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
 
-# Jaeger Distributed Tracing
-jaeger_int_ip: "{{ (groups['jaeger'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'jaeger' in groups else '' }}"
+# GitLab NFS
+gitlab_nfs_int_ip: "{{ groups['gitlab_nfs'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') }}"
+gitlab_nfs_path: "/mnt/gitlab-nfs"
 
 # Elastic
 elasticsearch_clean_install: "{{ lookup('env','ELASTICSEARCH_CLEAN_INSTALL') | default('false', true) }}"
@@ -120,7 +119,35 @@ elasticsearch_urls: "{{ (elastic_int_ips | map('regex_replace', '^(.*)$', 'http:
 elasticsearch_replicas: "{{ 1 if (groups['elastic'] | length > 1 ) else 0 }}"
 elasticsearch_shards: "{{ (((groups['elastic'] | sort | map('extract', hostvars, ['ansible_processor_vcpus']) | list | sum) / (elasticsearch_replicas | int + 1)) | round | int) if 'elastic' in groups else 0 }}"
 
-# Post Configure
+# Jaeger Distributed Tracing
+jaeger_int_ip: "{{ (groups['jaeger'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'jaeger' in groups else '' }}"
+
+################################################################################
+## GitLab Cloud Native Hybrid Settings (Helm)
+################################################################################
+
+kubeconfig_setup: false
+
+gitlab_charts_release_namespace: default
+
+## Webservice
+gitlab_charts_webservice_requests_memory_gb: 5
+gitlab_charts_webservice_limits_memory_gb: 5.25
+gitlab_charts_webservice_requests_cpu: 4
+gitlab_charts_webservice_max_replicas: ""
+gitlab_charts_webservice_min_replicas: ""
+
+## Sidekiq
+gitlab_charts_sidekiq_requests_memory_gb: 2
+gitlab_charts_sidekiq_limits_memory_gb: 4
+gitlab_charts_sidekiq_requests_cpu: 1
+gitlab_charts_sidekiq_max_replicas: ""
+gitlab_charts_sidekiq_min_replicas: ""
+
+################################################################################
+## GitLab Post Configure Settings
+################################################################################
+
 access_token_user: "root"
 access_token_key: "{{ lookup('password', 'tmp/access-token chars=ascii_lowercase,digits length=20') }}"
 access_token_scopes: "[:api]"
