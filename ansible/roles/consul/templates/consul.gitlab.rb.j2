@@ -11,7 +11,8 @@ consul['configuration'] = {
 consul['monitoring_service_discovery'] = true
 node_exporter['listen_address'] = '0.0.0.0:9100'
 
-{% if (groups | select('match', '^redis_sentinel.*') | list | count == 0) %}
+# Enable Redis Sentinel if Redis is present but dedicated Sentinel nodes are not
+{% if 'redis' in groups and (groups | select('match', '^redis_sentinel.*') | list | count == 0) %}
 # Redis Sentinel
 sentinel['enable'] = true
 sentinel['bind'] = '0.0.0.0'
