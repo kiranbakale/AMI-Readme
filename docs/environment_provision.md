@@ -190,11 +190,11 @@ module "gitlab_ref_arch_gcp" {
   redis_cache_node_count = 3
   redis_cache_machine_type = "n1-standard-4"
   redis_sentinel_cache_node_count = 3
-  redis_sentinel_cache_machine_type = "g1-small"
+  redis_sentinel_cache_machine_type = "n1-standard-1"
   redis_persistent_node_count = 3
   redis_persistent_machine_type = "n1-standard-4"
   redis_sentinel_persistent_node_count = 3
-  redis_sentinel_persistent_machine_type = "g1-small"
+  redis_sentinel_persistent_machine_type = "n1-standard-1"
 
   sidekiq_node_count = 4
   sidekiq_machine_type = "n1-standard-4"
