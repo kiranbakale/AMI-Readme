@@ -17,6 +17,11 @@ puma['enable'] = false
 sidekiq['enable'] = true
 sidekiq['listen_address'] = '0.0.0.0'
 sidekiq['max_concurrency'] = {{ sidekiq_max_concurrency }}
+sidekiq['queue_groups'] = [
+{% for cpu in range(ansible_processor_vcpus) %}
+  "*",
+{% endfor %}
+]
 
 # Ensure UIDs and GIDs match between servers for permissions via NFS
 user['uid'] = 9000
