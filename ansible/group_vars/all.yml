@@ -21,6 +21,9 @@ gcp_service_account_target_file: "/etc/gitlab/serviceaccount.json"
 gcp_project: "{{ project_name | default('', true) }}"
 gcp_zone: ""
 
+## AWS
+aws_region: ""
+
 ################################################################################
 ## GitLab Install Settings
 ################################################################################

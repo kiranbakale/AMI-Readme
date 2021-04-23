@@ -80,15 +80,15 @@
         dest: /etc/gitlab/gitlab.rb
       vars:
         db_migrate: true
-      register: result
-      retries: 3
-      until: result is success
       tags:
         - reconfigure
         - db_migrate
 
     - name: Reconfigure GitLab deploy node
       shell: gitlab-ctl reconfigure
+      register: result
+      retries: 3
+      until: result is success
       tags:
         - reconfigure
         - db_migrate
