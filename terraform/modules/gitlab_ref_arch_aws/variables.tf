@@ -1,6 +1,9 @@
 # General
 variable "prefix" { default = null }
+variable "geo_site" { default = null }
+variable "geo_deployment" { default = null }
 
+# AWS Settings
 variable "ami_id" { default = null } # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami
 
 variable "default_disk_size" { default = "100" }
@@ -8,8 +11,7 @@ variable "default_disk_type" { default = "gp2" }
 
 variable "ssh_key" { default = null }
 
-variable "geo_site" { default = null }
-variable "geo_deployment" { default = null }
+variable "object_storage_buckets" { default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"] }
 
 # Machines
 variable "consul_node_count" { default = 0 }
