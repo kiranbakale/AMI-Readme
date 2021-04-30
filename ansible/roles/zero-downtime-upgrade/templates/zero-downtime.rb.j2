@@ -1,0 +1,14 @@
+{% if ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names)) %}
+gitlab_rails['auto_migrate'] = true
+
+gitlab_rails['db_host'] = '{{ geo_secondary_site_postgres_int_ip if 'geo_secondary_site' in group_names else geo_primary_site_postgres_int_ip }}'
+gitlab_rails['db_port'] = '{{ postgres_primary_int_port }}'
+{% else %}
+gitlab_rails['auto_migrate'] = false
+{% endif %}
+
+{% if 'praefect_primary' in group_names %}
+praefect['auto_migrate'] = true
+{% elif 'praefect_secondary' in group_names %}
+praefect['auto_migrate'] = false
+{% endif %}

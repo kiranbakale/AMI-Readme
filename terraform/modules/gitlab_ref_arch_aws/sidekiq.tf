@@ -19,6 +19,8 @@ module "sidekiq" {
 
   geo_site = var.geo_site
   geo_deployment = var.geo_deployment
+
+  label_secondaries = true
 }
 
 output "sidekiq" {

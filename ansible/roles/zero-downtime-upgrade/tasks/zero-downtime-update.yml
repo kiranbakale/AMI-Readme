@@ -1,0 +1,118 @@
+- name: Stop services on deploy node
+  command: gitlab-ctl stop
+  when: ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
+
+- name: Create skip-auto-reconfigure file
+  file:
+    path: /etc/gitlab/skip-auto-reconfigure
+    state: touch
+    mode: u=rw,g=r,o=r
+
+- name: Disable auto migrations
+  template:
+    src: templates/zero-downtime.rb.j2
+    dest: /etc/gitlab/gitlab.zero-downtime.rb
+  when: ('sidekiq_primary' not in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' not in group_names))
+
+- name: Update Gitaly
+  include_tasks: update-gitlab.yml
+  with_items: "{{ groups['gitaly'] }}"
+  vars:
+    skip_reconfigure: false
+  when: "hostvars[host_item].inventory_hostname == inventory_hostname"
+  loop_control:
+    loop_var: host_item
+
+- name: Update Praefect
+  include_tasks: update-gitlab.yml
+  with_items: "{{ groups['praefect'] }}"
+  vars:
+    skip_reconfigure: false
+  when: "hostvars[host_item].inventory_hostname == inventory_hostname"
+  loop_control:
+    loop_var: host_item
+
+- name: Update Deploy node
+  import_tasks: update-gitlab.yml
+  vars:
+    skip_reconfigure: true
+  when: ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
+
+- name: "Get current Postgres leader when using Patroni"
+  shell: gitlab-ctl patroni members | grep Leader | grep {{ ansible_fqdn }}
+  register: patroni_leader
+  ignore_errors: true
+  when:
+    - postgres_replication_manager == 'patroni'
+    - ('postgres_primary' in group_names)
+
+- name: "Ensure postgres_primary is the leader when using Patroni"
+  command: gitlab-ctl patroni switchover --candidate "{{ ansible_fqdn }}"
+  register: switchover_result
+  until: switchover_result is not failed
+  retries: 10
+  delay: 5
+  when:
+    - postgres_replication_manager == 'patroni'
+    - ('postgres_primary' in group_names)
+    - patroni_leader is defined
+    - patroni_leader.failed
+
+- name: Enable auto migrations and update postgres details on deploy node
+  template:
+    src: templates/zero-downtime.rb.j2
+    dest: /etc/gitlab/gitlab.zero-downtime.rb
+  when: ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
+
+- name: Reconfigure deploy node
+  command: gitlab-ctl reconfigure
+  environment:
+    SKIP_POST_DEPLOYMENT_MIGRATIONS: true
+  when: ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
+
+- name: Run pre deployment migrations on secondary site when using Geo
+  command: gitlab-rake geo:db:migrate
+  environment:
+    SKIP_POST_DEPLOYMENT_MIGRATIONS: true
+  when:
+    - ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
+    - ('geo_secondary_site' in group_names)
+
+- name: Start services on deploy node
+  command: gitlab-ctl start
+  when: ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
+
+- name: Update all nodes excluding Praefect, Gitaly, GitLab Rails and Deploy nodes.
+  include_tasks: update-gitlab.yml
+  with_items: "{{ groups.all }}"
+  when:
+    - "hostvars[host_item].inventory_hostname == inventory_hostname"
+    - omnibus_node
+    - ('praefect' not in group_names)
+    - ('gitaly' not in group_names)
+    - ('sidekiq_primary' not in group_names)
+    - ('gitlab_rails' not in group_names)
+  loop_control:
+    loop_var: host_item
+
+- name: Update GitLab Rails
+  include_tasks: update-gitlab.yml
+  with_items: "{{ groups['gitlab_rails'] }}"
+  vars:
+    skip_reconfigure: false
+  when: "hostvars[host_item].inventory_hostname == inventory_hostname"
+  loop_control:
+    loop_var: host_item
+
+- name: Restart Sidekiq
+  command: gitlab-ctl restart sidekiq
+  throttle: 1
+  when:
+    - ('sidekiq' in group_names)
+
+- name: Restart geo-logcursor on secondary site if present
+  command: gitlab-ctl restart geo-logcursor
+  throttle: 1
+  when:
+    - ('sidekiq' in group_names)
+    - ('gitlab_rails_secondary' in group_names)

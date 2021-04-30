@@ -1,0 +1,21 @@
+# 'geo_primary_site' not in groups = not Geo deployment only 1 sidekiq primary
+# 'geo_primary_site' in group_names = Geo deployment and currently on primary sidekiq
+- name: Run database migrations
+  command: gitlab-rake db:migrate
+  when: ('geo_primary_site' not in groups or 'geo_primary_site' in group_names)
+
+- name: Run Geo check on primary site
+  command: gitlab-rake gitlab:geo:check
+  when: ('geo_primary_site' in group_names)
+
+- name: Run DB migrations and verify secondary site
+  block:
+  - name: Run migrations on secondary site
+    command: gitlab-rake geo:db:migrate
+
+  - name: Run Geo check on secondary site
+    command: gitlab-rake gitlab:geo:check
+
+  - name: Verify Geo status
+    command: gitlab-rake geo:status
+  when: ('geo_secondary_site' in group_names)
