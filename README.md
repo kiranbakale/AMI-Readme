@@ -3,9 +3,11 @@
 > Requires [GitLab Premium](https://about.gitlab.com/pricing/) or above.
 > Released under the [GitLab EE license](LICENSE).
 
-The GitLab Environment Toolkit (`GET`) is a collection of tools with a simple focused purpose - to deploy [GitLab Omnibus](https://gitlab.com/gitlab-org/omnibus-gitlab) at scale as defined by our [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures).
+![alt text](https://assets.gitlab-static.net/uploads/-/system/project/avatar/14292404/tanuki-blueprint.png "GitLab Environment Toolkit")
 
-Created and maintained by the Quality Enablement team the Toolkit, built with [Terraform](https://www.terraform.io/) and [Ansible](https://docs.ansible.com/ansible/latest/index.html), supports provisioning and configuring machines respectively with the following features:
+The GitLab Environment Toolkit (`GET`) is a collection of tools with a simple focused purpose - to deploy [GitLab Omnibus](https://gitlab.com/gitlab-org/omnibus-gitlab) and [GitLab Helm Charts](https://docs.gitlab.com/charts/) at scale as defined by our [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures).
+
+Created and maintained by the GitLab Quality Engineering Enablement team, the Toolkit - built with [Terraform](https://www.terraform.io/) and [Ansible](https://docs.ansible.com/ansible/latest/index.html) - supports provisioning and configuring machines and other related infrastructure respectively with the following features:
 
 - Support for deploying all [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) sizes dynamically from [1k](https://docs.gitlab.com/ee/administration/reference_architectures/1k_users.html) to [50k](https://docs.gitlab.com/ee/administration/reference_architectures/50k_users.html).
 - Support for deploying Cloud Native Hybrid variants of the Reference Architectures (GCP only at this time).
@@ -13,9 +15,11 @@ Created and maintained by the Quality Enablement team the Toolkit, built with [T
 - Upgrades
 - Release and nightly Omnibus builds support
 - Advanced search with Elasticsearch
+- Geo support
+- Zero Downtime Upgrades support
 - Built in Load Balancing and Monitoring (Prometheus, Grafana) setup
 
-Originally built to help define the official [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) and enable performance testing against those with the [GPT](https://gitlab.com/gitlab-org/quality/performance), the Toolkit has been opened to be used by other teams to enable them to deploy GitLab at scale in the recommended way.
+Originally built to help define the official [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) and enable performance testing against those with the [GPT](https://gitlab.com/gitlab-org/quality/performance), the Toolkit is now available for all to use to deploy GitLab at scale.
 
 ## How It Works
 
@@ -32,7 +36,7 @@ Note that the Toolkit currently has the following requirements (with related iss
 - OS: Ubuntu 18.04 ([OS support issue](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/43))
   - Note that additionally at this time GET supports clean Ubuntu installs and may work with existing ones but this is not guaranteed at this time.
   - Admin access to the OS is also required by GET to install various dependencies
-- Types of environment: The Toolkit is designed to deploy the official GitLab [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) as environments.
+- Types of environment: The Toolkit is designed to deploy the official GitLab [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) (Standard or Cloud Native Hybrid) as environments.
   - Advanced usage is possible where users can make tweaks to the environments as desired, such as increasing the number of nodes or their specs, but this is generally unrecommended.
 
 ## Documentation
