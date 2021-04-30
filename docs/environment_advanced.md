@@ -186,3 +186,26 @@ Like Gitaly Cluster, this guidance is only for new installs. You must note the f
 
 - Attempting to switch replication manage is only supported *once* from Repmgr to Patroni. Attempting to switch from Patroni to Repmgr will **break the environment irrevocably**.
 - [Switching from Postgres 11 to 12 is supported when Patroni is the replication manager](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#upgrading-postgresql-major-version-in-a-patroni-cluster) but this is a manual process that must be done directly unless on a single 1k installation. Once the upgrade process is done you must remove the `postgres_version` variable from your inventory variables.
+
+## Zero Downtime Updates
+
+For Zero Downtime Updates, the toolkit follows the [GitLab documented process](https://docs.gitlab.com/omnibus/update/README.html#zero-downtime-updates) and as such the documentation should be read and understood before proceeding with an update.
+
+NOTE:
+As with any update process there may rarely be times where a small number of requests fail when the update is in progress. For example, when updating a primary node it can take up to a few seconds for a new leader to be elected.
+
+Running the zero downtime update process with GET is done in the same way as building the initial environment but with a different playbook instead:
+
+1. `cd` to the `ansible/` directory if not already there.
+1. Run `ansible-playbook` with the intended environment's inventory against the `zero-downtime-update.yml` playbook
+
+    `ansible-playbook -i inventories/10k zero-downtime-update.yml`
+
+1. If GET is managing your Praefect Postgres instance you will need to run the following command to update this
+
+    `ansible-playbook -i inventories/10k praefect-postgres.yml`
+
+> This will cause downtime due to GET only using a single Praefect Postgres node.
+  If you want to have a highly available setup, Praefect requires a third-party PostgreSQL database and will need to be updated manually.
+
+The update process can take a couple of hours to complete and the full runtime will depend on the number of nodes in the deployment.
