@@ -1,15 +1,5 @@
 # Advanced - Customizations
 
----
-<table>
-    <tr>
-        <td><img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/></td>
-        <td>The GitLab Environment Toolkit is in **Beta** (`v1.0.0-beta`) and work is currently under way for its main release. We do not recommend using it for production use at this time.<br/><br/>As such, <b>this documentation is still under construction</b> but we aim to have it completed soon.</td>
-    </tr>
-</table>
-
----
-
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
@@ -57,8 +47,8 @@ The main steps for [GitLab Environment Toolkit - Building environments](environm
 Once you have copied the desired architecture sizes we will need to modify them to allow for Geo. The first step is to adjust the `ref_arch` module source variable to point to the right location if you've followed the folder structure above. You will need to add an additional `../` to the path as we are now using sub-folders. For example:
 
 ```tf
-module "gitlab_ref_arch_gcp" {
-  source = "../../modules/gitlab_ref_arch_gcp"
+module "gitlab_ref_arch_*" {
+  source = "../../modules/gitlab_ref_arch_*"
 
   [...]
 ```
@@ -80,14 +70,11 @@ variable "geo_deployment" {
 }
 ```
 
-Next you should add them into the module's call under `environment.tf`, for example:
+Next you should add them into the selected cloud providers module's call under `environment.tf`:
 
 ```tf
-module "gitlab_ref_arch_gcp" {
-  source = "../../modules/gitlab_ref_arch_gcp"
-
-  prefix = var.prefix
-  project = var.project
+module "gitlab_ref_arch_*" {
+  source = "../../modules/gitlab_ref_arch_*"
 
   geo_site = var.geo_site
   geo_deployment = var.geo_deployment
@@ -110,40 +97,85 @@ my-geo-deployment
     └── secondary
 ```
 
-The `primary` and `secondary` folders are treated the same as non Geo environments and as such the steps for [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md) should be followed, you should remove the GitLab license from the secondary site before running the `ansible-playbook` command. To remove the license from the secondary site you can just remove the `gitlab_license_file` setting from the secondary `vars.yml` file.
+The `primary` and `secondary` folders are treated the same as non Geo environments and as such the steps for [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md) should be followed.
+
+However you should remove the GitLab license from the secondary site before running the `ansible-playbook` command. To remove the license from the secondary site you can just remove the `gitlab_license_file` setting from the secondary `vars.yml` file.
 
 Once the inventories for primary and secondary are complete you can use Ansible to configure GitLab. Once complete you will have 2 independent instances of GitLab. The primary site should have a license installed and the secondary will not.
 As these environments are still separate from each other at this point, they can be built at the same time and are not reliant on each other. Once complete you should be able to log into each environment before continuing.
 
 The `all` inventory is very similar to the `primary` and `secondary`, it allows Ansible to see both sites instead of one for the tasks that require coordination across both environments. To create the `all` inventory files it is easiest to copy them from `primary` and modify some values as follows:
 
-#### `vars.yml`
+#### Dynamic Inventory - `all.*.yml`
 
-Add the line `secondary_external_url` which needs to match the `external_url` in the `secondary` inventory vars file. You can also remove the properties: `cloud_provider`, `prefix`, `gitlab_license_file`, `postgres_replication_manager` and `gitlab_root_password_file`. These are not used when configuring Geo and as such should only be set in the `primary` and `secondary` inventories.
+The Dynamic Inventory file for `all` Geo machines will be almost the same as the normal inventory files except for the following changes:
 
-#### `all.gcp.yml`
+- The `filters` should be changed to follow the `gitlab_geo_deployment` label / tag. The normal filter is based on an environment's prefix, unique to each environment. The Geo deployment label / tag is how we identify multiple environments to run our Geo configuration against.
+- Two new keys should be added to the `keyed_groups` section for the additional `gitlab_geo_site` and `gitlab_geo_full_role` labels / tags respectively. `gitlab_geo_full_role` is a label / tag that is created for us by the Terraform module, this label is a combination of `geo_site`, `node_type` and `node_level`. Using this we can get the IP of a machine directly by its role in a Geo deployment from a single label.
 
-Under the `keyed_groups` section add 2 new keys that allow Ansible to identify machines based on the Geo deployment and a machines role within that deployment:
+Dynamic Inventories differ slightly based on Cloud Provider. Below are full examples of Geo `all` Dynamic Inventory files for each Cloud Provider: 
 
-```yaml
-- key: labels.gitlab_geo_site
-  separator: ''
-- key: labels.gitlab_geo_full_role
-  separator: ''
-```
-
-`gitlab_geo_full_role` is a label that is created for us by a Terraform module, this label is a combination of `geo_site`, `node_type` and `node_level`. Using this we can get the IP of a machine directly by its role in a Geo deployment from a single label.
-
-Under the `filters` section we want to remove the existing filter and replace it with:
+GCP:
 
 ```yaml
+plugin: gcp_compute
+projects:
+  - <gcp_project_id>
 filters:
   - labels.gitlab_geo_deployment = my-geo-deployment
+keyed_groups:
+  - key: labels.gitlab_node_type
+    separator: ''
+  - key: labels.gitlab_node_level
+    separator: ''
+  - key: labels.gitlab_geo_site
+    separator: ''
+  - key: labels.gitlab_geo_full_role
+    separator: ''
+scopes:
+  - https://www.googleapis.com/auth/compute
+hostnames:
+  # List host by name instead of the default public ip
+  - name
+compose:
+  # Set an inventory parameter to use the Public IP address to connect to the host
+  # For Private ip use "networkInterfaces[0].networkIP"
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP
 ```
 
-The existing filter is based on an environments prefix, this is unique to each environment. The Geo deployment is how we identify multiple environments to run our Geo configuration against.
+AWS:
 
-Once done we can then run the command `ansible-playbook -i inventories/my-geo-deployment/all gitlab-geo.yml`
+```yaml
+plugin: aws_ec2
+regions:
+  - us-east-1
+filters:
+  tag:gitlab_geo_deployment: my-geo-deployment
+keyed_groups:
+  - key: tags.gitlab_node_type
+    separator: ''
+  - key: tags.gitlab_node_level
+    separator: ''
+  - key: tags.gitlab_geo_site
+    separator: ''
+  - key: tags.gitlab_geo_full_role
+    separator: ''
+hostnames:
+  # List host by name instead of the default public ip
+  - tag:Name
+compose:
+  # Use the public IP address to connect to the host
+  # (note: this does not modify inventory_hostname, which is set via I(hostnames))
+  ansible_host: public_ip_address
+```
+
+#### Environment config - `vars.yml`
+
+Add the line `secondary_external_url` which needs to match the `external_url` in the `secondary` inventory vars file.
+
+You can also remove the properties: `prefix`, `gitlab_license_file` and `gitlab_root_password`. These are not used when configuring Geo and as such should only be set in the `primary` and `secondary` inventories.
+
+Once done we can then run the command `ansible-playbook -i inventories/my-geo-deployment/all gitlab-geo.yml`.
 
 Once complete the 2 sites will now be part of the same Geo deployment.
 

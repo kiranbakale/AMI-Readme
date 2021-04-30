@@ -1,15 +1,5 @@
 # Advanced - Cloud Native Hybrid
 
----
-<table>
-    <tr>
-        <td><img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/></td>
-        <td>The GitLab Environment Toolkit is in **Beta** (`v1.0.0-beta`) and work is currently under way for its main release. We do not recommend using it for production use at this time.<br/><br/>As such, <b>this documentation is still under construction</b> but we aim to have it completed soon.</td>
-    </tr>
-</table>
-
----
-
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
@@ -125,7 +115,7 @@ By design, this file is similar to the one used in a [normal environment](enviro
 - `sidekiq_x` entries are replaced with `sidekiq_node_pool_x`
 - `supporting_node_pool_x` entries are added for several additional supporting services needed when running components in Helm Charts, e.g. NGINX, etc...
 - `haproxy_external_x` entries are removed as the Chart deployment handles external load balancing.
-- `object_storage_buckets` allows for the creation of separate object storage buckets for each type of data GitLab stores. Each bucket will have the name as configured in this list with the `prefix` being added to the beginning as a prefix. This is required for all Cloud Hybrid installs as given here and will become the default for all installs in the future.
+- `object_storage_buckets` allows for the creation of separate object storage buckets for each type of data GitLab stores. Each bucket will have a name following the convention `<prefix>-<datatype>`.
 
 Each node pool setting configures the following. To avoid repetition we'll describe each setting once:
 
@@ -184,15 +174,15 @@ all:
     patroni_remove_data_directory_on_rewind_failure: false
     patroni_remove_data_directory_on_diverged_timelines: false
 
-    # Object Storage Buckets
-    gitlab_object_storage_artifacts_bucket: "{{ prefix }}-hybrid-artifacts"
-    gitlab_object_storage_backups_bucket: "{{ prefix }}-hybrid-backups"
-    gitlab_object_storage_dependency_proxy_bucket: "{{ prefix }}-hybrid-dependency-proxy"
-    gitlab_object_storage_external_diffs_bucket: "{{ prefix }}-hybrid-mr-diffs"
-    gitlab_object_storage_lfs_bucket: "{{ prefix }}-hybrid-lfs"
-    gitlab_object_storage_packages_bucket: "{{ prefix }}-hybrid-packages"
-    gitlab_object_storage_terraform_state_bucket: "{{ prefix }}-hybrid-terraform-state"
-    gitlab_object_storage_uploads_bucket: "{{ prefix }}-hybrid-uploads"
+    # Object Storage Settings
+    gitlab_object_storage_artifacts_bucket: "{{ prefix }}-artifacts"
+    gitlab_object_storage_backups_bucket: "{{ prefix }}-backups"
+    gitlab_object_storage_dependency_proxy_bucket: "{{ prefix }}-dependency-proxy"
+    gitlab_object_storage_external_diffs_bucket: "{{ prefix }}-mr-diffs"
+    gitlab_object_storage_lfs_bucket: "{{ prefix }}-lfs"
+    gitlab_object_storage_packages_bucket: "{{ prefix }}-packages"
+    gitlab_object_storage_terraform_state_bucket: "{{ prefix }}-terraform-state"
+    gitlab_object_storage_uploads_bucket: "{{ prefix }}-uploads"
 
     # Passwords / Secrets
     gitlab_root_password: '<gitlab_root_password>'
@@ -212,7 +202,7 @@ By design, this file is similar to the one used in a [normal environment](enviro
 - `gcp_zone` - Zone name the GCP project is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
 - `external_ip` - External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid installs.
 - `kubeconfig_setup` - When true, will attempt to automatically configure the `.kubeconfig` file entry for the provisioned Kubernetes cluster.
-- `gitlab_object_storage_*_bucket` - The name of the Object Storage bucket for the specific data type. Required for Cloud Native Hybrid installs as given when used in conjunction with the Terraform `object_storage_buckets` setting as detailed above. As with the other setting the above will become the default in the future for all GitLab environments.
+- `gitlab_object_storage_*_bucket` - The name of the Object Storage bucket for the specific data type. When used in conjunction with the Terraform `object_storage_buckets` setting each data type bucket will have the naming convention `<prefix>-<datatype>`. If using custom Object Storage buckets then set these accordingly but note that for GitLab it's recommended each data type has a separate bucket.
 
 ### Additional Config Settings
 
