@@ -223,8 +223,7 @@ Like Gitaly Cluster, this guidance is only for new installs. You must note the f
 
 For Zero Downtime Updates, the toolkit follows the [GitLab documented process](https://docs.gitlab.com/omnibus/update/README.html#zero-downtime-updates) and as such the documentation should be read and understood before proceeding with an update.
 
-NOTE:
-As with any update process there may rarely be times where a small number of requests fail when the update is in progress. For example, when updating a primary node it can take up to a few seconds for a new leader to be elected.
+> As with any update process there may rarely be times where a small number of requests fail when the update is in progress. For example, when updating a primary node it can take up to a few seconds for a new leader to be elected.
 
 Running the zero downtime update process with GET is done in the same way as building the initial environment but with a different playbook instead:
 
