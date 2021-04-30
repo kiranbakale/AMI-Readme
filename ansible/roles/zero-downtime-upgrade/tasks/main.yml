@@ -1,0 +1,27 @@
+- name: Run Zero Downtime Updates
+  import_tasks: zero-downtime-update.yml
+  when:
+    - omnibus_node
+    - ('geo_primary_site' not in groups or 'geo_primary_site' in group_names)
+
+- name: Run Zero Downtime Updates on Geo Secondary Site if present
+  import_tasks: zero-downtime-update.yml
+  when:
+    - omnibus_node
+    - ('geo_secondary_site' in group_names)
+
+- name: Run post-deployment migrations
+  import_tasks: post-deployment-migrations.yml
+  when: ('sidekiq_primary' in group_names)
+
+- name: Remove zero downtime config from all nodes
+  block:
+    - name: Remove zero downtime config
+      file:
+        path: /etc/gitlab/gitlab.zero-downtime.rb
+        state: absent
+
+    - name: Run gitlab-ctl reconfigure
+      command: gitlab-ctl reconfigure
+      throttle: 1
+  when: omnibus_node

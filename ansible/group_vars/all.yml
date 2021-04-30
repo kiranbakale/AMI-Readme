@@ -156,3 +156,12 @@ gitlab_charts_sidekiq_min_replicas: ""
 access_token_user: "root"
 access_token_key: "{{ lookup('password', 'tmp/access-token chars=ascii_lowercase,digits length=20') }}"
 access_token_scopes: "[:api]"
+
+################################################################################
+## GitLab Geo Settings
+################################################################################
+
+geo_primary_site_postgres_group_name: "{% if 'geo_primary_site_postgres_primary' in groups %}geo_primary_site_postgres_primary{% elif 'geo_primary_site_gitlab_rails_primary' in groups %}geo_primary_site_gitlab_rails_primary{% elif 'postgres_primary' in groups%}postgres_primary{% else %}gitlab_rails_primary{% endif %}"
+geo_primary_site_postgres_int_ip: "{{ (groups[geo_primary_site_postgres_group_name] | sort | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) }}"
+geo_secondary_site_postgres_group_name: "{% if 'geo_secondary_site_postgres_primary' in groups %}geo_secondary_site_postgres_primary{% elif 'geo_secondary_site_gitlab_rails_primary' in groups %}geo_secondary_site_gitlab_rails_primary{% else %}gitlab_rails_primary{% endif %}"
+geo_secondary_site_postgres_int_ip: "{{ (groups[geo_secondary_site_postgres_group_name] | sort | map('extract', hostvars, ['networkInterfaces']) | map('first') | map(attribute='networkIP') | join('')) }}"

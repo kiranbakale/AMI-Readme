@@ -1,4 +1,10 @@
-roles ['{{ "redis_master_role" if (group_names | select("match", ".*_primary") | list | count > 0) else "redis_replica_role" }}']
+{% if (group_names | select("match", ".*_primary") | list | count > 0) %}
+roles ['redis_master_role']
+{% else %}
+roles ['redis_replica_role']
+
+gitlab_rails['rake_cache_clear'] = false
+{% endif %}
 
 redis['bind'] = '0.0.0.0'
 redis['port'] = {{ redis_port }}

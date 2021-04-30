@@ -33,7 +33,7 @@ backend gitlab-rails
     option httpchk GET /-/readiness
 
 {% for ip in gitlab_rails_int_ips %}
-    server gitlab-rails{{loop.index}} {{ ip }}:80 check
+    server gitlab-rails{{loop.index}} {{ ip }}:80 check inter 3s fall 1
 {% endfor %}
 
 backend gitlab-rails-ssh
@@ -59,7 +59,7 @@ backend prometheus
 backend influxdb_exporter
     option httpchk GET /ping
 
-    server influxdb_exporter {{ monitor_int_ip }}:9122 check 
+    server influxdb_exporter {{ monitor_int_ip }}:9122 check
 
 backend kibana
     option httpchk GET /api/status

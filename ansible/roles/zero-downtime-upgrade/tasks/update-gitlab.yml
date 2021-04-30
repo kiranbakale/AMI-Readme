@@ -1,0 +1,31 @@
+- name: Run gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
+
+- name: Run Common role
+  import_role:
+    name: common
+
+- name: Run gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
+  register: result
+  when:
+    - skip_reconfigure is defined
+    - not skip_reconfigure
+
+- name: Restart Redis
+  command: gitlab-ctl restart redis
+  when: ('redis' in group_names)
+
+- name: Reload Puma
+  command: gitlab-ctl hup puma
+  when: ('gitlab_rails' in group_names)
+
+- name: Wait for GitLab to be ready
+  uri:
+    url: 'http://localhost/-/readiness'
+    timeout: 60
+  register: result
+  until: result.status == 200
+  retries: 20
+  delay: 5
+  when: ('gitlab_rails' in group_names)
