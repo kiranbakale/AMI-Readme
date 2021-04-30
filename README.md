@@ -1,20 +1,9 @@
-# GitLab Environment Toolkit (`v1.0.0-beta`)
+# GitLab Environment Toolkit
 
 > Requires [GitLab Premium](https://about.gitlab.com/pricing/) or above.
 > Released under the [GitLab EE license](LICENSE).
 
----
-<table>
-    <tr>
-        <td><img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/></td>
-        <td>The GitLab Environment Toolkit is in **Beta** (`v1.0.0-beta`) and work is currently under way for its main release. We do not recommend using it for production use at this time.<br/><br/>As such, <b>this documentation is still under construction</b> but we aim to have it completed soon.</td>
-    </tr>
-
-</table>
-
----
-
-The GitLab Environment Toolkit (`GET`), formerly known as the Performance Environment Builder, is a collection of tools with a simple focused purpose - to deploy [GitLab Omnibus](https://gitlab.com/gitlab-org/omnibus-gitlab) at scale as defined by our [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures).
+The GitLab Environment Toolkit (`GET`) is a collection of tools with a simple focused purpose - to deploy [GitLab Omnibus](https://gitlab.com/gitlab-org/omnibus-gitlab) at scale as defined by our [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures).
 
 Created and maintained by the Quality Enablement team the Toolkit, built with [Terraform](https://www.terraform.io/) and [Ansible](https://docs.ansible.com/ansible/latest/index.html), supports provisioning and configuring machines respectively with the following features:
 

@@ -1,15 +1,5 @@
 # Provisioning the environment with Terraform
 
----
-<table>
-    <tr>
-        <td><img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/></td>
-        <td>The GitLab Environment Toolkit is in **Beta** (`v1.0.0-beta`) and work is currently under way for its main release. We do not recommend using it for production use at this time.<br/><br/>As such, <b>this documentation is still under construction</b> but we aim to have it completed soon.</td>
-    </tr>
-</table>
-
----
-
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [**GitLab Environment Toolkit - Provisioning the environment with Terraform**](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
@@ -95,7 +85,7 @@ variable "external_ip" {
 - `project` - The [ID](https://support.google.com/googleapi/answer/7014113?hl=en) of the GCP project the environment is to be deployed to.
 - `region` - The GCP region of the project, e.g. `us-east1`.
 - `zone` - The GCP zone of the project, e.g. `us-east1-c`.
-- `external_ip` - The static external IP the environment will be accessible one. Previously created in the [Create Static External IP](environment_prep.md#6-create-static-external-ip) step.
+- `external_ip` - The static external IP the environment will be accessible one. Previously created in the [Create Static External IP - GCP](environment_prep.md#6-create-static-external-ip-gcp) step.
 
 #### Configure Terraform settings - `main.tf`
 
@@ -126,7 +116,7 @@ provider "google" {
 
 - `terraform` - The main Terraform config block.
   - `backend "gcs"` - The [`gcs` backend](https://www.terraform.io/docs/language/settings/backends/gcs.html) config block.
-    - `bucket` - The name of the bucket [previously created](environment_prep.md#5-setup-terraform-state-storage-storage-bucket) to store the State.
+    - `bucket` - The name of the bucket [previously created](environment_prep.md#5-setup-terraform-state-storage-bucket-gcp-cloud-storage) to store the State.
     - `prefix` - The name of the folder to create in the bucket to store the State.
   - `required_providers` - Config block for the required provider(s) Terraform needs to download and use.
     - `google` - Config block for the GCP provider. Sets where to source the provider and what version to download and use.
@@ -149,6 +139,8 @@ module "gitlab_ref_arch_gcp" {
 
   prefix = var.prefix
   project = var.project
+
+  object_storage_buckets = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"]
 
   # 10k
   consul_node_count = 3
@@ -209,6 +201,7 @@ output "gitlab_ref_arch_gcp" {
   - `source` - The relative path to the `gitlab_ref_arch_gcp` module. We assume you're creating config in the `terraform/environments/` folder here but if you're in a different location this setting must be updated to the correct path.
   - `prefix` - The name prefix of the project. Set in `variables.tf`.
   - `project` - The [ID](https://support.google.com/googleapi/answer/7014113?hl=en) of the GCP project to connect to. Set in `variables.tf`.
+  - `object_storage_buckets` allows for the creation of separate object storage buckets for each type of data GitLab stores. Each bucket will have a name following the convention `<prefix>-<datatype>`.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
 
@@ -216,7 +209,7 @@ Next in the file are the various machine settings, separated the same as the Ref
 - `*_machine_type` - The [GCP Machine Type](https://cloud.google.com/compute/docs/machine-types) (size) for that component
 - `haproxy_external_external_ips` - Set the external HAProxy load balancer to assume the external IP set in `variables.tf`. Note that this is an array setting as the advanced underlying functionality needs to account for the specific setting of IPs for potentially multiple machines. In this case though it should always only be one IP.
 
-#### Setup Authentication
+#### Configure Authentication (GCP)
 
 Finally the last thing to configure is authentication. This is required so Terraform can access GCP (provider) as well as its State Storage Bucket (backend).
 
@@ -227,9 +220,174 @@ All of the methods given involve the Service Account file you generated previous
 - `GOOGLE_CREDENTIALS` environment variable - This environment variable is picked up by both the provider and backend, meaning it only needs to be set once. It's particularly useful with CI pipelines. The variable should be set to the path of the Service Account file.
 - `gcloud` login - Authentication can also occur automatically through the [`gcloud`](https://cloud.google.com/sdk/gcloud/reference/auth/application-default) command line tool. Make sure the user that's logged in has access to the Project along with the `editor` role attached.
 
-### Amazon Web Services (coming soon)
+### Amazon Web Services (AWS)
 
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
+The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on AWS is **[`gitlab_ref_arch_aws`](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/master/terraform/modules/gitlab_ref_arch_aws)**.
+
+In this section we detail all that's needed to configure it.
+
+#### Configure Variables - `variables.tf`
+
+First we configure the variables needed in the `variables.tf` file as these are used in the other files.
+
+Here's an example of the file with all config and descriptions below. Items in `<>` brackets need to be replaced with your config:
+
+```tf
+variable "prefix" {
+  default = "<environment_prefix>"
+}
+
+variable "region" {
+  default = "<region>"
+}
+
+variable "ssh_public_key_file" {
+  default = "<ssh_public_key_file>"
+}
+
+variable "external_ip_allocation" {
+  default = "<external_ip_allocation>"
+}
+```
+
+- `prefix` - Used to set the names and labels of the VMs in a consistent way. Once set this should not be changed. An example of what this could be is `gitlab-qa-10k`.
+- `region` - The AWS region of the project.
+- `ssh_public_key_file` - Path to the public SSH key file. Previously created in the [Setup SSH Authentication - AWS](environment_prep.md#2-setup-ssh-authentication-aws) step.
+- `external_ip_allocation` - The static external IP the environment will be accessible one. Previously created in the [Create Static External IP - AWS Elastic IP Allocation](environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) step.
+
+#### Configure Terraform settings - `main.tf`
+
+The next file to configure is the main Terraform settings file - `main.tf`. In this file will be the main connection details for Terraform to connect to AWS as well as where to store its state.
+
+Here's an example of the file with descriptions below. Items in `<>` brackets need to be replaced with your config:
+
+```tf
+terraform {
+  backend "s3" {
+    bucket = "<state_aws_storage_bucket_name>"
+    key    = "<state_file_path_and_name>"
+    region = "<state_aws_storage_bucket_region>"
+  }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3"
+    }
+  }
+}
+
+# Configure the AWS Provider
+provider "aws" {
+  region = var.region
+}
+```
+
+- `terraform` - The main Terraform config block.
+  - `backend "s3"` - The [`s3` backend](https://www.terraform.io/docs/language/settings/backends/s3.html) config block.
+    - `bucket` - The name of the bucket [previously created](environment_prep.md#3-setup-terraform-state-storage-s3) to store the State.
+    - `key` - The file path and name to store the state in. 
+    - `region` - The AWS region of the bucket.
+  - `required_providers` - Config block for the required provider(s) Terraform needs to download and use.
+    - `aws` - Config block for the AWS provider. Sets where to source the provider and what version to download and use.
+- `provider "aws"` - Config block for the [AWS provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs).
+  - `region` - The AWS region of the project. Set in `variables.tf`.
+
+#### Configure Module settings - `environment.tf`
+
+Next to configure is `environment.tf`. This file contains all the config for the `gitlab_ref_arch_aws` module such as instance counts, instance sizes, external IP, etc...
+
+How you configure this file depends on the size of [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/) you want to deploy. Below we show how a [10k](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html) `environment.tf` would be set. If a different size is required all that's required is to tweak the machine counts and sizes to match the desired Reference Architecture as shown in the [docs](https://docs.gitlab.com/ee/administration/reference_architectures/).
+
+Here's an example of the file with all config for a [10k Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html) and descriptions below:
+
+```tf
+module "gitlab_ref_arch_aws" {
+  source = "../../modules/gitlab_ref_arch_aws"
+
+  prefix = var.prefix
+  ssh_public_key_file = file(var.ssh_public_key_file)
+
+  object_storage_buckets = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"]
+
+  # 10k
+  consul_node_count = 3
+  consul_instance_type = "c5.large"
+
+  elastic_node_count = 3 
+  elastic_instance_type = "c5.4xlarge"
+
+  gitaly_node_count = 3
+  gitaly_instance_type = "m5.4xlarge"
+
+  praefect_node_count = 3
+  praefect_instance_type = "c5.large"
+
+  praefect_postgres_node_count = 1
+  praefect_postgres_instance_type = "c5.large"
+
+  gitlab_nfs_node_count = 1
+  gitlab_nfs_instance_type = "c5.xlarge"
+
+  gitlab_rails_node_count = 3
+  gitlab_rails_instance_type = "c5.9xlarge"
+
+  haproxy_external_node_count = 1
+  haproxy_external_instance_type = "c5.large"
+  haproxy_external_elastic_ip_allocation_ids = [var.external_ip_allocation]
+  haproxy_internal_node_count = 1
+  haproxy_internal_instance_type = "c5.large"
+
+  monitor_node_count = 1
+  monitor_instance_type = "c5.xlarge"
+
+  pgbouncer_node_count = 3
+  pgbouncer_instance_type = "c5.large"
+
+  postgres_node_count = 3
+  postgres_instance_type = "m5.2xlarge"
+
+  redis_cache_node_count = 3
+  redis_cache_instance_type = "m5.xlarge"
+  redis_sentinel_cache_node_count = 3
+  redis_sentinel_cache_instance_type = "c5.large"
+  redis_persistent_node_count = 3
+  redis_persistent_instance_type = "m5.xlarge"
+  redis_sentinel_persistent_node_count = 3
+  redis_sentinel_persistent_instance_type = "c5.large"
+
+  sidekiq_node_count = 4
+  sidekiq_instance_type = "m5.xlarge"
+}
+
+output "gitlab_ref_arch_aws" {
+  value = module.gitlab_ref_arch_aws
+}
+```
+
+- `module "gitlab_ref_arch_aws"` - Module config block with name.
+  - `source` - The relative path to the `gitlab_ref_arch_aws` module. We assume you're creating config in the `terraform/environments/` folder here but if you're in a different location this setting must be updated to the correct path.
+  - `prefix` - The name prefix of the project. Set in `variables.tf`.
+  - `ssh_public_key_file` - The file path of the public SSH key. Set in `variables.tf`.
+  - `object_storage_buckets` allows for the creation of separate object storage buckets for each type of data GitLab stores. Each bucket will have a name following the convention `<prefix>-<datatype>`.
+
+Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
+
+- `*_node_count` - The number of machines to set up for that component
+- `*_instance_type` - The [AWS Instance Type Machine Type](https://aws.amazon.com/ec2/instance-types/) (size) for that component
+- `haproxy_external_elastic_ip_allocation_ids` - Set the external HAProxy load balancer to assume the external IP allocation ID set in `variables.tf`. Note that this is an array setting as the advanced underlying functionality needs to account for the specific setting of IPs for potentially multiple machines. In this case though it should always only be one IP allocation ID.
+
+#### Configure Authentication (AWS)
+
+Finally the last thing to configure is authentication. This is required so Terraform can access AWS (provider) as well as its State Storage Bucket (backend).
+
+Terraform provides multiple ways to authenticate with the [provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication) and [backend](https://www.terraform.io/docs/language/settings/backends/s3.html#configuration), you can select any method that as desired.
+
+All of the methods given involve the AWS Access Key you generated previously. We've found that the easiest and secure way to do this is with the official [environment variables](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#environment-variables):
+
+- `AWS_ACCESS_KEY_ID` - Set to the AWS Access Key.
+- `AWS_SECRET_ACCESS_KEY` - Set to the AWS Secret Key.
+
+Once the two variables are either set locally or in your CI pipeline Terraform will be able to fully authenticate for both the provider and backend.
 
 ### Azure (coming soon)
 

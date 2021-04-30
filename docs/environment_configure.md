@@ -1,15 +1,5 @@
 # Configuring the environment with Ansible
 
----
-<table>
-    <tr>
-        <td><img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/></td>
-        <td>The GitLab Environment Toolkit is in **Beta** (`v1.0.0-beta`) and work is currently under way for its main release. We do not recommend using it for production use at this time.<br/><br/>As such, <b>this documentation is still under construction</b> but we aim to have it completed soon.</td>
-    </tr>
-</table>
-
----
-
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [**GitLab Environment Toolkit - Configuring the environment with Ansible**](environment_configure.md)
@@ -117,17 +107,17 @@ compose:
 
 - `plugin` - The name of the Dynamic Inventory plugin. Must always be `gcp_compute`.
 - `projects` - The ID of the GCP project for the environment
-- `filters` - A label filter for Ansible to use. This ensures it only configures the machines we want on the project and not any others. Should be set the same `prefix` value set in Terraform.
+- `filters` - A label filter for Ansible to use. This ensures it only configures the machines we want on the project and not any others based on the machine label `gitlab_node_prefix` set automatically in Terraform. Should be set the same `prefix` value set in Terraform.
 - `keyed_groups` - Configures Ansible to look for the labels automatically set by Terraform and to set up it's host groups based on them. This config block shouldn't be changed from what's shown.
 - `scopes` - A GCP specific setting for how to use its API. Should not be changed.
 - `hostnames` - Config block for how Ansible should show the hosts in its output. This block configures the use of hostnames rather than IPs for better readability. This config block should not be changed.
 - `compose`: As shown in the comment this set what IPs Ansible should use. This config block shouldn't be changed unless private IPs are desired as mentioned in the comment.
 
-#### Setup Authentication
+#### Configure Authentication (GCP)
 
 Finally the last thing to configure is authentication. This is required so Ansible can access GCP to build its dynamic inventory.
 
-Ansible provides several ways to authenticate with the [GCP](https://docs.ansible.com/ansible/latest/collections/google/cloud/gcp_compute_inventory.html#parameters), you can select any method that as desired.
+Ansible provides several ways to authenticate with [GCP](https://docs.ansible.com/ansible/latest/collections/google/cloud/gcp_compute_inventory.html#parameters), you can select any method that as desired.
 
 All of the methods given involve the Service Account file you generated previously. We've found the authentication methods that work best with the Toolkit in terms of ease of use are as follows:
 
@@ -136,9 +126,51 @@ All of the methods given involve the Service Account file you generated previous
 - `gcloud` login - Authentication can also occur automatically through the [`gcloud`](https://cloud.google.com/sdk/gcloud/reference/auth/application-default) command line tool. Make sure the user that's logged in has access to the Project.
   - Note that the `GCP_AUTH_KIND` variable also needs to be set to `application` for this authentication method.
 
-### Amazon Web Services (Coming Soon)
+### Amazon Web Services (AWS)
 
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
+The AWS Dynamic Inventory plugin is called [`aws_ec2`](https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html). This will have been installed already during the Ansible install process via `ansible-galaxy install`.
+
+The config file for this plugin which requires the naming convention `*.aws_ec2.yml`, e.g. `10k.aws_ec2.yml`. Here's an example of the file with all config and descriptions below. Items in `<>` brackets need to be replaced with your config:
+
+```yaml
+plugin: aws_ec2
+regions:
+  - us-east-1
+filters:
+  tag:gitlab_node_prefix: <prefix> # Same prefix set in Terraform
+keyed_groups:
+  - key: tags.gitlab_node_type
+    separator: ''
+  - key: tags.gitlab_node_level
+    separator: ''
+hostnames:
+  # List host by name instead of the default public ip
+  - tag:Name
+compose:
+  # Use the public IP address to connect to the host
+  # (note: this does not modify inventory_hostname, which is set via I(hostnames))
+  ansible_host: public_ip_address
+```
+
+- `plugin` - The name of the Dynamic Inventory plugin. Must always be `aws_ec2`.
+- `regions` - AWS region the environment will run in.
+- `filters` - A label filter for Ansible to use. This ensures it only configures the machines we want on the project and not any others based on the machine tab `gitlab_node_prefix` that set automatically in Terraform. Should be set the same `prefix` value set in Terraform.
+- `keyed_groups` - Configures Ansible to look for the tags automatically set by Terraform and to set up it's host groups based on them. This config block shouldn't be changed from what's shown.
+- `hostnames` - Config block for how Ansible should show the hosts in its output. This block configures the use of hostnames rather than IPs for better readability. This config block should not be changed.
+- `compose`: As shown in the comment this set what IPs Ansible should use. This config block shouldn't be changed unless private IPs are desired as mentioned in the comment.
+
+#### Configure Authentication (AWS)
+
+Finally the last thing to configure is authentication. This is required so Ansible can access AWS to build its dynamic inventory.
+
+Ansible provides several ways to authenticate with [AWS](https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html#id3), you can select any method that as desired.
+
+All of the methods given involve the AWS Access Key you generated previously. We've found that the easiest and secure way to do this is with the official [environment variables](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#environment-variables):
+
+- `AWS_ACCESS_KEY_ID` - Set to the AWS Access Key.
+- `AWS_SECRET_ACCESS_KEY` - Set to the AWS Secret Key.
+
+Once the two variables are either set locally or in your CI pipeline Ansible will be able to fully authenticate for both the provider and backend.
 
 ### Azure (Coming Soon)
 
@@ -151,7 +183,6 @@ Next we need to configure various Environment specific variables that Ansible wi
 The structure of these files are flexible, ansible will merge all YAML files that are saved beside the Dynamic Inventory file. For the Toolkit, we use the following files:
 
 - `vars.yml` - Contains all main config specific to the environment such as connection details, component settings, passwords, etc...
-- `object-storage-vars.yml` - Contains specific Object Storage config that differs depending on the host provider.
 
 ### Environment config - `vars.yml`
 
@@ -166,10 +197,15 @@ all:
     ansible_user: "<ssh_username>"
     ansible_ssh_private_key_file: "<private_ssh_key_path>"
 
-    # Cloud Settings
+    # Cloud Settings, available options: gcp, aws
     cloud_provider: "gcp"
+
+    # GCP only settings
     gcp_project: "<gcp_project_id>"
     gcp_service_account_host_file: "<gcp_service_account_host_file_path>"
+
+    # AWS only settings
+    aws_region: "<aws_region>"
 
     # General Settings
     prefix: "<environment_prefix>"
@@ -180,14 +216,24 @@ all:
     patroni_remove_data_directory_on_rewind_failure: false
     patroni_remove_data_directory_on_diverged_timelines: false
 
+    # Object Storage Settings
+    gitlab_object_storage_artifacts_bucket: "{{ prefix }}-artifacts"
+    gitlab_object_storage_backups_bucket: "{{ prefix }}-backups"
+    gitlab_object_storage_dependency_proxy_bucket: "{{ prefix }}-dependency-proxy"
+    gitlab_object_storage_external_diffs_bucket: "{{ prefix }}-mr-diffs"
+    gitlab_object_storage_lfs_bucket: "{{ prefix }}-lfs"
+    gitlab_object_storage_packages_bucket: "{{ prefix }}-packages"
+    gitlab_object_storage_terraform_state_bucket: "{{ prefix }}-terraform-state"
+    gitlab_object_storage_uploads_bucket: "{{ prefix }}-uploads"
+
     # Passwords / Secrets
     gitlab_root_password: '<gitlab_root_password>'
     grafana_password: '<grafana_password>'
     postgres_password: '<postgres_password>'
     consul_database_password: '<consul_database_password>'
+    gitaly_token: '<gitaly_token>'
     pgbouncer_password: '<pgbouncer_password>'
     redis_password: '<redis_password>'
-    gitaly_token: '<gitaly_token>'
     praefect_external_token: '<praefect_external_token>'
     praefect_internal_token: '<praefect_internal_token>'
     praefect_postgres_password: '<praefect_postgres_password>'
@@ -195,25 +241,30 @@ all:
 
 Ansible Settings are specific config for Ansible to be able to connect to the machines:
 
-- `ansible_user` - The SSH username that Ansible should use to SSH into the machines with. Previously created in the [Setup SSH Authentication - SSH OS Login for Service Account](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-service-account) step.
-- `ansible_ssh_private_key_file` - Path to the private SSH key file previously created in the [Setup SSH Authentication - SSH OS Login for Service Account](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-service-account) step.
+- `ansible_user` - The SSH username that Ansible should use to SSH into the machines with. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/gy-aws-v1-docs/docs/environment_prep.md#2-setup-ssh-authentication-aws)).
+- `ansible_ssh_private_key_file` - Path to the private SSH key file. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/gy-aws-v1-docs/docs/environment_prep.md#2-setup-ssh-authentication-aws))
 
 Cloud settings are specific config relating to the cloud provider is running on. They're used primarily for the parts of the environment that require direct configuration on the provider, e.g. Object Storage.
 
-- `cloud_provider` - Toolkit specific variable, used to dynamically configure cloud provider specific areas such as Object Storage.
-- `gcp_project` - ID of the GCP project. Note this must be the Project's unique ID and not just the name
-- `gcp_service_account_host_file` - Local path to the Service Account file. This is the same one created in [Setup Provider Authentication - Service Account](environment_prep.md#3-setup-provider-authentication-service-account). The Toolkit uses this to configure GitLab's Object Storage access.
+- `cloud_provider` - Toolkit specific variable, used to dynamically configure cloud provider specific areas such as Object Storage. Should be set to `gcp`, `aws` or `azure`.
+- `gcp_project` **_GCP only_** - ID of the GCP project. Note this must be the Project's unique ID and not just the name
+- `gcp_service_account_host_file` **_GCP only_** - Local path to the Service Account file. This is the same one created in [Setup Provider Authentication - Service Account](environment_prep.md#3-setup-provider-authentication-gcp-service-account). The Toolkit uses this to configure GitLab's Object Storage access.
+- `aws_region`  **_AWS only_** - AWS region the environment will run in.
 
 General settings are config used across the playbooks to configure GitLab:
 
 - `prefix` - The configured prefix for the environment as set in Terraform.
-- `external_url` - External URL that will be the main address for the environment. This can be a DNS hostname you've configured to point to the IP you created on the [Create Static External IP](environment_prep.md#6-create-static-external-ip) step or the IP itself in URL form, e.g. `http://1.2.3.4`.
+- `external_url` - External URL that will be the main address for the environment. This can be a DNS hostname you've configured to point to the IP you created on the `Create Static External IP` step ([GCP](environment_prep.md#6-create-static-external-ip-gcp), [AWS](environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation)) step or the IP itself in URL form, e.g. `http://1.2.3.4`.
 - `gitlab_license_file` - Local path to a valid GitLab License file. Toolkit will upload the license to the environment. Note that this is an optional setting.
 
-Component Settings are specific component for GitLab components, e.g. Postgres:
+Component settings are specific component for GitLab components, e.g. Postgres:
 
 - `patroni_remove_data_directory_on_rewind_failure` - A specific Patroni flag that enables resetting of database data on a secondary node if attempts to sync with the primary can't be achieved. **This may lead to data loss**, refer to the [GitLab Postgres documentation](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#customizing-patroni-failover-behavior) for further info.
 - `patroni_remove_data_directory_on_rewind_failure` - A specific Patroni flag that enables resetting of database data on a secondary node if timelines have diverged with the primary. **This may lead to data loss**, refer to the [GitLab Postgres documentation](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#customizing-patroni-failover-behavior) for further info.
+
+Object Storage settings configure GitLab on what Object Storage Buckets to use per data type
+
+- `gitlab_object_storage_*_bucket` - The name of the Object Storage bucket for the specific data type. When used in conjunction with the Terraform `object_storage_buckets` setting each data type bucket will have the naming convention `<prefix>-<datatype>`. If using custom Object Storage buckets then set these accordingly but note that for GitLab it's recommended each data type has a separate bucket.
 
 Passwords and Secrets settings are what they suggest - all of the various passwords and secrets that GitLab requires to be configured by the user.
 
@@ -229,14 +280,6 @@ Passwords and Secrets settings are what they suggest - all of the various passwo
 - `praefect_postgres_password` **_Gitaly Cluster only_** - Sets the [password for Praefect's database user](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#secrets).
 
 Note that this documentation doesn't provide instructions on how to keep these values safe but this is recommended in line with your security requirements.
-
-### Amazon Web Services (Coming Soon)
-
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
-
-### Azure (Coming Soon)
-
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
 
 ### Selecting what GitLab version to install
 

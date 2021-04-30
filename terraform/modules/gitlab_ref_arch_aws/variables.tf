@@ -9,7 +9,7 @@ variable "ami_id" { default = null } # https://registry.terraform.io/providers/h
 variable "default_disk_size" { default = "100" }
 variable "default_disk_type" { default = "gp2" }
 
-variable "ssh_key" { default = null }
+variable "ssh_public_key_file" { default = null }
 
 variable "object_storage_buckets" { default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"] }
 
