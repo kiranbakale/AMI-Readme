@@ -49,13 +49,13 @@ Note that the Toolkit currently has the following requirements (with related iss
 
 ## Issues or Feature Requests
 
-Everyone is welcome to open new Issues or Feature Requests (or to upvote existing ones) over on our tracker [here](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues).
+Everyone is welcome to open new Issues or Feature Requests (or to upvote existing ones) over on [our tracker](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues).
 
 Further information:
 
 <!-- markdownlint-disable proper-names -->
 - Work in progress can also be seen on our [board](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/boards).
 - Issues relating directly to the [Reference Architectures can be found in their own project](https://gitlab.com/gitlab-org/quality/reference-architectures).
-- Issues relating to the previous incarnation of Performance Environment Builder can be found on the old generic performance issue tracker [here](https://gitlab.com/gitlab-org/quality/performance/-/issues?scope=all&utf8=%E2%9C%93&state=closed).
+- Issues relating to the previous incarnation of Performance Environment Builder can be found on [the old generic performance issue tracker](https://gitlab.com/gitlab-org/quality/performance/-/issues?scope=all&utf8=%E2%9C%93&state=closed).
 - To contact the team you can also reach out on Slack [#gitlab-environment-toolkit](https://gitlab.slack.com/archives/C01DE8TA545) channel.
 <!-- markdownlint-restore proper-names -->
