@@ -82,7 +82,7 @@ That's all that's required for now. Later on in this guide we'll configure the T
 
 ### 5. Setup Terraform State Storage Bucket - GCP Cloud Storage
 
-Create a standard [GCP storage bucket](https://cloud.google.com/storage/docs/creating-buckets) on the intended environment's project for its Terraform State. Give this a meaningful name such named as `<env_short_name>-terraform-state`.
+Create a standard [GCP storage bucket](https://cloud.google.com/storage/docs/creating-buckets) on the intended environment's project for its Terraform State. Give this a meaningful name such as `<env_short_name>-terraform-state`.
 
 After the Bucket is created this is all that's required for now. We'll configure Terraform to use it later in these docs.
 
@@ -104,7 +104,7 @@ Authentication with AWS directly can be done in [various ways](https://registry.
 
 The most straightforward of these options that work with both Terraform and AWS is to create access keys for your user and then set them via the Environment Variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` respectively.
 
-To create an access for your user follow the official docs [here](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey). Once created save these in a secure location and then set each key to the respective environment variable as shown above in any shell or CI job you're looking to run the Toolkit.
+To create an access key for your user follow [the official docs](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey). Once created save these in a secure location and then set each key to the respective environment variable as shown above in any shell or CI job you're looking to run the Toolkit.
 
 ### 2. Setup SSH Authentication - AWS
 
