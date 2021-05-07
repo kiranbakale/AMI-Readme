@@ -410,6 +410,8 @@ After the config has been setup you're now ready to provision the environment. T
 1. To apply any changes run `terraform apply` and select yes
     - **Warning - running this command will likely apply changes to shared infrastructure. Only run this command if you have permission to do so.**
 
+_Note: If you ever want to deprovision resources created, you can do so by running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html)._
+
 ## Next Steps 
 
 After the above steps have been completed you can proceed to [Configuring the environment with Ansible](environment_configure.md).
