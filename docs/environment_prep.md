@@ -114,6 +114,8 @@ This is straightforward with AWS. All that's required is for a key to be created
 
 - [Generate an SSH key pair](https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair) and store it in the [`keys`](../keys) directory.
 
+It is also possible to use an existing SSH key pair, but it is recommended to use a new key to avoid any potential security implications.
+
 That's all that's required for now. Later on in this guide we'll configure the Toolkit to use this key for adding into the AWS machines as well as accessing them.
 
 ### 3. Setup Terraform State Storage - AWS S3
