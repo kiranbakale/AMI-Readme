@@ -285,7 +285,7 @@ provider "aws" {
 - `terraform` - The main Terraform config block.
   - `backend "s3"` - The [`s3` backend](https://www.terraform.io/docs/language/settings/backends/s3.html) config block.
     - `bucket` - The name of the bucket [previously created](environment_prep.md#3-setup-terraform-state-storage-s3) to store the State.
-    - `key` - The file path and name to store the state in. 
+    - `key` - The file path and name to store the state in (example: `path/to/my/key`- [must not start with '/'](https://github.com/hashicorp/terraform/blob/main/backend/remote-state/s3/backend.go#L34-L41)). 
     - `region` - The AWS region of the bucket.
   - `required_providers` - Config block for the required provider(s) Terraform needs to download and use.
     - `aws` - Config block for the AWS provider. Sets where to source the provider and what version to download and use.
