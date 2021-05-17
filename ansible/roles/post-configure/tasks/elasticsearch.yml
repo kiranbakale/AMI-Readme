@@ -1,6 +1,10 @@
 - name: Gather Elastic group facts
   setup:
     filter: ansible_processor_vcpus
+  register: result
+  retries: 3
+  delay: 2
+  until: result is success
   delegate_to: "{{ item }}"
   delegate_facts: true
   with_items: "{{ groups['elastic'] }}"
