@@ -18,7 +18,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1617718071156,
+  "iteration": 1621501934081,
   "links": [
     {
       "icon": "doc",
@@ -39,12 +39,11 @@
       "description": "LCP reports the render time of the largest image or text block visible within the viewport. Recommended target - 2500ms.",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
@@ -56,10 +55,10 @@
       "id": 3,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
         "show": true,
         "total": false,
         "values": true
@@ -71,7 +70,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -159,12 +158,11 @@
       "description": "Total Blocking Time (TBT) measures the total amount of time where the main thread was blocked for long enough to prevent input responsiveness. Recommended target - 300ms.",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
@@ -176,10 +174,10 @@
       "id": 4,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
         "show": true,
         "total": false,
         "values": true
@@ -191,7 +189,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -279,12 +277,11 @@
       "description": "FCP measures the time from when the page starts loading to when any part of the page's content is rendered on the screen",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
@@ -296,10 +293,10 @@
       "id": 2,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
         "show": true,
         "total": false,
         "values": true
@@ -311,7 +308,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -408,12 +405,11 @@
       "description": "Last Visual Change (LVC) measures the time when something for the last time changes within the viewport.",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
@@ -425,10 +421,10 @@
       "id": 5,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
         "show": true,
         "total": false,
         "values": true
@@ -440,7 +436,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -508,12 +504,11 @@
       "description": "Speed Index (SI) measures how quickly content is visually displayed during page load.",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
@@ -525,10 +520,10 @@
       "id": 6,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
         "show": true,
         "total": false,
         "values": true
@@ -540,7 +535,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -637,12 +632,11 @@
       "description": "The Transfer Size (TFR SIZE) over the wire in KB. Helps to evaluate response page size.",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
@@ -654,10 +648,10 @@
       "id": 7,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
         "show": true,
         "total": false,
         "values": true
@@ -669,7 +663,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -738,12 +732,11 @@
       "description": "Coach Performance Score (SCORE) given by SiteSpeed for the page. More about the Score https://www.sitespeed.io/documentation/coach/introduction/.",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
@@ -755,10 +748,10 @@
       "id": 8,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
         "show": true,
         "total": false,
         "values": true
@@ -770,7 +763,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -902,7 +895,7 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-14d",
     "to": "now"
   },
   "timepicker": {
@@ -921,5 +914,5 @@
   "timezone": "",
   "title": "GitLab Performance SiteSpeed results",
   "uid": "jH6yoWVMz",
-  "version": 3
+  "version": 5
 }

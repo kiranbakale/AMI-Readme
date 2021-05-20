@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1617717804052,
+  "iteration": 1621501895730,
   "links": [],
   "panels": [
     {
@@ -27,12 +27,11 @@
       "description": "The 90th percentile of Time To First Byte (TTFB) in ms grouped by test",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
@@ -44,10 +43,10 @@
       "id": 6,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
         "rightSide": false,
         "show": true,
         "total": false,
@@ -60,7 +59,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -150,12 +149,11 @@
       "description": "The average Time To First Byte (TTFB) in ms grouped by test",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 12,
@@ -167,10 +165,10 @@
       "id": 7,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
         "rightSide": false,
         "show": true,
         "total": false,
@@ -183,7 +181,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -274,12 +272,11 @@
       "description": "Requests Per Second(RPS) achieved by each test",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
@@ -291,10 +288,10 @@
       "id": 8,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
         "rightSide": false,
         "show": true,
         "total": false,
@@ -307,7 +304,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -377,12 +374,11 @@
       "description": "The percentage of requests made by the test that returned a successful status (HTTP Code 200 / 201 returned) along with its passing threshold.",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
@@ -394,10 +390,10 @@
       "id": 13,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
-        "current": false,
-        "max": false,
-        "min": false,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
         "rightSide": false,
         "show": true,
         "total": false,
@@ -410,7 +406,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
@@ -498,10 +494,7 @@
       "datasource": "GitLab Omnibus",
       "description": "Overall Test Results Score grouped by GitLab version ",
       "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": []
-        },
+        "defaults": {},
         "overrides": []
       },
       "fill": 1,
@@ -516,13 +509,13 @@
       "id": 12,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
+        "avg": false,
         "current": false,
         "max": false,
         "min": false,
         "rightSide": false,
         "show": true,
-        "total": false,
+        "total": true,
         "values": true
       },
       "lines": false,
@@ -532,7 +525,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "pointradius": 3,
       "points": true,
       "renderer": "flot",
@@ -542,10 +535,11 @@
       "steppedLine": false,
       "targets": [
         {
+          "exemplar": true,
           "expr": "avg(avg_over_time(score{test_name =~ \"$test_name\"}[$__interval])) by (gitlab_version, gitlab_revision)",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "GitLab version: {{gitlab_version}} - {{gitlab_revision}}",
+          "legendFormat": "{{gitlab_version}} - {{gitlab_revision}}",
           "queryType": "randomWalk",
           "refId": "A"
         }
@@ -619,7 +613,6 @@
           "color": {
             "mode": "thresholds"
           },
-          "custom": {},
           "mappings": [],
           "max": 100,
           "min": 0,
@@ -663,7 +656,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "7.4.2",
+      "pluginVersion": "7.5.5",
       "targets": [
         {
           "expr": "avg(avg_over_time(score{test_name =~ \"$test_name\"}[$__interval]))",
