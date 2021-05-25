@@ -93,17 +93,21 @@
         - omnibus_node
         - repo_file.changed
 
-    - name: Unlock GitLab package updates
+    - name: Unlock GitLab package installs
       command: apt-mark install gitlab-ee
       register: result
       retries: 2
-      delay: 10
+      delay: 3
       until: result is success
       when:
         - omnibus_node
 
     - name: Install GitLab repo package
       command: apt-get install {{ gitlab_repo_package }} -y --allow-downgrades
+      register: result
+      retries: 2
+      delay: 3
+      until: result is success
       when:
         - omnibus_node
         - gitlab_repo_package != ''
