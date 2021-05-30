@@ -22,7 +22,7 @@ In a nutshell Ansible runs through the Toolkit's provided Playbooks. We have a r
 
 Each Role in the Toolkit is designed to be as simple as possible and match what's recommended in the GitLab docs as much as possible. They will generally run through the following steps:
 
-1. Install require packages on the OS
+1. Install required packages on the OS
 1. Install GitLab Omnibus (EE)
 1. Configure the `gitlab.rb` file depending on the machine
 1. Run `gitlab-ctl reconfigure`
