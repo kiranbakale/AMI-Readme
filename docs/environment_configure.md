@@ -14,7 +14,7 @@ The Toolkit provides multiple curated [Ansible Playbooks and Roles](../ansible) 
 
 ## Overview
 
-Install and configuring GitLab automatically is the most involved part of the process, as such Ansible is the most involved part of the Toolkit as a result. It's worth highlighting then how it works at a high level before we detail the steps on how to setup and use it.
+Installing and configuring GitLab automatically is the most involved part of the process, as such Ansible is the most involved part of the Toolkit as a result. It's worth highlighting then how it works at a high level before we detail the steps on how to setup and use it.
 
 ### Playbooks and Roles
 
