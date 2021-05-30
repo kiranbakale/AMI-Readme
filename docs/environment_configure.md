@@ -111,7 +111,7 @@ compose:
 - `keyed_groups` - Configures Ansible to look for the labels automatically set by Terraform and to set up it's host groups based on them. This config block shouldn't be changed from what's shown.
 - `scopes` - A GCP specific setting for how to use its API. Should not be changed.
 - `hostnames` - Config block for how Ansible should show the hosts in its output. This block configures the use of hostnames rather than IPs for better readability. This config block should not be changed.
-- `compose`: As shown in the comment this set what IPs Ansible should use. This config block shouldn't be changed unless private IPs are desired as mentioned in the comment.
+- `compose`: As shown in the comment this sets what IPs Ansible should use. This config block shouldn't be changed unless private IPs are desired as mentioned in the comment.
 
 #### Configure Authentication (GCP)
 
