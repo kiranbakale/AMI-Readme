@@ -241,8 +241,8 @@ all:
 
 Ansible Settings are specific config for Ansible to be able to connect to the machines:
 
-- `ansible_user` - The SSH username that Ansible should use to SSH into the machines with. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/gy-aws-v1-docs/docs/environment_prep.md#2-setup-ssh-authentication-aws)).
-- `ansible_ssh_private_key_file` - Path to the private SSH key file. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/gy-aws-v1-docs/docs/environment_prep.md#2-setup-ssh-authentication-aws))
+- `ansible_user` - The SSH username that Ansible should use to SSH into the machines with. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](environment_prep.md#2-setup-ssh-authentication-aws)).
+- `ansible_ssh_private_key_file` - Path to the private SSH key file. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](environment_prep.md#2-setup-ssh-authentication-aws))
 
 Cloud settings are specific config relating to the cloud provider is running on. They're used primarily for the parts of the environment that require direct configuration on the provider, e.g. Object Storage.
 
