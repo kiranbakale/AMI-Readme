@@ -58,7 +58,7 @@ Hopefully with this overview it's clearer how Ansible in the Toolkit works. Belo
 
 The Toolkit requires Ansible to be installed and this can be done as desired. Unlike Terraform, there's no general dependencies on Ansible's versions so the latest version should suffice (although your mileage may vary). At the time of writing the Toolkit is confirmed to work with the latest version of Ansible - `2.10.x`.
 
-Since there are no version considerations we recommend just installing Ansible as per the official [Ansible Install Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html). Note that Ansible requires Python 3 and you may need to install it and its package manage `pip3` separately.
+Since there are no version considerations we recommend just installing Ansible as per the official [Ansible Install Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html). Note that Ansible requires Python 3 and you may need to install it and its package manager `pip3` separately.
 
 In addition to the above, Ansible also requires some dependencies to be installed. You'll need to install Python package dependencies on the machine along with some community roles from [Ansible Galaxy](https://galaxy.ansible.com/home) that allow for convenient deployment of some third party applications.
 
