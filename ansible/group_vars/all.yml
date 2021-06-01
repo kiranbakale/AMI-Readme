@@ -12,8 +12,8 @@ internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/p
 ## Cloud Provider Settings
 ################################################################################
 
-internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address']}
-external_ip_lookup: {gcp: ['networkInterfaces', 0, 'accessConfigs', 0, 'natIP'], azure: ['public_ipv4_addresses', 0], aws: ['public_ip_address']}
+internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address'], alicloud: ['private_ip_address'], tencentcloud: ['private_ip_address']}
+external_ip_lookup: {gcp: ['networkInterfaces', 0, 'accessConfigs', 0, 'natIP'], azure: ['public_ipv4_addresses', 0], aws: ['public_ip_address'], alicloud: ['public_ip_address'], tencentcloud: ['public_ip_address'] }
 
 ## GCP
 gcp_service_account_host_file: "{{ service_account_file | default('', true) }}"
