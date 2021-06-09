@@ -41,7 +41,7 @@ While with the Inventory Ansible can get a full list of hosts it's to configure 
 
 [Variables](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html) are a versatile and integral part of Ansible and can be [defined in many locations](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#understanding-variable-precedence). Ansible itself also collects [many variables](https://docs.ansible.com/ansible/latest/user_guide/playbooks_vars_facts.html) about the hosts it connects to such as IPs, machine specs and more.
 
-The Toolkit uses these extensively to dynamically configure each GitLab machine depending on its type. This includes things such as selecting what and how to install, finding out IPs of other machines, etc... 
+The Toolkit uses these extensively to dynamically configure each GitLab machine depending on its type. This includes things such as selecting what and how to install, finding out IPs of other machines, etc...
 
 As mentioned there are various ways variables can be configured. The Toolkit uses the following locations for variables (in order of precedence):
 
@@ -126,6 +126,8 @@ All of the methods given involve the Service Account file you generated previous
 - `gcloud` login - Authentication can also occur automatically through the [`gcloud`](https://cloud.google.com/sdk/gcloud/reference/auth/application-default) command line tool. Make sure the user that's logged in has access to the Project.
   - Note that the `GCP_AUTH_KIND` variable also needs to be set to `application` for this authentication method.
 
+Alternatively, instead of setting `GCP_AUTH_KIND`, you can add `auth_kind` to your [Environment config file](#environment-config-varsyml) (`vars.yml`) file to specify which authentication method you'd like to use.
+
 ### Amazon Web Services (AWS)
 
 The AWS Dynamic Inventory plugin is called [`aws_ec2`](https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html). This will have been installed already during the Ansible install process via `ansible-galaxy install`.
@@ -188,7 +190,7 @@ The structure of these files are flexible, ansible will merge all YAML files tha
 
 Starting with the main environment config file, `vars.yml`, which should be saved alongside the Dynamic Inventory file.
 
-Here's an example of the file with all standard config and descriptions below. Items in `<>` brackets need to be replaced with your config. It's worth noting that this is config for a standard install and further variables may be required for more advanced deployments, where applicable we detail these under the relevant section in our [Advanced docs sections](environment_advanced.md). 
+Here's an example of the file with all standard config and descriptions below. Items in `<>` brackets need to be replaced with your config. It's worth noting that this is config for a standard install and further variables may be required for more advanced deployments, where applicable we detail these under the relevant section in our [Advanced docs sections](environment_advanced.md).
 
 ```yml
 all:
