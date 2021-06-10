@@ -1,17 +1,14 @@
-alertmanager['enable'] = false
+# Avoid running unnecessary services on the Sidekiq server
 gitaly['enable'] = false
-gitlab_exporter['enable'] = false
-gitlab_workhorse['enable'] = false
-nginx['enable'] = false
-postgres_exporter['enable'] = false
 postgresql['enable'] = false
-prometheus['enable'] = false
-grafana['enable'] = false
-registry['enable'] = false
 redis['enable'] = false
-redis_exporter['enable'] = false
-unicorn['enable'] = false
 puma['enable'] = false
+gitlab_workhorse['enable'] = false
+prometheus['enable'] = false
+alertmanager['enable'] = false
+grafana['enable'] = false
+gitlab_exporter['enable'] = false
+nginx['enable'] = false
 
 # Sidekiq Config
 sidekiq['enable'] = true

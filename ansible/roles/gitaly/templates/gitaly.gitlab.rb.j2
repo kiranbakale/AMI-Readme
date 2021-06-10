@@ -1,36 +1,14 @@
 # Avoid running unnecessary services on the Gitaly server
 postgresql['enable'] = false
 redis['enable'] = false
-nginx['enable'] = false
-prometheus['enable'] = false
-unicorn['enable'] = false
+puma['enable'] = false
 sidekiq['enable'] = false
 gitlab_workhorse['enable'] = false
-alertmanager['enable'] = false
-geo_postgresql['enable'] = false
-geo_primary_role['enable'] = false
-geo_secondary_role['enable'] = false
-gitlab_exporter['enable'] = false
-gitlab_pages['enable'] = false
-grafana['enable'] = false
-mattermost['enable'] = false
-mattermost_nginx['enable'] = false
-pages_nginx['enable'] = false
-pgbouncer['enable'] = false
-pgbouncer_exporter['enable'] = false
-postgres_exporter['enable'] = false
 prometheus['enable'] = false
-puma['enable'] = false
-redis_exporter['enable'] = false
-redis_master_role['enable'] = false
-redis_sentinel_role['enable'] = false
-redis_replica_role['enable'] = false
-registry['enable'] = false
-registry_nginx['enable'] = false
-repmgr['enable'] = false
-repmgrd['enable'] = false
-sentinel['enable'] = false
-storage_check['enable'] = false
+alertmanager['enable'] = false
+grafana['enable'] = false
+gitlab_exporter['enable'] = false
+nginx['enable'] = false
 
 # Prevent database connections during 'gitlab-ctl reconfigure'
 gitlab_rails['rake_cache_clear'] = false

@@ -135,19 +135,15 @@ nginx['status']['options'] = {
   "deny" => "all",
 }
 
-# Disable all other services
-gitlab_rails['auto_migrate'] = false
-alertmanager['enable'] = false
+# Avoid running unnecessary services on the Prometheus server
 gitaly['enable'] = false
-gitlab_exporter['enable'] = false
-gitlab_workhorse['enable'] = false
-postgres_exporter['enable'] = false
 postgresql['enable'] = false
 redis['enable'] = false
-redis_exporter['enable'] = false
-sidekiq['enable'] = false
-unicorn['enable'] = false
 puma['enable'] = false
+sidekiq['enable'] = false
+gitlab_workhorse['enable'] = false
+alertmanager['enable'] = false
+gitlab_exporter['enable'] = false
 
 confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.*.rb"))
 confs.each { |conf|
