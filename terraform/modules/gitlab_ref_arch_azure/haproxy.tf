@@ -45,6 +45,8 @@ module "haproxy_internal" {
   ssh_public_key_file_path = var.ssh_public_key_file_path
   location = var.location
 
+  network_security_group = azurerm_network_security_group.ssh
+
   geo_site = var.geo_site
   geo_deployment = var.geo_deployment
 }

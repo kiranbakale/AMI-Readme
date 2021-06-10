@@ -16,6 +16,8 @@ module "redis" {
   ssh_public_key_file_path = var.ssh_public_key_file_path
   location = var.location
 
+  network_security_group = azurerm_network_security_group.ssh
+
   geo_site = var.geo_site
   geo_deployment = var.geo_deployment
 
@@ -46,6 +48,8 @@ module "redis_cache" {
   ssh_public_key_file_path = var.ssh_public_key_file_path
   location = var.location
 
+  network_security_group = azurerm_network_security_group.ssh
+
   geo_site = var.geo_site
   geo_deployment = var.geo_deployment
 
@@ -73,6 +77,8 @@ module "redis_sentinel_cache" {
   vm_admin_username = var.vm_admin_username
   ssh_public_key_file_path = var.ssh_public_key_file_path
   location = var.location
+
+  network_security_group = azurerm_network_security_group.ssh
 
   geo_site = var.geo_site
   geo_deployment = var.geo_deployment
@@ -102,6 +108,8 @@ module "redis_persistent" {
   ssh_public_key_file_path = var.ssh_public_key_file_path
   location = var.location
 
+  network_security_group = azurerm_network_security_group.ssh
+
   geo_site = var.geo_site
   geo_deployment = var.geo_deployment
 
@@ -129,6 +137,8 @@ module "redis_sentinel_persistent" {
   vm_admin_username = var.vm_admin_username
   ssh_public_key_file_path = var.ssh_public_key_file_path
   location = var.location
+
+  network_security_group = azurerm_network_security_group.ssh
 
   geo_site = var.geo_site
   geo_deployment = var.geo_deployment
