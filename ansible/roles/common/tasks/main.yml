@@ -111,14 +111,25 @@
       when:
         - omnibus_node
         - gitlab_repo_package != ''
+        - gitlab_deb_download_url == ''
         - gitlab_deb_host_path == ''
+
+    - name: Download GitLab deb package
+      get_url:
+        url: "{{ gitlab_deb_download_url }}"
+        dest: "{{ gitlab_deb_target_path }}"
+        force: true
+        headers: "{{ gitlab_deb_download_url_headers }}"
+      when:
+        - omnibus_node
+        - gitlab_deb_download_url != ''
 
     - name: Copy GitLab deb package
       copy:
         src: "{{ gitlab_deb_host_path }}"
         dest: "{{ gitlab_deb_target_path }}"
         mode: 0755
-        force: false
+        force: true
       when:
         - omnibus_node
         - gitlab_deb_host_path != ''
@@ -128,7 +139,7 @@
         deb: "{{ gitlab_deb_target_path }}"
       when:
         - omnibus_node
-        - gitlab_deb_host_path != ''
+        - (gitlab_deb_host_path != '') or (gitlab_deb_download_url != '')
 
     # Allows GET to run on a node after running gitlab-ctl cleanse. The current behavior of cleanse is to
     # delete the /etc/gitlab folder, this will cause an error when we try to copy files to the dir.

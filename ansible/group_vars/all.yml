@@ -35,7 +35,10 @@ gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default(gitlab_ed
 gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh', true) }}"
 ## Specify absolute path to the local deb package on host
 gitlab_deb_host_path: "{{ lookup('env','GITLAB_HOST_DEB_PATH')}}"
-gitlab_deb_target_path: "{{ lookup('env','GITLAB_TARGET_DEB_PATH') | default('/tmp/' + (gitlab_deb_host_path | basename), true)}}"
+## Specify deb package url
+gitlab_deb_download_url: "{{ lookup('env','GITLAB_DEB_DOWNLOAD_URL')}}"
+gitlab_deb_download_url_headers: "{{ lookup('env','GITLAB_DEB_DOWNLOAD_URL_HEADERS') | default('', true) }}"
+gitlab_deb_target_path: "{{ lookup('env','GITLAB_TARGET_DEB_PATH') | default('/tmp/gitlab_deb_package.deb', true)}}"
 
 external_url_sanitised: "{{ external_url | regex_replace('\\/$', '') }}"
 omnibus_node: true

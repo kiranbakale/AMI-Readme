@@ -288,7 +288,11 @@ By default the Toolkit will deploy the latest [GitLab EE package](https://packag
 The Toolkit can install other GitLab versions from `13.2.0` onwards through two different methods:
 
 - Repo - A different repo and package can be specified via the two inventory variables `gitlab_repo_script_url` and `gitlab_repo_package` respectively. The Toolkit will first install the repo via the script provided and then install the package.
-- Deb file - The Toolkit can install a deb file directly. This can be done by setting the `gitlab_deb_host_path` in the inventory variables, which should be set to the local path (on the same machine running Ansible) for the GitLab Debian file. An additional variable, `gitlab_deb_target_path` configures where Ansible should copy the Debian file onto the targets before installing but this is set to `/tmp` by default and doesn't need changed.
+- Deb file - The Toolkit can install a Debian file directly in several ways:
+  - If the package needs to be downloaded from the specific URL you can specify this via the `gitlab_deb_download_url` inventory variable.
+    - If the URL to download the deb file requires authorization or other headers you can pass these in a Hash format via the `gitlab_deb_download_url_headers` inventory variable.
+  - If the package needs to be uploaded from the local host where Ansible is running, add the `gitlab_deb_host_path` inventory variable that should be set to the local path where the file is located.
+  - An additional variable, `gitlab_deb_target_path` configures where Ansible should copy the Debian file onto the targets before installing but this is set to `/tmp` by default and doesn't need to be changed.
 
 ### Full config list and further examples
 
