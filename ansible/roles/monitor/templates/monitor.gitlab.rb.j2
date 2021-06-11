@@ -1,7 +1,8 @@
+roles ['monitoring_role']
+
 external_url '{{ external_url_sanitised }}'
 
-# Enable Prometheus
-prometheus['enable'] = true
+# Prometheus
 prometheus['listen_address'] = '0.0.0.0:9090'
 prometheus['monitor_kubernetes'] = false
 
@@ -72,8 +73,7 @@ prometheus['scrape_configs'] = [
   },
 ]
 
-# Enable Grafana
-grafana['enable'] = true
+# Grafana
 {% if grafana_password is defined and grafana_password != '' %}
 grafana['admin_password'] = "{{ grafana_password | regex_escape() }}"
 {% endif %}
@@ -117,7 +117,7 @@ grafana['datasources'] = [
   }
 ]
 
-# Monitoring
+# Consul
 consul['enable'] = true
 consul['configuration'] = {
   bind_addr: '{{ ansible_default_ipv4.address }}',
@@ -125,8 +125,7 @@ consul['configuration'] = {
 }
 consul['monitoring_service_discovery'] = true
 
-node_exporter['listen_address'] = '0.0.0.0:9100'
-
+# Nginx
 nginx['enable'] = true
 nginx['status']['options'] = {
   "server_tokens" => "off",
@@ -135,15 +134,7 @@ nginx['status']['options'] = {
   "deny" => "all",
 }
 
-# Avoid running unnecessary services on the Prometheus server
-gitaly['enable'] = false
-postgresql['enable'] = false
-redis['enable'] = false
-puma['enable'] = false
-sidekiq['enable'] = false
-gitlab_workhorse['enable'] = false
-alertmanager['enable'] = false
-gitlab_exporter['enable'] = false
+node_exporter['listen_address'] = '0.0.0.0:9100'
 
 confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.*.rb"))
 confs.each { |conf|
