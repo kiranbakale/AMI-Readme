@@ -14,9 +14,10 @@ postgresql['max_connections'] = 330
 
 {% if postgres_replication_manager == 'patroni' %}
 patroni['standby_cluster']['enable'] = true
-patroni['standby_cluster']['host'] = '{{ geo_primary_site_postgres_int_ip }}'
-patroni['standby_cluster']['port'] = {{ postgres_primary_int_port }}
+patroni['standby_cluster']['host'] = '{{ haproxy_internal_int_ip }}'
+patroni['standby_cluster']['port'] = 5432
 patroni['standby_cluster']['primary_slot_name'] = 'geo_secondary'
+
 patroni['replication_password'] = '{{ postgres_password }}'
 postgresql['sql_replication_password'] = '{{ (postgres_password + 'gitlab_replicator') | md5 }}'
 {% endif %}
