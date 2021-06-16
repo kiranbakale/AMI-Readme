@@ -22,3 +22,10 @@
       - apt-add-repository -r https://packages.gitlab.com/gitlab/gitlab-ee/ubuntu/
     when:
       - omnibus_node
+
+  - name: Remove the repository script file
+    file:
+      path: "{{ gitlab_script_path }}"
+      state: absent
+    when:
+      - omnibus_node

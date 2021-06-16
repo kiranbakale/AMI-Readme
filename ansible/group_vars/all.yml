@@ -44,6 +44,8 @@ external_url_sanitised: "{{ external_url | regex_replace('\\/$', '') }}"
 omnibus_node: true
 gitlab_admin_email: "admin@example.com"
 
+gitlab_script_path: "/tmp/gitlab_install_repository.sh"
+
 # Object Storage Buckets
 ## Will be switched to separate buckets by default in future release
 gitlab_object_storage_artifacts_bucket: "{{ prefix }}-object-storage"
