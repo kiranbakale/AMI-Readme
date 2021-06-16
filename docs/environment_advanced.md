@@ -100,6 +100,21 @@ my-geo-deployment
 The `primary` and `secondary` folders are treated the same as non Geo environments and as such the steps for [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md) should be followed.
 
 However you should remove the GitLab license from the secondary site before running the `ansible-playbook` command. To remove the license from the secondary site you can just remove the `gitlab_license_file` setting from the secondary `vars.yml` file.
+Also it's required to add a new `keyed_group` to your Dynamic Inventory config file for your chosen cloud provider:
+
+GCP:
+
+```yaml
+- key: labels.gitlab_geo_site
+    separator: ''
+```
+
+AWS:
+
+```yaml
+- key: tags.gitlab_geo_site
+  separator: ''
+```
 
 Once the inventories for primary and secondary are complete you can use Ansible to configure GitLab. Once complete you will have 2 independent instances of GitLab. The primary site should have a license installed and the secondary will not.
 As these environments are still separate from each other at this point, they can be built at the same time and are not reliant on each other. Once complete you should be able to log into each environment before continuing.
@@ -113,7 +128,7 @@ The Dynamic Inventory file for `all` Geo machines will be almost the same as the
 - The `filters` should be changed to follow the `gitlab_geo_deployment` label / tag. The normal filter is based on an environment's prefix, unique to each environment. The Geo deployment label / tag is how we identify multiple environments to run our Geo configuration against.
 - Two new keys should be added to the `keyed_groups` section for the additional `gitlab_geo_site` and `gitlab_geo_full_role` labels / tags respectively. `gitlab_geo_full_role` is a label / tag that is created for us by the Terraform module, this label is a combination of `geo_site`, `node_type` and `node_level`. Using this we can get the IP of a machine directly by its role in a Geo deployment from a single label.
 
-Dynamic Inventories differ slightly based on Cloud Provider. Below are full examples of Geo `all` Dynamic Inventory files for each Cloud Provider: 
+Dynamic Inventories differ slightly based on Cloud Provider. Below are full examples of Geo `all` Dynamic Inventory files for each Cloud Provider:
 
 GCP:
 

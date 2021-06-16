@@ -1,7 +1,3 @@
-- name: Read-only Replica - Ensure Postgres leader after reconfigure
-  import_tasks: set-postgres-leader.yml
-  when: postgres_replication_manager == 'patroni'
-
 - name: Read-only Replica - Add new config
   template:
     src: templates/read-only-replica.rb.j2

@@ -14,7 +14,17 @@ frontend internal-praefect-tcp-in
     option clitcpka
 
     default_backend praefect
-{% endif -%} 
+{% endif %}
+
+{% if 'geo_primary_site' in group_names and postgres_replication_manager == 'patroni' %}
+frontend internal-postgresql-tcp-in
+    bind *:5432
+    mode tcp
+    option tcplog
+    option clitcpka
+
+    default_backend postgresql
+{% endif %}
 
 backend pgbouncer
     mode tcp
@@ -34,4 +44,15 @@ backend praefect
 {% for ip in praefect_int_ips %}
     server praefect{{loop.index}} {{ ip }}:2305 check
 {% endfor %}
-{% endif -%} 
+{% endif %}
+
+{% if 'geo_primary_site' in group_names and postgres_replication_manager == 'patroni' %}
+backend postgresql
+    mode tcp
+    option httpchk
+    http-check expect status 200
+
+{% for ip in postgres_int_ips %}
+    server postgresql{{loop.index}} {{ ip }}:5432 maxconn 100 check port 8008 inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
+{% endfor %}
+{% endif -%}

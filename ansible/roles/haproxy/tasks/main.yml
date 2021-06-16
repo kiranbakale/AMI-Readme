@@ -32,7 +32,7 @@
     pull: true
     restart_policy: always
     state: started
-    ports: ['80:80', '6432:6432', '2305:2305', '1936:1936']
+    ports: ['80:80', '6432:6432', '2305:2305', '1936:1936', '5432:5432']
     volumes:
       - /opt/haproxy:/usr/local/etc/haproxy:ro
   when: "'haproxy_internal' in group_names"
