@@ -21,3 +21,5 @@ patroni['standby_cluster']['primary_slot_name'] = 'geo_secondary'
 patroni['replication_password'] = '{{ postgres_password }}'
 postgresql['sql_replication_password'] = '{{ (postgres_password + 'gitlab_replicator') | md5 }}'
 {% endif %}
+
+geo_logcursor['enable'] = false
