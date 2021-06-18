@@ -43,7 +43,7 @@ The `ref_arch` modules configure not only the VMs required for the environment b
 - `environment.tf` - `ref_arch` module configuration (machine count, sizes, etc...)
 - `variables.tf` - Variable definitions
 
-Each of the above files must be set in the same folder for Terraform to merge. Due to relative path requirements in Terraform we recommend you create these in a unique folder for your environment under the provided [`terraform/environments` folder](../terraform/environments). These docs will assume this is the case from now on.
+Each of the above files must be set in the same folder for Terraform to merge. Due to relative path requirements in Terraform we recommend you create these in a unique folder for your environment under the provided [`terraform/environments` folder](../terraform/environments), e.g. `terraform/environments/<env_name>`. These docs will assume this is the case from now on.
 
 In this step there are sections for each supported host provider on how to configure the above files. Follow the section for your selected provider and then move onto the next step.
 

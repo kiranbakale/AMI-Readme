@@ -51,6 +51,7 @@
           elasticsearch_shards: "5"
           elasticsearch_indexing: false
           elasticsearch_search: false
+        follow_redirects: all
         status_code: 200, 201
         body_format: json
       when: gitlab_license_plan == 'ultimate'
@@ -90,6 +91,7 @@
       elasticsearch_url: "{{ elasticsearch_urls | join(',') }}"
       elasticsearch_shards: "{{ elasticsearch_shards }}"
       elasticsearch_replicas: "{{ elasticsearch_replicas }}"
+    follow_redirects: all
     status_code: 200, 201
     body_format: json
   when: gitlab_license_plan == 'ultimate'
@@ -123,6 +125,7 @@
         body:
           elasticsearch_url: "{{ elasticsearch_urls | join(',') }}"
           elasticsearch_indexing: true
+        follow_redirects: all
         status_code: 200, 201
         body_format: json
       register: elasticsearch_status_result
@@ -203,6 +206,7 @@
       PRIVATE-TOKEN: '{{ access_token_key }}'
     body:
       elasticsearch_search: true
+    follow_redirects: all
     status_code: 200, 201
     body_format: json
   when:

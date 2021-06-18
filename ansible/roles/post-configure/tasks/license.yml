@@ -17,6 +17,7 @@
       PRIVATE-TOKEN: '{{ access_token_key }}'
     body:
       license: "{{ lookup('file', gitlab_license_file) }}"
+    follow_redirects: all
     status_code: 200, 201
     body_format: json
     return_content: true
