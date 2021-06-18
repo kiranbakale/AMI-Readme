@@ -25,7 +25,7 @@ repmgr['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 
 postgresql['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
 postgresql['max_replication_slots'] = {{ (groups['postgres'] | length) + 1 }}
-repmgr['master_on_initialization'] = {{ (true if 'postgres_primary' in group_names else false) | lower }}
+repmgr['master_on_initialization'] = {{ ('postgres_primary' in group_names) | lower }}
 
 {% endif %}
 

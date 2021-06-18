@@ -1,7 +1,11 @@
 # GitLab Environment Toolkit
 
-> Requires [GitLab Premium](https://about.gitlab.com/pricing/) or above.
-> Released under the [GitLab EE license](LICENSE).
+>>>
+Requires [GitLab Premium](https://about.gitlab.com/pricing/) or above.
+Released under the [GitLab EE license](LICENSE).
+
+Customers are very welcome to trial and evaluate GET today but we ask that you take into consideration the [continuing expansion of capabilities](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues), as well as limitations of the current iteration.
+>>>
 
 ![alt text](https://assets.gitlab-static.net/uploads/-/system/project/avatar/14292404/tanuki-blueprint.png "GitLab Environment Toolkit")
 

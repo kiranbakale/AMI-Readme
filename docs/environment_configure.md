@@ -73,7 +73,7 @@ To do this you only have to run the following before proceeding:
 
 One of the first pieces of config you will need to configure is the Inventory. As mentioned we use Dynamic Inventories as it automates the collection of machines and labels.
 
-The recommend place to store these is in a new folder under [`ansible/inventories`](../ansible/inventories).
+The recommend place to store these is in a new folder under [`ansible/inventories`](../ansible/inventories), e.g. `ansible/inventories/<env_name>`.
 
 Each Dynamic Inventory is a plugin offered by Ansible themselves and are different depending on the host provider. As such, select the section for your host provider and move onto the next step.
 
@@ -188,7 +188,7 @@ The structure of these files are flexible, ansible will merge all YAML files tha
 
 ### Environment config - `vars.yml`
 
-Starting with the main environment config file, `vars.yml`, which should be saved alongside the Dynamic Inventory file.
+Starting with the main environment config file, `vars.yml`, which should be **saved alongside the Dynamic Inventory file**, e.g. `ansible/inventories/<env_name>`. This is important as Ansible will load this file alongside the Dynamic Inventory file at runtime to get all the variables.
 
 Here's an example of the file with all standard config and descriptions below. Items in `<>` brackets need to be replaced with your config. It's worth noting that this is config for a standard install and further variables may be required for more advanced deployments, where applicable we detail these under the relevant section in our [Advanced docs sections](environment_advanced.md).
 

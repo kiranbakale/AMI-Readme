@@ -6,6 +6,7 @@
       PRIVATE-TOKEN: '{{ access_token_key }}'
     body:
       deletion_adjourned_period: 0
+    follow_redirects: all
     status_code: 200, 201
     body_format: json
 
@@ -19,6 +20,7 @@
       issues_create_limit: 0
       raw_blob_request_limit: 0
       max_import_size: 10240  # https://gitlab.com/gitlab-org/gitlab/-/issues/259801
+    follow_redirects: all
     status_code: 200, 201
     body_format: json
 
@@ -30,6 +32,7 @@
       PRIVATE-TOKEN: '{{ access_token_key }}'
     body:
       signup_enabled: false
+    follow_redirects: all
     status_code: 200, 201
     body_format: json
 
@@ -41,5 +44,6 @@
       PRIVATE-TOKEN: '{{ access_token_key }}'
     body:
       authorized_keys_enabled: false
+    follow_redirects: all
     status_code: 200, 201
     body_format: json
