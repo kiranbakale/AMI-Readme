@@ -55,8 +55,8 @@ module "gitlab_ref_arch_*" {
 
 Next you need to add 2 new labels that helps to identify the machines as belonging to our Geo deployment and if they are part of the primary or secondary site:
 
-- `geo_site` - used to identify if a machine belongs to the primary or secondary site. This should be set to either `geo-primary-site` or `geo-secondary-site`.
-- `geo_deployment` - used to identify that a primary and secondary site belong to the same Geo deployment.
+- `geo_site` - used to identify if a machine belongs to the primary or secondary site. This must be set to either `geo-primary-site` or `geo-secondary-site`.
+- `geo_deployment` - used to identify that a primary and secondary site belong to the same Geo deployment. This must be unique across all Geo deployments thats will be stored alongside each other.
 
 The recommended way to do this is to first set them in the `variables.tf` file, for example:
 
