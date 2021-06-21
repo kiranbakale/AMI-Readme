@@ -4,7 +4,9 @@
 Requires [GitLab Premium](https://about.gitlab.com/pricing/) or above.
 Released under the [GitLab EE license](LICENSE).
 
-Customers are very welcome to trial and evaluate GET today but we ask that you take into consideration the [continuing expansion of capabilities](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues), as well as limitations of the current iteration.
+GET’s journey is only just beginning. Currently it can configure a base GitLab environment based on the Reference Architectures that can be built upon accordingly.
+
+Customers are very welcome to trial and evaluate GET today, however be aware of [key limitations](#missing-features-to-be-aware-of) of the current iteration. For production environments further manual setup will be required based on your specific requirements.
 >>>
 
 ![alt text](https://assets.gitlab-static.net/uploads/-/system/project/avatar/14292404/tanuki-blueprint.png "GitLab Environment Toolkit")
@@ -50,6 +52,16 @@ Note that the Toolkit currently has the following requirements (with related iss
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](docs/environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Customizations](docs/environment_advanced.md)
   - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](docs/environment_advanced_hybrid.md)
+
+## Missing features to be aware of
+
+There are a few key features which are not supported yet, which are important to keep in mind.
+
+* Provisioning and configuring [SSL](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/3)
+* [Cloud-provider services](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/74), like Postgres (RDS) or object storage (S3)
+* GitLab [Registry support](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/25)
+* [OmniAuth](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/123) (SAML, OAuth) configuration support
+* [Promotion](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/133) of a Geo secondary
 
 ## Issues or Feature Requests
 
