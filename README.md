@@ -63,6 +63,8 @@ There are a few key features which are not supported yet, which are important to
 * [OmniAuth](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/123) (SAML, OAuth) configuration support
 * [Promotion](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/133) of a Geo secondary
 
+Our next release will be [v1.1.0](https://gitlab.com/groups/gitlab-org/-/epics/5614) and you can view our upcoming work sorted by tentative milestone on [our development board](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/boards). Please note that the issues slated for any upcoming release or milestone are subject to change and may not meet the planned timeframes.
+
 ## Issues or Feature Requests
 
 Everyone is welcome to open new Issues or Feature Requests (or to upvote existing ones) over on [our tracker](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues).
