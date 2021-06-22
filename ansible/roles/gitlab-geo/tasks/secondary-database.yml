@@ -31,6 +31,9 @@
   when:
     - postgres_replication_manager == 'patroni'
 
+- name: Secondary Database - Run gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
+
 - name: Secondary Database - Restart Postgres
   command: gitlab-ctl restart
 
