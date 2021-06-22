@@ -24,6 +24,14 @@ gcp_zone: ""
 ## AWS
 aws_region: ""
 
+## Alicloud
+alicloud_region: ""
+alicloud_endpoint: ""
+
+## Tencentcloud
+tencentcloud_region: ""
+tencentcloud_endpoint: ""
+
 ################################################################################
 ## GitLab Install Settings
 ################################################################################
