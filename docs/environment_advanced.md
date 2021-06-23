@@ -91,10 +91,14 @@ Once each site is configured we can run the `terraform apply` command against ea
 We will need to start by creating new inventories for a Geo deployment. For Geo we will require 3 inventories: `primary`, `secondary` and `all`. It is recommended to store these in one parent folder to keep all the config together.
 
 ```bash
-my-geo-deployment
-    ├── all
-    ├── primary
-    └── secondary
+ansible
+└── environments
+    └── my-geo-deployment
+        ├── files
+        └── inventory
+            ├── all
+            ├── primary
+            └── secondary
 ```
 
 The `primary` and `secondary` folders are treated the same as non Geo environments and as such the steps for [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md) should be followed.
@@ -190,7 +194,7 @@ Add the line `secondary_external_url` which needs to match the `external_url` in
 
 You can also remove the properties: `prefix`, `gitlab_license_file` and `gitlab_root_password`. These are not used when configuring Geo and as such should only be set in the `primary` and `secondary` inventories.
 
-Once done we can then run the command `ansible-playbook -i inventories/my-geo-deployment/all gitlab-geo.yml`.
+Once done we can then run the command `ansible-playbook -i environments/my-geo-deployment/inventory/all gitlab-geo.yml`.
 
 Once complete the 2 sites will now be part of the same Geo deployment.
 
@@ -245,11 +249,11 @@ Running the zero downtime update process with GET is done in the same way as bui
 1. `cd` to the `ansible/` directory if not already there.
 1. Run `ansible-playbook` with the intended environment's inventory against the `zero-downtime-update.yml` playbook
 
-    `ansible-playbook -i inventories/10k zero-downtime-update.yml`
+    `ansible-playbook -i environments/10k/inventory zero-downtime-update.yml`
 
 1. If GET is managing your Praefect Postgres instance you will need to run the following command to update this
 
-    `ansible-playbook -i inventories/10k praefect-postgres.yml`
+    `ansible-playbook -i environments/10k/inventory praefect-postgres.yml`
 
 > This will cause downtime due to GET only using a single Praefect Postgres node.
   If you want to have a highly available setup, Praefect requires a third-party PostgreSQL database and will need to be updated manually.
