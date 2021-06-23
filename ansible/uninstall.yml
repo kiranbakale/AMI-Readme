@@ -25,7 +25,7 @@
 
   - name: Remove the repository script file
     file:
-      path: "{{ gitlab_script_path }}"
+      path: "{{ gitlab_repo_script_path }}"
       state: absent
     when:
       - omnibus_node

@@ -1,3 +1,11 @@
+{% if 'gitlab_rails' in groups %}
+frontend internal-http-in
+    bind *:80
+
+    default_backend gitlab-rails
+{% endif %}
+
+{% if 'pgbouncer' in groups %}
 frontend internal-pgbouncer-tcp-in
     bind *:6432
     mode tcp
@@ -5,6 +13,7 @@ frontend internal-pgbouncer-tcp-in
     option clitcpka
 
     default_backend pgbouncer
+{% endif %}
 
 {% if 'praefect' in groups %}
 frontend internal-praefect-tcp-in
@@ -26,6 +35,14 @@ frontend internal-postgresql-tcp-in
     default_backend postgresql
 {% endif %}
 
+{% if 'gitlab_rails' in groups %}
+backend gitlab-rails
+{% for ip in gitlab_rails_int_ips %}
+    server gitlab-rails{{loop.index}} {{ ip }}:80
+{% endfor %}
+{% endif %}
+
+{% if 'pgbouncer' in groups %}
 backend pgbouncer
     mode tcp
     option tcp-check
@@ -34,6 +51,7 @@ backend pgbouncer
 {% for ip in pgbouncer_int_ips %}
     server pgbouncer{{loop.index}} {{ ip }}:6432 check
 {% endfor %}
+{% endif %}
 
 {% if 'praefect' in groups %}
 backend praefect
