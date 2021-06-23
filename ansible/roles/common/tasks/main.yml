@@ -81,7 +81,7 @@
     - name: Download GitLab repository installation script
       get_url:
         url: "{{ gitlab_repo_script_url }}"
-        dest: "{{ gitlab_script_path }}"
+        dest: "{{ gitlab_repo_script_path }}"
         force: true
       register: repo_file
       when:

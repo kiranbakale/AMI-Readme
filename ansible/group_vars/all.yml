@@ -33,14 +33,30 @@ tencentcloud_region: ""
 tencentcloud_endpoint: ""
 
 ################################################################################
+## Networking Settings
+################################################################################
+
+# HAProxy
+# haproxy_internal_primary_site_group_name: Sets the group name for haproxy_internal_int_ip for Geo or non Geo deployments
+haproxy_internal_primary_site_group_name: "{% if 'geo_primary_site_haproxy_internal_primary' in groups %}geo_primary_site_haproxy_internal_primary{% elif 'haproxy_internal' in groups %}haproxy_internal{% else %}{% endif %}"
+haproxy_internal_int_ip: "{{ (groups[haproxy_internal_primary_site_group_name] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_internal' in groups else ''}}"
+haproxy_external_int_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
+haproxy_external_ext_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, external_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
+
+################################################################################
 ## GitLab Install Settings
 ################################################################################
+
+external_url_sanitised: "{{ external_url | regex_replace('\\/$', '') }}"
+
+omnibus_node: true
 
 gitlab_version: ""
 gitlab_edition: "gitlab-ee"
 ## Set to env var, package with version wildcard or just latest
 gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default(gitlab_edition + '=' + gitlab_version + '*' if gitlab_version != '' else 'gitlab-ee', true) }}"
 gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh', true) }}"
+gitlab_repo_script_path: "/tmp/gitlab_install_repository.sh"
 ## Specify absolute path to the local deb package on host
 gitlab_deb_host_path: "{{ lookup('env','GITLAB_HOST_DEB_PATH')}}"
 ## Specify deb package url
@@ -48,11 +64,7 @@ gitlab_deb_download_url: "{{ lookup('env','GITLAB_DEB_DOWNLOAD_URL')}}"
 gitlab_deb_download_url_headers: "{{ lookup('env','GITLAB_DEB_DOWNLOAD_URL_HEADERS') | default('', true) }}"
 gitlab_deb_target_path: "{{ lookup('env','GITLAB_TARGET_DEB_PATH') | default('/tmp/gitlab_deb_package.deb', true)}}"
 
-external_url_sanitised: "{{ external_url | regex_replace('\\/$', '') }}"
-omnibus_node: true
 gitlab_admin_email: "admin@example.com"
-
-gitlab_script_path: "/tmp/gitlab_install_repository.sh"
 
 # Object Storage Buckets
 ## Will be switched to separate buckets by default in future release
@@ -78,6 +90,7 @@ gitlab_rails_int_ips: "{{ (groups['gitlab_rails'] | sort | map('extract', hostva
 # Gitaly
 gitaly_primary_int_ip: "{{ (groups['gitaly_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'gitaly_primary' in groups else '' }}"
 gitaly_secondary_int_ips: "{{ (groups['gitaly_secondary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'gitaly_secondary' in groups else [] }}"
+gitaly_callback_internal_api_url: "{{ ('http://' + haproxy_internal_int_ip) if 'haproxy_internal' in groups and 'gitlab_rails' in groups else external_url_sanitised }}"
 
 # Praefect
 praefect_primary_int_ip: "{{ (groups['praefect_primary'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_primary' in groups else '' }}"
@@ -118,13 +131,6 @@ sidekiq_max_concurrency: 10
 ################################################################################
 ## GitLab Component Settings (Non-Omnibus)
 ################################################################################
-
-# HAProxy
-# haproxy_internal_primary_site_group_name: Sets the group name for haproxy_internal_int_ip for Geo or non Geo deployments
-haproxy_internal_primary_site_group_name: "{% if 'geo_primary_site_haproxy_internal_primary' in groups %}geo_primary_site_haproxy_internal_primary{% elif 'haproxy_internal' in groups %}haproxy_internal{% else %}{% endif %}"
-haproxy_internal_int_ip: "{{ (groups[haproxy_internal_primary_site_group_name] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_internal' in groups else ''}}"
-haproxy_external_int_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
-haproxy_external_ext_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, external_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
 
 # GitLab NFS
 gitlab_nfs_int_ip: "{{ groups['gitlab_nfs'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') }}"
