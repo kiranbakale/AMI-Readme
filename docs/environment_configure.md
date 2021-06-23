@@ -69,15 +69,33 @@ To do this you only have to run the following before proceeding:
 1. Next, run the following command to install the roles - `ansible-galaxy install -r requirements/ansible-galaxy-requirements.yml`
 1. Note that if you're on a Mac OS machine you also need to install `gnu-tar` - `brew install gnu-tar`
 
-## 2. Setup the Environment's Dynamic Inventory
+## 2. Setup the Environment's Inventory and Config
+
+For your environment you'll need to set up some config and files to be used by Ansible.
+
+We recommend this is done in the `ansible/environments` folder with the following recommended structure:
+
+```sh
+ansible
+└── environments
+    └── <env_name>
+        ├── files
+        └── inventory
+```
+
+> Previously we suggested a different folder structure under the `inventories` folder. While this will continue to work we recommend moving to the above structure moving forward.
+
+With the above structure in place we can now look at the files to be configured. The rest of this guide will assume this structure is being used.
+
+### Configure Dynamic Inventory
 
 One of the first pieces of config you will need to configure is the Inventory. As mentioned we use Dynamic Inventories as it automates the collection of machines and labels.
 
-The recommend place to store these is in a new folder under [`ansible/inventories`](../ansible/inventories), e.g. `ansible/inventories/<env_name>`.
+Using the recommended structure the file should be saved in the `inventory` folder, e.g. `environments/<env_name>/inventory`.
 
 Each Dynamic Inventory is a plugin offered by Ansible themselves and are different depending on the host provider. As such, select the section for your host provider and move onto the next step.
 
-### Google Cloud Platform (GCP)
+#### Google Cloud Platform (GCP)
 
 The Google Dynamic Inventory plugin is called [`gcp_compute`](https://docs.ansible.com/ansible/latest/collections/google/cloud/gcp_compute_inventory.html). This will have been installed already during the Ansible install process via `ansible-galaxy install`.
 
@@ -113,7 +131,7 @@ compose:
 - `hostnames` - Config block for how Ansible should show the hosts in its output. This block configures the use of hostnames rather than IPs for better readability. This config block should not be changed.
 - `compose`: As shown in the comment this sets what IPs Ansible should use. This config block shouldn't be changed unless private IPs are desired as mentioned in the comment.
 
-#### Configure Authentication (GCP)
+##### Configure Authentication (GCP)
 
 Finally the last thing to configure is authentication. This is required so Ansible can access GCP to build its dynamic inventory.
 
@@ -128,7 +146,7 @@ All of the methods given involve the Service Account file you generated previous
 
 Alternatively, instead of setting `GCP_AUTH_KIND`, you can add `auth_kind` to your [Environment config file](#environment-config-varsyml) (`vars.yml`) file to specify which authentication method you'd like to use.
 
-### Amazon Web Services (AWS)
+#### Amazon Web Services (AWS)
 
 The AWS Dynamic Inventory plugin is called [`aws_ec2`](https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html). This will have been installed already during the Ansible install process via `ansible-galaxy install`.
 
@@ -161,7 +179,7 @@ compose:
 - `hostnames` - Config block for how Ansible should show the hosts in its output. This block configures the use of hostnames rather than IPs for better readability. This config block should not be changed.
 - `compose`: As shown in the comment this set what IPs Ansible should use. This config block shouldn't be changed unless private IPs are desired as mentioned in the comment.
 
-#### Configure Authentication (AWS)
+##### Configure Authentication (AWS)
 
 Finally the last thing to configure is authentication. This is required so Ansible can access AWS to build its dynamic inventory.
 
@@ -174,11 +192,11 @@ All of the methods given involve the AWS Access Key you generated previously. We
 
 Once the two variables are either set locally or in your CI pipeline Ansible will be able to fully authenticate for both the provider and backend.
 
-### Azure (Coming Soon)
+#### Azure (Coming Soon)
 
 <img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
 
-## 3. Setup the Environment's config
+### Configure Variables
 
 Next we need to configure various Environment specific variables that Ansible will use when configuring GitLab. This is done by setting Inventory variables in separate files alongside the dynamic inventory to ensure the variables are used only for the specific environment.
 
@@ -186,9 +204,9 @@ The structure of these files are flexible, ansible will merge all YAML files tha
 
 - `vars.yml` - Contains all main config specific to the environment such as connection details, component settings, passwords, etc...
 
-### Environment config - `vars.yml`
+#### Environment config - `vars.yml`
 
-Starting with the main environment config file, `vars.yml`, which should be **saved alongside the Dynamic Inventory file**, e.g. `ansible/inventories/<env_name>`. This is important as Ansible will load this file alongside the Dynamic Inventory file at runtime to get all the variables.
+Starting with the main environment config file, `vars.yml`, which should be **saved in the same folder as the Dynamic Inventory file**, e.g. `ansible/environments/<env_name>/inventory`. This is important as Ansible will load this file alongside the Dynamic Inventory file at runtime to get all the variables.
 
 Here's an example of the file with all standard config and descriptions below. Items in `<>` brackets need to be replaced with your config. It's worth noting that this is config for a standard install and further variables may be required for more advanced deployments, where applicable we detail these under the relevant section in our [Advanced docs sections](environment_advanced.md).
 
@@ -283,7 +301,11 @@ Passwords and Secrets settings are what they suggest - all of the various passwo
 
 Note that this documentation doesn't provide instructions on how to keep these values safe but this is recommended in line with your security requirements.
 
-### Selecting what GitLab version to install
+#### Configure Files
+
+<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
+
+#### Selecting what GitLab version to install
 
 By default the Toolkit will deploy the latest [GitLab EE package](https://packages.gitlab.com/gitlab/gitlab-ee) via its repo.
 
@@ -296,7 +318,7 @@ The Toolkit can install other GitLab versions from `13.2.0` onwards through two 
   - If the package needs to be uploaded from the local host where Ansible is running, add the `gitlab_deb_host_path` inventory variable that should be set to the local path where the file is located.
   - An additional variable, `gitlab_deb_target_path` configures where Ansible should copy the Debian file onto the targets before installing but this is set to `/tmp` by default and doesn't need to be changed.
 
-### Full config list and further examples
+#### Full config list and further examples
 
 All Ansible config can be viewed directly in the project under the [`group_vars`](../ansible/group_vars) folder. Most config will be found in the [`all.yml`](../ansible/group_vars/all.yml) file, where config applies to all machines. Additional config that only needs to apply to select machines can be found under specific group names under this folder. As mentioned earlier, we may also refer to additional variables in detail later in these docs under the [Advanced sections](environment_advanced.md) where they are applicable.
 
@@ -307,8 +329,8 @@ The Quality team actively uses the Toolkit daily to build and test various envir
 After the config has been setup you're now ready to configure the environment. This is done as follows:
 
 1. `cd` to the `ansible/` directory if not already there.
-1. Run `ansible-playbook` with the intended environment's inventory against the `all.yml` playbook - `ansible-playbook -i inventories/10k all.yml`
-    - Note that we pass the whole inventory folder - `inventories/10k`. This ensures Ansible reads all the files in the directory.
+1. Run `ansible-playbook` with the intended environment's inventory against the `all.yml` playbook - `ansible-playbook -i environments/10k/inventory all.yml`
+    - Note that we pass the whole inventory folder - `environments/10k/inventory`. This ensures Ansible reads all the files in the directory.
     - If you only want to run a specific playbook & role against the respective VMs you can switch out `all.yml` and replace it with the intended playbook, e.g. `gitlab-rails.yml`
 
 ### Running with ansible-deployer (optional)
@@ -318,7 +340,7 @@ An alternative way to run the playbooks is with the `ansible-deployer` script. T
 The script can be run as follows:
 
 1. `cd` to the `ansible/` directory if not already there.
-1. Run `ansible-deployer` with the intended environment's just the same as `ansible-playbook` - `./bin/ansible-deployer -i inventories/10k all.yml`
+1. Run `ansible-deployer` with the intended environment's just the same as `ansible-playbook` - `./bin/ansible-deployer -i environments/10k/inventory all.yml`
 
 Due to running multiple commands in parallel the stdout of the ansible runner can get very messy, to alleviate this issue the stdout is suppressed and each playbook will create its own log file in `logs`.
 

@@ -12,6 +12,8 @@ ansible/tmp/
 .tool-versions
 terraform/environments/*
 !terraform/environments/README.md
+ansible/environments/*
+!ansible/environments/README.md
 ansible/inventories/*
 !ansible/inventories/README.md
 keys/*
