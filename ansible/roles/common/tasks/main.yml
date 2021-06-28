@@ -12,6 +12,10 @@
         - ansible_hostname != inventory_hostname
       tags: hostname
 
+    - name: Mount data disk if given
+      import_tasks: disks.yml
+      when: data_disk is defined
+
     - name: Add GitLab repository GPG key
       apt_key:
         url: https://gitlab-org.gitlab.io/omnibus-gitlab/gitlab_new_gpg.key
