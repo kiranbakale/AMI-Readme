@@ -49,3 +49,11 @@ variable "geo_site" {
 variable "geo_deployment" {
   default = null
 }
+
+variable "data_disk_type" {
+  default = "CLOUD_SSD"
+}
+
+variable "data_disk_size" {
+  default = null
+}

@@ -25,11 +25,13 @@ variable "elastic_node_count" { default = 0 }
 variable "elastic_instance_type" { default = "" }
 variable "elastic_disk_type" { default = "CLOUD_SSD" }
 variable "elastic_disk_size" { default = "500" }
+variable "elastic_data_disk_size" { default = "500" }
 
 variable "gitaly_node_count" { default = 0 }
 variable "gitaly_instance_type" { default = "" }
 variable "gitaly_disk_type" { default = "CLOUD_SSD" }
 variable "gitaly_disk_size" { default = "500" }
+variable "gitaly_data_disk_size" { default = "500" }
 
 variable "gitlab_nfs_node_count" { default = 0 }
 variable "gitlab_nfs_instance_type" { default = "" }
@@ -60,6 +62,7 @@ variable "postgres_node_count" { default = 0 }
 variable "postgres_instance_type" { default = "" }
 variable "postgres_disk_type" { default = null }
 variable "postgres_disk_size" { default = null }
+variable "postgres_data_disk_size" { default = null }
 
 variable "praefect_node_count" { default = 0 }
 variable "praefect_instance_type" { default = "" }
@@ -75,6 +78,7 @@ variable "redis_node_count" { default = 0 }
 variable "redis_instance_type" { default = "" }
 variable "redis_disk_type" { default = null }
 variable "redis_disk_size" { default = null }
+variable "redis_data_disk_size" { default = null }
 
 variable "redis_cache_node_count" { default = 0 }
 variable "redis_cache_instance_type" { default = "" }
