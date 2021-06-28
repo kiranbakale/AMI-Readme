@@ -140,8 +140,6 @@ module "gitlab_ref_arch_gcp" {
   prefix = var.prefix
   project = var.project
 
-  object_storage_buckets = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"]
-
   # 10k
   consul_node_count = 3
   consul_machine_type = "n1-highcpu-2"
@@ -201,7 +199,6 @@ output "gitlab_ref_arch_gcp" {
   - `source` - The relative path to the `gitlab_ref_arch_gcp` module. We assume you're creating config in the `terraform/environments/` folder here but if you're in a different location this setting must be updated to the correct path.
   - `prefix` - The name prefix of the project. Set in `variables.tf`.
   - `project` - The [ID](https://support.google.com/googleapi/answer/7014113?hl=en) of the GCP project to connect to. Set in `variables.tf`.
-  - `object_storage_buckets` allows for the creation of separate object storage buckets for each type of data GitLab stores. Each bucket will have a name following the convention `<prefix>-<datatype>`.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
 
@@ -307,8 +304,6 @@ module "gitlab_ref_arch_aws" {
   prefix = var.prefix
   ssh_public_key_file = file(var.ssh_public_key_file)
 
-  object_storage_buckets = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"]
-
   # 10k
   consul_node_count = 3
   consul_instance_type = "c5.large"
@@ -368,7 +363,6 @@ output "gitlab_ref_arch_aws" {
   - `source` - The relative path to the `gitlab_ref_arch_aws` module. We assume you're creating config in the `terraform/environments/` folder here but if you're in a different location this setting must be updated to the correct path.
   - `prefix` - The name prefix of the project. Set in `variables.tf`.
   - `ssh_public_key_file` - The file path of the public SSH key. Set in `variables.tf`.
-  - `object_storage_buckets` allows for the creation of separate object storage buckets for each type of data GitLab stores. Each bucket will have a name following the convention `<prefix>-<datatype>`.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
 

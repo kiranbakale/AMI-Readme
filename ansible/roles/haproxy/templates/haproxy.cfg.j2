@@ -18,7 +18,6 @@ defaults
     timeout connect 10m
     timeout client 30m
     timeout server 30m
-    errorfile 503 /usr/local/etc/haproxy/errorfiles/503.http
  
 {% if 'haproxy_external' in hostvars[inventory_hostname].group_names %}
 {% include 'haproxy_external.cfg.j2' %}

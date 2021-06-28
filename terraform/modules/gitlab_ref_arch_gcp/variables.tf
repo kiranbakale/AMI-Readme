@@ -11,9 +11,8 @@ variable "default_disk_type" { default = "pd-standard" }
 
 variable "project" { default = null }
 
-# To be change in the future to the below by default as a breaking change
-# ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"]
-variable "object_storage_buckets" { default = ["object-storage"] }
+variable "object_storage_buckets" { default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"] }
+variable "object_storage_buckets_force_destroy" { default = false }
 
 # Machines
 variable "consul_node_count" { default = 0 }

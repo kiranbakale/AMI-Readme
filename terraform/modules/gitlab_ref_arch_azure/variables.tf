@@ -23,6 +23,8 @@ variable "ssh_public_key_file_path" { default = null }
 variable "default_disk_size" { default = "100" }
 variable "default_storage_account_type" { default = "Standard_LRS" }
 
+variable "object_storage_buckets" { default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"] }
+
 variable "project" { default = null }
 
 # Machines

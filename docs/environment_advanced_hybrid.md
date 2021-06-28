@@ -61,8 +61,6 @@ module "gitlab_ref_arch_gcp" {
   supporting_node_pool_count = 2
   supporting_node_pool_machine_type = "n1-standard-4"
 
-  object_storage_buckets = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"]
-
   # 10k Hybrid - Compute VMs
   consul_node_count = 3
   consul_machine_type = "n1-highcpu-2"
@@ -115,7 +113,6 @@ By design, this file is similar to the one used in a [normal environment](enviro
 - `sidekiq_x` entries are replaced with `sidekiq_node_pool_x`
 - `supporting_node_pool_x` entries are added for several additional supporting services needed when running components in Helm Charts, e.g. NGINX, etc...
 - `haproxy_external_x` entries are removed as the Chart deployment handles external load balancing.
-- `object_storage_buckets` allows for the creation of separate object storage buckets for each type of data GitLab stores. Each bucket will have a name following the convention `<prefix>-<datatype>`.
 
 Each node pool setting configures the following. To avoid repetition we'll describe each setting once:
 
@@ -146,7 +143,7 @@ As a convenience, the Toolkit can automatically run this command for you in its 
 
 ## 3. Configuring the Helm Charts deployment with Ansible
 
-Like Provisioning with Terraform, configuring the Helm deployment onto the Kubernetes cluster on Google Kubernetes Engine (as well as configuring the backend compute VMs as normal) only requires a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) - Namely a few extra settings required for Helm and Object Storages.
+Like Provisioning with Terraform, configuring the Helm deployment onto the Kubernetes cluster on Google Kubernetes Engine (as well as configuring the backend compute VMs as normal) only requires a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) - Namely a few extra settings required for Helm.
 
 Here's an example of a file with all config for a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) and descriptions below:
 
@@ -174,16 +171,6 @@ all:
     patroni_remove_data_directory_on_rewind_failure: false
     patroni_remove_data_directory_on_diverged_timelines: false
 
-    # Object Storage Settings
-    gitlab_object_storage_artifacts_bucket: "{{ prefix }}-artifacts"
-    gitlab_object_storage_backups_bucket: "{{ prefix }}-backups"
-    gitlab_object_storage_dependency_proxy_bucket: "{{ prefix }}-dependency-proxy"
-    gitlab_object_storage_external_diffs_bucket: "{{ prefix }}-mr-diffs"
-    gitlab_object_storage_lfs_bucket: "{{ prefix }}-lfs"
-    gitlab_object_storage_packages_bucket: "{{ prefix }}-packages"
-    gitlab_object_storage_terraform_state_bucket: "{{ prefix }}-terraform-state"
-    gitlab_object_storage_uploads_bucket: "{{ prefix }}-uploads"
-
     # Passwords / Secrets
     gitlab_root_password: '<gitlab_root_password>'
     grafana_password: '<grafana_password>'
@@ -202,7 +189,6 @@ By design, this file is similar to the one used in a [normal environment](enviro
 - `gcp_zone` - Zone name the GCP project is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
 - `external_ip` - External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid installs.
 - `kubeconfig_setup` - When true, will attempt to automatically configure the `.kubeconfig` file entry for the provisioned Kubernetes cluster.
-- `gitlab_object_storage_*_bucket` - The name of the Object Storage bucket for the specific data type. When used in conjunction with the Terraform `object_storage_buckets` setting each data type bucket will have the naming convention `<prefix>-<datatype>`. If using custom Object Storage buckets then set these accordingly but note that for GitLab it's recommended each data type has a separate bucket.
 
 ### Additional Config Settings
 

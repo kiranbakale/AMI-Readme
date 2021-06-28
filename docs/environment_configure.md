@@ -236,16 +236,6 @@ all:
     patroni_remove_data_directory_on_rewind_failure: false
     patroni_remove_data_directory_on_diverged_timelines: false
 
-    # Object Storage Settings
-    gitlab_object_storage_artifacts_bucket: "{{ prefix }}-artifacts"
-    gitlab_object_storage_backups_bucket: "{{ prefix }}-backups"
-    gitlab_object_storage_dependency_proxy_bucket: "{{ prefix }}-dependency-proxy"
-    gitlab_object_storage_external_diffs_bucket: "{{ prefix }}-mr-diffs"
-    gitlab_object_storage_lfs_bucket: "{{ prefix }}-lfs"
-    gitlab_object_storage_packages_bucket: "{{ prefix }}-packages"
-    gitlab_object_storage_terraform_state_bucket: "{{ prefix }}-terraform-state"
-    gitlab_object_storage_uploads_bucket: "{{ prefix }}-uploads"
-
     # Passwords / Secrets
     gitlab_root_password: '<gitlab_root_password>'
     grafana_password: '<grafana_password>'
@@ -281,10 +271,6 @@ Component settings are specific component for GitLab components, e.g. Postgres:
 
 - `patroni_remove_data_directory_on_rewind_failure` - A specific Patroni flag that enables resetting of database data on a secondary node if attempts to sync with the primary can't be achieved. **This may lead to data loss**, refer to the [GitLab Postgres documentation](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#customizing-patroni-failover-behavior) for further info.
 - `patroni_remove_data_directory_on_rewind_failure` - A specific Patroni flag that enables resetting of database data on a secondary node if timelines have diverged with the primary. **This may lead to data loss**, refer to the [GitLab Postgres documentation](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#customizing-patroni-failover-behavior) for further info.
-
-Object Storage settings configure GitLab on what Object Storage Buckets to use per data type
-
-- `gitlab_object_storage_*_bucket` - The name of the Object Storage bucket for the specific data type. When used in conjunction with the Terraform `object_storage_buckets` setting each data type bucket will have the naming convention `<prefix>-<datatype>`. If using custom Object Storage buckets then set these accordingly but note that for GitLab it's recommended each data type has a separate bucket.
 
 Passwords and Secrets settings are what they suggest - all of the various passwords and secrets that GitLab requires to be configured by the user.
 
