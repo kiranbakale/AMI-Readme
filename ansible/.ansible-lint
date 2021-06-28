@@ -1,6 +1,7 @@
 exclude_paths:
   - ${HOME}/.ansible/roles/
 skip_list:
+  - experimental
   - role-name  # Role name {} does not match ``^[a-z][a-z0-9_]+$`` pattern
   - risky-file-permissions  # Lines should be no longer than 160 char
   - no-changed-when  # File permissions unset or incorrect
