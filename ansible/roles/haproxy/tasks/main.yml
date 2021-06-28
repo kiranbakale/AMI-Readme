@@ -11,12 +11,6 @@
     dest: /opt/haproxy/haproxy.cfg
   tags: reconfigure
 
-- name: Copy HAProxy error files
-  copy:
-    src: "files/errorfiles"
-    dest: "/opt/haproxy"
-  tags: reconfigure
-
 - name: Remove old HAProxy container
   docker_container:
     name: haproxy

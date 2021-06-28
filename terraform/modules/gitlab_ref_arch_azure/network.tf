@@ -11,7 +11,3 @@ resource "azurerm_subnet" "gitlab" {
   address_prefixes     = ["172.17.0.0/16"]
   resource_group_name = var.resource_group_name
 }
-
-output "subnet" {
-  value = azurerm_subnet.gitlab
-}

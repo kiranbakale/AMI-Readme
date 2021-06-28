@@ -68,14 +68,14 @@ gitlab_admin_email: "admin@example.com"
 
 # Object Storage Buckets
 ## Will be switched to separate buckets by default in future release
-gitlab_object_storage_artifacts_bucket: "{{ prefix }}-object-storage"
-gitlab_object_storage_backups_bucket: "{{ prefix }}-object-storage"
-gitlab_object_storage_dependency_proxy_bucket: "{{ prefix }}-object-storage"
-gitlab_object_storage_external_diffs_bucket: "{{ prefix }}-object-storage"
-gitlab_object_storage_lfs_bucket: "{{ prefix }}-object-storage"
-gitlab_object_storage_packages_bucket: "{{ prefix }}-object-storage"
-gitlab_object_storage_terraform_state_bucket: "{{ prefix }}-object-storage"
-gitlab_object_storage_uploads_bucket: "{{ prefix }}-object-storage"
+gitlab_object_storage_artifacts_bucket: "{{ prefix }}-artifacts"
+gitlab_object_storage_backups_bucket: "{{ prefix }}-backups"
+gitlab_object_storage_dependency_proxy_bucket: "{{ prefix }}-dependency-proxy"
+gitlab_object_storage_external_diffs_bucket: "{{ prefix }}-mr-diffs"
+gitlab_object_storage_lfs_bucket: "{{ prefix }}-lfs"
+gitlab_object_storage_packages_bucket: "{{ prefix }}-packages"
+gitlab_object_storage_terraform_state_bucket: "{{ prefix }}-terraform-state"
+gitlab_object_storage_uploads_bucket: "{{ prefix }}-uploads"
 
 ################################################################################
 ## GitLab Component Settings (Omnibus)
