@@ -1,7 +1,7 @@
 resource "aws_s3_bucket" "gitlab_object_storage_buckets" {
   for_each = toset(var.object_storage_buckets)
   bucket = "${var.prefix}-${each.value}"
-  force_destroy = true
+  force_destroy = var.object_storage_buckets_force_destroy
 }
 
 resource "aws_iam_role" "gitlab_s3_role" {

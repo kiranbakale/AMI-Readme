@@ -9,6 +9,7 @@ module "gitaly" {
   ami_id = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
   disk_size = coalesce(var.gitaly_disk_size, var.default_disk_size)
   disk_type = coalesce(var.gitaly_disk_type, var.default_disk_type)
+  disk_iops = 8000
   iam_instance_profile = aws_iam_instance_profile.gitlab_s3_profile.name
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
