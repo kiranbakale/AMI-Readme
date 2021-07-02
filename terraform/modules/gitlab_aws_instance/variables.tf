@@ -39,6 +39,10 @@ variable "disk_size" {
   default = "100"
 }
 
+variable "disk_iops" {
+  default = null
+}
+
 variable "label_secondaries" {
   default = false
 }
