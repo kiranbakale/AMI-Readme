@@ -1,6 +1,9 @@
 {% if 'gitlab_rails' in groups %}
-frontend internal-http-in
+frontend internal-gitlab-rails-tcp-in
     bind *:80
+    mode tcp
+    option tcplog
+    option clitcpka
 
     default_backend gitlab-rails
 {% endif %}
@@ -37,8 +40,12 @@ frontend internal-postgresql-tcp-in
 
 {% if 'gitlab_rails' in groups %}
 backend gitlab-rails
+    mode tcp
+    option tcp-check
+    option srvtcpka
+
 {% for ip in gitlab_rails_int_ips %}
-    server gitlab-rails{{loop.index}} {{ ip }}:80
+    server gitlab-rails{{loop.index}} {{ ip }}:80 check
 {% endfor %}
 {% endif %}
 

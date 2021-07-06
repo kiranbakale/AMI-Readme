@@ -26,6 +26,7 @@ user['gid'] = 9000
 web_server['uid'] = 9001
 web_server['gid'] = 9001
 
+# Nginx Config
 nginx['enable'] = true
 nginx['status']['options'] = {
   "server_tokens" => "off",
@@ -35,6 +36,13 @@ nginx['status']['options'] = {
   "allow" => "{{ monitor_int_ip }}"
 {% endif -%}
 }
+
+{% if external_ssl %}
+nginx['listen_port'] = 80
+nginx['listen_https'] = false
+
+letsencrypt['enable'] = false
+{% endif %}
 
 ### External merge request diffs - store outdated diffs in object storage
 gitlab_rails['external_diffs_when'] = 'outdated'

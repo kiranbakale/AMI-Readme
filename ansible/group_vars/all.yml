@@ -43,6 +43,11 @@ haproxy_internal_int_ip: "{{ (groups[haproxy_internal_primary_site_group_name] |
 haproxy_external_int_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
 haproxy_external_ext_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, external_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
 
+# External SSL
+external_ssl: "{{ 'https' in external_url }}"
+external_ssl_certificates_name: "{{ external_url | regex_replace('^https?:\/\/') }}"
+external_ssl_certificates_host_path: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/certificates"
+
 ################################################################################
 ## GitLab Install Settings
 ################################################################################

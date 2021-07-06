@@ -97,13 +97,18 @@ global:
   hosts:
     domain: "{{ external_url | regex_replace('^https?:\/\/') }}"
     externalIP: "{{ external_ip }}"
-    https: false
+    https: {{ external_ssl | lower }}
     gitlab:
       name: "{{ external_url | regex_replace('^https?:\/\/') }}"
   ingress:
     configureCertmanager: false
     tls:
+{% if external_ssl %}
+      enabled: true
+      secretName: gitlab-webservice-ssl
+{% else %}
       enabled: false
+{% endif %}
   minio:
     enabled: false
   psql:
@@ -145,6 +150,8 @@ nginx-ingress:
   defaultBackend:
     nodeSelector:
       workload: ""
+certmanager:
+  install: false
 prometheus:
   alertmanager:
     nodeSelector:
