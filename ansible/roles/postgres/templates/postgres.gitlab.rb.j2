@@ -35,7 +35,7 @@ patroni['enable'] = false
 {% endif %}
 
 {% if postgres_version is defined %}
-postgresql['version'] = postgres_version
+postgresql['version'] = {{ postgres_version }}
 {% elif postgres_replication_manager == 'repmgr' %}
 postgresql['version'] = 11
 {% endif %}
