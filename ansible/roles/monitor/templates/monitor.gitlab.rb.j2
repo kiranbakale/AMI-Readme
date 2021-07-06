@@ -134,6 +134,13 @@ nginx['status']['options'] = {
   "deny" => "all",
 }
 
+{% if external_ssl %}
+nginx['listen_port'] = 80
+nginx['listen_https'] = false
+
+letsencrypt['enable'] = false
+{% endif %}
+
 node_exporter['listen_address'] = '0.0.0.0:9100'
 
 confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.*.rb"))

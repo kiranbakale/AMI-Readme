@@ -5,6 +5,27 @@
     state: directory
   tags: reconfigure
 
+- name: Copy any SSL certificates
+  block:
+    - name: Check if HAProxy SSL cert is provided
+      stat:
+        path: "{{ external_ssl_certificates_host_path }}/{{ external_ssl_certificates_name }}.pem"
+      delegate_to: localhost
+      become: false
+      register: haproxy_pem_cert
+
+    - name: Copy over HAProxy SSL cert
+      copy:
+        src: "{{ external_ssl_certificates_host_path }}/{{ external_ssl_certificates_name }}.pem"
+        dest: "/opt/haproxy"
+      when: haproxy_pem_cert.stat.exists
+  tags:
+    - reconfigure
+    - ssl
+  when:
+    - "'haproxy_external' in group_names"
+    - external_ssl
+
 - name: Create /opt/haproxy/haproxy.cfg file
   template:
     src: templates/haproxy.cfg.j2

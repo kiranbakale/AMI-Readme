@@ -52,6 +52,7 @@
           elasticsearch_indexing: false
           elasticsearch_search: false
         follow_redirects: all
+        validate_certs: false
         status_code: 200, 201
         body_format: json
       when: gitlab_license_plan == 'ultimate'
@@ -71,6 +72,7 @@
         method: GET
         headers:
           PRIVATE-TOKEN: '{{ access_token_key }}'
+        validate_certs: false
         status_code: 200, 201
         body_format: json
         return_content: true
@@ -92,6 +94,7 @@
       elasticsearch_shards: "{{ elasticsearch_shards }}"
       elasticsearch_replicas: "{{ elasticsearch_replicas }}"
     follow_redirects: all
+    validate_certs: false
     status_code: 200, 201
     body_format: json
   when: gitlab_license_plan == 'ultimate'
@@ -126,6 +129,7 @@
           elasticsearch_url: "{{ elasticsearch_urls | join(',') }}"
           elasticsearch_indexing: true
         follow_redirects: all
+        validate_certs: false
         status_code: 200, 201
         body_format: json
       register: elasticsearch_status_result
@@ -188,6 +192,7 @@
         method: GET
         headers:
           PRIVATE-TOKEN: '{{ access_token_key }}'
+        validate_certs: false
         status_code: 200, 201
         body_format: json
         return_content: true
@@ -207,6 +212,7 @@
     body:
       elasticsearch_search: true
     follow_redirects: all
+    validate_certs: false
     status_code: 200, 201
     body_format: json
   when:
