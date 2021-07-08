@@ -65,7 +65,7 @@ module "gitlab_ref_arch_gcp" {
   consul_node_count = 3
   consul_machine_type = "n1-highcpu-2"
 
-  elastic_node_count = 3 
+  elastic_node_count = 3
   elastic_machine_type = "n1-highcpu-16"
 
   gitaly_node_count = 3
@@ -175,6 +175,7 @@ all:
     gitlab_root_password: '<gitlab_root_password>'
     grafana_password: '<grafana_password>'
     postgres_password: '<postgres_password>'
+    patroni_password: '<patroni_password>'
     consul_database_password: '<consul_database_password>'
     pgbouncer_password: '<pgbouncer_password>'
     redis_password: '<redis_password>'

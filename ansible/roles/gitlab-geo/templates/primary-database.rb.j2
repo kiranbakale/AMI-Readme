@@ -15,4 +15,9 @@ patroni['replication_slots'] = {
 }
 postgresql['sql_replication_password'] = '{{ (postgres_password + 'gitlab_replicator') | md5 }}'
 patroni['replication_password'] = '{{ postgres_password }}'
+
+{% if patroni_password is defined %}
+patroni['username'] = 'patroni-api'
+patroni['password'] = '{{ patroni_password }}'
+{% endif %}
 {% endif %}

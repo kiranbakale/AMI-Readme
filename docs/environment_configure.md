@@ -240,6 +240,7 @@ all:
     gitlab_root_password: '<gitlab_root_password>'
     grafana_password: '<grafana_password>'
     postgres_password: '<postgres_password>'
+    patroni_password: '<patroni_password>'
     consul_database_password: '<consul_database_password>'
     gitaly_token: '<gitaly_token>'
     pgbouncer_password: '<pgbouncer_password>'
@@ -277,6 +278,7 @@ Passwords and Secrets settings are what they suggest - all of the various passwo
 - `gitlab_root_password` - Sets the password for the root user on first installation.
 - `grafana_password` - Sets the password for the [Grafana admin user](https://docs.gitlab.com/omnibus/settings/grafana.html#specifying-an-admin-password) on first installation.
 - `postgres_password` - Sets the password for the [GitLab's default Postgres user](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#postgresql-information).
+- `patroni_password` - Sets the password for the [Patroni REST API](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#patroni-information) (GitLab 14.1+).
 - `consul_database_password` - Sets the password for [Consul's database user](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#consul-information). Required for Postgres HA.
 - `pgbouncer_password` - Sets the password for [GitLab's default PgBouncer user](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#pgbouncer-information)
 - `redis_password` - Sets the password for [Redis](https://docs.gitlab.com/ee/administration/redis/replication_and_failover.html#step-1-configuring-the-primary-redis-instance).
