@@ -120,6 +120,14 @@ AWS:
   separator: ''
 ```
 
+Azure:
+
+```yaml
+- prefix: ''
+  separator: ''
+  key: tags.gitlab_geo_site | default('ungrouped')
+```
+
 Once the inventories for primary and secondary are complete you can use Ansible to configure GitLab. Once complete you will have 2 independent instances of GitLab. The primary site should have a license installed and the secondary will not.
 As these environments are still separate from each other at this point, they can be built at the same time and are not reliant on each other. Once complete you should be able to log into each environment before continuing.
 
@@ -186,6 +194,29 @@ compose:
   # Use the public IP address to connect to the host
   # (note: this does not modify inventory_hostname, which is set via I(hostnames))
   ansible_host: public_ip_address
+```
+
+Azure:
+
+```yml
+plugin: azure.azcollection.azure_rm
+
+include_vm_resource_groups:
+  - "<resource_group_name>"
+
+keyed_groups:
+  - prefix: ''
+    separator: ''
+    key: tags.gitlab_node_type | default('ungrouped')
+  - prefix: ''
+    separator: ''
+    key: tags.gitlab_node_level | default('ungrouped')
+  - prefix: ''
+    separator: ''
+    key: tags.gitlab_geo_site | default('ungrouped')
+  - prefix: ''
+    separator: ''
+    key: tags.gitlab_geo_full_role | default('ungrouped')
 ```
 
 #### Environment config - `vars.yml`

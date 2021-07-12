@@ -50,7 +50,7 @@ We recommend installing GCP's command line tool, `gcloud` as per the [official i
 
 Each environment is recommended to have its own project on GCP for various reasons such as ensuring there's no conflicts, avoiding shared firewall rule changes / quota limits, etc...
 
-Existing projects can also be used but this should be checked with the Project's stakeholders as this will effect things such as total CPU quotas, etc...
+Existing projects can also be used but this should be checked with the Project's stakeholders as this will affect things such as total CPU quotas, etc...
 
 ### 3. Setup Provider Authentication - GCP Service Account
 
@@ -133,9 +133,52 @@ A static IP, AKA an Elastic IP, can be generated in AWS as follows:
 
 Once the IP is available take note of its allocation ID for later.
 
-## Azure (Coming Soon)
+## Azure
 
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
+### 1. Create Azure Resource Group
+
+Each environment is recommended to have its own [resource group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal#what-is-a-resource-group) on Azure. Create a group following the [official guide](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal#create-resource-groups). When given a choice using the default options is fine.
+
+Existing resource groups can also be used but this should be checked with the Group's stakeholders as this will affect things such as total CPU quotas, etc...
+
+### 2. Setup Provider Authentication - Azure
+
+Authentication with Azure directly can be done in [various ways](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure).
+
+It's recommended to use either a Service Principal(with [Client Certificate](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_certificate) or [Client Secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret)) or [Managed Service Identity](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/managed_service_identity) when running Terraform non-interactively (such as when running Terraform in a CI server) - and authenticating using the [Azure CLI](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli) when running Terraform locally.
+
+Once you have selected the authentication method and obtained the credentials you may export them as Environment Variables following the Terraform instructions for the specific authentication type.
+
+### 3. Setup SSH Authentication - Azure
+
+SSH authentication for the created machines on Azure will require an admin username and an SSH key.
+
+First think of an admin username that will be used for SSH connection to the Azure's virtual machines. Take a note of this name, it will be needed later in these docs.
+
+All that's required for an SSH key is to be created and then for this to be accessible for the Toolkit to handle the rest:
+
+- [Generate an SSH key pair](https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair) and store it in the `keys` directory.
+
+It is also possible to use an existing SSH key pair, but it is recommended to use a new key to avoid any potential security implications.
+
+That's all that's required for now. Later on in this guide we'll configure the Toolkit to use the admin username and the key for adding into the Azure machines as well as accessing them.
+
+### 4. Setup Terraform State Storage - Azure Blob Storage
+
+Create a [storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create) that will contain all of your Azure Storage data objects. Take a note of its name and [access key](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage) for later.
+
+Then create a standard [Azure blob container](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal) on the intended environment's storage account for its Terraform State. Give this a meaningful name such as `<env_short_name>-terraform-state`.
+
+After the container is created this is all that's required for now. We'll configure Terraform to use it later in these docs.
+
+### 5. Create Static External IP - Azure
+
+A static IP can be generated in Azure as follows:
+
+- Reserve a static external IP address in your resource group [as detailed in the Azure docs](https://docs.microsoft.com/en-us/azure/virtual-network/create-public-ip-portal?tabs=option-create-public-ip-standard-zones)
+- Make sure to select the *[Standard SKU](https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses#standard)* to ensure that the allocation is static 
+
+Once the IP is available take note of its name for later.
 
 ## Next Steps 
 

@@ -126,7 +126,7 @@ compose:
 - `plugin` - The name of the Dynamic Inventory plugin. Must always be `gcp_compute`.
 - `projects` - The ID of the GCP project for the environment
 - `filters` - A label filter for Ansible to use. This ensures it only configures the machines we want on the project and not any others based on the machine label `gitlab_node_prefix` set automatically in Terraform. Should be set the same `prefix` value set in Terraform.
-- `keyed_groups` - Configures Ansible to look for the labels automatically set by Terraform and to set up it's host groups based on them. This config block shouldn't be changed from what's shown.
+- `keyed_groups` - Configures Ansible to look for the labels automatically set by Terraform and to set up its host groups based on them. This config block shouldn't be changed from what's shown.
 - `scopes` - A GCP specific setting for how to use its API. Should not be changed.
 - `hostnames` - Config block for how Ansible should show the hosts in its output. This block configures the use of hostnames rather than IPs for better readability. This config block should not be changed.
 - `compose`: As shown in the comment this sets what IPs Ansible should use. This config block shouldn't be changed unless private IPs are desired as mentioned in the comment.
@@ -135,7 +135,7 @@ compose:
 
 Finally the last thing to configure is authentication. This is required so Ansible can access GCP to build its dynamic inventory.
 
-Ansible provides several ways to authenticate with [GCP](https://docs.ansible.com/ansible/latest/collections/google/cloud/gcp_compute_inventory.html#parameters), you can select any method that as desired.
+Ansible provides several ways to authenticate with [GCP](https://docs.ansible.com/ansible/latest/collections/google/cloud/gcp_compute_inventory.html#parameters), you can select any method that is desired.
 
 All of the methods given involve the Service Account file you generated previously. We've found the authentication methods that work best with the Toolkit in terms of ease of use are as follows:
 
@@ -175,7 +175,7 @@ compose:
 - `plugin` - The name of the Dynamic Inventory plugin. Must always be `aws_ec2`.
 - `regions` - AWS region the environment will run in.
 - `filters` - A label filter for Ansible to use. This ensures it only configures the machines we want on the project and not any others based on the machine tab `gitlab_node_prefix` that set automatically in Terraform. Should be set the same `prefix` value set in Terraform.
-- `keyed_groups` - Configures Ansible to look for the tags automatically set by Terraform and to set up it's host groups based on them. This config block shouldn't be changed from what's shown.
+- `keyed_groups` - Configures Ansible to look for the tags automatically set by Terraform and to set up its host groups based on them. This config block shouldn't be changed from what's shown.
 - `hostnames` - Config block for how Ansible should show the hosts in its output. This block configures the use of hostnames rather than IPs for better readability. This config block should not be changed.
 - `compose`: As shown in the comment this set what IPs Ansible should use. This config block shouldn't be changed unless private IPs are desired as mentioned in the comment.
 
@@ -183,7 +183,7 @@ compose:
 
 Finally the last thing to configure is authentication. This is required so Ansible can access AWS to build its dynamic inventory.
 
-Ansible provides several ways to authenticate with [AWS](https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html#id3), you can select any method that as desired.
+Ansible provides several ways to authenticate with [AWS](https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html#id3), you can select any method that is desired.
 
 All of the methods given involve the AWS Access Key you generated previously. We've found that the easiest and secure way to do this is with the official [environment variables](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#environment-variables):
 
@@ -192,9 +192,38 @@ All of the methods given involve the AWS Access Key you generated previously. We
 
 Once the two variables are either set locally or in your CI pipeline Ansible will be able to fully authenticate for both the provider and backend.
 
-#### Azure (Coming Soon)
+#### Azure
 
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
+The Azure Dynamic Inventory plugin is called [`azure.azcollection.azure_rm`](https://docs.ansible.com/ansible/latest/collections/azure/azcollection/azure_rm_inventory.html). This will have been installed already during the Ansible install process via `ansible-galaxy install`.
+
+The config file for this plugin which requires the naming convention `*.azure_rm.yml`, e.g. `10k.azure_rm.yml`. Here's an example of the file with all config and descriptions below. Items in `<>` brackets need to be replaced with your config:
+
+```yaml
+plugin: azure.azcollection.azure_rm
+
+include_vm_resource_groups:
+  - "<resource_group_name>"
+
+keyed_groups:
+  - prefix: ''
+    separator: ''
+    key: tags.gitlab_node_type | default('ungrouped')
+  - prefix: ''
+    separator: ''
+    key: tags.gitlab_node_level | default('ungrouped')
+```
+
+- `plugin` - The name of the Dynamic Inventory plugin. Must always be `azure.azcollection.azure_rm`.
+- `resource_group_name` - The name of the resource group previously created in the [Create Azure Resource Group](environment_prep.md#1-create-azure-resource-group) step.
+- `keyed_groups` - Configures Ansible to look for the tags automatically set by Terraform and to set up its host groups based on them. This config block shouldn't be changed from what's shown.
+
+##### Configure Authentication (Azure)
+
+Finally the last thing to configure is authentication. This is required so Ansible can access Azure to build its dynamic inventory.
+
+Ansible provides several ways to authenticate with [Azure](https://docs.ansible.com/ansible/latest/collections/azure/azcollection/azure_rm_inventory.html#parameter-auth_source), you can select any method that is desired.
+
+If you are planning to run the toolkit locally it'll be easier to use [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) authentication method. In this case the credentials will be sourced from the Azure CLI profile. Otherwise you can use either [Service Principal Credentials](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html#using-service-principal) or [Active Directory Username/Password](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html#using-active-directory-username-password), please refer to [Authenticating to Azure](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html#authenticating-with-azure) documentation for details. Once you have selected the authentication method and obtained the credentials you may export them as [Environment Variables](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html#using-environment-variables) following the Ansible instructions for the specific authentication type.
 
 ### Configure Variables
 
@@ -217,7 +246,7 @@ all:
     ansible_user: "<ssh_username>"
     ansible_ssh_private_key_file: "<private_ssh_key_path>"
 
-    # Cloud Settings, available options: gcp, aws
+    # Cloud Settings, available options: gcp, aws, azure
     cloud_provider: "gcp"
 
     # GCP only settings
@@ -226,6 +255,10 @@ all:
 
     # AWS only settings
     aws_region: "<aws_region>"
+
+    # Azure only settings
+    azure_storage_account_name: "<storage_account_name>"
+    azure_storage_access_key: "<storage_access_key>"
 
     # General Settings
     prefix: "<environment_prefix>"
@@ -252,8 +285,8 @@ all:
 
 Ansible Settings are specific config for Ansible to be able to connect to the machines:
 
-- `ansible_user` - The SSH username that Ansible should use to SSH into the machines with. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](environment_prep.md#2-setup-ssh-authentication-aws)).
-- `ansible_ssh_private_key_file` - Path to the private SSH key file. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](environment_prep.md#2-setup-ssh-authentication-aws))
+- `ansible_user` - The SSH username that Ansible should use to SSH into the machines with. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](environment_prep.md#2-setup-ssh-authentication-aws), [Azure](environment_prep.md#3-setup-ssh-authentication-azure)).
+- `ansible_ssh_private_key_file` - Path to the private SSH key file. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](environment_prep.md#2-setup-ssh-authentication-aws), [Azure]((environment_prep.md#3-setup-ssh-authentication-azure)))
 
 Cloud settings are specific config relating to the cloud provider is running on. They're used primarily for the parts of the environment that require direct configuration on the provider, e.g. Object Storage.
 
@@ -261,11 +294,13 @@ Cloud settings are specific config relating to the cloud provider is running on.
 - `gcp_project` **_GCP only_** - ID of the GCP project. Note this must be the Project's unique ID and not just the name
 - `gcp_service_account_host_file` **_GCP only_** - Local path to the Service Account file. This is the same one created in [Setup Provider Authentication - Service Account](environment_prep.md#3-setup-provider-authentication-gcp-service-account). The Toolkit uses this to configure GitLab's Object Storage access.
 - `aws_region`  **_AWS only_** - AWS region the environment will run in.
+- `storage_account_name` **_Azure only_** - The name of the storage account previously created in the [Setup Terraform State Storage - Azure Blob Storage](environment_prep.md#4-setup-terraform-state-storage-azure-blob-storage) step.
+- `storage_access_key` **_Azure only_** - The access key of the storage account previously obtained in the [Setup Terraform State Storage - Azure Blob Storage](environment_prep.md#4-setup-terraform-state-storage-azure-blob-storage) step.
 
 General settings are config used across the playbooks to configure GitLab:
 
 - `prefix` - The configured prefix for the environment as set in Terraform.
-- `external_url` - External URL that will be the main address for the environment. This can be a DNS hostname you've configured to point to the IP you created on the `Create Static External IP` step ([GCP](environment_prep.md#6-create-static-external-ip-gcp), [AWS](environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation)) step or the IP itself in URL form, e.g. `http://1.2.3.4`.
+- `external_url` - External URL that will be the main address for the environment. This can be a DNS hostname you've configured to point to the IP you created on the `Create Static External IP` step ([GCP](environment_prep.md#6-create-static-external-ip-gcp), [AWS](environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation), [Azure](environment_prep.md#5-create-static-external-ip-azure)) step or the IP itself in URL form, e.g. `http://1.2.3.4`.
 - `gitlab_license_file` - Local path to a valid GitLab License file. Toolkit will upload the license to the environment. Note that this is an optional setting.
 
 Component settings are specific component for GitLab components, e.g. Postgres:

@@ -210,7 +210,7 @@ Next in the file are the various machine settings, separated the same as the Ref
 
 Finally the last thing to configure is authentication. This is required so Terraform can access GCP (provider) as well as its State Storage Bucket (backend).
 
-Terraform provides multiple ways to authenticate with the [provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference#authentication) and [backend](https://www.terraform.io/docs/language/settings/backends/gcs.html#configuration-variables), you can select any method that as desired.
+Terraform provides multiple ways to authenticate with the [provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference#authentication) and [backend](https://www.terraform.io/docs/language/settings/backends/gcs.html#configuration-variables), you can select any method that is desired.
 
 All of the methods given involve the Service Account file you generated previously. We've found the authentication methods that work best with the Toolkit in terms of ease of use are as follows:
 
@@ -282,7 +282,7 @@ provider "aws" {
 - `terraform` - The main Terraform config block.
   - `backend "s3"` - The [`s3` backend](https://www.terraform.io/docs/language/settings/backends/s3.html) config block.
     - `bucket` - The name of the bucket [previously created](environment_prep.md#3-setup-terraform-state-storage-s3) to store the State.
-    - `key` - The file path and name to store the state in (example: `path/to/my/key`- [must not start with '/'](https://github.com/hashicorp/terraform/blob/main/backend/remote-state/s3/backend.go#L34-L41)). 
+    - `key` - The file path and name to store the state in (example: `path/to/my/key`- [must not start with '/'](https://github.com/hashicorp/terraform/blob/main/internal/backend/remote-state/s3/backend.go#L30-L41)). 
     - `region` - The AWS region of the bucket.
   - `required_providers` - Config block for the required provider(s) Terraform needs to download and use.
     - `aws` - Config block for the AWS provider. Sets where to source the provider and what version to download and use.
@@ -374,7 +374,7 @@ Next in the file are the various machine settings, separated the same as the Ref
 
 Finally the last thing to configure is authentication. This is required so Terraform can access AWS (provider) as well as its State Storage Bucket (backend).
 
-Terraform provides multiple ways to authenticate with the [provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication) and [backend](https://www.terraform.io/docs/language/settings/backends/s3.html#configuration), you can select any method that as desired.
+Terraform provides multiple ways to authenticate with the [provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication) and [backend](https://www.terraform.io/docs/language/settings/backends/s3.html#configuration), you can select any method that is desired.
 
 All of the methods given involve the AWS Access Key you generated previously. We've found that the easiest and secure way to do this is with the official [environment variables](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#environment-variables):
 
@@ -383,9 +383,192 @@ All of the methods given involve the AWS Access Key you generated previously. We
 
 Once the two variables are either set locally or in your CI pipeline Terraform will be able to fully authenticate for both the provider and backend.
 
-### Azure (coming soon)
+### Azure
 
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
+The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on Azure is **[`gitlab_ref_arch_azure`](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/master/terraform/modules/gitlab_ref_arch_azure)**.
+
+In this section we detail all that's needed to configure it.
+
+#### Configure Variables - `variables.tf`
+
+First we configure the variables needed in the `variables.tf` file as these are used in the other files.
+
+Here's an example of the file with all config and descriptions below. Items in `<>` brackets need to be replaced with your config:
+
+```tf
+variable "prefix" {
+  default = "<environment_prefix>"
+}
+
+variable "resource_group_name" {
+  default = "<resource_group_name>"
+}
+
+variable "location" {
+  default = "<location>"
+}
+
+variable "vm_admin_username" {
+  default = "<vm_admin_username>"
+}
+
+variable "ssh_public_key_file_path" {
+  default = "<ssh_public_key_file_path>"
+}
+
+variable "storage_account_name" {
+  default = "<storage_account_name>"
+}
+
+variable "external_ip_name" {
+  default = "<external_ip_name>"
+}
+
+```
+
+- `prefix` - Used to set the names and labels of the VMs in a consistent way. Once set this should not be changed. An example of what this could be is `gitlab-qa-10k`.
+- `resource_group_name` - The name of the resource group previously created in the [Create Azure Resource Group](environment_prep.md#1-create-azure-resource-group) step.
+- `location` - The Azure location of the resource group.
+- `vm_admin_username` - The username of the local administrator that will be used for the virtual machines. Previously created in the [Setup SSH Authentication - Azure](environment_prep.md#3-setup-ssh-authentication-azure) step.
+- `ssh_public_key_file_path` - Path to the public SSH key file. Previously created in the [Setup SSH Authentication - Azure](environment_prep.md#3-setup-ssh-authentication-azure) step.
+- `storage_account_name` - The name of the storage account previously created in the [Setup Terraform State Storage - Azure Blob Storage](environment_prep.md#4-setup-terraform-state-storage-azure-blob-storage) step.
+- `external_ip_name` - The name of the static external IP the environment will be accessible one. Previously created in the [Create Static External IP - Azure](environment_prep.md#5-create-static-external-ip-azure) step.
+
+#### Configure Terraform settings - `main.tf`
+
+The next file to configure is the main Terraform settings file - `main.tf`. In this file will be the main connection details for Terraform to connect to AWS as well as where to store its state.
+
+Here's an example of the file with descriptions below. Items in `<>` brackets need to be replaced with your config:
+
+```tf
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "<resource_group_name>"
+    storage_account_name = "<storage_account_name>"
+    container_name       = "<state_azure_storage_container_name>"
+    key                  = "<state_file_path_and_name>"
+  }
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 2"
+    }
+  }
+}
+
+# Configure the Microsoft Azure Provider
+provider "azurerm" {
+  features {}
+}
+```
+
+- `terraform` - The main Terraform config block.
+  - `backend "azurerm"` - The [`azurerm` backend](https://www.terraform.io/docs/language/settings/backends/azurerm.html) config block.
+    - `resource_group_name` - The name of the resource group previously created in the [Create Azure Resource Group](environment_prep.md#1-create-azure-resource-group) step.
+    - `storage_account_name` - The name of the storage account previously created in the [Setup Terraform State Storage - Azure Blob Storage](environment_prep.md#4-setup-terraform-state-storage-azure-blob-storage) step.
+    - `container_name` - The name of the container [previously created](environment_prep.md#4-setup-terraform-state-storage-azure-blob-storage) to store the State.
+    - `key` - The name of the Blob(file) used to store Terraform's State file inside the Storage Container.
+  - `required_providers` - Config block for the required provider(s) Terraform needs to download and use.
+    - `azurerm` - Config block for the Azure provider. Sets where to source the provider and what version to download and use.
+- `provider "azurerm"` - Config block for the [Azure provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs).
+  - `features` - Used to [customize the behaviour](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#features) of certain Azure Provider resources.
+
+#### Configure Module settings - `environment.tf`
+
+Next to configure is `environment.tf`. This file contains all the config for the `gitlab_ref_arch_azure` module such as instance counts, instance sizes, external IP, etc...
+
+How you configure this file depends on the size of [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/) you want to deploy. Below we show how a [10k](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html) `environment.tf` would be set. If a different size is required all that's required is to tweak the machine counts and sizes to match the desired Reference Architecture as shown in the [docs](https://docs.gitlab.com/ee/administration/reference_architectures/).
+
+Here's an example of the file with all config for a [10k Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html) and descriptions below:
+
+```tf
+module "gitlab_ref_arch_azure" {
+  source = "../../modules/gitlab_ref_arch_azure"
+
+  prefix = var.prefix
+  resource_group_name = var.resource_group_name
+  location = var.location
+  storage_account_name = var.storage_account_name
+  vm_admin_username = var.vm_admin_username
+  ssh_public_key_file_path = var.ssh_public_key_file_path
+
+  # 10k
+  consul_node_count = 3
+  consul_size = "Standard_F2s_v2"
+
+  elastic_node_count = 3 
+  elastic_size = "Standard_F16s_v2"
+
+  gitaly_node_count = 3
+  gitaly_size = "Standard_D16s_v3"
+  
+  praefect_node_count = 3
+  praefect_size = "Standard_F2s_v2"
+
+  praefect_postgres_node_count = 1
+  praefect_postgres_size = "Standard_F2s_v2"
+
+  gitlab_nfs_node_count = 1
+  gitlab_nfs_size = "Standard_F4s_v2"
+
+  gitlab_rails_node_count = 3
+  gitlab_rails_size = "Standard_F32s_v2"
+
+  haproxy_external_node_count = 1
+  haproxy_external_size = "Standard_F2s_v2"
+  haproxy_external_external_ip_names = [var.external_ip_name]
+  haproxy_internal_node_count = 1
+  haproxy_internal_size = "Standard_F2s_v2"
+
+  monitor_node_count = 1
+  monitor_size = "Standard_F4s_v2"
+
+  pgbouncer_node_count = 3
+  pgbouncer_size = "Standard_F2s_v2"
+
+  postgres_node_count = 3
+  postgres_size = "Standard_D8s_v3"
+
+  redis_cache_node_count = 3
+  redis_cache_size = "Standard_D4s_v3"
+  redis_sentinel_cache_node_count = 3
+  redis_sentinel_cache_size = "Standard_A1_v2"
+  redis_persistent_node_count = 3
+  redis_persistent_size = "Standard_D4s_v3"
+  redis_sentinel_persistent_node_count = 3
+  redis_sentinel_persistent_size = "Standard_A1_v2"
+
+  sidekiq_node_count = 4
+  sidekiq_size = "Standard_D4s_v3"
+}
+
+output "gitlab_ref_arch_azure" {
+  value = module.gitlab_ref_arch_azure
+}
+```
+
+- `module "gitlab_ref_arch_azure"` - Module config block with name.
+  - `source` - The relative path to the `gitlab_ref_arch_azure` module. We assume you're creating config in the `terraform/environments/` folder here but if you're in a different location this setting must be updated to the correct path.
+  - `prefix` - The name prefix of the project. Set in `variables.tf`.
+  - `resource_group_name` - The name of the resource group. Set in `variables.tf`.
+  - `location` - The location of the resource group. Set in `variables.tf`.
+  - `storage_account_name` - The name of the storage account. Set in `variables.tf`.
+  - `vm_admin_username` - The username of the administrator for the virtual machines. Set in `variables.tf`.
+  - `ssh_public_key_file_path` - The file path of the public SSH key. Set in `variables.tf`.
+
+Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
+
+- `*_node_count` - The number of machines to set up for that component
+- `*_size` - The [Azure Machine Size](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes) for that component
+- `haproxy_external_external_ip_names` - Set the external HAProxy load balancer to assume the external IP name set in `variables.tf`. Note that this is an array setting as the advanced underlying functionality needs to account for the specific setting of IPs for potentially multiple machines. In this case though it should always only be one IP name.
+
+#### Configure Authentication (Azure)
+
+Finally the last thing to configure is authentication. This is required so Terraform can access Azure (provider) as well as its State Storage Bucket (backend).
+
+Terraform provides multiple ways to authenticate with the [provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure) and [backend](https://www.terraform.io/docs/language/settings/backends/azurerm.html), you can select any method that is desired.
+
+If you are planning to run the toolkit locally it'll be easier to use [Azure CLI](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli) authentication method. Otherwise you can use either a Service Principal or Managed Service Identity when running Terraform non-interactively, please refer to [Authenticating to Azure](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure) documentation for details. Once you have selected the authentication method and obtained the credentials you may export them as Environment Variables following the Terraform instructions for the specific authentication type to fully authenticate for both the provider and backend.
 
 ### Further Config Examples
 
