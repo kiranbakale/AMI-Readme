@@ -5,6 +5,7 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Customizations](environment_advanced.md)
   - [**GitLab Environment Toolkit - Advanced - Cloud Native Hybrid**](environment_advanced_hybrid.md)
+  - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
 
 The Toolkit by default will deploy the latest version of the selected [Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/). However, it can also support deploying our alternative [Cloud Native Hybrid Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) where select stateless components are deployed in Kubernetes via our [Helm charts](https://docs.gitlab.com/charts/) instead of static compute VMs. To achieve this the Toolkit can provision the Kubernetes cluster via Terraform and then configure the Helm Chart via Ansible.
 
@@ -34,7 +35,7 @@ In addition to the above and as [stated earlier in the docs](docs/environment_pr
 
 ## 2. Provisioning the Kubernetes Cluster with Terraform
 
-Provisioning a Cloud Native Hybrid Reference Architecture has been designed to be very similar to a normal one, which native support added to the Toolkit's modules. As such, it only requires some different config in your Environment's config file (`environment.tf`).
+Provisioning a Cloud Native Hybrid Reference Architecture has been designed to be very similar to a standard one, which native support added to the Toolkit's modules. As such, it only requires some different config in your Environment's config file (`environment.tf`).
 
 Like the main provisioning docs there are sections for each support host provider on how to achieve this. Follow the section for your selected provider and then move onto the next step.
 
@@ -107,7 +108,7 @@ output "gitlab_ref_arch_gcp" {
 }
 ```
 
-By design, this file is similar to the one used in a [normal environment](environment_provision.md#configure-module-settings-environmenttf) with the following differences:
+By design, this file is similar to the one used in a [standard environment](environment_provision.md#configure-module-settings-environmenttf) with the following differences:
 
 - `gitlab_rails_x` entries are replaced with `webservice_node_pool_x`. In the charts we run Puma, etc... in Webservice pods.
 - `sidekiq_x` entries are replaced with `sidekiq_node_pool_x`
@@ -119,7 +120,7 @@ Each node pool setting configures the following. To avoid repetition we'll descr
 - `*_node_pool_count` - The number of machines to set up for that component's node pool
 - `*_node_pool_machine_type` - The [GCP Machine Type](https://cloud.google.com/compute/docs/machine-types) (size) for that each machine in the node pool
 
-Once the above is configured as desired you can proceed to [provision as normal](environment_provision.md#3-provision).
+Once the above is configured as desired you can proceed to [provision as standard](environment_provision.md#3-provision).
 
 ### Amazon Web Services (coming soon)
 
@@ -185,7 +186,7 @@ all:
     praefect_postgres_password: '<praefect_postgres_password>'
 ```
 
-By design, this file is similar to the one used in a [normal environment](environment_provision.md#configure-module-settings-environmenttf) with the following additional settings:
+By design, this file is similar to the one used in a [standard environment](environment_provision.md#configure-module-settings-environmenttf) with the following additional settings:
 
 - `gcp_zone` - Zone name the GCP project is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
 - `external_ip` - External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid installs.
@@ -209,7 +210,7 @@ The Toolkit provides several other settings that can customize a Cloud Native Hy
 - `gitlab_charts_sidekiq_max_replicas`: Override for the number of max Sidekiq replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
 - `gitlab_charts_sidekiq_min_replicas`: Override for the number of min Sidekiq replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
 
-Once your config file is in place as desired you can proceed to [configure as normal](environment_configure.md#3-configure).
+Once your config file is in place as desired you can proceed to [configure as normal](environment_configure.md#3-configure-update).
 
 ### Amazon Web Services (coming soon)
 
