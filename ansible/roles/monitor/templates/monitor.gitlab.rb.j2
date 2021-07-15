@@ -134,7 +134,7 @@ nginx['status']['options'] = {
   "deny" => "all",
 }
 
-{% if external_ssl %}
+{% if external_url_ssl %}
 nginx['listen_port'] = 80
 nginx['listen_https'] = false
 
