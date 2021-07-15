@@ -97,16 +97,19 @@ global:
   hosts:
     domain: "{{ external_url | regex_replace('^https?:\/\/') }}"
     externalIP: "{{ external_ip }}"
-    https: {{ external_ssl | lower }}
+    https: {{ external_url_ssl | lower }}
     gitlab:
       name: "{{ external_url | regex_replace('^https?:\/\/') }}"
   ingress:
+{% if external_url_ssl and external_ssl_source == 'letsencrypt' %}
+    configureCertmanager: true
+{% elif external_url_ssl and external_ssl_source == 'user' %}
     configureCertmanager: false
     tls:
-{% if external_ssl %}
-      enabled: true
       secretName: gitlab-webservice-ssl
 {% else %}
+    configureCertmanager: false
+    tls:
       enabled: false
 {% endif %}
   minio:
@@ -136,6 +139,16 @@ global:
       - host: '{{ ip }}'
 {% endfor %}
 
+{% if external_url_ssl and external_ssl_source == 'letsencrypt' %}
+certmanager:
+  install: true
+certmanager-issuer:
+  email: "{{ external_ssl_letsencrypt_issuer_email }}"
+{% else %}
+certmanager:
+  install: false
+{% endif %}
+
 # https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
 gitlab-runner:
   install: false
@@ -150,8 +163,6 @@ nginx-ingress:
   defaultBackend:
     nodeSelector:
       workload: ""
-certmanager:
-  install: false
 prometheus:
   alertmanager:
     nodeSelector:
