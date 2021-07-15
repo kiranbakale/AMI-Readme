@@ -5,6 +5,7 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Customizations](environment_advanced.md)
   - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
+  - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
 
 With [Terraform](https://www.terraform.io/) you can automatically provision machines and associated dependencies on a provider.
 

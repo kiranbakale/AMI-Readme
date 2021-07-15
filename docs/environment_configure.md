@@ -5,6 +5,7 @@
 - [**GitLab Environment Toolkit - Configuring the environment with Ansible**](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Customizations](environment_advanced.md)
   - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
+  - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
 
 With [Ansible](https://docs.ansible.com/ansible/latest/index.html) you can automatically configure provisioned machines.
 
@@ -347,7 +348,7 @@ All Ansible config can be viewed directly in the project under the [`group_vars`
 
 The Quality team actively uses the Toolkit daily to build and test various environments, including at least one of each Reference Architecture size. These are stored on a different project and can be viewed [here](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit-configs/quality) for further reference (although note some files are encrypted to protect secrets).
 
-## 3. Configure
+## 3. Configure \ Update
 
 After the config has been setup you're now ready to configure the environment. This is done as follows:
 
@@ -355,6 +356,8 @@ After the config has been setup you're now ready to configure the environment. T
 1. Run `ansible-playbook` with the intended environment's inventory against the `all.yml` playbook - `ansible-playbook -i environments/10k/inventory all.yml`
     - Note that we pass the whole inventory folder - `environments/10k/inventory`. This ensures Ansible reads all the files in the directory.
     - If you only want to run a specific playbook & role against the respective VMs you can switch out `all.yml` and replace it with the intended playbook, e.g. `gitlab-rails.yml`
+
+The same commands are used when you wish to update an existing environment.
 
 ### Running with ansible-deployer (optional)
 
