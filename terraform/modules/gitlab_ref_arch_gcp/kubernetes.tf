@@ -73,7 +73,7 @@ resource "google_container_node_pool" "gitlab_supporting_pool" {
     disk_size_gb = coalesce(var.supporting_node_pool_disk_size, var.default_disk_size)
 
     labels = {
-      workload = ""
+      workload = "support"
     }
   }
 }
