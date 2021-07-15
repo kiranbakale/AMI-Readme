@@ -30,7 +30,7 @@
         task_runner_pod: "{{ task_runner_pod_list | json_query('resources[0].metadata.name') }}"
       when: task_runner_pod_list.resources | length != 0
   when:
-    - "'gitlab_cluster' in groups"
+    - cloud_native_hybrid_environment
     - "'gitlab_rails' not in groups"
   tags:
     - access_token

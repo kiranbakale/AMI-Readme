@@ -32,11 +32,7 @@ gitlab:
   task-runner:
     backups:
       objectStorage:
-        backend: gcs
-        config:
-          gcpProject: "{{ gcp_project }}"
-          secret: gitlab-backups-object-storage-key
-          key: key
+        {{ lookup('template', 'task_runner_backups_object_storage.' + cloud_provider + '.yml.j2') | indent(width=8) }}
   migrations:
 {% if 'postgres' in groups %}
     psql:
@@ -95,8 +91,10 @@ global:
   grafana:
     enabled: true
   hosts:
-    domain: "{{ external_url | regex_replace('^https?:\/\/') }}"
+{% if cloud_provider != 'aws' %}
     externalIP: "{{ external_ip }}"
+{% endif %}
+    domain: "{{ external_url | regex_replace('^https?:\/\/') }}"
     https: {{ external_url_ssl | lower }}
     gitlab:
       name: "{{ external_url | regex_replace('^https?:\/\/') }}"
@@ -121,6 +119,18 @@ global:
       key: password
     port: 6432
   redis:
+{% if 'redis' in groups %}
+    host: gitlab-redis
+    serviceName: redis
+    password:
+      secret: gitlab-redis-password
+      key: password
+    sentinels:
+{% for ip in consul_int_ips %}
+      - host: '{{ ip }}'
+        port: '{{ redis_sentinel_port }}'
+{% endfor %}
+{% elif 'redis_cache' in groups and 'redis_persistent' in groups %}
     cache:
       host: gitlab-redis-cache
       password:
@@ -138,6 +148,7 @@ global:
 {% for ip in redis_sentinel_persistent_int_ips %}
       - host: '{{ ip }}'
 {% endfor %}
+{% endif %}
 
 {% if external_url_ssl and external_ssl_source == 'letsencrypt' %}
 certmanager:
@@ -155,31 +166,41 @@ gitlab-runner:
 
 grafana:
   nodeSelector:
-    workload: ""
+    workload: "support"
 nginx-ingress:
   controller:
+{% if allocation_ids is defined %}
+    service:
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-type: nlb
+        service.beta.kubernetes.io/aws-load-balancer-eip-allocations: "{{ allocation_ids }}"
+{% endif %}
     nodeSelector:
-      workload: ""
+      workload: "support"
   defaultBackend:
     nodeSelector:
-      workload: ""
+      workload: "support"
+
+certmanager:
+  install: false
+
 prometheus:
   alertmanager:
     nodeSelector:
-      workload: ""
+      workload: "support"
   install: true
   kubeStateMetrics:
     nodeSelector:
-      workload: ""
+      workload: "support"
   nodeExporter:
     nodeSelector:
-      workload: ""
+      workload: "support"
   pushgateway:
     nodeSelector:
-      workload: ""
+      workload: "support"
   server:
     nodeSelector:
-      workload: ""
+      workload: "support"
 
 # Run outside of cluster
 redis:

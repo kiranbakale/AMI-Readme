@@ -165,9 +165,12 @@ jaeger_int_ip: "{{ (groups['jaeger'] | sort | map('extract', hostvars, internal_
 ## GitLab Cloud Native Hybrid Settings (Helm)
 ################################################################################
 
+cloud_native_hybrid_environment: false
 kubeconfig_setup: false
 
 gitlab_charts_release_namespace: default
+gcp_backups_object_storage_key: "{{ lookup('file', gcp_service_account_host_file) }}"
+aws_backups_object_storage_key: "{{ lookup('template', 'templates/backup_object_storage_key.aws.s3cfg.j2') }}"
 
 ## Webservice
 gitlab_charts_webservice_requests_memory_gb: 5
