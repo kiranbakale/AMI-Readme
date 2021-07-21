@@ -1,11 +1,13 @@
 # Legacy Object Storage config - To be deprecated
 resource "google_storage_bucket" "gitlab_object_storage" {
+  count = var.object_storage_create_legacy_bucket ? 1 : 0
   name = "${var.prefix}-object-storage"
-  force_destroy = var.object_storage_buckets_force_destroy
+  force_destroy = false
 }
 
 resource "google_storage_bucket_iam_binding" "gitlab_object_storage_binding" {
-  bucket = google_storage_bucket.gitlab_object_storage.name
+  count = var.object_storage_create_legacy_bucket ? 1 : 0
+  bucket = google_storage_bucket.gitlab_object_storage[count.index].name
   role = "roles/storage.objectAdmin"
 
   members = [
@@ -17,7 +19,7 @@ resource "google_storage_bucket_iam_binding" "gitlab_object_storage_binding" {
 resource "google_storage_bucket" "gitlab_object_storage_buckets" {
   for_each = toset(var.object_storage_buckets)
   name = "${var.prefix}-${each.value}"
-  force_destroy = var.object_storage_buckets_force_destroy
+  force_destroy = true
 }
 
 resource "google_storage_bucket_iam_binding" "gitlab_object_storage_buckets_binding" {

@@ -12,7 +12,6 @@ variable "default_disk_type" { default = "gp3" }
 variable "ssh_public_key_file" { default = null }
 
 variable "object_storage_buckets" { default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"] }
-variable "object_storage_buckets_force_destroy" { default = false }
 
 # Machines
 variable "consul_node_count" { default = 0 }
