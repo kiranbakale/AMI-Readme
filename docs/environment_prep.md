@@ -60,7 +60,7 @@ Authentication with GCP directly is done with a [Service Account](https://cloud.
 A Service Account is created as follows if you're an admin:
 
 - Head to the [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) page. Be sure to check that the correct project is selected in the dropdown at the top of the page.
-- Proceed to create an account with a descriptive name like `gitlab-qa` and give it the [IAM roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access#granting-console) of `Compute Instance Admin (v1)`, `Kubernetes Engine Admin`, `Storage Admin` and `Service Account User`.
+- Proceed to create an account with a descriptive name like `gitlab-qa` and give it the [IAM roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access#granting-console) of `Compute Admin`, `Kubernetes Engine Admin`, `Storage Admin` and `Service Account User`.
 - On the last page there will be the option to generate a key. Select to do so with the `JSON` format and save it locally with a reasonable naming convention like `serviceaccount-<project-name>.json`, e.g. `serviceaccount-10k.json`, as in GCP the key will have a default name that's unclear. This key will passed to both Terraform and Ansible later.
   - The [`keys`](../keys) directory in this project is provided as a central place to store all of your keys. It's automatically configured in `.gitignore` to not have its contents included with any Git Pushes if you desired to have your own copy of this repo.
 - Finish creating the user
