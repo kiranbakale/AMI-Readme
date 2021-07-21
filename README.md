@@ -24,8 +24,9 @@ Created and maintained by the GitLab Quality Engineering Enablement team, the To
 - Geo support
 - Zero Downtime Upgrades support
 - Built in Load Balancing and Monitoring (Prometheus, Grafana) setup
+- External SSL termination
 
-Originally built to help define the official [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) and enable performance testing against those with the [GPT](https://gitlab.com/gitlab-org/quality/performance), the Toolkit is now available for all to use to deploy GitLab at scale.
+By design the Toolkit is meant to be **_one for all_** and aims to deploy an environment that will be a good base that can be tweaked further depending on your requirements.
 
 ## How It Works
 
@@ -50,9 +51,10 @@ Note that the Toolkit currently has the following requirements (with related iss
 - [GitLab Environment Toolkit - Preparing the environment](docs/environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](docs/environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](docs/environment_configure.md)
-- [GitLab Environment Toolkit - Advanced - Customizations](docs/environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Geo, Cloud Native Hybrid, Zero Downtime Updates and more](docs/environment_advanced.md)
   - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](docs/environment_advanced_hybrid.md)
   - [GitLab Environment Toolkit - Advanced - External SSL](docs/environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](docs/environment_post_considerations.md)
 
 ## Missing features to be aware of
 

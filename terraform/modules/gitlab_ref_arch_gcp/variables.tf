@@ -12,7 +12,8 @@ variable "default_disk_type" { default = "pd-standard" }
 variable "project" { default = null }
 
 variable "object_storage_buckets" { default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"] }
-variable "object_storage_buckets_force_destroy" { default = false }
+# To be removed next release, allows users now to remove legacy bucket before next release
+variable "object_storage_create_legacy_bucket" { default = true } 
 
 # Machines
 variable "consul_node_count" { default = 0 }

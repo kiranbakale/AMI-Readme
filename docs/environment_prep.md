@@ -3,9 +3,10 @@
 - [**GitLab Environment Toolkit - Preparing the environment**](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
-- [GitLab Environment Toolkit - Advanced - Customizations](environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Geo, Cloud Native Hybrid, Zero Downtime Updates and more](environment_advanced.md)
   - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
   - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 
 To start using the Toolkit to build an environment you'll first need to do some preparation for the environment itself, depending on how you intend to host it. These docs assume working knowledge of the selected host provider the environment is to run on, such as a specific Cloud provider.
 

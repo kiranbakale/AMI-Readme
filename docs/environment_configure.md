@@ -3,9 +3,10 @@
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [**GitLab Environment Toolkit - Configuring the environment with Ansible**](environment_configure.md)
-- [GitLab Environment Toolkit - Advanced - Customizations](environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Geo, Cloud Native Hybrid, Zero Downtime Updates and more](environment_advanced.md)
   - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
   - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 
 With [Ansible](https://docs.ansible.com/ansible/latest/index.html) you can automatically configure provisioned machines.
 
@@ -379,3 +380,5 @@ Along with the main environment there are several other services that should be 
 - Grafana - `http://<external_ip_or_url>/-/grafana`
 - Prometheus - `http://<external_ip_or_url>:9090`
 - HAProxy stats - `http://<external_ip_or_url>:1936`
+
+Next you should consider any [advanced setups](environment_advanced.md) you may wish to explore as well as reading through the [considerations after deployment](environment_post_considerations.md) such as backups and security.
