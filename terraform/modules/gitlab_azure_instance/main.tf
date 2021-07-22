@@ -34,9 +34,9 @@ resource "azurerm_network_interface" "gitlab" {
   }
 }
 
-# Connect the security group to the network interface
+# Connect the security group to the network interface if provided
 resource "azurerm_network_interface_security_group_association" "gitlab" {
-  count = min(1, var.node_count, length(var.network_security_group))
+  count = var.node_count == 0 || var.network_security_group == null ? 0 : 1
   network_interface_id = azurerm_network_interface.gitlab[count.index].id
   network_security_group_id = var.network_security_group.id
 }

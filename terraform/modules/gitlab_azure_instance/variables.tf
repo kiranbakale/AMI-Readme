@@ -50,7 +50,7 @@ variable "label_secondaries" {
 }
 
 variable "network_security_group" {
-  default = ""
+  default = null
 }
 
 variable "geo_site" {

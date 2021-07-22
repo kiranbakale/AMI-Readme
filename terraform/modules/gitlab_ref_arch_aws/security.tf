@@ -42,6 +42,7 @@ resource "aws_security_group" "gitlab_external_ssh" {
 }
 
 resource "aws_security_group" "gitlab_external_git_ssh" {
+  count = min(var.haproxy_external_node_count, 1)
   name = "${var.prefix}-external-git-ssh"
   ingress {
     from_port   = 2222
@@ -56,6 +57,7 @@ resource "aws_security_group" "gitlab_external_git_ssh" {
 }
 
 resource "aws_security_group" "gitlab_external_http_https" {
+  count = min(var.haproxy_external_node_count + var.monitor_node_count, 1)
   name = "${var.prefix}-external-http-https"
   ingress {
     from_port   = 80
@@ -77,6 +79,7 @@ resource "aws_security_group" "gitlab_external_http_https" {
 }
 
 resource "aws_security_group" "gitlab_external_haproxy_stats" {
+  count = min(var.haproxy_external_node_count + var.haproxy_internal_node_count, 1)
   name = "${var.prefix}-external-haproxy-stats"
   ingress {
     from_port   = 1936
@@ -91,6 +94,7 @@ resource "aws_security_group" "gitlab_external_haproxy_stats" {
 }
 
 resource "aws_security_group" "gitlab_external_monitor" {
+  count = min(var.monitor_node_count, 1)
   name = "${var.prefix}-external-monitor"
   ingress {
     from_port   = 9122

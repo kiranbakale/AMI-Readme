@@ -10,7 +10,7 @@ module "gitaly" {
   disk_size = coalesce(var.gitaly_disk_size, var.default_disk_size)
   disk_type = coalesce(var.gitaly_disk_type, var.default_disk_type)
   disk_iops = 8000
-  iam_instance_profile = aws_iam_instance_profile.gitlab_s3_profile.name
+  iam_instance_profile = try(aws_iam_instance_profile.gitlab_s3_profile[0].name, null)
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
   security_group_ids = [

@@ -17,7 +17,7 @@ module "haproxy_external" {
   location = var.location
 
   external_ip_names = var.haproxy_external_external_ip_names
-  network_security_group = azurerm_network_security_group.haproxy
+  network_security_group = var.haproxy_external_node_count == 0 ? null : azurerm_network_security_group.haproxy[0]
 
   geo_site = var.geo_site
   geo_deployment = var.geo_deployment
