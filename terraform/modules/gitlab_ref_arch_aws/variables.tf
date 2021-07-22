@@ -106,7 +106,6 @@ variable "sidekiq_disk_type" { default = null }
 variable "sidekiq_disk_size" { default = null }
 
 # Kubernetes \ Helm
-
 variable "webservice_node_pool_count" { default = 0 }
 variable "webservice_node_pool_instance_type" { default = "" }
 variable "webservice_node_pool_disk_size" { default = "100" }
@@ -118,3 +117,15 @@ variable "sidekiq_node_pool_disk_size" { default = "100" }
 variable "supporting_node_pool_count" { default = 0 }
 variable "supporting_node_pool_instance_type" { default = "" }
 variable "supporting_node_pool_disk_size" { default = null }
+
+# Networking
+
+## Create new network
+variable "create_network" { default = false }
+variable "vpc_cidr_block" { default = "172.31.0.0/16" }
+variable "subpub_pub_cidr_block" { default = ["172.31.0.0/20","172.31.16.0/20","172.31.32.0/20"] }
+variable "subnet_pub_count" { default = 2 }
+
+## Existing network
+variable "vpc_id" { default = null }
+variable "subnet_ids" { default = null }
