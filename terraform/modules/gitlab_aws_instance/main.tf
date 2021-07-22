@@ -6,6 +6,8 @@ resource "aws_instance" "gitlab" {
   vpc_security_group_ids = var.security_group_ids
   iam_instance_profile = var.iam_instance_profile
 
+  subnet_id = var.subnet_ids == null ? null : tolist(var.subnet_ids)[(count.index + length(var.subnet_ids)) % length(var.subnet_ids)]
+
   root_block_device {
     volume_type = var.disk_type
     volume_size = var.disk_size

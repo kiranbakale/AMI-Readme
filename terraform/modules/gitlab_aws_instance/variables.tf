@@ -54,3 +54,7 @@ variable "geo_site" {
 variable "geo_deployment" {
   default = null
 }
+
+variable "subnet_ids" {
+  default = null
+}

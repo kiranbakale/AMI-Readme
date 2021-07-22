@@ -11,7 +11,7 @@ resource "aws_eks_cluster" "gitlab_cluster" {
   role_arn = aws_iam_role.gitlab_eks_role[0].arn
 
   vpc_config {
-    subnet_ids = data.aws_subnet_ids.vpc_ids.ids
+    subnet_ids = coalesce(local.subnet_ids, data.aws_subnet_ids.defaults.ids)
 
     security_group_ids = [
       aws_security_group.gitlab_internal_networking.id,
@@ -36,8 +36,8 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
 
   cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
   node_group_name = "gitlab_webservice_pool"
-  node_role_arn = aws_iam_role.gitlab_eks_role[0].arn
-  subnet_ids = data.aws_subnet_ids.vpc_ids.ids
+  node_role_arn = aws_iam_role.gitlab_eks_node_role[0].arn
+  subnet_ids = coalesce(local.subnet_ids, data.aws_subnet_ids.defaults.ids)
   instance_types = [var.webservice_node_pool_instance_type]
   disk_size = var.webservice_node_pool_disk_size
 
@@ -63,8 +63,8 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
 
   cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
   node_group_name = "gitlab_sidekiq_pool"
-  node_role_arn = aws_iam_role.gitlab_eks_role[0].arn
-  subnet_ids = data.aws_subnet_ids.vpc_ids.ids
+  node_role_arn = aws_iam_role.gitlab_eks_node_role[0].arn
+  subnet_ids = coalesce(local.subnet_ids, data.aws_subnet_ids.defaults.ids)
   instance_types = [var.sidekiq_node_pool_instance_type]
   disk_size = var.sidekiq_node_pool_disk_size
 
@@ -90,8 +90,8 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
 
   cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
   node_group_name = "gitlab_supporting_pool"
-  node_role_arn = aws_iam_role.gitlab_eks_role[0].arn
-  subnet_ids = data.aws_subnet_ids.vpc_ids.ids
+  node_role_arn = aws_iam_role.gitlab_eks_node_role[0].arn
+  subnet_ids = coalesce(local.subnet_ids, data.aws_subnet_ids.defaults.ids)
   instance_types = [var.supporting_node_pool_instance_type]
   disk_size = var.supporting_node_pool_disk_size
 
@@ -167,27 +167,13 @@ resource "aws_iam_role_policy_attachment" "AmazonEKSVPCResourceController" {
 resource "aws_iam_role_policy_attachment" "AmazonEKSWorkerNodePolicy" {
   count = min(local.total_node_pool_count, 1)
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role = aws_iam_role.gitlab_eks_role[0].name
+  role = aws_iam_role.gitlab_eks_node_role[0].name
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
   count = min(local.total_node_pool_count, 1)
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role = aws_iam_role.gitlab_eks_role[0].name
-}
-
-# VPC
-
-resource "aws_default_vpc" "default" {
-  tags = {
-    Name = "Default VPC"
-  }
-}
-
-# Subnets
-
-data "aws_subnet_ids" "vpc_ids" {
-  vpc_id = aws_default_vpc.default.id
+  role = aws_iam_role.gitlab_eks_node_role[0].name
 }
 
 # Addons
