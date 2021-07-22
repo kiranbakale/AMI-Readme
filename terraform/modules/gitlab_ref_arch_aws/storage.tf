@@ -5,6 +5,7 @@ resource "aws_s3_bucket" "gitlab_object_storage_buckets" {
 }
 
 resource "aws_iam_role" "gitlab_s3_role" {
+  count = min(length(var.object_storage_buckets), 1)
   name = "${var.prefix}-s3-role"
 
   assume_role_policy = jsonencode({
@@ -23,8 +24,9 @@ resource "aws_iam_role" "gitlab_s3_role" {
 }
 
 resource "aws_iam_role_policy" "gitlab_s3_policy" {
+  count = min(length(var.object_storage_buckets), 1)
   name = "${var.prefix}-s3-policy"
-  role = aws_iam_role.gitlab_s3_role.id
+  role = aws_iam_role.gitlab_s3_role[0].id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -43,6 +45,7 @@ resource "aws_iam_role_policy" "gitlab_s3_policy" {
 }
 
 resource "aws_iam_instance_profile" "gitlab_s3_profile" {
+  count = min(length(var.object_storage_buckets), 1)
   name = "${var.prefix}-s3-profile"
-  role = aws_iam_role.gitlab_s3_role.name
+  role = aws_iam_role.gitlab_s3_role[0].name
 }

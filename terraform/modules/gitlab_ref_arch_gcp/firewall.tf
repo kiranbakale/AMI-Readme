@@ -1,8 +1,9 @@
 resource "google_compute_firewall" "gitlab_http_https" {
-  name    = "${var.prefix}-gitlab-rails-firewall-rule-http-https"
+  count = min(var.haproxy_external_node_count + var.monitor_node_count, 1)
+  name = "${var.prefix}-gitlab-rails-firewall-rule-http-https"
   network = "default"
 
-  description = "Allow Google health checks and network load balancers access"
+  description = "Allow external load balancer access"
 
   allow {
     protocol = "icmp"
@@ -17,10 +18,11 @@ resource "google_compute_firewall" "gitlab_http_https" {
 }
 
 resource "google_compute_firewall" "gitlab_ssh" {
+  count = min(var.haproxy_external_node_count, 1)
   name    = "${var.prefix}-gitlab-rails-firewall-rule-ssh"
   network = "default"
 
-  description = "Allow access to GitLab SSH"
+  description = "Allow access to GitLab SSH via external load balancer"
 
   allow {
     protocol = "icmp"
@@ -35,6 +37,7 @@ resource "google_compute_firewall" "gitlab_ssh" {
 }
 
 resource "google_compute_firewall" "haproxy_stats" {
+  count = min(var.haproxy_external_node_count + var.haproxy_internal_node_count, 1)
   name    = "${var.prefix}-haproxy-stats-firewall-rule"
   network = "default"
 
@@ -53,6 +56,7 @@ resource "google_compute_firewall" "haproxy_stats" {
 }
 
 resource "google_compute_firewall" "monitor" {
+  count = min(var.monitor_node_count, 1)
   name    = "${var.prefix}-monitor-firewall-rule"
   network = "default"
 
