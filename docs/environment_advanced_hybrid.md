@@ -3,9 +3,9 @@
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
-- [GitLab Environment Toolkit - Advanced - Geo, Cloud Native Hybrid, Zero Downtime Updates and more](environment_advanced.md)
-  - [**GitLab Environment Toolkit - Advanced - Cloud Native Hybrid**](environment_advanced_hybrid.md)
-  - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [**GitLab Environment Toolkit - Advanced - Cloud Native Hybrid**](environment_advanced_hybrid.md)
+- [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Zero Downtime Updates and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 
 The Toolkit by default will deploy the latest version of the selected [Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/). However, it can also support deploying our alternative [Cloud Native Hybrid Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) where select stateless components are deployed in Kubernetes via our [Helm charts](https://docs.gitlab.com/charts/) instead of static compute VMs. To achieve this the Toolkit can provision the Kubernetes cluster via Terraform and then configure the Helm Chart via Ansible.
@@ -131,7 +131,7 @@ Once the above is configured as desired you can proceed to [provision as standar
 
 <img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
 
-## 2. Setting up authentication for the provisioned Kubernetes Cluster
+## 3. Setting up authentication for the provisioned Kubernetes Cluster
 
 Authenticating with Kubernetes is different compared to other services, and can be [considered a challenge](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/using_gke_with_terraform#interacting-with-kubernetes) in terms of automation.
 
@@ -143,7 +143,7 @@ The easiest way to do this is via the selected cloud providers tooling after the
 
 As a convenience, the Toolkit can automatically run this command for you in its configuration stage as well when the variable `kubeconfig_setup` is set to `true`. This will be detailed more in the next section.
 
-## 3. Configuring the Helm Charts deployment with Ansible
+## 4. Configuring the Helm Charts deployment with Ansible
 
 Like Provisioning with Terraform, configuring the Helm deployment onto the Kubernetes cluster on Google Kubernetes Engine (as well as configuring the backend compute VMs as normal) only requires a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) - Namely a few extra settings required for Helm.
 

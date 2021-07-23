@@ -3,9 +3,9 @@
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [**GitLab Environment Toolkit - Provisioning the environment with Terraform**](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
-- [GitLab Environment Toolkit - Advanced - Geo, Cloud Native Hybrid, Zero Downtime Updates and more](environment_advanced.md)
-  - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
-  - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
+- [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Zero Downtime Updates and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 
 With [Terraform](https://www.terraform.io/) you can automatically provision machines and associated dependencies on a provider.
@@ -374,6 +374,92 @@ Next in the file are the various machine settings, separated the same as the Ref
 - `*_instance_type` - The [AWS Instance Type Machine Type](https://aws.amazon.com/ec2/instance-types/) (size) for that component
 - `haproxy_external_elastic_ip_allocation_ids` - Set the external HAProxy load balancer to assume the external IP allocation ID set in `variables.tf`. Note that this is an array setting as the advanced underlying functionality needs to account for the specific setting of IPs for potentially multiple machines. In this case though it should always only be one IP allocation ID.
 
+##### Configure network setup (AWS)
+
+The module for AWS can configure the [network stack](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html) (VPC, Subnets, etc...) for your environment in several different ways:
+
+- **Default** - Sets up the infrastructure on the default network stack as provided by AWS. This is the default for the module.
+- **Created** - Creates the required network stack for the infrastructure
+- **Existing** - Will use a provided network stack passed in by the user
+
+In this section you will find the config required to set up each depending on your requirements.
+
+**{-NOTE: Changing network setup on an existing environment must be avoided-}**. **Doing so is considered a significant change in AWS and will essentially trigger the recreation of the entire environment leading to data loss**.
+
+**Default**
+
+This is the default setup for the module. No additional configuration is required.
+
+This is the recommended setup for most standard (Omnibus) environments where AWS will handle the networking by default.
+
+**Created**
+
+When configured the module will create a network stack to run the environment in. The network stack created is as follows:
+
+- 1 VPC
+- 2 Subnets
+  - Subnets are created in the created VPC and are additionally spread across the available Availability Zones in the selected region.
+  - The number of Subnets is configurable.
+- 1 Internet Gateway
+- 1 Route Table
+
+The environment's machines will be spread across the created subnets and their Availability Zones evenly.
+
+This setup is recommended for users who want a specific network stack for their GitLab environment. It's also recommended for Cloud Native Hybrid environments running on AWS.
+
+To configure this setup the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf-1):
+
+- `create_network` - This variable should be set to `true` when you are wanting the module to create a new network stack.
+
+An example of your environment config file then would look like:
+
+```tf
+module "gitlab_ref_arch_aws" {
+  source = "../../modules/gitlab_ref_arch_aws"
+
+  prefix = var.prefix
+  ssh_public_key_file = file(var.ssh_public_key_file)
+
+  create_network = "true"
+
+  [...]
+```
+
+In addition to the above the following _optional_ settings change how the network is configured:
+
+- `subnet_pub_count` - The number of subnets to create in the VPC. This should only be changed if you want increased subnet count for availability reasons. Default is `2`.
+- `vpc_cidr_block` - The [CIDR block](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for your VPC. This shouldn't need to be changed in most scenarios unless you want to use a specific CIDR block. Default is `172.31.0.0/16`.
+- `subpub_pub_cidr_block`- A list of [CIDR blocks](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for each subnet created. This shouldn't need to be changed in most scenarios unless you want to use a specific CIDR blocks. Default is `["172.31.0.0/20","172.31.16.0/20","172.31.32.0/20"]`
+  - As a convenience the module has up to 3 subnet CIDR blocks it will use. If you have set `subnet_pub_count` higher than 3 then this variable will need to be adjusted to match the number of Subnets to be created.
+
+**Existing**
+
+In this setup you have an existing network stack that you want the environment to use.
+
+This is an advanced setup and you must ensure the network stack is configured correctly. This guide doesn't detail the specifics on how to do this but generally a stack should include the same elements as listed in the **Created** for the environment to work properly. Please refer to the AWS docs for more info.
+
+Note that when this is configured the module will configure some AWS Security Groups in your VPC to enable network access for the environment.
+
+With an existing stack configure the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf-1):
+
+- `vpc_id` - The ID of your existing VPC
+- `subnet_ids` - A list of Subnet IDs the environment's machines should be spread across. The subnets should be located in the same existing VPC.
+
+An example of your environment config file then would look like:
+
+```tf
+module "gitlab_ref_arch_aws" {
+  source = "../../modules/gitlab_ref_arch_aws"
+
+  prefix = var.prefix
+  ssh_public_key_file = file(var.ssh_public_key_file)
+
+  vpc_id = "<vpc-id>"
+  subnet_ids = ["<subnet-1-id>", "<subnet-2-id>"]
+
+  [...]
+```
+
 #### Configure Authentication (AWS)
 
 Finally the last thing to configure is authentication. This is required so Terraform can access AWS (provider) as well as its State Storage Bucket (backend).
@@ -595,7 +681,7 @@ _Note: If you ever want to deprovision resources created, you can do so by runni
 
 ### Avoid Auto Approve
 
-Where possible we strongly recommend against using the `--auto-approve` behavior that is an option with the `terraform apply` command, where Terraform is instructed to make all changes without confirmation. This is especially so with Production instances 
+Where possible we strongly recommend against using the `--auto-approve` behavior that is an option with various Terraform commands such as `terraform apply`, where Terraform is instructed to make all changes without confirmation. This is especially so with Production instances.
 
 Terraform will delete resources and data if it can't apply changes directly. As the Reference Architectures and the Toolkit continue to evolve and improve this may happen at some times, leading to complete data loss.
 
