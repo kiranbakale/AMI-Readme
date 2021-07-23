@@ -3,9 +3,9 @@
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
-- [GitLab Environment Toolkit - Advanced - Geo, Cloud Native Hybrid, Zero Downtime Updates and more](environment_advanced.md)
-  - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
-  - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
+- [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Zero Downtime Updates and more](environment_advanced.md)
 - [**GitLab Environment Toolkit - Considerations After Deployment - Backups, Security**](environment_post_considerations.md)
 
 The Toolkit deploys a _base_ GitLab environment based on the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/). This is by design as the Toolkit is _one for all_ and it wouldn't be possible to cover every user's specific requirements with a general toolkit.
