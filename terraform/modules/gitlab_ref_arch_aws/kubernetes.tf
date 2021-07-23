@@ -1,6 +1,6 @@
 locals {
   total_node_pool_count = sum([var.webservice_node_pool_count, var.sidekiq_node_pool_count, var.supporting_node_pool_count])
-  default_subnet_list = slice(tolist(data.aws_subnet_ids.defaults.ids), 0, var.eks_default_subnet_count)
+  default_subnet_list = var.create_network ? null : slice(tolist(data.aws_subnet_ids.defaults[0].ids), 0, var.eks_default_subnet_count)
 }
 
 # Cluster
