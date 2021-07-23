@@ -3,13 +3,15 @@ locals {
 }
 
 resource "aws_default_vpc" "default" {
+  count = local.create_network ? 0 : 1
   tags = {
     Name = "Default VPC"
   }
 }
 
 data "aws_subnet_ids" "defaults" {
-  vpc_id = aws_default_vpc.default.id
+  count = local.create_network ? 0 : 1
+  vpc_id = aws_default_vpc.default[0].id
 }
 
 data "aws_availability_zones" "defaults" {}
