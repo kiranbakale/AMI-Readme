@@ -6,7 +6,7 @@ resource "aws_key_pair" "ssh_key" {
 resource "aws_security_group" "gitlab_internal_networking" {
   # Allows for machine internal connections as well as outgoing internet access
   name = "${var.prefix}-internal-networking"
-  vpc_id = coalesce(local.vpc_id, aws_default_vpc.default[0].id)
+  vpc_id = local.vpc_id
 
   ingress {
     from_port = 0
@@ -30,7 +30,7 @@ resource "aws_security_group" "gitlab_internal_networking" {
 
 resource "aws_security_group" "gitlab_external_ssh" {
   name = "${var.prefix}-external-ssh"
-  vpc_id = coalesce(local.vpc_id, aws_default_vpc.default[0].id)
+  vpc_id = local.vpc_id
   ingress {
     from_port   = 22
     to_port     = 22
@@ -46,7 +46,7 @@ resource "aws_security_group" "gitlab_external_ssh" {
 resource "aws_security_group" "gitlab_external_git_ssh" {
   count = min(var.haproxy_external_node_count, 1)
   name = "${var.prefix}-external-git-ssh"
-  vpc_id = coalesce(local.vpc_id, aws_default_vpc.default[0].id)
+  vpc_id = local.vpc_id
   ingress {
     from_port   = 2222
     to_port     = 2222
@@ -62,7 +62,7 @@ resource "aws_security_group" "gitlab_external_git_ssh" {
 resource "aws_security_group" "gitlab_external_http_https" {
   count = min(var.haproxy_external_node_count + var.monitor_node_count, 1)
   name = "${var.prefix}-external-http-https"
-  vpc_id = coalesce(local.vpc_id, aws_default_vpc.default[0].id)
+  vpc_id = local.vpc_id
   ingress {
     from_port   = 80
     to_port     = 80
@@ -85,7 +85,7 @@ resource "aws_security_group" "gitlab_external_http_https" {
 resource "aws_security_group" "gitlab_external_haproxy_stats" {
   count = min(var.haproxy_external_node_count + var.haproxy_internal_node_count, 1)
   name = "${var.prefix}-external-haproxy-stats"
-  vpc_id = coalesce(local.vpc_id, aws_default_vpc.default[0].id)
+  vpc_id = local.vpc_id
   ingress {
     from_port   = 1936
     to_port     = 1936
@@ -101,7 +101,7 @@ resource "aws_security_group" "gitlab_external_haproxy_stats" {
 resource "aws_security_group" "gitlab_external_monitor" {
   count = min(var.monitor_node_count, 1)
   name = "${var.prefix}-external-monitor"
-  vpc_id = coalesce(local.vpc_id, aws_default_vpc.default[0].id)
+  vpc_id = local.vpc_id
   ingress {
     from_port   = 9122
     to_port     = 9122
