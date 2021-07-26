@@ -18,10 +18,14 @@
 
     - name: Add GitLab repository GPG key
       apt_key:
-        url: https://gitlab-org.gitlab.io/omnibus-gitlab/gitlab_new_gpg.key
+        url: https://packages.gitlab.com/gpg.key
         state: present
-      when:
-        - omnibus_node
+      register: result
+      retries: 2
+      delay: 3
+      until: result is success
+      when: omnibus_node
+      tags: gpg
 
     - name: Get GitLab json config file stats if it exists
       stat:
