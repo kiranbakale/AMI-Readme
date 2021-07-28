@@ -79,6 +79,7 @@ global:
   railsSecrets:
     secret: gitlab-rails-secrets
   gitaly:
+{% if 'praefect' in groups %}
     authToken:
       secret: gitlab-praefect-external-token
       key: password
@@ -88,6 +89,23 @@ global:
       hostname: "{{ haproxy_internal_int_ip }}"
       port: 2305
       tlsEnabled: false
+{% elif 'gitaly' in groups %}
+    authToken:
+      secret: gitlab-gitaly-external-token
+      key: password
+    enabled: false # Gitaly runs outside of cluster
+    external:
+    - name: default
+      hostname: "{{ gitaly_primary_int_ip }}"
+      port: 8075
+      tlsEnabled: false
+{% for gitaly_secondary_ip in gitaly_secondary_int_ips %}
+    - name: "storage{{loop.index + 1}}"
+      hostname: "{{ gitaly_secondary_ip }}"
+      port: 8075
+      tlsEnabled: false
+{% endfor %}
+{% endif %}
   grafana:
     enabled: true
   hosts:
@@ -113,13 +131,22 @@ global:
   minio:
     enabled: false
   psql:
-    host: "{{ haproxy_internal_int_ip }}"
+    host: "{{ haproxy_internal_int_ip if 'haproxy_internal' in groups else postgres_primary_int_ip }}"
     password:
       secret: gitlab-postgres-password
       key: password
-    port: 6432
+    port: "{{ 6432 if 'haproxy_internal' in groups else postgres_primary_int_port }}"
   redis:
 {% if 'redis' in groups %}
+{% if groups['redis'] | length == 1 %}
+### Redis Single Node
+    host: '{{ redis_primary_int_ip }}'
+    port: '{{ redis_port }}'
+    password:
+      secret: gitlab-redis-password
+      key: password
+{% elif groups['redis'] | length > 1 %}
+### Redis Multi Node
     host: gitlab-redis
     serviceName: redis
     password:
@@ -130,6 +157,7 @@ global:
       - host: '{{ ip }}'
         port: '{{ redis_sentinel_port }}'
 {% endfor %}
+{% endif %}
 {% elif 'redis_cache' in groups and 'redis_persistent' in groups %}
     cache:
       host: gitlab-redis-cache

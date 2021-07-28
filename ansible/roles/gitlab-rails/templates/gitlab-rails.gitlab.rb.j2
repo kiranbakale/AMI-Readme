@@ -197,7 +197,7 @@ gitlab_workhorse['env'] = {
 }
 {% endif %}
 
-{% if 'gitaly' in groups and 'praefect' in groups %}
+{% if 'praefect' in groups %}
 ## Gitaly Cluster (External)
 gitaly['enable'] = false
 git_data_dirs({
