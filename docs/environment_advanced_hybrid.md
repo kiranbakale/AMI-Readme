@@ -223,6 +223,7 @@ Like Provisioning with Terraform, configuring the Helm deployment for the Kubern
 
 By design, this file is similar to the one used in a [standard environment](environment_provision.md#configure-module-settings-environmenttf) with the following additional settings:
 
+- `cloud_native_hybrid_environment` - Sets Ansible to know it's configuring a Cloud Native Hybrid Reference Architecture environment. Required.
 - `kubeconfig_setup` - When true, will attempt to automatically configure the `.kubeconfig` file entry for the provisioned Kubernetes cluster.
 - `external_ip` - **GCP only** External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid installs.
 - `gcp_zone` - **GCP only** Zone name the GCP project is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
