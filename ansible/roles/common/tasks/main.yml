@@ -49,7 +49,9 @@
       tags: packages
 
     - name: Install system packages
-      command: apt-get install -y {{ system_packages }}  # noqa command-instead-of-module
+      command:
+        cmd: apt-get install -y {{ system_packages }}  # noqa command-instead-of-module
+        warn: false
       environment:
         DEBIAN_FRONTEND: "noninteractive"
       register: result
@@ -111,7 +113,9 @@
         - omnibus_node
 
     - name: Install GitLab repo package
-      command: apt-get install {{ gitlab_repo_package }} -y --allow-downgrades
+      command:
+        cmd: apt-get install {{ gitlab_repo_package }} -y --allow-downgrades
+        warn: false
       register: result
       retries: 2
       delay: 3
@@ -172,14 +176,18 @@
         - omnibus_node
 
     - name: Update system packages to the latest version
-      command: apt-get upgrade -y  # noqa command-instead-of-module
+      command:
+        cmd: apt-get upgrade -y  # noqa command-instead-of-module
+        warn: false
       register: result
       retries: 1
       until: result is success
       tags: packages
 
     - name: Autoremove any unneeded packages
-      command: apt-get autoremove -y  # noqa command-instead-of-module
+      command:
+        cmd: apt-get autoremove -y  # noqa command-instead-of-module
+        warn: false
       register: result
       retries: 1
       until: result is success
