@@ -40,11 +40,26 @@ Provisioning a Cloud Native Hybrid Reference Architecture has been designed to b
 
 Like the main provisioning docs there are sections for each support host provider on how to achieve this. Follow the section for your selected provider and then move onto the next step.
 
+Provisioning the required Kubernetes cluster with a cloud provider only requires a few tweaks to your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`) - Namely replacing the GitLab Rails and Sidekiq VMs with equivalent k8s Node Pools instead.
+
+By design, the `environment.tf` file is similar to the one used in a [standard environment](environment_provision.md#configure-module-settings-environmenttf) with the following differences:
+
+- `gitlab_rails_x` entries are replaced with `webservice_node_pool_x`. In the charts we run Puma, etc... in Webservice pods.
+- `sidekiq_x` entries are replaced with `sidekiq_node_pool_x`
+- `supporting_node_pool_x` entries are added for several additional supporting services needed when running components in Helm Charts, e.g. NGINX, etc...
+- `haproxy_external_x` entries are removed as the Chart deployment handles external load balancing.
+
+Each node pool setting configures the following. To avoid repetition we'll describe each setting once:
+
+- `*_node_pool_count` - The number of machines to set up for that component's node pool
+- `*_node_pool_machine_type` - **GCP only** The [GCP Machine Type](https://cloud.google.com/compute/docs/machine-types) (size) for each machine in the node pool
+- `*_node_pool_instance_type` - **AWS only** The [AWS Instance Type](https://aws.amazon.com/ec2/instance-types/) (size) for each machine in the node pool
+
+Once the above is configured as desired you can proceed to [provision as standard](environment_provision.md#3-provision).
+
+Below are examples for an `environment.tf` file with all config for each cloud provider based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative):
+
 ### Google Cloud Platform (GCP)
-
-Provisioning the required Kubernetes cluster on Google Kubernetes Engine only requires a few tweaks to your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`) - Namely replacing the GitLab Rails and Sidekiq VMs with equivalent k8s Node Pools instead.
-
-Here's an example of a file with all config for a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) and descriptions below:
 
 ```tf
 module "gitlab_ref_arch_gcp" {
@@ -109,27 +124,85 @@ output "gitlab_ref_arch_gcp" {
 }
 ```
 
-By design, this file is similar to the one used in a [standard environment](environment_provision.md#configure-module-settings-environmenttf) with the following differences:
+### Amazon Web Services (AWS)
 
-- `gitlab_rails_x` entries are replaced with `webservice_node_pool_x`. In the charts we run Puma, etc... in Webservice pods.
-- `sidekiq_x` entries are replaced with `sidekiq_node_pool_x`
-- `supporting_node_pool_x` entries are added for several additional supporting services needed when running components in Helm Charts, e.g. NGINX, etc...
-- `haproxy_external_x` entries are removed as the Chart deployment handles external load balancing.
+```tf
+module "gitlab_ref_arch_aws" {
+  source = "../../modules/gitlab_ref_arch_aws"
 
-Each node pool setting configures the following. To avoid repetition we'll describe each setting once:
+  prefix = var.prefix
+  ssh_public_key_file = file(var.ssh_public_key_file)
 
-- `*_node_pool_count` - The number of machines to set up for that component's node pool
-- `*_node_pool_machine_type` - The [GCP Machine Type](https://cloud.google.com/compute/docs/machine-types) (size) for that each machine in the node pool
+  create_network = true
 
-Once the above is configured as desired you can proceed to [provision as standard](environment_provision.md#3-provision).
+  # 10k Hybrid - k8s Node Pools
+  webservice_node_pool_count = 4
+  webservice_node_pool_instance_type = "c5.9xlarge"
 
-### Amazon Web Services (coming soon)
+  sidekiq_node_pool_count = 4
+  sidekiq_node_pool_instance_type = "m5.xlarge"
 
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
+  supporting_node_pool_count = 3
+  supporting_node_pool_instance_type = "m5.xlarge"
 
-### Azure (coming soon)
+  # 10k Hybrid - Compute VMs
+  consul_node_count = 3
+  consul_instance_type = "c5.large"
 
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
+  elastic_node_count = 3
+  elastic_instance_type = "c5.4xlarge"
+
+  gitaly_node_count = 3
+  gitaly_instance_type = "m5.4xlarge"
+
+  praefect_node_count = 3
+  praefect_instance_type = "c5.large"
+
+  praefect_postgres_node_count = 1
+  praefect_postgres_instance_type = "c5.large"
+
+  gitlab_nfs_node_count = 1
+  gitlab_nfs_instance_type = "c5.xlarge"
+
+  haproxy_internal_node_count = 1
+  haproxy_internal_instance_type = "c5.large"
+
+  monitor_node_count = 1
+  monitor_instance_type = "c5.xlarge"
+
+  pgbouncer_node_count = 3
+  pgbouncer_instance_type = "c5.large"
+
+  postgres_node_count = 3
+  postgres_instance_type = "m5.2xlarge"
+
+  redis_cache_node_count = 3
+  redis_cache_instance_type = "m5.xlarge"
+  redis_sentinel_cache_node_count = 3
+  redis_sentinel_cache_instance_type = "c5.large"
+  redis_persistent_node_count = 3
+  redis_persistent_instance_type = "m5.xlarge"
+  redis_sentinel_persistent_node_count = 3
+  redis_sentinel_persistent_instance_type = "c5.large"
+}
+
+output "gitlab_ref_arch_aws" {
+  value = module.gitlab_ref_arch_aws
+}
+```
+
+#### Networking Options
+
+With EKS the GitLab Environment Toolkit is able to configure the networking for your environment in several different ways:
+
+- Default - Sets up the infrastructure on the default network stack as provided by AWS. Using the variable `default_subnet_use_count` it is recommended to limit the number of subnets that the cluster will attach to, by default it will attach to all subnets. Using the default VPC is only recommended if there will be no other network traffic using it.
+- Created - Creates the required network stack for the infrastructure. This is the recommended option as GitLab will be isolated to its own [network stack](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html).
+- Default - Sets up the infrastructure on the default network stack as provided by AWS. Using the variable `default_subnet_use_count` it is recommended to limit the number of subnets that the cluster will attach to, by default it will attach to all subnets. Using the default VPC is only recommended if there will be no other network traffic using it.
+- Existing - Will use a provided network stack passed in by the user. This should be used if you wish to create your own network stack and have the toolkit use this for your EKS cluster.
+
+More information can be found in the docs for [Configuring network setup (AWS)](environment_provision.md#configure-network-setup-aws).
+
+NOTE: If you ever want to deprovision resources created, with a Cloud Native Hybrid on AWS **you must run [helm uninstall gitlab](https://helm.sh/docs/helm/helm_uninstall/)** before running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html). This ensure all resources are correctly removed.
 
 ## 3. Setting up authentication for the provisioned Kubernetes Cluster
 
@@ -139,15 +212,26 @@ In a nutshell authentication must be setup for the `kubectl` command on the mach
 
 The easiest way to do this is via the selected cloud providers tooling after the cluster has been provisioned:
 
-- Google Cloud Platform (GCP) - Can be setup and selected via the `gcloud get-credentials` command, e.g. `gcloud container clusters get-credentials <CLUSTER NAME> --project <GCP PROJECT NAME> --zone <GCP ZONE NAME>`. Where `<CLUSTER NAME>` will be the same as the `prefix` variable set in Terraform.
+- Google Cloud Platform (GCP) can be setup and selected via the `gcloud get-credentials` command, e.g. `gcloud container clusters get-credentials <CLUSTER NAME> --project <GCP PROJECT NAME> --zone <GCP ZONE NAME>`. Where `<CLUSTER NAME>` will be the same as the `prefix` variable set in Terraform.
+- Amazon Web Services (AWS) can be setup and selected via the `aws update-kubeconfig` command, e.g. `aws eks --region <AWS REGION NAME> update-kubeconfig --name <CLUSTER NAME>`. Where `<CLUSTER NAME>` will be the same as the `prefix` variable set in Terraform.
 
-As a convenience, the Toolkit can automatically run this command for you in its configuration stage as well when the variable `kubeconfig_setup` is set to `true`. This will be detailed more in the next section.
+As a convenience, the Toolkit can automatically run these commands for you in its configuration stage when the variable `kubeconfig_setup` is set to `true`. This will be detailed more in the next section.
 
 ## 4. Configuring the Helm Charts deployment with Ansible
 
-Like Provisioning with Terraform, configuring the Helm deployment onto the Kubernetes cluster on Google Kubernetes Engine (as well as configuring the backend compute VMs as normal) only requires a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) - Namely a few extra settings required for Helm.
+Like Provisioning with Terraform, configuring the Helm deployment for the Kubernetes cluster only requires a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) - Namely a few extra settings required for Helm.
 
-Here's an example of a file with all config for a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) and descriptions below:
+By design, this file is similar to the one used in a [standard environment](environment_provision.md#configure-module-settings-environmenttf) with the following additional settings:
+
+- `kubeconfig_setup` - When true, will attempt to automatically configure the `.kubeconfig` file entry for the provisioned Kubernetes cluster.
+- `external_ip` - **GCP only** External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid installs.
+- `gcp_zone` - **GCP only** Zone name the GCP project is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
+- `aws_region` - **AWS only** Name of the region where the EKS cluster is located. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
+- `aws_allocation_ids` - **AWS only** A comma separated list of allocation IDs to assign to the AWS load balancer.
+  - With AWS you **must have an [Elastic IP](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/master/docs/environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) for each subnet being used**, each Elastic IP will have an allocation ID that must be stored in this list.
+Below are examples for a `vars.yml` file with all config for each cloud provider based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative):
+
+### Google Cloud Platform (GCP)
 
 ```yml
 all:
@@ -167,6 +251,7 @@ all:
     external_url: "<external_url>"
     external_ip: "<external_ip>"
     gitlab_license_file: "<gitlab_license_file_path>"
+    cloud_native_hybrid_environment: true
     kubeconfig_setup: true
 
     # Component Settings
@@ -187,11 +272,44 @@ all:
     praefect_postgres_password: '<praefect_postgres_password>'
 ```
 
-By design, this file is similar to the one used in a [standard environment](environment_provision.md#configure-module-settings-environmenttf) with the following additional settings:
+### Amazon Web Services (AWS)
 
-- `gcp_zone` - Zone name the GCP project is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
-- `external_ip` - External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid installs.
-- `kubeconfig_setup` - When true, will attempt to automatically configure the `.kubeconfig` file entry for the provisioned Kubernetes cluster.
+```yml
+all:
+  vars:
+    # Ansible Settings
+    ansible_user: "<ssh_username>"
+    ansible_ssh_private_key_file: "<private_ssh_key_path>"
+
+    # Cloud Settings
+    cloud_provider: "aws"
+    aws_region: "<aws_region_name>"
+    aws_allocation_ids: "<aws_allocation_id1>,<aws_allocation_id2>"
+
+    #General Settings
+    prefix: "<environment_prefix>"
+    external_url: "<external_url>"
+    gitlab_license_file: "<gitlab_license_file_path>"
+    cloud_native_hybrid_environment: true
+    kubeconfig_setup: true
+  
+    # Component Settings
+    patroni_remove_data_directory_on_rewind_failure: false
+    patroni_remove_data_directory_on_diverged_timelines: false
+
+    # Passwords / Secrets
+    gitlab_root_password: '<gitlab_root_password>'
+    grafana_password: '<grafana_password>'
+    postgres_password: '<postgres_password>'
+    patroni_password: '<patroni_password>'
+    consul_database_password: '<consul_database_password>'
+    pgbouncer_password: '<pgbouncer_password>'
+    redis_password: '<redis_password>'
+    gitaly_token: '<gitaly_token>'
+    praefect_external_token: '<praefect_external_token>'
+    praefect_internal_token: '<praefect_internal_token>'
+    praefect_postgres_password: '<praefect_postgres_password>'
+```
 
 ### Additional Config Settings
 
@@ -212,11 +330,3 @@ The Toolkit provides several other settings that can customize a Cloud Native Hy
 - `gitlab_charts_sidekiq_min_replicas`: Override for the number of min Sidekiq replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
 
 Once your config file is in place as desired you can proceed to [configure as normal](environment_configure.md#3-configure-update).
-
-### Amazon Web Services (coming soon)
-
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
-
-### Azure (coming soon)
-
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
