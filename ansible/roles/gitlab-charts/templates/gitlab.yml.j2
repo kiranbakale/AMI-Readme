@@ -169,7 +169,7 @@ grafana:
     workload: "support"
 nginx-ingress:
   controller:
-{% if aws_allocation_ids is defined %}
+{% if aws_allocation_ids != "" %}
     service:
       annotations:
         service.beta.kubernetes.io/aws-load-balancer-type: nlb
