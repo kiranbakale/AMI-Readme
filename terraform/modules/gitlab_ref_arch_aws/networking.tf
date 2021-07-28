@@ -68,4 +68,5 @@ resource "aws_default_route_table" "gitlab_vpc_rt" {
 locals {
   vpc_id = local.create_network ? aws_vpc.gitlab_vpc[0].id : var.vpc_id
   subnet_ids = local.create_network ? aws_subnet.gitlab_vpc_sn_pub[*].id : var.subnet_ids
+  default_subnet_ids = var.create_network ? null : slice(tolist(data.aws_subnet_ids.defaults[0].ids), 0, var.default_subnet_use_count)
 }

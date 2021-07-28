@@ -1,6 +1,5 @@
 locals {
   total_node_pool_count = sum([var.webservice_node_pool_count, var.sidekiq_node_pool_count, var.supporting_node_pool_count])
-  default_subnet_list = var.create_network ? null : slice(tolist(data.aws_subnet_ids.defaults[0].ids), 0, var.eks_default_subnet_count)
 }
 
 # Cluster
@@ -12,7 +11,7 @@ resource "aws_eks_cluster" "gitlab_cluster" {
   role_arn = aws_iam_role.gitlab_eks_role[0].arn
 
   vpc_config {
-    subnet_ids = coalesce(local.subnet_ids, local.default_subnet_list)
+    subnet_ids = coalesce(local.subnet_ids, local.default_subnet_ids)
 
     security_group_ids = [
       aws_security_group.gitlab_internal_networking.id,
@@ -38,7 +37,7 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
   cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
   node_group_name = "gitlab_webservice_pool"
   node_role_arn = aws_iam_role.gitlab_eks_node_role[0].arn
-  subnet_ids = coalesce(local.subnet_ids, local.default_subnet_list)
+  subnet_ids = coalesce(local.subnet_ids, local.default_subnet_ids)
   instance_types = [var.webservice_node_pool_instance_type]
   disk_size = var.webservice_node_pool_disk_size
 
@@ -65,7 +64,7 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
   cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
   node_group_name = "gitlab_sidekiq_pool"
   node_role_arn = aws_iam_role.gitlab_eks_node_role[0].arn
-  subnet_ids = coalesce(local.subnet_ids, local.default_subnet_list)
+  subnet_ids = coalesce(local.subnet_ids, local.default_subnet_ids)
   instance_types = [var.sidekiq_node_pool_instance_type]
   disk_size = var.sidekiq_node_pool_disk_size
 
@@ -92,7 +91,7 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
   cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
   node_group_name = "gitlab_supporting_pool"
   node_role_arn = aws_iam_role.gitlab_eks_node_role[0].arn
-  subnet_ids = coalesce(local.subnet_ids, local.default_subnet_list)
+  subnet_ids = coalesce(local.subnet_ids, local.default_subnet_ids)
   instance_types = [var.supporting_node_pool_instance_type]
   disk_size = var.supporting_node_pool_disk_size
 

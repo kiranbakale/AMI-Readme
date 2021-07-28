@@ -388,9 +388,11 @@ In this section you will find the config required to set up each depending on yo
 
 **Default**
 
-This is the default setup for the module. No additional configuration is required.
+This is the default setup for the module and is the recommended setup for most standard (Omnibus) environments where AWS will handle the networking by default.
 
-This is the recommended setup for most standard (Omnibus) environments where AWS will handle the networking by default.
+No additional configuration is needed to use this setup. However several parts of the provisioned architecture may require attaching to a number of Subnets in the network stack to function correctly. The actual number of subnets to be attached can be configured as follows:
+
+- `default_subnet_use_count` - Set to the number of subnets in the default network stack that should be attached to by parts that require it. Default is 2.
 
 **Created**
 
@@ -420,7 +422,7 @@ module "gitlab_ref_arch_aws" {
   prefix = var.prefix
   ssh_public_key_file = file(var.ssh_public_key_file)
 
-  create_network = "true"
+  create_network = true
 
   [...]
 ```

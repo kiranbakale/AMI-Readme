@@ -130,5 +130,5 @@ variable "subnet_pub_count" { default = 2 }
 variable "vpc_id" { default = null }
 variable "subnet_ids" { default = null }
 
-## EKS
-variable "eks_default_subnet_count" { default = 2 }
+## Default Network
+variable "default_subnet_use_count" { default = 2 }
