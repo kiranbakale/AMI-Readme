@@ -5,7 +5,8 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
-- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Zero Downtime Updates and more](environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search and more](environment_advanced.md)
+- [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 
 With [Terraform](https://www.terraform.io/) you can automatically provision machines and associated dependencies on a provider.
@@ -680,16 +681,6 @@ After the config has been setup you're now ready to provision the environment. T
     - **Warning - running this command will likely apply changes to shared infrastructure. Only run this command if you have permission to do so.**
 
 NOTE: If you ever want to deprovision resources created, you can do so by running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html).
-
-### Avoid Auto Approve
-
-Where possible we strongly recommend against using the `--auto-approve` behavior that is an option with various Terraform commands such as `terraform apply`, where Terraform is instructed to make all changes without confirmation. This is especially so with Production instances.
-
-Terraform will delete resources and data if it can't apply changes directly. As the Reference Architectures and the Toolkit continue to evolve and improve this may happen at some times, leading to complete data loss.
-
-We'll always endeavor to call out when breaking changes are introduced in new versions of the Toolkit and what steps to take to avoid them but using auto approve, such as in automation, may lead to total data loss and for this reason is strongly unrecommended.
-
-In addition to this generally we recommend you implement a good [backup strategy](environment_post_considerations.md#backups) as well to cover any disaster scenarios in general.
 
 ## Next Steps 
 
