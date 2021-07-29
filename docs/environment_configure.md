@@ -5,7 +5,8 @@
 - [**GitLab Environment Toolkit - Configuring the environment with Ansible**](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
-- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Zero Downtime Updates and more](environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search and more](environment_advanced.md)
+- [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 
 With [Ansible](https://docs.ansible.com/ansible/latest/index.html) you can automatically configure provisioned machines.
@@ -336,6 +337,7 @@ By default the Toolkit will deploy the latest [GitLab EE package](https://packag
 
 The Toolkit can install other GitLab versions from `13.2.0` onwards through two different methods:
 
+- The Toolkit can be configured to install a specific GitLab version via the `gitlab_version` inventory variable. This should be set to the full semantic version, e.g. `14.0.0`. If let unset (the default) the Toolkit will look to install the latest version.
 - Repo - A different repo and package can be specified via the two inventory variables `gitlab_repo_script_url` and `gitlab_repo_package` respectively. The Toolkit will first install the repo via the script provided and then install the package.
 - Deb file - The Toolkit can install a Debian file directly in several ways:
   - If the package needs to be downloaded from the specific URL you can specify this via the `gitlab_deb_download_url` inventory variable.
@@ -381,4 +383,4 @@ Along with the main environment there are several other services that should be 
 - Prometheus - `http://<external_ip_or_url>:9090`
 - HAProxy stats - `http://<external_ip_or_url>:1936`
 
-Next you should consider any [advanced setups](environment_advanced.md) you may wish to explore as well as reading through the [considerations after deployment](environment_post_considerations.md) such as backups and security.
+Next you should consider any [advanced setups](environment_advanced.md) you may wish to explore, the notes on [Upgrades](environment_upgrades.md) as well as reading through the [considerations after deployment](environment_post_considerations.md) such as backups and security.

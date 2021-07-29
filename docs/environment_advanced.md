@@ -1,11 +1,12 @@
-# Advanced - Geo, Advanced Search, Zero Downtime Updates and more
+# Advanced - Geo, Advanced Search and more
 
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
-- [**GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Zero Downtime Updates and more**](environment_advanced.md)
+- [**GitLab Environment Toolkit - Advanced - Geo, Advanced Search and more**](environment_advanced.md)
+- [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 
 The Toolkit by default will deploy the latest version of the selected [Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/). However, it can also support other advanced setups such as Geo or different component makeups such as Gitaly Sharded.
@@ -246,28 +247,6 @@ Enabling Advanced Search on your environment is designed to be as easy possible 
   - At the time of writing the Elasticsearch version deployed is `7.6.2`. To deploy a different version you can set the `elastic_version`.
 - The Toolkit will also setup a Kibana Docker container on the Primary Elasticsearch node for administration and debugging purposes. Kibana will be accessible on your external IP / URL and port `5602` by default, e.g. `http://<external_ip_or_url>:5602`.
 - Ansible will then configure the GitLab environment near the end of its run to enable Advanced Search against those nodes and perform the first index.
-
-## Zero Downtime Updates
-
-For Zero Downtime Updates, the toolkit follows the [GitLab documented process](https://docs.gitlab.com/omnibus/update/README.html#zero-downtime-updates) and as such the documentation should be read and understood before proceeding with an update.
-
-> As with any update process there may rarely be times where a small number of requests fail when the update is in progress. For example, when updating a primary node it can take up to a few seconds for a new leader to be elected.
-
-Running the zero downtime update process with GET is done in the same way as building the initial environment but with a different playbook instead:
-
-1. `cd` to the `ansible/` directory if not already there.
-1. Run `ansible-playbook` with the intended environment's inventory against the `zero-downtime-update.yml` playbook
-
-    `ansible-playbook -i environments/10k/inventory zero-downtime-update.yml`
-
-1. If GET is managing your Praefect Postgres instance you will need to run the following command to update this
-
-    `ansible-playbook -i environments/10k/inventory praefect-postgres.yml`
-
-> This will cause downtime due to GET only using a single Praefect Postgres node.
-  If you want to have a highly available setup, Praefect requires a third-party PostgreSQL database and will need to be updated manually.
-
-The update process can take a couple of hours to complete and the full runtime will depend on the number of nodes in the deployment.
 
 ## Gitaly Sharded
 
