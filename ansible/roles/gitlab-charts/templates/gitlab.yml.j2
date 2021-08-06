@@ -231,6 +231,12 @@ prometheus:
 redis:
   install: false
 registry:
+{% if cloud_provider == 'aws' and external_url_ssl and external_ssl_source != '' %}
+  storage:
+    secret: gitlab-container-registry-object-storage-key
+    key: config
+{% else %}
   enabled: false
+{% endif %}
 postgresql:
   install: false
