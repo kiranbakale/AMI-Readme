@@ -1,0 +1,6 @@
+s3:
+  bucket: {{ gitlab_object_storage_registry_bucket }}
+  accesskey: {{ lookup('env','AWS_ACCESS_KEY_ID') }}
+  secretkey: {{ lookup('env','AWS_SECRET_ACCESS_KEY') }}
+  region: {{ aws_region }}
+  v4auth: true

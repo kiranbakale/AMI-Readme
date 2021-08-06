@@ -91,6 +91,7 @@ gitlab_object_storage_lfs_bucket: "{{ prefix }}-lfs"
 gitlab_object_storage_packages_bucket: "{{ prefix }}-packages"
 gitlab_object_storage_terraform_state_bucket: "{{ prefix }}-terraform-state"
 gitlab_object_storage_uploads_bucket: "{{ prefix }}-uploads"
+gitlab_object_storage_registry_bucket: "{{ prefix }}-registry"
 
 ################################################################################
 ## GitLab Component Settings (Omnibus)
