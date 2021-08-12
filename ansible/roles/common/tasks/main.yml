@@ -149,6 +149,7 @@
     - name: Install GitLab deb package
       apt:
         deb: "{{ gitlab_deb_target_path }}"
+        force: true
       when:
         - omnibus_node
         - (gitlab_deb_host_path != '') or (gitlab_deb_download_url != '')
