@@ -14,6 +14,7 @@ module "redis" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+  disks = var.redis_disks
 }
 
 output "redis" {
@@ -38,6 +39,7 @@ module "redis_cache" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+  disks = var.redis_cache_disks
 }
 
 output "redis_cache" {
@@ -60,6 +62,7 @@ module "redis_sentinel_cache" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+  disks = var.redis_sentinel_cache_disks
 }
 
 output "redis_sentinel_cache" {
@@ -82,6 +85,7 @@ module "redis_persistent" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+  disks = var.redis_persistent_disks
 }
 
 output "redis_persistent" {
@@ -104,6 +108,7 @@ module "redis_sentinel_persistent" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+  disks = var.redis_sentinel_persistent_disks
 }
 
 output "redis_sentinel_persistent" {

@@ -1,0 +1,15 @@
+---
+
+disk_device_prefix:
+  # GCP gives an ID that can be used as an alias
+  # to the device name
+  gcp: "/dev/disk/by-id/google-"
+  aws: "/dev/"
+mkfs_opts: "-m 0 -F -E lazy_itable_init=0,lazy_journal_init=0,discard"
+mount_opts: "discard,defaults"
+
+disk_mounts: []
+# This should be an array of hashes specifying the disk device name and mount dir
+# Example:
+#   - { device_name: 'log', mount_dir: '/var/log/gitlab' }
+#   - { device_name: 'data', mount_dir: '/var/opt/gitlab' }

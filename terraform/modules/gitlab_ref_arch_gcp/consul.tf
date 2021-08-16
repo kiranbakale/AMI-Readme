@@ -12,6 +12,7 @@ module "consul" {
 
   geo_site = var.geo_site
   geo_deployment = var.geo_deployment
+  disks = var.consul_disks
 }
 
 output "consul" {

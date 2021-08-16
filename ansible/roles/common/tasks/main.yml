@@ -13,8 +13,12 @@
       tags: hostname
 
     - name: Mount data disk if given
-      import_tasks: disks.yml
+      import_tasks: data_disk.yml
       when: data_disk is defined
+
+    - name: Mount disks if disks are given
+      import_tasks: disk_mounts.yml
+      when: disk_mounts|length > 0
 
     - name: Add GitLab repository GPG key
       apt_key:

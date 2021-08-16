@@ -14,6 +14,7 @@ module "praefect" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+  disks = var.praefect_disks
 }
 
 output "praefect" {

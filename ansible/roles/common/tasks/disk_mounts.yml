@@ -1,0 +1,38 @@
+---
+
+- name: Stat the disks
+  stat:
+    path: "{{ disk_device_prefix[cloud_provider] }}{{ item.device_name }}"
+  register: disks_info
+  loop: "{{ disk_mounts }}"
+
+- name: Create and mount disks
+  block:
+    - name: Create ext4 filesystem
+      filesystem:
+        fstype: ext4
+        dev: "{{ disk_device_prefix[cloud_provider] }}{{ item.device_name }}"
+        opts: "{{ mkfs_opts }}"
+      loop: "{{ disk_mounts }}"
+      loop_control:
+        index_var: loop_index
+
+    - name: Create directory for mount
+      file:
+        path: "{{ item.mount_dir }}"
+        state: directory
+      loop: "{{ disk_mounts }}"
+      loop_control:
+        index_var: loop_index
+
+    - name: Mount the disk
+      mount:
+        path: "{{ item.mount_dir }}"
+        src: "{{ disk_device_prefix[cloud_provider] }}{{ item.device_name }}"
+        fstype: ext4
+        state: mounted
+        opts: "{{ mount_opts }}"
+      loop: "{{ disk_mounts }}"
+      loop_control:
+        index_var: loop_index
+  when: disks_info.results[loop_index].stat.exists
