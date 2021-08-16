@@ -275,3 +275,34 @@ Like Gitaly Cluster, this guidance is only for new installs. You must note the f
 ## Container Registry
 
 Container Registry is enabled by default if you're deploying [Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/#available-reference-architectures) configured with external SSL via GET using AWS cloud provider. Container Registry in that case will run in k8s and use an s3 bucket for storage.
+
+## Disk Volume Configuration (GCP only)
+
+Optionally, you may want to add disk volumes to Omnibus installed VMs. This may be useful if you want to put your data and logs on different disks.
+
+In Terraform, you must provision the disks first using the `disks` variable, for example:
+
+```
+variable "disks" {
+  disks = [
+    {
+      size    = 50
+      type    = "pd-ssd"
+      device_name = "data"
+    },
+    {
+      size    = 20
+      type    = "pd-standard"
+      device_name = "log"
+    },
+  ]
+}
+```
+
+In Ansible, set the `disk_mounts` variable to mount and format them when instances are configured, for example:
+
+```yaml
+disk_mounts:
+  - { device_name: 'log', mount_dir: '/var/log/gitlab' }
+  - { device_name: 'data', mount_dir: '/var/opt/gitlab' }
+```

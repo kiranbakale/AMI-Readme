@@ -14,6 +14,7 @@ module "gitlab_rails" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+  disks = var.gitlab_rails_disks
 }
 
 output "gitlab_rails" {

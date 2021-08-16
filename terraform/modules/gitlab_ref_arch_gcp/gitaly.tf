@@ -14,6 +14,7 @@ module "gitaly" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+  disks = var.gitaly_disks
 }
 
 output "gitaly" {

@@ -14,6 +14,8 @@ module "praefect_postgres" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+
+  disks = var.praefect_postgres_disks
 }
 
 output "praefect_postgres" {

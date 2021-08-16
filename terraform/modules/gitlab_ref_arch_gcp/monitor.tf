@@ -14,6 +14,7 @@ module "monitor" {
   geo_deployment = var.geo_deployment
 
   tags = ["${var.prefix}-web"]
+  disks = var.monitor_disks
 }
 
 output "monitor" {

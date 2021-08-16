@@ -14,6 +14,8 @@ module "elastic" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+
+  disks = var.elastic_disks
 }
 
 output "elastic" {

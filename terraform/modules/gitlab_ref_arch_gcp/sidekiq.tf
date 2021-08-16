@@ -14,6 +14,7 @@ module "sidekiq" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+  disks = var.sidekiq_disks
 }
 
 output "sidekiq" {
