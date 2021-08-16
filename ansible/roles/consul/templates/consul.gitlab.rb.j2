@@ -2,7 +2,6 @@ roles ['consul_role']
 
 gitlab_rails['auto_migrate'] = false
 
-consul['enable'] = true
 consul['configuration'] = {
   server: true,
   retry_join: %w({{ consul_int_ips | join(' ') }}),
