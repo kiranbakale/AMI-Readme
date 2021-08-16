@@ -68,10 +68,13 @@ omnibus_node: true
 
 gitlab_version: ""
 gitlab_edition: "gitlab-ee"
+
 ## Set to env var, package with version wildcard or just latest
 gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default(gitlab_edition + '=' + gitlab_version + '*' if gitlab_version != '' else 'gitlab-ee', true) }}"
 gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh', true) }}"
 gitlab_repo_script_path: "/tmp/gitlab_install_repository.sh"
+
+gitlab_deb_force_install: false
 ## Specify absolute path to the local deb package on host
 gitlab_deb_host_path: "{{ lookup('env','GITLAB_HOST_DEB_PATH')}}"
 ## Specify deb package url
