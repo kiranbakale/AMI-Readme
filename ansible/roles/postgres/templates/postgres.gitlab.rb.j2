@@ -1,13 +1,11 @@
-# Disable all components except PostgreSQL, Patroni/Repmgr and Consul
-roles ['postgres_role']
-
 {% if groups['postgres'] | length > 1 %}
 {% if postgres_replication_manager == 'patroni' %}
-# Enable Patroni
-patroni['enable'] = true
+# Disable all components except PostgreSQL, Patroni and Consul
+roles ['patroni_role']
 
-patroni['postgresql']['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
-patroni['postgresql']['max_replication_slots'] = {{ (((groups['postgres'] | length) * 2) * (geo_replication_slot_modifier | int)) + 1 }}
+# Patroni uses one extra slot per node when initiating the replication
+patroni['postgresql']['max_replication_slots'] = {{ (((groups['postgres'] | length) * 2) * (geo_replication_slot_modifier | int)) }}
+patroni['postgresql']['max_wal_senders'] = {{ (((groups['postgres'] | length) * 2) * (geo_replication_slot_modifier | int)) + 1 }}
 
 patroni['remove_data_directory_on_rewind_failure'] = {{ patroni_remove_data_directory_on_rewind_failure | lower }}
 patroni['remove_data_directory_on_diverged_timelines'] = {{ patroni_remove_data_directory_on_diverged_timelines | lower }}
@@ -20,6 +18,9 @@ patroni['password'] = '{{ patroni_password }}'
 {% endif %}
 
 {% elif postgres_replication_manager == 'repmgr' %}
+# Disable all components except PostgreSQL, Repmgr and Consul
+roles ['postgres_role']
+
 # Enable Repmgr
 postgresql['shared_preload_libraries'] = 'repmgr_funcs, pg_stat_statements'
 postgresql['wal_level'] = 'replica'
@@ -59,7 +60,6 @@ postgresql['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
 gitlab_rails['auto_migrate'] = false
 
 # Consul
-consul['enable'] = true
 {% if groups['postgres'] | length > 1 %}
 consul['services'] = %w(postgresql)
 {% endif %}
