@@ -6,11 +6,11 @@ gitlab:
       targetAverageValue: 1600
     resources:
       limits:
-        memory: "{{ gitlab_charts_webservice_limits_memory_gb }}G"
+        memory: "{{ webservice_limits_memory_gb }}G"
       requests:
-        cpu: "{{ gitlab_charts_webservice_requests_cpu }}"
-        memory: "{{ gitlab_charts_webservice_requests_memory_gb }}G"
-    workerProcesses: "{{ gitlab_charts_webservice_requests_cpu }}"
+        cpu: "{{ webservice_requests_cpu }}"
+        memory: "{{ webservice_requests_memory_gb }}G"
+    workerProcesses: "{{ webservice_requests_cpu }}"
     ingress:
       proxyBodySize: 0  # Bigger file uploads, e.g. imports
     nodeSelector:
