@@ -356,7 +356,18 @@ The Quality team actively uses the Toolkit daily to build and test various envir
 After the config has been setup you're now ready to configure the environment. This is done as follows:
 
 1. `cd` to the `ansible/` directory if not already there.
-1. Run `ansible-playbook` with the intended environment's inventory against the `all.yml` playbook - `ansible-playbook -i environments/10k/inventory all.yml`
+1. (Optional) Run `ansible` module `ping` with the intended environment's inventory to list hosts which have been selected.
+
+    ```shell
+    ansible all -m ping -i environments/10k/inventory --list-hosts  
+    ```
+   
+1. Run `ansible-playbook` with the intended environment's inventory against the `all.yml` playbook 
+
+    ```shell
+    ansible-playbook -i environments/10k/inventory all.yml
+    ```
+
     - Note that we pass the whole inventory folder - `environments/10k/inventory`. This ensures Ansible reads all the files in the directory.
     - If you only want to run a specific playbook & role against the respective VMs you can switch out `all.yml` and replace it with the intended playbook, e.g. `gitlab-rails.yml`
 
