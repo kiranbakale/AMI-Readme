@@ -85,7 +85,7 @@ module "gitlab_ref_arch_*" {
   [...]
 ```
 
-> Alpha support for [multi-node PostgreSQL](https://gitlab.com/groups/gitlab-org/-/epics/2536) with Patroni is currently in development. When using repmgr on the secondary site the `node_count` in `postgres.tf` should be set to 1 for the secondary sites config. When using Patroni, this can be left at its original value.
+> When using repmgr on the secondary site the `node_count` in `postgres.tf` should be set to 1 for the secondary sites config. When using Patroni, this can be left at its original value.
 
 Once each site is configured we can run the `terraform apply` command against each project. You can run this command against the primary and secondary sites at the same time.
 
@@ -104,10 +104,27 @@ ansible
             └── secondary
 ```
 
-The `primary` and `secondary` folders are treated the same as non Geo environments and as such the steps for [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md) should be followed.
+For Omnibus environments the `primary` and `secondary` folders are treated the same as non Geo environments and as such the steps for [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md) should be followed.
 
 However you should remove the GitLab license from the secondary site before running the `ansible-playbook` command. To remove the license from the secondary site you can just remove the `gitlab_license_file` setting from the secondary `vars.yml` file.
-Also it's required to add a new `keyed_group` to your Dynamic Inventory config file for your chosen cloud provider:
+
+For Cloud Native Hybrid environments some variables will need to be added to the primary and secondary `vars.yml` files.
+
+Primary `vars.yml`:
+
+```yml
+cloud_native_hybrid_geo: true
+cloud_native_hybrid_geo_role: primary
+```
+
+Secondary `vars.yml`:
+
+```yml
+cloud_native_hybrid_geo: true
+cloud_native_hybrid_geo_role: secondary
+```
+
+Also for Omnibus and Cloud Native Hybrid environments it's required to add a new `keyed_group` to your Dynamic Inventory config file for your chosen cloud provider:
 
 GCP:
 
@@ -226,7 +243,34 @@ keyed_groups:
 
 Add the line `secondary_external_url` which needs to match the `external_url` in the `secondary` inventory vars file.
 
-You can also remove the properties: `prefix`, `gitlab_license_file` and `gitlab_root_password`. These are not used when configuring Geo and as such should only be set in the `primary` and `secondary` inventories.
+You can also remove the properties: `prefix`, `gitlab_license_file` and any password vars with the exception of `postgres_password` which is still required. These are not used when configuring Geo and as such should only be set in the `primary` and `secondary` inventories.
+
+For Cloud Native Hybrid environments you will need to leave some of the password variables in the `vars.yml` file as well as adding some Geo specific variables:
+
+```yml
+# Geo Settings
+cloud_native_hybrid_geo: true
+geo_primary_site_prefix: "<geo_primary_site_prefix>"
+geo_secondary_site_prefix: "<geo_secondary_site_prefix>"
+
+# GCP Specific Settings
+geo_primary_site_gcp_project: "<geo_primary_site_gcp_project>"
+geo_primary_site_gcp_zone: "<geo_primary_site_gcp_zone>"
+geo_secondary_site_gcp_project: "<geo_secondary_site_gcp_project>"
+geo_secondary_site_gcp_zone: "<geo_secondary_site_gcp_zone>"
+
+# AWS Specific Settings
+geo_primary_site_aws_region: "<geo_primary_site_aws_region>"
+geo_secondary_site_aws_region: "<geo_secondary_site_aws_region>"
+
+# Passwords / Secrets
+gitlab_root_password: '<gitlab_root_password>'
+postgres_password: '<postgres_password>'
+redis_password: '<redis_password>'
+praefect_external_token: '<praefect_external_token>'
+gitaly_token: '<gitaly_token>'
+grafana_password: '<grafana_password>'
+```
 
 Once done we can then run the command `ansible-playbook -i environments/my-geo-deployment/inventory/all gitlab-geo.yml`.
 

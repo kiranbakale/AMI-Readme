@@ -1,3 +1,9 @@
+- name: End run if running against Geo secondary site
+  meta: end_play
+  when:
+    - cloud_native_hybrid_geo
+    - cloud_native_hybrid_geo_role == 'secondary'
+
 - name: Wait for GitLab to be available
   uri:
     url: '{{ external_url }}/-/readiness'

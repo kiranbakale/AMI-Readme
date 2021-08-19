@@ -36,11 +36,11 @@ gitlab:
   migrations:
 {% if 'postgres' in groups %}
     psql:
-      host: "{{ postgres_primary_int_ip }}"
+      host: "{{ postgres_leader_int_ip }}"
       password:
         secret: gitlab-postgres-password
         key: password
-      port: "{{ postgres_primary_int_port }}"
+      port: "{{ postgres_leader_int_port }}"
 {% else %}
     enabled: false
 {% endif %}
@@ -176,6 +176,18 @@ global:
 {% for ip in redis_sentinel_persistent_int_ips %}
       - host: '{{ ip }}'
 {% endfor %}
+{% endif %}
+{% if cloud_native_hybrid_geo %}
+  geo:
+    nodeName: "{{ geo_primary_site_name if cloud_native_hybrid_geo_role == 'primary' else geo_secondary_site_name }}"
+    enabled: true
+    role: "{{ cloud_native_hybrid_geo_role }}"
+    psql:
+      host: "{{ postgres_primary_int_ip }}"
+      port: 5431
+      password:
+        secret: gitlab-postgres-password
+        key: password
 {% endif %}
 
 {% if external_url_ssl and external_ssl_source == 'letsencrypt' %}

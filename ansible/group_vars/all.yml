@@ -168,6 +168,8 @@ jaeger_int_ip: "{{ (groups['jaeger'] | sort | map('extract', hostvars, internal_
 ################################################################################
 
 cloud_native_hybrid_environment: false
+cloud_native_hybrid_geo: false
+cloud_native_hybrid_geo_role: ""
 kubeconfig_setup: false
 
 gitlab_charts_release_namespace: default
@@ -201,6 +203,9 @@ access_token_scopes: "[:api]"
 ################################################################################
 ## GitLab Geo Settings
 ################################################################################
+
+geo_primary_site_name: "Primary Site"
+geo_secondary_site_name: "Secondary Site"
 
 geo_replication_slot_modifier: "{{ 2 if 'geo_primary_site' in group_names else 1 }}"
 geo_primary_site_postgres_group_name: "{% if 'geo_primary_site_postgres_primary' in groups %}geo_primary_site_postgres_primary{% elif 'geo_primary_site_gitlab_rails_primary' in groups %}geo_primary_site_gitlab_rails_primary{% elif 'postgres_primary' in groups%}postgres_primary{% else %}gitlab_rails_primary{% endif %}"
