@@ -282,7 +282,7 @@ Optionally, you may want to add disk volumes to Omnibus installed VMs. This may 
 
 In Terraform, you must provision the disks first using the `disks` variable, for example:
 
-```
+```tf
 variable "disks" {
   disks = [
     {
