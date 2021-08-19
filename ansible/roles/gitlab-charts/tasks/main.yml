@@ -21,10 +21,10 @@
       delegate_facts: true
       become: true
 
-    - name: Update Postgres Primary IP and Port
+    - name: Set Postgres Leader IP and Port
       set_fact:
-        postgres_primary_int_ip: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
-        postgres_primary_int_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
+        postgres_leader_int_ip: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
+        postgres_leader_int_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
   when:
     - "'postgres' in groups"
     - postgres_replication_manager == 'patroni'

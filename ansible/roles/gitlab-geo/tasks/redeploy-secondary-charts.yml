@@ -1,0 +1,55 @@
+- name: Redeploy Secondary Charts - Configure kubeconfig credentials for Geo secondary site
+  become: false
+  delegate_to: localhost
+  run_once: true
+  import_tasks: kubeconfig.yml
+  vars:
+    geo_site_prefix: "{{ geo_secondary_site_prefix }}"
+    geo_site_gcp_project: "{{ geo_secondary_site_gcp_project if cloud_provider == 'gcp' else '' }}"
+    geo_site_gcp_zone: "{{ geo_secondary_site_gcp_zone if cloud_provider == 'gcp' else '' }}"
+    geo_site_aws_region: "{{ geo_secondary_site_aws_region if cloud_provider == 'aws' else '' }}"
+
+- name: Redeploy Secondary Charts - Recreate GitLab Charts Secrets for Cloud Native Hybrid environments
+  vars:
+    kubeconfig_setup: false
+  include_role:
+    name: gitlab-charts
+    tasks_from: secrets
+    apply:
+      become: false
+      delegate_to: localhost
+      run_once: true
+
+- name: Redeploy Secondary Charts - Get GitLab Charts values for Cloud Native Hybrid environments
+  become: false
+  delegate_to: localhost
+  run_once: true
+  community.kubernetes.helm_info:
+    name: gitlab
+    release_namespace: "{{ gitlab_charts_release_namespace }}"
+  register: gitlab_info
+
+- name: Redeploy Secondary Charts - Uninstall GitLab Charts for Cloud Native Hybrid environments
+  become: false
+  delegate_to: localhost
+  run_once: true
+  community.kubernetes.helm:
+    name: gitlab
+    release_state: absent
+    release_namespace: "{{ gitlab_charts_release_namespace }}"
+    wait: true
+
+- name: Redeploy Secondary Charts - Install GitLab Charts for Cloud Native Hybrid environments
+  become: false
+  delegate_to: localhost
+  run_once: true
+  community.kubernetes.helm:
+    name: gitlab
+    chart_ref: gitlab/gitlab
+    chart_version: "{{ gitlab_charts_version | default(None) }}"
+    update_repo_cache: true
+    release_namespace: "{{ gitlab_charts_release_namespace }}"
+    force: true
+    values: "{{ item.value }}"
+  loop: "{{ lookup('dict', gitlab_info.status) }}"
+  when: "'values' in item.key"

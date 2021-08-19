@@ -294,7 +294,7 @@ all:
     gitlab_license_file: "<gitlab_license_file_path>"
     cloud_native_hybrid_environment: true
     kubeconfig_setup: true
-  
+
     # Component Settings
     patroni_remove_data_directory_on_rewind_failure: false
     patroni_remove_data_directory_on_diverged_timelines: false
@@ -332,3 +332,7 @@ The Toolkit provides several other settings that can customize a Cloud Native Hy
 - `gitlab_charts_sidekiq_min_replicas`: Override for the number of min Sidekiq replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
 
 Once your config file is in place as desired you can proceed to [configure as normal](environment_configure.md#3-configure-update).
+
+## Geo
+
+More information on setting up Geo within GET can be found in our [Advanced - Geo, Advanced Search and more](environment_advanced.md#geo) documentation.

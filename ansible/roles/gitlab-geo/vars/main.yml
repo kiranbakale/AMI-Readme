@@ -1,8 +1,5 @@
 geo_secondary_site_postgres_primary_nodename: "{{ (groups[geo_secondary_site_postgres_group_name] | map('extract', hostvars, ['ansible_nodename']) | join('')) }}"
 
-geo_primary_site_name: "Primary Site"
-geo_secondary_site_name: "Secondary Site"
-
 geo_secondary_site_rails_primary_int_ip: "{{ (groups['geo_secondary_site_gitlab_rails_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) }}"
 geo_secondary_site_rails_secondary_int_ips: "{{ (groups['geo_secondary_site_gitlab_rails_secondary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list if 'geo_secondary_site_gitlab_rails_secondary' in groups else '') }}"
 geo_secondary_site_sidekiq_primary_int_ip: "{{ (groups['geo_secondary_site_sidekiq_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) }}"

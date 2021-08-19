@@ -3,9 +3,6 @@
   tags:
     - primary-app-servers
     - primary
-  when:
-    - ('gitlab_rails' in group_names or 'sidekiq' in group_names)
-    - ('geo_primary_site' in group_names)
 
 - name: Configure database for the primary site
   import_tasks: primary-database.yml
@@ -64,9 +61,6 @@
   tags:
     - add-site-name
     - secondary
-  when:
-    - ('gitlab_rails_primary' in group_names)
-    - ('geo_primary_site' in group_names)
 
 - name: Configure backend app servers
   import_tasks: secondary-backend-app-servers.yml
@@ -78,9 +72,10 @@
     - ('geo_secondary_site' in group_names)
 
 - name: Enable object storage replication on all secondary sites
-  command: |
-    gitlab-rails runner "GeoNode.secondary_nodes.each { |n| n.update(sync_object_storage: true) }"
-  when:
-    - ('geo_primary_site' in group_names)
-    - ('gitlab_rails_primary' in group_names)
+  import_tasks: enable-object-storage-replication.yml
   tags: post-configure
+
+- name: Redeploy GitLab Charts for Cloud Native Hybrid environments
+  import_tasks: redeploy-secondary-charts.yml
+  tags: redeploy-secondary-charts
+  when: cloud_native_hybrid_geo
