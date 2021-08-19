@@ -117,9 +117,9 @@
         - omnibus_node
 
     - name: Install GitLab repo package
-      command:
-        cmd: apt-get install {{ gitlab_repo_package }} -y --allow-downgrades
-        warn: false
+      apt:
+        name: "{{ gitlab_repo_package }}"
+        state: present
       register: result
       retries: 2
       delay: 3
