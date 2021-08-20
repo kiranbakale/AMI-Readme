@@ -20,8 +20,12 @@ resource "google_compute_disk" "gitlab" {
 }
 
 resource "google_compute_address" "gitlab" {
-  count = length(var.external_ips) == 0 ? var.node_count : 0
+  count = length(var.external_ips) == 0 && var.setup_external_ip ? var.node_count : 0
   name = "${var.prefix}-${var.node_type}-ip-${count.index + 1}"
+}
+
+locals {
+  external_ips = length(var.external_ips) == 0 ? google_compute_address.gitlab[*].address : var.external_ips
 }
 
 resource "google_compute_instance" "gitlab" {
@@ -55,8 +59,12 @@ resource "google_compute_instance" "gitlab" {
   network_interface {
     network = "default"
 
-    access_config {
-      nat_ip = length(var.external_ips) == 0 ? google_compute_address.gitlab[count.index].address : var.external_ips[count.index]
+    dynamic "access_config" {
+      # Dynamic block is used here to be able to completely omit it if not needed.
+      for_each = var.setup_external_ip ? [local.external_ips[count.index]] : []
+      content {
+        nat_ip = access_config.value
+      }
     }
   }
 

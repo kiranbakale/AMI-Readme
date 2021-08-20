@@ -15,6 +15,8 @@ module "redis" {
 
   label_secondaries = true
   disks = var.redis_disks
+
+  setup_external_ip = var.setup_external_ips
 }
 
 output "redis" {
@@ -40,6 +42,8 @@ module "redis_cache" {
 
   label_secondaries = true
   disks = var.redis_cache_disks
+
+  setup_external_ip = var.setup_external_ips
 }
 
 output "redis_cache" {
@@ -63,6 +67,8 @@ module "redis_sentinel_cache" {
 
   label_secondaries = true
   disks = var.redis_sentinel_cache_disks
+
+  setup_external_ip = var.setup_external_ips
 }
 
 output "redis_sentinel_cache" {
@@ -86,6 +92,8 @@ module "redis_persistent" {
 
   label_secondaries = true
   disks = var.redis_persistent_disks
+
+  setup_external_ip = var.setup_external_ips
 }
 
 output "redis_persistent" {
@@ -109,6 +117,8 @@ module "redis_sentinel_persistent" {
 
   label_secondaries = true
   disks = var.redis_sentinel_persistent_disks
+
+  setup_external_ip = var.setup_external_ips
 }
 
 output "redis_sentinel_persistent" {

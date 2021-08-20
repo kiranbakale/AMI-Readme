@@ -15,6 +15,8 @@ module "monitor" {
 
   tags = ["${var.prefix}-web"]
   disks = var.monitor_disks
+
+  setup_external_ip = var.setup_external_ips
 }
 
 output "monitor" {

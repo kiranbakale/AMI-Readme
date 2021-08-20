@@ -15,6 +15,8 @@ module "sidekiq" {
 
   label_secondaries = true
   disks = var.sidekiq_disks
+
+  setup_external_ip = var.setup_external_ips
 }
 
 output "sidekiq" {

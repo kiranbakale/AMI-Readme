@@ -15,6 +15,8 @@ variable "object_storage_buckets" { default = ["artifacts", "backups", "dependen
 # To be removed next release, allows users now to remove legacy bucket before next release
 variable "object_storage_create_legacy_bucket" { default = true }
 
+variable "setup_external_ips" { default = true }
+
 # Machines
 variable "consul_node_count" { default = 0 }
 variable "consul_machine_type" { default = "" }

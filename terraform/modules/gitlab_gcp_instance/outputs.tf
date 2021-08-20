@@ -7,7 +7,7 @@ output "internal_addresses" {
 }
 
 output "external_addresses" {
-  value = google_compute_instance.gitlab[*].network_interface[0].access_config[0].nat_ip
+  value = var.setup_external_ip ? google_compute_instance.gitlab[*].network_interface[0].access_config[0].nat_ip : []
 }
 
 output "self_links" {

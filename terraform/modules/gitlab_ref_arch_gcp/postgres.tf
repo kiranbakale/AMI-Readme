@@ -16,6 +16,7 @@ module "postgres" {
   label_secondaries = true
 
   disks = var.postgres_disks
+  setup_external_ip = var.setup_external_ips
 }
 
 output "postgres" {
