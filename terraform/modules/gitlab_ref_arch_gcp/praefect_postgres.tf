@@ -16,6 +16,8 @@ module "praefect_postgres" {
   label_secondaries = true
 
   disks = var.praefect_postgres_disks
+
+  setup_external_ip = var.setup_external_ips
 }
 
 output "praefect_postgres" {

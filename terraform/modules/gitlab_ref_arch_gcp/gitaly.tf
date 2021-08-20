@@ -15,6 +15,8 @@ module "gitaly" {
 
   label_secondaries = true
   disks = var.gitaly_disks
+
+  setup_external_ip = var.setup_external_ips
 }
 
 output "gitaly" {

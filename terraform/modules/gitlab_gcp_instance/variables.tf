@@ -65,3 +65,7 @@ variable "disks" {
   #     },
   #   ]
 }
+
+variable "setup_external_ip" {
+  default = true
+}

@@ -17,6 +17,8 @@ module "haproxy_external" {
   disks = var.haproxy_external_disks
 
   tags = ["${var.prefix}-web", "${var.prefix}-ssh", "${var.prefix}-haproxy", "${var.prefix}-monitor"]
+
+  setup_external_ip = var.setup_external_ips
 }
 
 output "haproxy_external" {
@@ -41,6 +43,8 @@ module "haproxy_internal" {
   disks = var.haproxy_internal_disks
 
   tags = ["${var.prefix}-haproxy"]
+
+  setup_external_ip = var.setup_external_ips
 }
 
 output "haproxy_internal" {
