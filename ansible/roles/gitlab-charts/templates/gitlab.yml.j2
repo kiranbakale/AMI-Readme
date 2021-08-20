@@ -34,15 +34,15 @@ gitlab:
       objectStorage:
         {{ lookup('template', 'task_runner_backups_object_storage.' + cloud_provider + '.yml.j2') | indent(width=8) }}
   migrations:
-{% if 'postgres' in groups %}
     psql:
-      host: "{{ postgres_leader_int_ip }}"
       password:
         secret: gitlab-postgres-password
         key: password
-      port: "{{ postgres_leader_int_port }}"
-{% else %}
-    enabled: false
+      host: "{{ postgres_host }}"
+      port: "{{ postgres_port }}"
+{% if 'postgres' not in groups %}
+      username: "{{ postgres_username }}"
+      database: "{{ postgres_database_name }}"
 {% endif %}
 
 global:
@@ -131,11 +131,18 @@ global:
   minio:
     enabled: false
   psql:
-    host: "{{ haproxy_internal_int_ip if 'haproxy_internal' in groups else postgres_primary_int_ip }}"
     password:
       secret: gitlab-postgres-password
       key: password
-    port: "{{ 6432 if 'haproxy_internal' in groups else postgres_primary_int_port }}"
+{% if 'postgres' in groups %}
+    host: "{{ haproxy_internal_int_ip if 'haproxy_internal' in groups else postgres_host }}"
+    port: "{{ 6432 if 'haproxy_internal' in groups else postgres_port }}"
+{% elif postgres_external %}
+    host: "{{ postgres_host }}"
+    port: "{{ postgres_port }}"
+    username: "{{ postgres_username }}"
+    database: "{{ postgres_database_name }}"
+{% endif %}
   redis:
 {% if 'redis' in groups %}
 {% if groups['redis'] | length == 1 %}

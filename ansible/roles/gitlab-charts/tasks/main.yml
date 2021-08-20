@@ -12,7 +12,7 @@
     - reconfigure
     - charts
 
-- name: Gather facts for external omnibus postgres
+- name: Gather facts for Omnibus Postgres cluster
   block:
     - name: Get latest Postgres Leader
       command: gitlab-ctl get-postgresql-primary
@@ -23,8 +23,8 @@
 
     - name: Set Postgres Leader IP and Port
       set_fact:
-        postgres_leader_int_ip: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
-        postgres_leader_int_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
+        postgres_host: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
+        postgres_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
   when:
     - "'postgres' in groups"
     - postgres_replication_manager == 'patroni'

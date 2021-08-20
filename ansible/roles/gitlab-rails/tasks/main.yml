@@ -54,9 +54,9 @@
   when:
     - cloud_provider == 'gcp'
 
-- name: External database related tasks
+- name: Omnibus database related tasks
   block:
-    - name: Gather facts for external omnibus postgres
+    - name: Gather facts for Omnibus Postgres cluster
       block:
         - name: Get latest Postgres primary
           command: gitlab-ctl get-postgresql-primary
@@ -67,8 +67,8 @@
 
         - name: Update Postgres primary IP and Port
           set_fact:
-            postgres_primary_int_ip: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
-            postgres_primary_int_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
+            postgres_host: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
+            postgres_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
       when: postgres_replication_manager == 'patroni'
       tags:
         - reconfigure
@@ -106,6 +106,9 @@
 
 - name: Reconfigure all GitLab Rails
   shell: gitlab-ctl reconfigure
+  register: result
+  retries: 3
+  until: result is success
   tags: reconfigure
 
 - name: Restart GitLab

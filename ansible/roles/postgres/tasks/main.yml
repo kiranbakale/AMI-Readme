@@ -104,7 +104,7 @@
     - postgres_replication_manager != 'patroni'
 
 - name: Enable secondary standby
-  shell: "gitlab-ctl repmgr standby setup {{ postgres_primary_int_ip }} -w"
+  shell: "gitlab-ctl repmgr standby setup {{ postgres_host }} -w"
   register: postgres_secondary_standby_result
   tags: postgres_secondary_standby
   when:

@@ -66,7 +66,7 @@
 
     - name: Install python packages
       pip:
-        name: ['requests', 'google-auth', 'netaddr', 'openshift', 'PyYAML', 'docker', 'pexpect']
+        name: ['requests', 'google-auth', 'netaddr', 'openshift', 'PyYAML', 'docker', 'pexpect', 'psycopg2']
         extra_args: --upgrade
       tags:
         - packages
