@@ -16,7 +16,7 @@ pgbouncer['users'] = {
 pgbouncer['admin_users'] = %w(pgbouncer gitlab-consul)
 pgbouncer['databases'] = {
   gitlabhq_production: {
-    host: "{{ postgres_primary_int_ip }}",
+    host: "{{ postgres_host }}",
     user: "pgbouncer",
     password: "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
   }

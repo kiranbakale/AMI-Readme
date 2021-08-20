@@ -116,9 +116,18 @@ gitlab_rails['redis_actioncable_sentinels'] = [
 {% endif %}
 
 # Postgres \ Database
+{% if 'postgres' in groups %}
 gitlab_rails['db_host'] = '{{ haproxy_internal_int_ip }}'
 gitlab_rails['db_port'] = 6432
 gitlab_rails['db_password'] = '{{ postgres_password }}'
+{% elif postgres_external %}
+gitlab_rails['db_host'] = '{{ postgres_host }}'
+gitlab_rails['db_port'] = '{{ postgres_port }}'
+gitlab_rails['db_username'] = '{{ postgres_username }}'
+gitlab_rails['db_password'] = '{{ postgres_password }}'
+gitlab_rails['db_database'] = '{{ postgres_database_name }}'
+{% endif %}
+
 gitlab_rails['auto_migrate'] = false
 
 gitlab_rails['env'] = {

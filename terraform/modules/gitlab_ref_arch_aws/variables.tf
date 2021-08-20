@@ -118,8 +118,16 @@ variable "supporting_node_pool_count" { default = 0 }
 variable "supporting_node_pool_instance_type" { default = "" }
 variable "supporting_node_pool_disk_size" { default = null }
 
-# Networking
+# PaaS Services
+variable "rds_postgres_instance_type" { default = "" }
+variable "rds_postgres_username" { default = "gitlab" }
+variable "rds_postgres_password" { default = "" }
+variable "rds_postgres_database_name" { default = "gitlabhq_production" }
+variable "rds_postgres_version" { default = "12.6" }
+variable "rds_postgres_allocated_storage" { default = 100 }
+variable "rds_postgres_max_allocated_storage" { default = 1000 }
 
+# Networking
 ## Create new network
 variable "create_network" { default = false }
 variable "vpc_cidr_block" { default = "172.31.0.0/16" }

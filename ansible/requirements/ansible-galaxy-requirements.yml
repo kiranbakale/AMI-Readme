@@ -7,3 +7,4 @@ collections:
   - google.cloud
   - azure.azcollection
   - community.kubernetes
+  - community.postgresql

@@ -5,7 +5,7 @@
 ansible_python_interpreter: auto
 swap_file_size_mb: "2048"
 swap_swappiness: "10"
-system_packages: "aptitude curl openssh-server ca-certificates glances nano tzdata ack-grep tree python3-pip nfs-common postfix jq"
+system_packages: "aptitude curl openssh-server ca-certificates glances nano tzdata ack-grep tree python3-pip nfs-common postfix jq libpq-dev"
 internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
 
 ################################################################################
@@ -106,6 +106,21 @@ consul_int_ips: "{{ (groups['consul'] | sort | map('extract', hostvars, internal
 # GitLab Rails (Application nodes)
 gitlab_rails_int_ips: "{{ (groups['gitlab_rails'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'gitlab_rails_primary' in groups else [] }}"
 
+# GitLab Postgres / PGBouncer
+postgres_primary_int_ip: "{{ (groups['postgres_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'postgres_primary' in groups else '' }}"
+postgres_int_ips: "{{ (groups['postgres'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'postgres' in groups else [] }}"
+pgbouncer_int_ips: "{{ (groups['pgbouncer'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'pgbouncer' in groups else [] }}"
+
+postgres_host: "{{ postgres_primary_int_ip }}"
+postgres_port: "5432"
+postgres_username: "gitlab"
+postgres_password: ""
+postgres_database_name: "gitlabhq_production"
+postgres_external: "{{ 'postgres' not in groups and postgres_host != '' }}"
+
+## Postgres Omnibus
+postgres_replication_manager: "{{ 'patroni' if ((groups['postgres'] is defined) and (groups['postgres'] | length > 1)) else 'none' }}"
+
 # Gitaly
 gitaly_primary_int_ip: "{{ (groups['gitaly_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'gitaly_primary' in groups else '' }}"
 gitaly_secondary_int_ips: "{{ (groups['gitaly_secondary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'gitaly_secondary' in groups else [] }}"
@@ -116,20 +131,14 @@ praefect_primary_int_ip: "{{ (groups['praefect_primary'] | map('extract', hostva
 praefect_secondary_int_ips: "{{ (groups['praefect_secondary'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'praefect_secondary' in groups else [] }}"
 praefect_int_ips: "{{ (groups['praefect'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'praefect' in groups else [] }}"
 
+## Praefect Postgres
 praefect_postgres_int_ip: "{{ (groups['praefect_postgres'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_postgres_primary' in groups else '' }}"
-praefect_postgres_dbname: "praefect_production"
 praefect_postgres_username: "praefect"
+praefect_postgres_password: ""
+praefect_postgres_database_name: "praefect_production"
 
 # GitLab Monitor
 monitor_int_ip: "{{ (groups['monitor'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'monitor' in groups else '' }}"
-
-# GitLab Postgres / PGBouncer
-postgres_primary_int_ip: "{{ (groups['postgres_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'postgres_primary' in groups else '' }}"
-postgres_primary_int_port: "5432"
-postgres_replication_manager: "{{ 'patroni' if ((groups['postgres'] is defined) and (groups['postgres'] | length > 1)) else 'none' }}"
-
-postgres_int_ips: "{{ (groups['postgres'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'postgres' in groups else [] }}"
-pgbouncer_int_ips: "{{ (groups['pgbouncer'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'pgbouncer' in groups else [] }}"
 
 # GitLab Redis
 redis_port: 6379
