@@ -1,12 +1,13 @@
-# Advanced - Geo, Advanced Search and more
+# Advanced - Geo, Advanced Search, Custom Config and more
 
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
-- [**GitLab Environment Toolkit - Advanced - Geo, Advanced Search and more**](environment_advanced.md)
+- [**GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Custom Config and more**](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
+- [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 
 The Toolkit by default will deploy the latest version of the selected [Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/). However, it can also support other advanced setups such as Geo or different component makeups such as Gitaly Sharded.
@@ -292,29 +293,33 @@ Enabling Advanced Search on your environment is designed to be as easy possible 
 - The Toolkit will also setup a Kibana Docker container on the Primary Elasticsearch node for administration and debugging purposes. Kibana will be accessible on your external IP / URL and port `5602` by default, e.g. `http://<external_ip_or_url>:5602`.
 - Ansible will then configure the GitLab environment near the end of its run to enable Advanced Search against those nodes and perform the first index.
 
-## Gitaly Sharded
+## Custom Config
 
-[Gitaly Cluster](https://docs.gitlab.com/ee/administration/gitaly/praefect.html) is recommended in the Reference Architectures from `13.9.0` onwards for its high availability and replication features. Before Cluster Gitaly was configured in a Sharded setup, where there are multiple separate Gitaly nodes that each hosted their own repo data with no HA or replication between them.
+The Toolkit allows for you to provide custom GitLab config that will be used when setting up components via Omnibus or Helm charts.
 
-The Toolkit supports setting up a Gitaly Sharded setup if desired. This is done simply by not provisioning the Praefect nodes required in Cluster. If these nodes aren't present the Toolkit automatically assumes that the environment is using Gitaly Sharded and will configure in that way.
+**However, this feature must be used with the utmost caution**. Any custom config passed will always take precedence and may lead to various unintended consequences or broken environments if not used carefully.
 
-Note this setup is only valid for new environments. Attempting to switch an environment from using Gitaly Cluster to Sharded and vice versa will break the environment.
+Custom config should only be used in advanced scenarios where you are fully aware of the intended effects or for areas that the Toolkit doesn't support natively due to potential permutations such as:
 
-## Postgres 11 & Repmgr
+- Omniauth
+- Custom Object Storage
+- Email
 
-Postgres 12 and Patroni are recommended in the Reference Architectures from `13.9.0` onwards. The previous version of Postgres, 11, is still supported in `13.x.y` versions however and the Toolkit supports deploying it.
+In this section we detail how to set up custom config for Omnibus and Helm charts components respectively.
 
-One of the changes with Postgres 12 was the switch to Patroni over Repmgr as the default replication manager. It's worth noting that Patroni will support a Postgres 11 setup but Repmgr won't support a Postgres 12 one.
+### Omnibus
 
-Configuring either Postgres 11 or Repmgr can be done as follows:
+TBC
 
-- Postgres 11 - Set `postgres_version` in the inventory variables to `11`, e.g. `postgres_version: 11`. Patroni or Repmgr can be used here but note the advice below on switching replication managers for existing setups.
-- Repmgr - Set the `postgres_replication_manager` inventory variable to `repmgr`. This can only be used with Postgres 11.
+### Helm
 
-Like Gitaly Cluster, this guidance is only for new installs. You must note the following for existing installs:
+Providing custom config for components run via Helm charts in Cloud Native Hybrid environments is done as follows:
 
-- Attempting to switch replication manage is only supported *once* from Repmgr to Patroni. Attempting to switch from Patroni to Repmgr will **break the environment irrevocably**.
-- [Switching from Postgres 11 to 12 is supported when Patroni is the replication manager](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#upgrading-postgresql-major-version-in-a-patroni-cluster) but this is a manual process that must be done directly unless on a single 1k installation. Once the upgrade process is done you must remove the `postgres_version` variable from your inventory variables.
+1. Create a [GitLab Charts](https://docs.gitlab.com/charts/) yaml file in the correct format with the specific custom settings you wish to apply
+1. By default the Toolkit will looks for a file named `gitlab_charts.yml` in the [environments](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/config` folder path. E.G. `ansible/environments/<env_name>/files/config/gitlab_charts.yml`. Save your file in this location with the same name.
+    - If you wish to store your file in a different location or use a different name the full path that Ansible should use can be set via the `gitlab_charts_custom_config_file` inventory variable.
+
+With the above done the file will be picked up by the Toolkit and used when configuring the Helm charts.
 
 ## Container Registry
 

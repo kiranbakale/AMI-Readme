@@ -31,6 +31,7 @@
   tags:
     - reconfigure
     - charts
+    - charts_values
 
 - name: Gather facts for Node Pools
   block:
@@ -63,6 +64,7 @@
   tags:
     - reconfigure
     - charts
+    - charts_values
 
 - name: Add GitLab Charts repo
   community.kubernetes.helm_repository:
@@ -92,6 +94,41 @@
     - charts
     - charts_version
 
+- name: Lookup GitLab Chart values
+  set_fact:
+    gitlab_charts_values: "{{ lookup('template', 'templates/gitlab.yml.j2') | from_yaml }}"
+  tags:
+    - reconfigure
+    - charts
+    - charts_values
+
+- name: Check if custom GitLab Chart values are provided
+  stat:
+    path: "{{ gitlab_charts_custom_config_file }}"
+  register: custom_config_file
+  tags:
+    - reconfigure
+    - charts
+    - charts_values
+
+- name: Merge in custom GitLab Chart values if provided
+  set_fact:
+    gitlab_charts_values: "{{ gitlab_charts_values | combine(lookup('file', gitlab_charts_custom_config_file) | from_yaml, recursive=True) }}"
+  when: custom_config_file.stat.exists
+  tags:
+    - reconfigure
+    - charts
+    - charts_values
+
+- name: Show charts values if configured
+  debug:
+    msg: "{{ gitlab_charts_values }}"
+  tags:
+    - reconfigure
+    - charts
+    - charts_values
+  when: gitlab_charts_show_values
+
 - name: Install GitLab Charts
   community.kubernetes.helm:
     name: gitlab
@@ -99,7 +136,7 @@
     chart_version: "{{ gitlab_charts_version | default(None) }}"
     update_repo_cache: true
     release_namespace: "{{ gitlab_charts_release_namespace }}"
-    values: "{{ lookup('template', 'templates/gitlab.yml.j2') | from_yaml }}"
+    values: "{{ gitlab_charts_values }}"
   tags:
     - reconfigure
     - charts

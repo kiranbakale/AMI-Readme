@@ -5,8 +5,9 @@
 - [**GitLab Environment Toolkit - Configuring the environment with Ansible**](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
-- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search and more](environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Custom Config and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
+- [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 
 With [Ansible](https://docs.ansible.com/ansible/latest/index.html) you can automatically configure provisioned machines.
