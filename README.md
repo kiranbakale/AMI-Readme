@@ -53,8 +53,9 @@ Note that the Toolkit currently has the following requirements (with related iss
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](docs/environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](docs/environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](docs/environment_advanced_ssl.md)
-- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search and more](docs/environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Custom Config and more](docs/environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](docs/environment_upgrades.md)
+- [GitLab Environment Toolkit - Legacy Setups](docs/environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](docs/environment_post_considerations.md)
 
 ## Missing features to be aware of
