@@ -12,3 +12,4 @@ skip_list:
   - command-instead-of-module  # meta/main.yml should contain relevant info
   - line-length
   - braces
+  - package-latest
