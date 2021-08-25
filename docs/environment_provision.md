@@ -5,6 +5,7 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - Cloud Services](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Custom Config and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
@@ -651,12 +652,6 @@ Finally the last thing to configure is authentication. This is required so Terra
 Terraform provides multiple ways to authenticate with the [provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure) and [backend](https://www.terraform.io/docs/language/settings/backends/azurerm.html), you can select any method that is desired.
 
 If you are planning to run the toolkit locally it'll be easier to use [Azure CLI](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli) authentication method. Otherwise you can use either a Service Principal or Managed Service Identity when running Terraform non-interactively, please refer to [Authenticating to Azure](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure) documentation for details. Once you have selected the authentication method and obtained the credentials you may export them as Environment Variables following the Terraform instructions for the specific authentication type to fully authenticate for both the provider and backend.
-
-### Further Config Examples
-
-The Quality team actively use the Toolkit daily to build and test various environments, including at least one of each Reference Architecture size.
-
-These are stored on a different project and can be viewed [here](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit-configs/quality) for further reference (although note some files are encrypted to protect secrets).
 
 ## 3. Provision
 

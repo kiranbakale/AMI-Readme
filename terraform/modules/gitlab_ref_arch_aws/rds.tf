@@ -19,6 +19,7 @@ resource "aws_db_instance" "gitlab" {
   iops = 1000
   
   name = var.rds_postgres_database_name
+  port = var.rds_postgres_port
   username = var.rds_postgres_username
   password = var.rds_postgres_password
   db_subnet_group_name = aws_db_subnet_group.gitlab[0].name

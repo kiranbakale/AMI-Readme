@@ -5,6 +5,7 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - Cloud Services](environment_advanced_services.md)
 - [**GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Custom Config and more**](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)

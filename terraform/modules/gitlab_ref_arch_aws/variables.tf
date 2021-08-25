@@ -121,6 +121,7 @@ variable "supporting_node_pool_disk_size" { default = null }
 
 # PaaS Services
 variable "rds_postgres_instance_type" { default = "" }
+variable "rds_postgres_port" { default = 5432 }
 variable "rds_postgres_username" { default = "gitlab" }
 variable "rds_postgres_password" { default = "" }
 variable "rds_postgres_database_name" { default = "gitlabhq_production" }
