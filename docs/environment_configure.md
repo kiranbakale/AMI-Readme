@@ -5,6 +5,7 @@
 - [**GitLab Environment Toolkit - Configuring the environment with Ansible**](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - Cloud Services](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Custom Config and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
@@ -349,8 +350,6 @@ The Toolkit can install other GitLab versions from `13.2.0` onwards through two 
 #### Full config list and further examples
 
 All Ansible config can be viewed directly in the project under the [`group_vars`](../ansible/group_vars) folder. Most config will be found in the [`all.yml`](../ansible/group_vars/all.yml) file, where config applies to all machines. Additional config that only needs to apply to select machines can be found under specific group names under this folder. As mentioned earlier, we may also refer to additional variables in detail later in these docs under the [Advanced sections](environment_advanced.md) where they are applicable.
-
-The Quality team actively uses the Toolkit daily to build and test various environments, including at least one of each Reference Architecture size. These are stored on a different project and can be viewed [here](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit-configs/quality) for further reference (although note some files are encrypted to protect secrets).
 
 ## 3. Configure \ Update
 

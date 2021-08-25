@@ -5,6 +5,7 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [**GitLab Environment Toolkit - Advanced - Cloud Native Hybrid**](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - Cloud Services](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Custom Config and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
@@ -38,9 +39,7 @@ In addition to the above and as [stated earlier in the docs](docs/environment_pr
 
 ## 2. Provisioning the Kubernetes Cluster with Terraform
 
-Provisioning a Cloud Native Hybrid Reference Architecture has been designed to be very similar to a standard one, which native support added to the Toolkit's modules. As such, it only requires some different config in your Environment's config file (`environment.tf`).
-
-Like the main provisioning docs there are sections for each support host provider on how to achieve this. Follow the section for your selected provider and then move onto the next step.
+Provisioning a Cloud Native Hybrid Reference Architecture has been designed to be very similar to a standard one, with native support added to the Toolkit's modules. As such, it only requires some minor config changes in your Environment's config file (`environment.tf`).
 
 Provisioning the required Kubernetes cluster with a cloud provider only requires a few tweaks to your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`) - Namely replacing the GitLab Rails and Sidekiq VMs with equivalent k8s Node Pools instead.
 
@@ -56,8 +55,6 @@ Each node pool setting configures the following. To avoid repetition we'll descr
 - `*_node_pool_count` - The number of machines to set up for that component's node pool
 - `*_node_pool_machine_type` - **GCP only** The [GCP Machine Type](https://cloud.google.com/compute/docs/machine-types) (size) for each machine in the node pool
 - `*_node_pool_instance_type` - **AWS only** The [AWS Instance Type](https://aws.amazon.com/ec2/instance-types/) (size) for each machine in the node pool
-
-Once the above is configured as desired you can proceed to [provision as standard](environment_provision.md#3-provision).
 
 Below are examples for an `environment.tf` file with all config for each cloud provider based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative):
 
