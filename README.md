@@ -11,12 +11,12 @@ Customers are very welcome to trial and evaluate GET today, however be aware of 
 
 ![alt text](https://assets.gitlab-static.net/uploads/-/system/project/avatar/14292404/tanuki-blueprint.png "GitLab Environment Toolkit")
 
-The GitLab Environment Toolkit (`GET`) is a collection of tools with a simple focused purpose - to deploy [GitLab Omnibus](https://gitlab.com/gitlab-org/omnibus-gitlab) and [GitLab Helm Charts](https://docs.gitlab.com/charts/) at scale as defined by our [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures).
+The GitLab Environment Toolkit (`GET`) is a collection of tools to deploy and operate production GitLab instances based on our [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures), including automation of common day 2 tasks.
 
 Created and maintained by the GitLab Quality Engineering Enablement team, the Toolkit - built with [Terraform](https://www.terraform.io/) and [Ansible](https://docs.ansible.com/ansible/latest/index.html) - supports provisioning and configuring machines and other related infrastructure respectively with the following features:
 
 - Support for deploying all [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) sizes dynamically from [1k](https://docs.gitlab.com/ee/administration/reference_architectures/1k_users.html) to [50k](https://docs.gitlab.com/ee/administration/reference_architectures/50k_users.html).
-- Support for deploying Cloud Native Hybrid variants of the Reference Architectures (GCP only at this time).
+- Support for deploying Cloud Native Hybrid variants of the Reference Architectures (AWS & GCP only at this time).
 - GCP, AWS and Azure cloud provider support
 - Upgrades
 - Release and nightly Omnibus builds support
@@ -26,7 +26,24 @@ Created and maintained by the GitLab Quality Engineering Enablement team, the To
 - Built in Load Balancing and Monitoring (Prometheus, Grafana) setup
 - External SSL termination
 
-By design the Toolkit is meant to be **_one for all_** and aims to deploy an environment that will be a good base that can be tweaked further depending on your requirements.
+By design the Toolkit is meant to be **_one for all_** and aims to deploy a production GitLab environment that will be a good base that can be customized further depending on your requirements.
+
+## Direction
+
+The GitLab Environment Toolkit will be the best and easiest way to deploy multi-node production instances of GitLab, and operate them with very high service levels. It will come pre-packaged with best practices in areas such as secrets and least-privileged access. It will be what GitLab internally uses to deploy their own production instances of GitLab, and shared in a [source-available](https://en.wikipedia.org/wiki/Source-available_software#GitLab_Enterprise_Edition_License_(EE_License)) way for collaboration with other large deployments of GitLab.
+
+GET will support both VM (Omnibus), hybrid, and cloud native (GitLab Helm chart and Operator) deployments of GitLab as per the Reference Architectures. How certain operations are carried out will differ, as we will choose the best implementation method for each type. For example, the Operator will likely handle most of the day 2 operations for cloud native deployments, while terraform and ansible will likely handle these for VM-based deployments. Today only VM and hybrid are supported.
+
+### What we plan to include
+
+We include everything necessary for the deployment and operation of GitLab on major cloud providers. This includes all required dependencies such as Postgres, as well as optional ones like Elasticsearch. We will provide flexibility in selecting cloud managed services when available, and the Omnibus-based deployments, for services like Postgres. GET is intended to be opinionated, but still flexible enough for most use cases.
+
+### What we do not plan to include
+
+Currently, we do not plan to include:
+
+* Cloud accounts management
+* Observability stack beyond Prometheus and Grafana
 
 ## How It Works
 
