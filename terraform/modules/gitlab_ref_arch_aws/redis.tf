@@ -58,35 +58,6 @@ output "redis_cache" {
   value = module.redis_cache
 }
 
-module "redis_sentinel_cache" {
-  source = "../gitlab_aws_instance"
-
-  prefix = var.prefix
-  node_type = "redis-sentinel-cache"
-  node_count = var.redis_sentinel_cache_node_count
-
-  instance_type = var.redis_sentinel_cache_instance_type
-  ami_id = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
-  disk_size = coalesce(var.redis_sentinel_cache_disk_size, var.default_disk_size)
-  disk_type = coalesce(var.redis_sentinel_cache_disk_type, var.default_disk_type)
-  subnet_ids = local.subnet_ids
-
-  ssh_key_name = aws_key_pair.ssh_key.key_name
-  security_group_ids = [
-    aws_security_group.gitlab_internal_networking.id,
-    aws_security_group.gitlab_external_ssh.id
-  ]
-
-  geo_site = var.geo_site
-  geo_deployment = var.geo_deployment
-
-  label_secondaries = true
-}
-
-output "redis_sentinel_cache" {
-  value = module.redis_sentinel_cache
-}
-
 module "redis_persistent" {
   source = "../gitlab_aws_instance"
 
@@ -114,33 +85,4 @@ module "redis_persistent" {
 
 output "redis_persistent" {
   value = module.redis_persistent
-}
-
-module "redis_sentinel_persistent" {
-  source = "../gitlab_aws_instance"
-
-  prefix = var.prefix
-  node_type = "redis-sentinel-persistent"
-  node_count = var.redis_sentinel_persistent_node_count
-
-  instance_type = var.redis_sentinel_persistent_instance_type
-  ami_id = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
-  disk_size = coalesce(var.redis_sentinel_persistent_disk_size, var.default_disk_size)
-  disk_type = coalesce(var.redis_sentinel_persistent_disk_type, var.default_disk_type)
-  subnet_ids = local.subnet_ids
-
-  ssh_key_name = aws_key_pair.ssh_key.key_name
-  security_group_ids = [
-    aws_security_group.gitlab_internal_networking.id,
-    aws_security_group.gitlab_external_ssh.id
-  ]
-
-  geo_site = var.geo_site
-  geo_deployment = var.geo_deployment
-
-  label_secondaries = true
-}
-
-output "redis_sentinel_persistent" {
-  value = module.redis_sentinel_persistent
 }

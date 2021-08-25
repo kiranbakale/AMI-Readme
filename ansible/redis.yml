@@ -1,11 +1,8 @@
 ---
 - hosts:
     - redis
-    - redis_sentinel
     - redis_cache_*
     - redis_persistent_*
-    - redis_sentinel_cache_*
-    - redis_sentinel_persistent_*
   roles:
     - redis
   become: true

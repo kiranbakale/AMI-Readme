@@ -185,12 +185,8 @@ module "gitlab_ref_arch_gcp" {
 
   redis_cache_node_count = 3
   redis_cache_machine_type = "n1-standard-4"
-  redis_sentinel_cache_node_count = 3
-  redis_sentinel_cache_machine_type = "n1-standard-1"
   redis_persistent_node_count = 3
   redis_persistent_machine_type = "n1-standard-4"
-  redis_sentinel_persistent_node_count = 3
-  redis_sentinel_persistent_machine_type = "n1-standard-1"
 
   sidekiq_node_count = 4
   sidekiq_machine_type = "n1-standard-4"
@@ -349,12 +345,8 @@ module "gitlab_ref_arch_aws" {
 
   redis_cache_node_count = 3
   redis_cache_instance_type = "m5.xlarge"
-  redis_sentinel_cache_node_count = 3
-  redis_sentinel_cache_instance_type = "c5.large"
   redis_persistent_node_count = 3
   redis_persistent_instance_type = "m5.xlarge"
-  redis_sentinel_persistent_node_count = 3
-  redis_sentinel_persistent_instance_type = "c5.large"
 
   sidekiq_node_count = 4
   sidekiq_instance_type = "m5.xlarge"
@@ -625,12 +617,8 @@ module "gitlab_ref_arch_azure" {
 
   redis_cache_node_count = 3
   redis_cache_size = "Standard_D4s_v3"
-  redis_sentinel_cache_node_count = 3
-  redis_sentinel_cache_size = "Standard_A1_v2"
   redis_persistent_node_count = 3
   redis_persistent_size = "Standard_D4s_v3"
-  redis_sentinel_persistent_node_count = 3
-  redis_sentinel_persistent_size = "Standard_A1_v2"
 
   sidekiq_node_count = 4
   sidekiq_size = "Standard_D4s_v3"
