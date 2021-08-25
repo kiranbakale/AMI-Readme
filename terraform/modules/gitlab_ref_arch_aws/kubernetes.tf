@@ -249,3 +249,10 @@ resource "aws_iam_role_policy_attachment" "gitlab_addon_vpc_cni_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
   role = aws_iam_role.gitlab_addon_vpc_cni_role[count.index].name
 }
+
+resource "aws_iam_role_policy_attachment" "s3_policy" {
+  count = min(local.total_node_pool_count, length(var.object_storage_buckets), 1)
+
+  policy_arn = aws_iam_policy.gitlab_s3_policy[0].arn
+  role = aws_iam_role.gitlab_eks_role[0].name
+}
