@@ -145,13 +145,13 @@ redis_port: 6379
 redis_sentinel_port: 26379
 
 redis_primary_int_ip: "{{ (groups['redis_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'redis' in groups else '' }}"
-redis_sentinel_int_ips: "{{ (groups['redis_sentinel'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis_sentinel' in groups else [] }}"
+redis_int_ips: "{{ (groups['redis'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis' in groups else [] }}"
 
 redis_cache_primary_int_ip: "{{ (groups['redis_cache_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'redis_cache' in groups else '' }}"
-redis_sentinel_cache_int_ips: "{{ (groups['redis_sentinel_cache'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis_sentinel_cache' in groups else [] }}"
+redis_cache_int_ips: "{{ (groups['redis_cache'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis_cache' in groups else [] }}"
 
 redis_persistent_primary_int_ip: "{{ (groups['redis_persistent_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'redis_persistent' in groups else '' }}"
-redis_sentinel_persistent_int_ips: "{{ (groups['redis_sentinel_persistent'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis_sentinel_persistent' in groups else [] }}"
+redis_persistent_int_ips: "{{ (groups['redis_persistent'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis_persistent' in groups else [] }}"
 
 # Sidekiq
 sidekiq_max_concurrency: 10

@@ -1,7 +1,7 @@
 ---
 - name: Setup GitLab config file
   template:
-    src: "{{ 'templates/redis-sentinel.gitlab.rb.j2' if (group_names | select('match', '^redis_sentinel_.*') | list | count > 0) else 'templates/redis.gitlab.rb.j2' }}"
+    src: "templates/redis.gitlab.rb.j2"
     dest: /etc/gitlab/gitlab.rb
   tags: reconfigure
 

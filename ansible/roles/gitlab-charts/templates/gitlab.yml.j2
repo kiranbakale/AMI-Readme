@@ -160,7 +160,7 @@ global:
       secret: gitlab-redis-password
       key: password
     sentinels:
-{% for ip in consul_int_ips %}
+{% for ip in redis_int_ips %}
       - host: '{{ ip }}'
         port: '{{ redis_sentinel_port }}'
 {% endfor %}
@@ -172,7 +172,7 @@ global:
         secret: gitlab-redis-password
         key: password
       sentinels:
-{% for ip in redis_sentinel_cache_int_ips %}
+{% for ip in redis_cache_int_ips %}
       - host: '{{ ip }}'
 {% endfor %}
     host: gitlab-redis-persistent
@@ -180,7 +180,7 @@ global:
       secret: gitlab-redis-password
       key: password
     sentinels:
-{% for ip in redis_sentinel_persistent_int_ips %}
+{% for ip in redis_persistent_int_ips %}
       - host: '{{ ip }}'
 {% endfor %}
 {% endif %}

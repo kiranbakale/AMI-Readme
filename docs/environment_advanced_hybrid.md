@@ -113,12 +113,8 @@ module "gitlab_ref_arch_gcp" {
 
   redis_cache_node_count = 3
   redis_cache_machine_type = "n1-standard-4"
-  redis_sentinel_cache_node_count = 3
-  redis_sentinel_cache_machine_type = "n1-standard-1"
   redis_persistent_node_count = 3
   redis_persistent_machine_type = "n1-standard-4"
-  redis_sentinel_persistent_node_count = 3
-  redis_sentinel_persistent_machine_type = "n1-standard-1"
 }
 
 output "gitlab_ref_arch_gcp" {
@@ -180,12 +176,8 @@ module "gitlab_ref_arch_aws" {
 
   redis_cache_node_count = 3
   redis_cache_instance_type = "m5.xlarge"
-  redis_sentinel_cache_node_count = 3
-  redis_sentinel_cache_instance_type = "c5.large"
   redis_persistent_node_count = 3
   redis_persistent_instance_type = "m5.xlarge"
-  redis_sentinel_persistent_node_count = 3
-  redis_sentinel_persistent_instance_type = "c5.large"
 }
 
 output "gitlab_ref_arch_aws" {

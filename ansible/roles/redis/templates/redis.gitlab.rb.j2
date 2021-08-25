@@ -1,24 +1,29 @@
-{% if (group_names | select("match", ".*_primary") | list | count > 0) %}
-roles ['redis_master_role']
-{% else %}
-roles ['redis_replica_role']
+{% if groups[redis_group_name] | count > 1 %}
+roles ['redis_sentinel_role', '{{ "redis_master_role" if (group_names | select("match", ".*_primary") | list | count == 1) else "redis_replica_role" }}']
 
-gitlab_rails['rake_cache_clear'] = false
+sentinel['bind'] = '0.0.0.0'
+sentinel['quorum'] = 2
+{% else %}
+roles ["redis_master_role"]
 {% endif %}
 
 redis['bind'] = '0.0.0.0'
 redis['port'] = {{ redis_port }}
 redis['password'] = '{{ redis_password }}'
+redis['master_password'] = '{{ redis_password }}'
 
-{% if (group_names | select("match", ".*_cache_.*") | list | count > 0) %}
+{% if redis_group_name == 'redis_cache' %}
+redis['master_name'] = 'gitlab-redis-cache'
 redis['master_ip'] = '{{ redis_cache_primary_int_ip }}'
 
 redis['maxmemory'] = '{{ ((ansible_memory_mb.real.total | int) * 0.9) | round | int }}mb'
 redis['maxmemory_policy'] = "allkeys-lru"
 redis['maxmemory_samples'] = 5
-{% elif (group_names | select("match", ".*_persistent_.*") | list | count > 0) %}
+{% elif redis_group_name == 'redis_persistent' %}
+redis['master_name'] = 'gitlab-redis-persistent'
 redis['master_ip'] = '{{ redis_persistent_primary_int_ip }}'
 {% else %}
+redis['master_name'] = 'gitlab-redis'
 redis['master_ip'] = '{{ redis_primary_int_ip }}'
 {% endif %}
 

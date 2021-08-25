@@ -109,6 +109,7 @@ variable "redis_persistent_disk_type" { default = null }
 variable "redis_persistent_disk_size" { default = null }
 variable "redis_persistent_disks" { default = [] }
 
+# Separate Redis Sentinel is Deprecated - To be removed in future release
 variable "redis_sentinel_cache_node_count" { default = 0 }
 variable "redis_sentinel_cache_machine_type" { default = "" }
 variable "redis_sentinel_cache_disk_type" { default = null }

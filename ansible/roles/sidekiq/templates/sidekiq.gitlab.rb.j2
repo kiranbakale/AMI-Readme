@@ -80,7 +80,7 @@ redis['master_name'] = 'gitlab-redis'
 redis['master_password'] = '{{ redis_password }}'
 
 gitlab_rails['redis_sentinels'] = [
-{% for ip in (redis_sentinel_int_ips if redis_sentinel_int_ips | length > 0 else consul_int_ips) %}
+{% for ip in redis_int_ips %}
   {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
@@ -94,22 +94,22 @@ gitlab_rails['redis_shared_state_instance'] = 'redis://:{{ redis_password }}@git
 gitlab_rails['redis_actioncable_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
 
 gitlab_rails['redis_cache_sentinels'] = [
-{% for ip in redis_sentinel_cache_int_ips %}
+{% for ip in redis_cache_int_ips %}
   {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
 gitlab_rails['redis_queues_sentinels'] = [
-{% for ip in redis_sentinel_persistent_int_ips %}
+{% for ip in redis_persistent_int_ips %}
   {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
 gitlab_rails['redis_shared_state_sentinels'] = [
-{% for ip in redis_sentinel_persistent_int_ips %}
+{% for ip in redis_persistent_int_ips %}
   {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
 gitlab_rails['redis_actioncable_sentinels'] = [
-{% for ip in redis_sentinel_persistent_int_ips %}
+{% for ip in redis_persistent_int_ips %}
   {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
