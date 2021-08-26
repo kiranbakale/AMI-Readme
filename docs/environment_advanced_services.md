@@ -58,6 +58,7 @@ The variables for this service start with the prefix `rds_postgres_*` and should
 - `rds_postgres_version` - The version of the PostgreSQL instance. Should only be changed to versions that are supported by GitLab. Optional, default is `12.6`.
 - `rds_postgres_allocated_storage` - The initial disk size for the instance. Optional, default is `100`.
 - `rds_postgres_max_allocated_storage` - The max disk size for the instance. Optional, default is `1000`.
+- `rds_postgres_multi_az` - Specifies if the RDS instance is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`
 
 To set up a standard AWS RDS PostgreSQL for a 10k environment with the required variables should look like the following in your `environment.tf` file for a 10k environment is:
 

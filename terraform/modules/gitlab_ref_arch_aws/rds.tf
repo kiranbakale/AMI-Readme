@@ -15,7 +15,7 @@ resource "aws_db_instance" "gitlab" {
   engine = "postgres"
   engine_version = var.rds_postgres_version
   instance_class = "db.${var.rds_postgres_instance_type}"
-  multi_az = true
+  multi_az = var.rds_postgres_multi_az
   iops = 1000
   
   name = var.rds_postgres_database_name
