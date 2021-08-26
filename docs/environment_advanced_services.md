@@ -50,7 +50,7 @@ The Toolkit supports provisioning an AWS RDS PostgreSQL service instance with ev
 
 The variables for this service start with the prefix `rds_postgres_*` and should replace any previous `postgres_*`, `pgbouncer_*` and `praefect_postgres_*` settings. The available variables are as follows:
 
-- `rds_postgres_instance_type`- The [AWS Instance Type](https://aws.amazon.com/ec2/instance-types/) for the RDS service to use. **Required**.
+- `rds_postgres_instance_type`- The [AWS Instance Type](https://aws.amazon.com/ec2/instance-types/) for the RDS service to use wihtout the `db.` prefix. For example, to use a `db.m5.2xlarge` RDS instance type, the value of this variable should be `m5.2xlarge`. **Required**.
 - `rds_postgres_password` - The password for the instance. **Required**.
 - `rds_postgres_username` - The username for the instance. Optional, default is `gitlab`.
 - `rds_postgres_database_name` - The name of the main database in the instance for use by GitLab. Optional, default is `gitlabhq_production`.
