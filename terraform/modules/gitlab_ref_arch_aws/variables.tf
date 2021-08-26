@@ -128,6 +128,7 @@ variable "rds_postgres_database_name" { default = "gitlabhq_production" }
 variable "rds_postgres_version" { default = "12.6" }
 variable "rds_postgres_allocated_storage" { default = 100 }
 variable "rds_postgres_max_allocated_storage" { default = 1000 }
+variable "rds_postgres_multi_az" { default = true }
 
 # Networking
 ## Create new network
