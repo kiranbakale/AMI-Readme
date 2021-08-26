@@ -59,6 +59,8 @@ The variables for this service start with the prefix `rds_postgres_*` and should
 - `rds_postgres_allocated_storage` - The initial disk size for the instance. Optional, default is `100`.
 - `rds_postgres_max_allocated_storage` - The max disk size for the instance. Optional, default is `1000`.
 - `rds_postgres_multi_az` - Specifies if the RDS instance is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`
+- `rds_postgres_iops` - The amount of provisioned IOPS. Setting this implies a storage_type of "io1". Optional, default is `1000`.
+- `rds_postgres_storage_type` - The type of storage to use. Optional, default is `io1`.
 
 To set up a standard AWS RDS PostgreSQL for a 10k environment with the required variables should look like the following in your `environment.tf` file for a 10k environment is:
 
