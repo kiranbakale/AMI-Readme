@@ -356,3 +356,24 @@ disk_mounts:
   - { device_name: 'log', mount_dir: '/var/log/gitlab' }
   - { device_name: 'data', mount_dir: '/var/opt/gitlab' }
 ```
+
+## Disable External IPs (GCP Only)
+
+Optionally, you may want to disable External IPs on your provisioned nodes. This is done in Terraform with the `setup_external_ips` variable being set to false in your `environment.tf` file:
+
+```tf
+module "gitlab_ref_arch_gcp" {
+  source = "../../modules/gitlab_ref_arch_gcp"
+[...]
+
+  setup_external_ips = false
+}
+```
+
+Once set no external IPs will be created or added to your nodes.
+
+In this setup however some tweaks will need to be made to ansible:
+
+- It will need to be run from a box that can access the boxes via internal IPs
+- When using the Dynamic Inventory it will need to be adjusted to return internal IPs. This can be done by changing the `compose.ansible_host` setting to `private_ip_address`
+- The `external_url` setting should be set to the URL that the instance will be reachable internally
