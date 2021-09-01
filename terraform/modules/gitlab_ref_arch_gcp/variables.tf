@@ -15,7 +15,10 @@ variable "object_storage_buckets" { default = ["artifacts", "backups", "dependen
 # To be removed next release, allows users now to remove legacy bucket before next release
 variable "object_storage_create_legacy_bucket" { default = true }
 
+# A NAT will be created if setup_external_ips is set to false
 variable "setup_external_ips" { default = true }
+# Set use_existing_nat=true to use a NAT outside of GET
+variable "use_existing_nat" { default = false }
 
 # Machines
 variable "consul_node_count" { default = 0 }
