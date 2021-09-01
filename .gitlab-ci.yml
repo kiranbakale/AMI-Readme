@@ -1,12 +1,15 @@
+include:
+  - template: Dependency-Scanning.gitlab-ci.yml
+
 stages:
-  - check
+  - test
 
 #########################
 ##     Lint Checks     ##
 #########################
 
 check:tflint:
-  stage: check
+  stage: test
   image: alpine
   before_script:
     - apk add curl
@@ -29,7 +32,7 @@ check:tflint:
     - tags
 
 check:ansible-lint:
-  stage: check
+  stage: test
   image: quay.io/ansible/toolset
   script:
     - chmod 700 ansible
@@ -41,3 +44,17 @@ check:ansible-lint:
   except:
     - schedules
     - tags
+
+# Does the requirements.txt install?
+check_requirements:
+  stage: test
+  image: python:3
+  script:
+    - python -m venv get-python-env
+    - source ./get-python-env/bin/activate
+    - pip install -r ansible/requirements/requirements.txt
+    - ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
+  rules:
+    - changes:
+        - ansible/requirements/requirements.txt
+        - ansible/requirements/ansible-galaxy-requirements.yml

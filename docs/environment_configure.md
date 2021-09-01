@@ -61,11 +61,35 @@ Hopefully with this overview it's clearer how Ansible in the Toolkit works. Belo
 
 ## 1. Install Ansible
 
-The Toolkit requires Ansible to be installed and this can be done as desired. Unlike Terraform, there's no general dependencies on Ansible's versions so the latest version should suffice (although your mileage may vary). At the time of writing the Toolkit is confirmed to work with the latest version of Ansible - `2.10.x`.
+The Toolkit requires Ansible to be installed. You can either use a Python virtual environment or install Ansible globally. We recommend using the python virtual environment.
 
-Since there are no version considerations we recommend just installing Ansible as per the official [Ansible Install Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html). Note that Ansible requires Python 3 and you may need to install it and its package manager `pip3` separately.
+### Option 1a: Install Ansible with a Virtual Environment
 
-In addition to the above, Ansible also requires some dependencies to be installed. You'll need to install Python package dependencies on the machine along with some community roles from [Ansible Galaxy](https://galaxy.ansible.com/home) that allow for convenient deployment of some third party applications.
+We recommend using this approach as your local environment will be isolated from other python packages that you install on your machine. Additionally, your local environment will match the environment used for testing, validation, and building docker images, so there is less chance of package changes affecting the ansible environment you are running locally.
+
+To setup the Python virtual environment the first time, run:
+
+```shell
+# Create a virtual environment called `get-python-env`
+python3 -m venv get-python-env
+
+# Activate the new environment
+. ./get-python-env/bin/activate
+
+# Install python dependencies
+pip install -r ansible/requirements/requirements.txt
+
+# Install galaxy requirements
+ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
+```
+
+### Option 1b: Bring-Your-Own Ansible
+
+If you have installed Ansible inside a virtual environment, you can skip this step.
+
+Installing Ansible as per the official [Ansible Install Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html). Note that Ansible requires Python 3 and you may need to install it and its package manager `pip3` separately.
+
+Once you've installed Ansible, install the required dependencies. You'll need to install Python package dependencies on the machine along with some community roles from [Ansible Galaxy](https://galaxy.ansible.com/home) that allow for convenient deployment of some third party applications.
 
 To do this you only have to run the following before proceeding:
 
@@ -359,10 +383,10 @@ After the config has been setup you're now ready to configure the environment. T
 1. (Optional) Run `ansible` module `ping` with the intended environment's inventory to list hosts which have been selected.
 
     ```shell
-    ansible all -m ping -i environments/10k/inventory --list-hosts  
+    ansible all -m ping -i environments/10k/inventory --list-hosts
     ```
-   
-1. Run `ansible-playbook` with the intended environment's inventory against the `all.yml` playbook 
+
+1. Run `ansible-playbook` with the intended environment's inventory against the `all.yml` playbook
 
     ```shell
     ansible-playbook -i environments/10k/inventory all.yml
