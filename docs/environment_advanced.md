@@ -333,6 +333,21 @@ Providing custom config for components run via Helm charts in Cloud Native Hybri
 
 With the above done the file will be picked up by the Toolkit and used when configuring the Helm charts.
 
+## Custom Grafana Dashboards
+
+When using the Toolkit it is possible to pass custom Grafana dashboards during setup to allow Grafana to monitor any metrics required by the user.
+
+By default we recommend storing any custom dashboards along side your Ansible inventory in `environments/<inventory name>/files/grafana/<collection name>/<dashboard files>`. You can create multiple folders to store different dashboards or store everything in a single folder. If you want to store your custom dashboards in a folder other than `environments/<inventory name>/files/grafana/` then you can set the variable `monitor_custom_dashboards_path` to point to your custom location.
+
+Once the dashboards are in place you can add the `monitor_custom_dashboards` variable into your `vars.yml` file.
+
+```yaml
+monitor_custom_dashboards: [{ display_name: 'Sidekiq Dashboards', folder: "my_sidekiq_dashboards" }, { display_name: 'Gitaly Dashboards', folder: "my_gitaly_dashboards" }]
+```
+
+`display_name`: This is how the collection will appear in the Grafana UI and the name of the folder the dashboards will be stored in on the Grafana server.
+`folder`: This is the name of the folder in `monitor_custom_dashboards_path` that holds your collection of dashboards.
+
 ## Container Registry
 
 Container Registry is enabled by default if you're deploying [Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/#available-reference-architectures) configured with external SSL via GET using AWS cloud provider. Container Registry in that case will run in k8s and use an s3 bucket for storage.
