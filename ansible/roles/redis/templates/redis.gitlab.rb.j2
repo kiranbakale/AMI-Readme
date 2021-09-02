@@ -1,5 +1,5 @@
 {% if groups[redis_group_name] | count > 1 %}
-roles ['redis_sentinel_role', '{{ "redis_master_role" if (group_names | select("match", ".*_primary") | list | count == 1) else "redis_replica_role" }}']
+roles ['redis_sentinel_role', '{{ "redis_master_role" if (group_names | select("match", "redis.*_primary") | list | count == 1) else "redis_replica_role" }}']
 
 sentinel['bind'] = '0.0.0.0'
 sentinel['quorum'] = 2
