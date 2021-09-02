@@ -14,6 +14,21 @@
     dest: /etc/gitlab/gitlab.rb
   tags: reconfigure
 
+- name: Check if custom config exists
+  stat:
+    path: "{{ sidekiq_custom_config_file }}"
+  delegate_to: localhost
+  become: false
+  register: sidekiq_custom_config_file_path
+
+- name: Copy custom GitLab config file
+  copy:
+    src: "{{ sidekiq_custom_config_file }}"
+    dest: "/etc/gitlab/gitlab.sidekiq.custom.rb"
+    mode: 0755
+  tags: reconfigure
+  when: sidekiq_custom_config_file_path.stat.exists
+
 - name: Copy secrets file from NFS
   shell: "cp {{ gitlab_nfs_path }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets

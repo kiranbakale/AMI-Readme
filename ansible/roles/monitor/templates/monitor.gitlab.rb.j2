@@ -143,7 +143,7 @@ letsencrypt['enable'] = false
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
 
-confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.*.rb"))
-confs.each { |conf|
+custom_confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.monitor.*.rb"))
+custom_confs.each { |conf|
   from_file conf
 }

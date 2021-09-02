@@ -54,6 +54,13 @@
   when:
     - cloud_provider == 'gcp'
 
+- name: Check if custom config exists
+  stat:
+    path: "{{ gitlab_rails_custom_config_file }}"
+  delegate_to: localhost
+  become: false
+  register: gitlab_rails_custom_config_file_path
+
 - name: Omnibus database related tasks
   block:
     - name: Gather facts for Omnibus Postgres cluster
@@ -84,6 +91,16 @@
         - reconfigure
         - db_migrate
 
+    - name: Copy custom GitLab config file
+      copy:
+        src: "{{ gitlab_rails_custom_config_file }}"
+        dest: "/etc/gitlab/gitlab.gitlab_rails.custom.rb"
+        mode: 0755
+      tags:
+        - reconfigure
+        - db_migrate
+      when: gitlab_rails_custom_config_file_path.stat.exists
+
     - name: Reconfigure GitLab deploy node
       shell: gitlab-ctl reconfigure
       register: result
@@ -103,6 +120,14 @@
   retries: 3
   until: result is success
   tags: reconfigure
+
+- name: Copy custom GitLab config file
+  copy:
+    src: "{{ gitlab_rails_custom_config_file }}"
+    dest: "/etc/gitlab/gitlab.gitlab_rails.custom.rb"
+    mode: 0755
+  tags: reconfigure
+  when: gitlab_rails_custom_config_file_path.stat.exists
 
 - name: Reconfigure all GitLab Rails
   shell: gitlab-ctl reconfigure
