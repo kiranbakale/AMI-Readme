@@ -220,7 +220,20 @@ access_token_scopes: "[:api]"
 ## GitLab Component Custom Settings
 ################################################################################
 
-gitlab_charts_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/config/gitlab_charts.yml"
+consul_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/consul.rb"
+postgres_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/postgres.rb"
+pgbouncer_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/pgbouncer.rb"
+redis_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/redis.rb"
+redis_cache_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/redis_cache.rb"
+redis_persistent_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/redis_persistent.rb"
+praefect_postgres_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/praefect_postgres.rb"
+praefect_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/praefect.rb"
+gitaly_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/gitaly.rb"
+gitlab_rails_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/gitlab_rails.rb"
+sidekiq_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/sidekiq.rb"
+monitor_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/monitor.rb"
+
+gitlab_charts_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/gitlab_charts.yml"
 
 ################################################################################
 ## GitLab Geo Settings

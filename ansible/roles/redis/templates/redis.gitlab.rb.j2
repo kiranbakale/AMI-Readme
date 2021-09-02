@@ -43,7 +43,7 @@ redis_exporter['flags'] = {
   'redis.password' => '{{ redis_password }}'
 }
 
-confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.*.rb"))
-confs.each { |conf|
+custom_confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.redis.*.rb"))
+custom_confs.each { |conf|
   from_file conf
 }

@@ -44,6 +44,21 @@
     dest: /etc/gitlab/gitlab.rb
   tags: reconfigure
 
+- name: Check if custom config exists
+  stat:
+    path: "{{ monitor_custom_config_file }}"
+  delegate_to: localhost
+  become: false
+  register: monitor_custom_config_file_path
+
+- name: Copy custom GitLab config file
+  copy:
+    src: "{{ monitor_custom_config_file }}"
+    dest: "/etc/gitlab/gitlab.monitor.custom.rb"
+    mode: 0755
+  tags: reconfigure
+  when: monitor_custom_config_file_path.stat.exists
+
 - name: Reconfigure GitLab
   shell: gitlab-ctl reconfigure
   tags: reconfigure
