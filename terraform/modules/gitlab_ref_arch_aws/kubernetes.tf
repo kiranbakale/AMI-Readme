@@ -29,6 +29,60 @@ resource "aws_eks_cluster" "gitlab_cluster" {
   ]
 }
 
+// In order to connect to kubernetes to setup the AWS auth,
+// we need to obtain information from the recently created cluster,
+// and feed that into the kubernetes provider in the next step
+data "aws_eks_cluster" "gitlab_cluster_for_provider" {
+  name = var.prefix
+  depends_on = [aws_eks_cluster.gitlab_cluster]
+}
+
+data "aws_eks_cluster_auth" "gitlab_cluster_for_provider" {
+  name = var.prefix
+  depends_on = [aws_eks_cluster.gitlab_cluster]
+}
+
+provider "kubernetes" {
+  alias                  = "aws_auth_map"
+  host                   = data.aws_eks_cluster.gitlab_cluster_for_provider.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.gitlab_cluster_for_provider.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.gitlab_cluster_for_provider.token
+}
+
+// Configure the aws_auth ConfigMap to configure role access to EKS
+// Documentation available at:
+// https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
+resource "kubernetes_config_map" "aws_auth" {
+  provider   = kubernetes.aws_auth_map
+  count      = length(var.aws_auth_roles) > 0 ? 1 : 0
+  depends_on = [aws_eks_cluster.gitlab_cluster]
+
+  metadata {
+    name      = "aws-auth"
+    namespace = "kube-system"
+  }
+
+  data = {
+    mapRoles = yamlencode(
+        [
+          for r in var.aws_auth_roles: {
+            rolearn  = r.rolearn
+            username = r.kube_username
+            groups   = r.kube_groups
+          }
+        ]
+    )
+    mapUsers    = yamlencode([])
+    mapAccounts = yamlencode([])
+  }
+
+  lifecycle {
+    # Other processes will update this configmap, be sure
+    # not to overwrite them after we've configured the initial roles
+    ignore_changes = [data]
+  }
+}
+
 # Node Pools
 
 resource "aws_eks_node_group" "gitlab_webservice_pool" {
@@ -52,6 +106,7 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
   }
 
   depends_on = [
+    kubernetes_config_map.aws_auth,
     aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
     aws_iam_role.gitlab_addon_vpc_cni_role,
@@ -79,6 +134,7 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
   }
 
   depends_on = [
+    kubernetes_config_map.aws_auth,
     aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
     aws_iam_role.gitlab_addon_vpc_cni_role,
@@ -106,6 +162,7 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
   }
 
   depends_on = [
+    kubernetes_config_map.aws_auth,
     aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
     aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
     aws_iam_role.gitlab_addon_vpc_cni_role,
@@ -148,6 +205,10 @@ resource "aws_iam_role" "gitlab_eks_node_role" {
       },
     ]
   })
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 # Policies
@@ -168,6 +229,10 @@ resource "aws_iam_role_policy_attachment" "AmazonEKSWorkerNodePolicy" {
   count = min(local.total_node_pool_count, 1)
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role = aws_iam_role.gitlab_eks_node_role[0].name
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
@@ -183,6 +248,10 @@ resource "aws_eks_addon" "kube-proxy" {
 
   cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
   addon_name = "kube-proxy"
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 resource "aws_eks_addon" "coredns" {
@@ -190,6 +259,10 @@ resource "aws_eks_addon" "coredns" {
 
   cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
   addon_name = "coredns"
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 ## vpc-cni Addon
@@ -200,6 +273,10 @@ resource "aws_eks_addon" "vpc_cni" {
   cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
   addon_name = "vpc-cni"
   service_account_role_arn = aws_iam_role.gitlab_addon_vpc_cni_role[count.index].arn
+
+  depends_on = [
+    kubernetes_config_map.aws_auth
+  ]
 }
 
 data "tls_certificate" "gitlab_cluster_oidc" {
