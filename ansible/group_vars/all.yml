@@ -141,8 +141,6 @@ praefect_postgres_database_name: "praefect_production"
 
 # GitLab Monitor
 monitor_int_ip: "{{ (groups['monitor'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'monitor' in groups else '' }}"
-monitor_custom_dashboards: []
-monitor_custom_dashboards_path: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/grafana"
 
 # GitLab Redis
 redis_port: 6379
