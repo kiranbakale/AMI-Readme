@@ -96,16 +96,29 @@ grafana['dashboards'] = [
     }
   },
   {
-    'name' => 'GitLab Quality',
+    'name' => 'GitLab Environment Toolkit',
     'orgId' => 1,
-    'folder' => 'GitLab Quality',
+    'folder' => 'GitLab Environment Toolkit',
     'type' => 'file',
     'disableDeletion' => true,
     'updateIntervalSeconds' => 600,
     'options' => {
-      'path' => '/opt/gitlab-quality/dashboards',
+      'path' => '/opt/GitLab Environment Toolkit/dashboards',
     }
-  }
+  },
+{% for item in monitor_custom_dashboards %}
+  {
+    'name' => '{{ item.display_name }}',
+    'orgId' => 1,
+    'folder' => '{{ item.display_name }}',
+    'type' => 'file',
+    'disableDeletion' => true,
+    'updateIntervalSeconds' => 600,
+    'options' => {
+      'path' => '/opt/{{ item.display_name }}/dashboards',
+    }
+  },
+{% endfor %}
 ]
 
 grafana['datasources'] = [
