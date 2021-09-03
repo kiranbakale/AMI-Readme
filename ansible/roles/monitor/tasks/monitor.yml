@@ -12,28 +12,19 @@
   shell: "cp {{ gitlab_nfs_path }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
   tags: secrets
 
-- name: Remove old GitLab Quality Grafana dashboards directory
-  file:
-    path: /opt/gitlab-quality/dashboards
-    state: absent
-  tags: reconfigure
-
-- name: Create GitLab Quality Grafana dashboards directory
-  file:
-    path: /opt/gitlab-quality/dashboards
-    state: directory
-    mode: 0755
+- name: Import GitLab Grafana dashboards
+  include_tasks: dashboard_import.yml
+  vars:
+    monitor_custom_dashboards_path: "{{ role_path }}"
+  loop:
+    - { display_name: 'GitLab Environment Toolkit', folder: 'files' }
   tags:
     - reconfigure
     - dashboards
 
-- name: Copy GitLab Quality Grafana dashboards
-  copy:
-    src: "{{ item }}"
-    dest: "/opt/gitlab-quality/dashboards"
-    mode: 0755
-  with_fileglob:
-    - files/*
+- name: Import custom Grafana dashboards
+  include_tasks: dashboard_import.yml
+  loop: "{{ monitor_custom_dashboards }}"
   tags:
     - reconfigure
     - dashboards
