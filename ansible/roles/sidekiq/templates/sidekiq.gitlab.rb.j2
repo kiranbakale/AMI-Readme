@@ -67,15 +67,32 @@ gitlab_rails['shared_path'] = '{{ gitlab_nfs_path }}/shared'
 gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
 
 # Components Config
-{% if 'redis' in groups %}
-## Redis - Combined Queues (External)
-{% if groups['redis'] | length == 1 %}
-### Redis Single Node
+# Redis
+{% if redis_external %}
+## Redis Non Omnibus (PaaS \ User Provided)
+### Combined Queues
+gitlab_rails['redis_host'] = '{{ redis_host }}'
 gitlab_rails['redis_port'] = '{{ redis_port }}'
-gitlab_rails['redis_host'] = '{{ redis_primary_int_ip }}'
+
+gitlab_rails['redis_ssl'] = {{ redis_external_ssl | lower }}
+
+{% elif redis_cache_external and redis_persistent_external %}
+### Separate Queues
+gitlab_rails['redis_cache_instance'] = '{{ "rediss" if redis_external_ssl else "redis" }}://{{ redis_cache_host }}:{{ redis_cache_port }}'
+gitlab_rails['redis_queues_instance'] = '{{ "rediss" if redis_external_ssl else "redis" }}://{{ redis_persistent_host }}:{{ redis_persistent_port }}'
+gitlab_rails['redis_shared_state_instance'] = '{{ "rediss" if redis_external_ssl else "redis" }}://{{ redis_persistent_host }}:{{ redis_persistent_port }}'
+gitlab_rails['redis_actioncable_instance'] = '{{ "rediss" if redis_external_ssl else "redis" }}://{{ redis_persistent_host }}:{{ redis_persistent_port }}'
+
+{% elif 'redis' in groups %}
+## Redis Omnibus - Separate Node(s)
+### Combined Queues
+{% if groups['redis'] | length == 1 %}
+#### Separate Single Node
+gitlab_rails['redis_port'] = '{{ redis_port }}'
+gitlab_rails['redis_host'] = '{{ redis_host }}'
 gitlab_rails['redis_password'] = '{{ redis_password }}'
 {% elif groups['redis'] | length > 1 %}
-### Redis Multi Node
+#### Separate Multi Node
 redis['master_name'] = 'gitlab-redis'
 redis['master_password'] = '{{ redis_password }}'
 
@@ -86,8 +103,8 @@ gitlab_rails['redis_sentinels'] = [
 ]
 {% endif %}
 {% elif 'redis_cache' in groups and 'redis_persistent' in groups %}
-## Redis - Separate Queues (External)
-### Multi Node
+### Separate Queues
+#### Separate Multi Node
 gitlab_rails['redis_cache_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-cache'
 gitlab_rails['redis_queues_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
 gitlab_rails['redis_shared_state_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
@@ -116,16 +133,18 @@ gitlab_rails['redis_actioncable_sentinels'] = [
 {% endif %}
 
 # Postgres \ Database
-{% if 'postgres' in groups %}
-gitlab_rails['db_host'] = '{{ haproxy_internal_int_ip }}'
-gitlab_rails['db_port'] = 6432
-gitlab_rails['db_password'] = '{{ postgres_password }}'
-{% elif postgres_external %}
+{% if postgres_external %}
 gitlab_rails['db_host'] = '{{ postgres_host }}'
 gitlab_rails['db_port'] = '{{ postgres_port }}'
 gitlab_rails['db_username'] = '{{ postgres_username }}'
 gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['db_database'] = '{{ postgres_database_name }}'
+
+{% elif 'postgres' in groups %}
+gitlab_rails['db_host'] = '{{ haproxy_internal_int_ip }}'
+gitlab_rails['db_port'] = 6432
+gitlab_rails['db_password'] = '{{ postgres_password }}'
+
 {% endif %}
 
 gitlab_rails['auto_migrate'] = false
@@ -142,7 +161,7 @@ gitlab_rails['env'] = {
 
 # Gitaly
 {% if 'praefect' in groups %}
-## Gitaly Cluster (External)
+## Gitaly Cluster - Separate Node(s)
 gitaly['enable'] = false
 git_data_dirs({
   "default" => {
@@ -151,7 +170,7 @@ git_data_dirs({
   }
 })
 {% elif 'gitaly' in groups %}
-## Gitaly (External)
+## Gitaly - Separate Node(s)
 gitaly['enable'] = false
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 

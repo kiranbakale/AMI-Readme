@@ -95,15 +95,32 @@ gitlab_rails['monitoring_whitelist'] = ['0.0.0.0/0']
 gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
 
 # Components Config
-{% if 'redis' in groups %}
-## Redis - Combined Queues (External)
-{% if groups['redis'] | length == 1 %}
-### Redis Single Node
+# Redis
+{% if redis_external %}
+## Redis Non Omnibus (PaaS \ User Provided)
+### Combined Queues
+gitlab_rails['redis_host'] = '{{ redis_host }}'
 gitlab_rails['redis_port'] = '{{ redis_port }}'
-gitlab_rails['redis_host'] = '{{ redis_primary_int_ip }}'
+gitlab_rails['redis_ssl'] = {{ redis_external_ssl | lower }}
+
+{% elif redis_cache_external and redis_persistent_external %}
+### Separate Queues
+gitlab_rails['redis_cache_instance'] = '{{ "rediss" if redis_external_ssl else "redis" }}://{{ redis_cache_host }}:{{ redis_cache_port }}'
+gitlab_rails['redis_queues_instance'] = '{{ "rediss" if redis_external_ssl else "redis" }}://{{ redis_persistent_host }}:{{ redis_persistent_port }}'
+gitlab_rails['redis_shared_state_instance'] = '{{ "rediss" if redis_external_ssl else "redis" }}://{{ redis_persistent_host }}:{{ redis_persistent_port }}'
+gitlab_rails['redis_actioncable_instance'] = '{{ "rediss" if redis_external_ssl else "redis" }}://{{ redis_persistent_host }}:{{ redis_persistent_port }}'
+
+{% elif 'redis' in groups %}
+## Redis Omnibus - Separate Node(s)
+### Combined Queues
+{% if groups['redis'] | length == 1 %}
+#### Separate Single Node
+gitlab_rails['redis_host'] = '{{ redis_host }}'
+gitlab_rails['redis_port'] = '{{ redis_port }}'
 gitlab_rails['redis_password'] = '{{ redis_password }}'
+
 {% elif groups['redis'] | length > 1 %}
-### Redis Multi Node
+#### Separate Multi Node
 redis['master_name'] = 'gitlab-redis'
 redis['master_password'] = '{{ redis_password }}'
 
@@ -113,9 +130,10 @@ gitlab_rails['redis_sentinels'] = [
 {% endfor %}
 ]
 {% endif %}
+
 {% elif 'redis_cache' in groups and 'redis_persistent' in groups %}
-## Redis - Separate Queues (External)
-### Multi Node
+### Separate Queues
+#### Separate Multi Node
 gitlab_rails['redis_cache_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-cache'
 gitlab_rails['redis_queues_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
 gitlab_rails['redis_shared_state_instance'] = 'redis://:{{ redis_password }}@gitlab-redis-persistent'
@@ -142,23 +160,34 @@ gitlab_rails['redis_actioncable_sentinels'] = [
 {% endfor %}
 ]
 {% else %}
-## Redis - Combined Queues (Internal)
+## Redis Omnibus - Local
 redis['enable'] = true
 redis_exporter['listen_address'] = '0.0.0.0:9121'
 {% endif %}
 
 {% if 'sidekiq' in groups %}
-## Sidekiq (External)
+## Sidekiq - Separate Node(s)
 sidekiq['enable'] = false
 {% else %}
-## Sidekiq (Internal)
+## Sidekiq - Local
 sidekiq['enable'] = true
 sidekiq['listen_address'] = '0.0.0.0'
 sidekiq['max_concurrency'] = 15
 {% endif %}
 
-{% if 'postgres' in groups %}
-## Postgres Omnibus (Separate)
+# Postgres
+{% if postgres_external %}
+## Postgres Non Omnibus (PaaS \ User Provided)
+
+gitlab_rails['db_host'] = '{{ postgres_host }}'
+gitlab_rails['db_port'] = '{{ postgres_port }}'
+gitlab_rails['db_username'] = '{{ postgres_username }}'
+gitlab_rails['db_password'] = '{{ postgres_password }}'
+gitlab_rails['db_database'] = '{{ postgres_database_name }}'
+gitlab_rails['auto_migrate'] = {{ ('gitlab_rails_primary' in group_names) | lower }}
+
+{% elif 'postgres' in groups %}
+## Postgres Omnibus - Separate Node(s)
 postgresql['enable'] = false
 
 {% if 'pgbouncer' not in groups or (db_migrate is defined and db_migrate == true) %}
@@ -173,18 +202,8 @@ gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['auto_migrate'] = false
 {% endif %}
 
-{% elif postgres_external %}
-## Postgres Non Omnibus (PaaS \ User Provided)
-
-gitlab_rails['db_host'] = '{{ postgres_host }}'
-gitlab_rails['db_port'] = '{{ postgres_port }}'
-gitlab_rails['db_username'] = '{{ postgres_username }}'
-gitlab_rails['db_password'] = '{{ postgres_password }}'
-gitlab_rails['db_database'] = '{{ postgres_database_name }}'
-gitlab_rails['auto_migrate'] = {{ ('gitlab_rails_primary' in group_names) | lower }}
-
 {% else %}
-## Postgres Omnibus (Combined)
+## Postgres Omnibus - Local
 
 postgresql['enable'] = true
 postgresql['trust_auth_cidr_addresses'] = %w(0.0.0.0/0)
@@ -195,7 +214,7 @@ postgresql['version'] = {{ postgres_version }}
 {% endif %}
 
 {% if 'monitor' in groups %}
-## Monitor (External)
+## Monitor - Separate Node(s)
 prometheus['enable'] = false
 grafana['enable'] = false
 {% endif %}
@@ -211,7 +230,7 @@ gitlab_workhorse['env'] = {
 {% endif %}
 
 {% if 'praefect' in groups %}
-## Gitaly Cluster (External)
+## Gitaly Cluster - Separate Node(s)
 gitaly['enable'] = false
 git_data_dirs({
   "default" => {
@@ -220,7 +239,7 @@ git_data_dirs({
   }
 })
 {% elif 'gitaly' in groups %}
-## Gitaly (External)
+## Gitaly - Separate Node(s)
 gitaly['enable'] = false
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
@@ -232,7 +251,7 @@ git_data_dirs({
 {% endfor %}
 })
 {% else %}
-## Gitaly (Internal)
+## Gitaly - Local
 gitaly['enable'] = true
 gitaly['prometheus_listen_addr'] = "0.0.0.0:9236"
 {% endif %}

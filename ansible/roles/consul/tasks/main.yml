@@ -19,6 +19,7 @@
     path: "{{ consul_custom_config_file }}"
   delegate_to: localhost
   become: false
+  tags: reconfigure
   register: consul_custom_config_file_path
 
 - name: Copy custom GitLab config file

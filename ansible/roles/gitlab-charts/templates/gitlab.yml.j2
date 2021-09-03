@@ -134,26 +134,47 @@ global:
     password:
       secret: gitlab-postgres-password
       key: password
-{% if 'postgres' in groups %}
-    host: "{{ haproxy_internal_int_ip if 'haproxy_internal' in groups else postgres_host }}"
-    port: "{{ 6432 if 'haproxy_internal' in groups else postgres_port }}"
-{% elif postgres_external %}
+{% if postgres_external %}
     host: "{{ postgres_host }}"
     port: "{{ postgres_port }}"
     username: "{{ postgres_username }}"
     database: "{{ postgres_database_name }}"
+{% elif 'postgres' in groups %}
+    host: "{{ haproxy_internal_int_ip if 'haproxy_internal' in groups else postgres_host }}"
+    port: "{{ 6432 if 'haproxy_internal' in groups else postgres_port }}"
 {% endif %}
+# Redis
   redis:
-{% if 'redis' in groups %}
+{% if redis_external %}
+## Redis Non Omnibus (PaaS \ User Provided)
+### Combined Queues
+    host: "{{ redis_host }}"
+    port: "{{ redis_port }}"
+    password:
+      enabled: false
+    scheme: "{{ 'rediss' if redis_external_ssl else 'redis' }}"
+{% elif redis_cache_external and redis_persistent_external %}
+### Separate Queues
+    cache:
+      host: "{{ redis_cache_host }}"
+      port: "{{ redis_cache_port }}"
+    host: "{{ redis_persistent_host }}"
+    port: "{{ redis_persistent_port }}"
+    password:
+      enabled: false
+    scheme: "{{ 'rediss' if redis_external_ssl else 'redis' }}"
+{% elif 'redis' in groups %}
+## Redis Omnibus - Separate Node(s)
+### Combined Queues
 {% if groups['redis'] | length == 1 %}
-### Redis Single Node
-    host: '{{ redis_primary_int_ip }}'
+#### Separate Single Node
+    host: '{{ redis_host }}'
     port: '{{ redis_port }}'
     password:
       secret: gitlab-redis-password
       key: password
 {% elif groups['redis'] | length > 1 %}
-### Redis Multi Node
+#### Separate Multi Node
     host: gitlab-redis
     serviceName: redis
     password:
@@ -166,6 +187,8 @@ global:
 {% endfor %}
 {% endif %}
 {% elif 'redis_cache' in groups and 'redis_persistent' in groups %}
+### Separate Queues
+#### Separate Multi Node
     cache:
       host: gitlab-redis-cache
       password:
@@ -183,6 +206,7 @@ global:
 {% for ip in redis_persistent_int_ips %}
       - host: '{{ ip }}'
 {% endfor %}
+
 {% endif %}
 {% if cloud_native_hybrid_geo %}
   geo:

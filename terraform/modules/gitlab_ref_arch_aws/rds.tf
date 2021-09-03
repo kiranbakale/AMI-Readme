@@ -53,7 +53,7 @@ resource "aws_db_instance" "gitlab" {
   skip_final_snapshot = true
 }
 
-output "rds_connection" {
+output "rds_postgres_connection" {
   value = {
     "rds_address"           = try(aws_db_instance.gitlab[0].address, "")
     "rds_port"              = try(aws_db_instance.gitlab[0].port, "")
