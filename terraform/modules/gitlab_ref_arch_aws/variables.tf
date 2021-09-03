@@ -139,14 +139,15 @@ variable "rds_postgres_version" { default = "12.6" }
 variable "rds_postgres_allocated_storage" { default = 100 }
 variable "rds_postgres_max_allocated_storage" { default = 1000 }
 variable "rds_postgres_multi_az" { default = true }
-variable "rds_postgres_iops" { default = 1000}
+variable "rds_postgres_iops" { default = 1000 }
 variable "rds_postgres_storage_type" { default = "io1" }
+variable "rds_postgres_kms_key_arn" { default = null }
 
 # Networking
 ## Create new network
 variable "create_network" { default = false }
 variable "vpc_cidr_block" { default = "172.31.0.0/16" }
-variable "subpub_pub_cidr_block" { default = ["172.31.0.0/20","172.31.16.0/20","172.31.32.0/20"] }
+variable "subpub_pub_cidr_block" { default = ["172.31.0.0/20", "172.31.16.0/20", "172.31.32.0/20"] }
 variable "subnet_pub_count" { default = 2 }
 
 ## Existing network
