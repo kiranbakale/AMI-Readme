@@ -145,17 +145,35 @@ monitor_custom_dashboards: []
 monitor_custom_dashboards_path: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/grafana"
 
 # GitLab Redis
-redis_port: 6379
-redis_sentinel_port: 26379
+## General
+redis_password: ""
 
+## Combined
 redis_primary_int_ip: "{{ (groups['redis_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'redis' in groups else '' }}"
 redis_int_ips: "{{ (groups['redis'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis' in groups else [] }}"
 
+redis_host: "{{ redis_primary_int_ip }}"
+redis_port: 6379
+redis_external: "{{ 'redis' not in groups and redis_host != '' }}"
+
+## Cache
 redis_cache_primary_int_ip: "{{ (groups['redis_cache_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'redis_cache' in groups else '' }}"
 redis_cache_int_ips: "{{ (groups['redis_cache'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis_cache' in groups else [] }}"
 
+redis_cache_host: "{{ redis_cache_primary_int_ip }}"
+redis_cache_port: "{{ redis_port }}"
+redis_cache_external: "{{ 'redis_cache' not in groups and redis_cache_host != '' }}"
+
+## Persistent
 redis_persistent_primary_int_ip: "{{ (groups['redis_persistent_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'redis_persistent' in groups else '' }}"
 redis_persistent_int_ips: "{{ (groups['redis_persistent'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis_persistent' in groups else [] }}"
+
+redis_persistent_host: "{{ redis_persistent_primary_int_ip }}"
+redis_persistent_port: "{{ redis_port }}"
+redis_persistent_external: "{{ 'redis_persistent' not in groups and redis_persistent_host != '' }}"
+
+redis_sentinel_port: 26379
+redis_external_ssl: true
 
 # Sidekiq
 sidekiq_max_concurrency: 10

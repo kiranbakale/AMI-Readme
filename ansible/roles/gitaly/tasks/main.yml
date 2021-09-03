@@ -22,6 +22,7 @@
     path: "{{ gitaly_custom_config_file }}"
   delegate_to: localhost
   become: false
+  tags: reconfigure
   register: gitaly_custom_config_file_path
 
 - name: Copy custom GitLab config file

@@ -42,8 +42,8 @@ We include everything necessary for the deployment and operation of GitLab on ma
 
 Currently, we do not plan to include:
 
-* Cloud accounts management
-* Observability stack beyond Prometheus and Grafana
+- Cloud accounts management
+- Observability stack beyond Prometheus and Grafana
 
 ## How It Works
 
@@ -80,9 +80,8 @@ Note that the Toolkit currently has the following requirements (with related iss
 
 There are a few key features which are not supported yet, which are important to keep in mind.
 
-- [Cloud-provider services](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/74), like Postgres (RDS) or object storage (S3)
-- [GitLab Registry support](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/25)
-- [OmniAuth](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/123) (SAML, OAuth) configuration support
+- [Certain Cloud-provider services](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/74) such as PostgreSQL or Redis. Currently supported services can be seen on the [relevant docs page](docs/environment_advanced_services.md).
+- [GitLab Registry support](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/212)
 - [Promotion](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/133) of a Geo secondary
 
 Our upcoming work, sorted by tentative milestone, can be viewed on [our development board](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/boards). Please note that the issues slated for any upcoming release or milestone are subject to change and may not meet the planned timeframes.

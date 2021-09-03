@@ -14,17 +14,17 @@ redis['master_password'] = '{{ redis_password }}'
 
 {% if redis_group_name == 'redis_cache' %}
 redis['master_name'] = 'gitlab-redis-cache'
-redis['master_ip'] = '{{ redis_cache_primary_int_ip }}'
+redis['master_ip'] = '{{ redis_cache_host }}'
 
 redis['maxmemory'] = '{{ ((ansible_memory_mb.real.total | int) * 0.9) | round | int }}mb'
 redis['maxmemory_policy'] = "allkeys-lru"
 redis['maxmemory_samples'] = 5
 {% elif redis_group_name == 'redis_persistent' %}
 redis['master_name'] = 'gitlab-redis-persistent'
-redis['master_ip'] = '{{ redis_persistent_primary_int_ip }}'
+redis['master_ip'] = '{{ redis_persistent_host }}'
 {% else %}
 redis['master_name'] = 'gitlab-redis'
-redis['master_ip'] = '{{ redis_primary_int_ip }}'
+redis['master_ip'] = '{{ redis_host }}'
 {% endif %}
 
 gitlab_rails['auto_migrate'] = false

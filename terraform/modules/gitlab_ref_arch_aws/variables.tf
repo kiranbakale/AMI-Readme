@@ -120,6 +120,7 @@ variable "supporting_node_pool_instance_type" { default = "" }
 variable "supporting_node_pool_disk_size" { default = null }
 
 # PaaS Services
+## PostgreSQL
 variable "rds_postgres_instance_type" { default = "" }
 variable "rds_postgres_port" { default = 5432 }
 variable "rds_postgres_username" { default = "gitlab" }
@@ -132,6 +133,28 @@ variable "rds_postgres_multi_az" { default = true }
 variable "rds_postgres_iops" { default = 1000 }
 variable "rds_postgres_storage_type" { default = "io1" }
 variable "rds_postgres_kms_key_arn" { default = null }
+
+## Redis
+variable "elasticache_redis_node_count" { default = 0 }
+variable "elasticache_redis_instance_type" { default = "" }
+### Defaults
+variable "elasticache_redis_engine_version" { default = "6.x" }
+variable "elasticache_redis_port" { default = 6379 }
+variable "elasticache_redis_multi_az" { default = true }
+
+variable "elasticache_redis_cache_node_count" { default = 0 }
+variable "elasticache_redis_cache_instance_type" { default = "" }
+### Defaults Overrides
+variable "elasticache_redis_cache_engine_version" { default = null }
+variable "elasticache_redis_cache_port" { default = null }
+variable "elasticache_redis_cache_multi_az" { default = null }
+
+variable "elasticache_redis_persistent_node_count" { default = 0 }
+variable "elasticache_redis_persistent_instance_type" { default = "" }
+### Defaults Overrides
+variable "elasticache_redis_persistent_engine_version" { default = null }
+variable "elasticache_redis_persistent_port" { default = null }
+variable "elasticache_redis_persistent_multi_az" { default = null }
 
 # Networking
 ## Create new network

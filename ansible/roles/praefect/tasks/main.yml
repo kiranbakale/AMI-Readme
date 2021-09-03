@@ -17,6 +17,7 @@
     path: "{{ praefect_custom_config_file }}"
   delegate_to: localhost
   become: false
+  tags: reconfigure
   register: praefect_custom_config_file_path
 
 - name: Non Omnibus database related tasks
