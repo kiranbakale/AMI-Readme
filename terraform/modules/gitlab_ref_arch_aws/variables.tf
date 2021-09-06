@@ -1,5 +1,15 @@
 # General
-variable "prefix" { default = null }
+variable "prefix" {
+  default = null
+  type = string
+  description = "Prefix to use on all provisioned resources"
+
+  validation {
+    condition = can(regex("^[a-z0-9][a-z0-9-]{2,19}$", var.prefix))
+    error_message = "The prefix must be all lowercase alphanumeric characters, between 3 and 20 characters in length."
+  }
+}
+
 variable "geo_site" { default = null }
 variable "geo_deployment" { default = null }
 
