@@ -129,6 +129,16 @@ variable "supporting_node_pool_count" { default = 0 }
 variable "supporting_node_pool_instance_type" { default = "" }
 variable "supporting_node_pool_disk_size" { default = null }
 
+# AWS Kubernetes Auth Map
+variable "aws_auth_roles" {
+  type = list(object({
+    rolearn       = string       # The IAM role ARN for the role that requires access
+    kube_username = string       # The username of the kubernetes user for the Role
+    kube_groups   = list(string) # The kubernetes groups that the user belongs to
+  }))
+  default = []
+}
+
 # PaaS Services
 ## PostgreSQL
 variable "rds_postgres_instance_type" { default = "" }
