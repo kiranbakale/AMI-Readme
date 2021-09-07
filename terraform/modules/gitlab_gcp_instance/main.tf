@@ -32,7 +32,7 @@ resource "google_compute_instance" "gitlab" {
   count = var.node_count
   name = "${var.prefix}-${var.node_type}-${count.index + 1}"
   machine_type = var.machine_type
-  tags = var.tags
+  tags = distinct(concat([var.prefix, var.node_type], var.tags))
   allow_stopping_for_update = true
 
   boot_disk {
