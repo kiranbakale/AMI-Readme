@@ -35,7 +35,7 @@
             - "{{ monitor_custom_dashboards_path }}/{{ item.folder }}/*"
           loop_control:
             loop_var: file_path
-      when: dashboards_dir.stat.isdir is defined and dashboards_dir.stat.isdir
+      when: dashboards_dir.stat.exists
   tags:
     - reconfigure
     - dashboards
