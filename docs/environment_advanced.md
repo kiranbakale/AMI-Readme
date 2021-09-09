@@ -345,8 +345,8 @@ Once the dashboards are in place you can add the `monitor_custom_dashboards` var
 monitor_custom_dashboards: [{ display_name: 'Sidekiq Dashboards', folder: "my_sidekiq_dashboards" }, { display_name: 'Gitaly Dashboards', folder: "my_gitaly_dashboards" }]
 ```
 
-`display_name`: This is how the collection will appear in the Grafana UI and the name of the folder the dashboards will be stored in on the Grafana server.
-`folder`: This is the name of the folder in `monitor_custom_dashboards_path` that holds your collection of dashboards.
+- `display_name`: This is how the collection will appear in the Grafana UI and the name of the folder the dashboards will be stored in on the Grafana server.
+- `folder`: This is the name of the folder in `monitor_custom_dashboards_path` that holds your collection of dashboards.
 
 ## Container Registry
 
