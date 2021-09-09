@@ -12,8 +12,15 @@ check:tflint:
     - apk add curl
     - curl -L "$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip && unzip tflint.zip -d /usr/bin
   script:
-    - cd terraform
-    - tflint
+    - |
+      tflint --init
+      cd terraform/modules
+      for dir in */; do
+        echo "************************************************************************"
+        echo "Executing tflint for module: $dir"
+        echo "************************************************************************"
+        tflint -c ${CI_PROJECT_DIR}/.tflint.hcl $dir
+      done
   only:
     - master
     - merge_requests
