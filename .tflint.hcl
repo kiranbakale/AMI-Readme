@@ -17,7 +17,8 @@ rule "terraform_deprecated_interpolation" {
 }
 
 rule "terraform_naming_convention" {
-  enabled = false
+  enabled = true
+  format  = "snake_case"
 }
 
 rule "terraform_required_version" {
