@@ -24,8 +24,8 @@ resource "aws_eks_cluster" "gitlab_cluster" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.AmazonEKSClusterPolicy,
-    aws_iam_role_policy_attachment.AmazonEKSVPCResourceController,
+    aws_iam_role_policy_attachment.amazon_eks_cluster_policy,
+    aws_iam_role_policy_attachment.amazon_eks_vpc_resource_controller,
   ]
 }
 
@@ -52,8 +52,8 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
+    aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
+    aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
     aws_iam_role.gitlab_addon_vpc_cni_role,
   ]
 }
@@ -79,8 +79,8 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
+    aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
+    aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
     aws_iam_role.gitlab_addon_vpc_cni_role,
   ]
 }
@@ -106,8 +106,8 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
+    aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
+    aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
     aws_iam_role.gitlab_addon_vpc_cni_role,
   ]
 }
@@ -152,25 +152,25 @@ resource "aws_iam_role" "gitlab_eks_node_role" {
 
 # Policies
 
-resource "aws_iam_role_policy_attachment" "AmazonEKSClusterPolicy" {
+resource "aws_iam_role_policy_attachment" "amazon_eks_cluster_policy" {
   count = min(local.total_node_pool_count, 1)
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
   role = aws_iam_role.gitlab_eks_role[0].name
 }
 
-resource "aws_iam_role_policy_attachment" "AmazonEKSVPCResourceController" {
+resource "aws_iam_role_policy_attachment" "amazon_eks_vpc_resource_controller" {
   count = min(local.total_node_pool_count, 1)
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
   role = aws_iam_role.gitlab_eks_role[0].name
 }
 
-resource "aws_iam_role_policy_attachment" "AmazonEKSWorkerNodePolicy" {
+resource "aws_iam_role_policy_attachment" "amazon_eks_worker_node_policy" {
   count = min(local.total_node_pool_count, 1)
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role = aws_iam_role.gitlab_eks_node_role[0].name
 }
 
-resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
+resource "aws_iam_role_policy_attachment" "amazon_ec2_container_registry_read_only" {
   count = min(local.total_node_pool_count, 1)
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role = aws_iam_role.gitlab_eks_node_role[0].name
@@ -178,7 +178,7 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
 
 # Addons
 
-resource "aws_eks_addon" "kube-proxy" {
+resource "aws_eks_addon" "kube_proxy" {
   count = min(local.total_node_pool_count, 1)
 
   cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
