@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0.14"
+}
+
 resource "alicloud_instance" "gitlab" {
   count                = var.node_count
   instance_type        = var.instance_type

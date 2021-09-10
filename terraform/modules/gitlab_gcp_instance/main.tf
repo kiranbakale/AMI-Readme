@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0.14"
+}
+
 locals {
   node_disks = flatten([
     for i in range(var.node_count) :
