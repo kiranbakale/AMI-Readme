@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0.14"
+}
+
 data "azurerm_public_ip" "gitlab_external_ips" {
   name = each.key
   resource_group_name = var.resource_group_name
