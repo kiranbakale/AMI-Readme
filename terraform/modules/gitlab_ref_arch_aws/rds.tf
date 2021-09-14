@@ -1,5 +1,5 @@
 locals {
-  create_kms_key = var.rds_postgres_instance_type != "" && var.rds_postgres_kms_key_arn == null
+  postgres_kms_key_create = var.rds_postgres_instance_type != "" && var.rds_postgres_kms_key_arn == null
 }
 
 resource "aws_db_subnet_group" "gitlab" {
@@ -12,8 +12,8 @@ resource "aws_db_subnet_group" "gitlab" {
   }
 }
 
-resource "aws_kms_key" "gitlab_kms_key" {
-  count = local.create_kms_key ? 1 : 0
+resource "aws_kms_key" "gitlab_rds_postgres_kms_key" {
+  count = local.postgres_kms_key_create ? 1 : 0
 
   description = "${var.prefix} RDS Postgres KMS Key"
 
@@ -45,7 +45,7 @@ resource "aws_db_instance" "gitlab" {
   allocated_storage     = var.rds_postgres_allocated_storage
   max_allocated_storage = var.rds_postgres_max_allocated_storage
   storage_encrypted     = true
-  kms_key_id            = local.create_kms_key ? aws_kms_key.gitlab_kms_key[0].arn : var.rds_postgres_kms_key_arn
+  kms_key_id            = local.postgres_kms_key_create ? aws_kms_key.gitlab_rds_postgres_kms_key[0].arn : var.rds_postgres_kms_key_arn
 
   allow_major_version_upgrade = true
   auto_minor_version_upgrade  = false
