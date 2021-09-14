@@ -5,8 +5,8 @@ variable "prefix" {
   description = "Prefix to use on all provisioned resources"
 
   validation {
-    condition = can(regex("^[a-z0-9][a-z0-9-]{2,19}$", var.prefix))
-    error_message = "The prefix must be all lowercase alphanumeric characters, between 3 and 20 characters in length."
+    condition = can(regex("^[a-z0-9][a-z0-9-]{2,29}$", var.prefix))
+    error_message = "The prefix must be all lowercase alphanumeric characters, between 3 and 30 characters in length."
   }
 }
 
@@ -145,24 +145,33 @@ variable "rds_postgres_storage_type" { default = "io1" }
 variable "rds_postgres_kms_key_arn" { default = null }
 
 ## Redis
+### Combined
 variable "elasticache_redis_node_count" { default = 0 }
 variable "elasticache_redis_instance_type" { default = "" }
-### Defaults
+variable "elasticache_redis_kms_key_arn" { default = null }
+
 variable "elasticache_redis_engine_version" { default = "6.x" }
+variable "elasticache_redis_password" { default = "" }
 variable "elasticache_redis_port" { default = 6379 }
 variable "elasticache_redis_multi_az" { default = true }
 
+### Separate - Cache
 variable "elasticache_redis_cache_node_count" { default = 0 }
 variable "elasticache_redis_cache_instance_type" { default = "" }
-### Defaults Overrides
+variable "elasticache_redis_cache_kms_key_arn" { default = null }
+
 variable "elasticache_redis_cache_engine_version" { default = null }
+variable "elasticache_redis_cache_password" { default = "" }
 variable "elasticache_redis_cache_port" { default = null }
 variable "elasticache_redis_cache_multi_az" { default = null }
 
+### Separate - Persistent
 variable "elasticache_redis_persistent_node_count" { default = 0 }
 variable "elasticache_redis_persistent_instance_type" { default = "" }
-### Defaults Overrides
+variable "elasticache_redis_persistent_kms_key_arn" { default = null }
+
 variable "elasticache_redis_persistent_engine_version" { default = null }
+variable "elasticache_redis_persistent_password" { default = "" }
 variable "elasticache_redis_persistent_port" { default = null }
 variable "elasticache_redis_persistent_multi_az" { default = null }
 

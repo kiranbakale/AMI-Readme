@@ -151,17 +151,22 @@ global:
     host: "{{ redis_host }}"
     port: "{{ redis_port }}"
     password:
-      enabled: false
+      secret: gitlab-redis-password
+      key: password
     scheme: "{{ 'rediss' if redis_external_ssl else 'redis' }}"
 {% elif redis_cache_external and redis_persistent_external %}
 ### Separate Queues
     cache:
       host: "{{ redis_cache_host }}"
       port: "{{ redis_cache_port }}"
+      password:
+        secret: gitlab-redis-cache-password
+        key: password
     host: "{{ redis_persistent_host }}"
     port: "{{ redis_persistent_port }}"
     password:
-      enabled: false
+      secret: gitlab-redis-persistent-password
+      key: password
     scheme: "{{ 'rediss' if redis_external_ssl else 'redis' }}"
 {% elif 'redis' in groups %}
 ## Redis Omnibus - Separate Node(s)
@@ -192,7 +197,7 @@ global:
     cache:
       host: gitlab-redis-cache
       password:
-        secret: gitlab-redis-password
+        secret: gitlab-redis-cache-password
         key: password
       sentinels:
 {% for ip in redis_cache_int_ips %}
@@ -200,7 +205,7 @@ global:
 {% endfor %}
     host: gitlab-redis-persistent
     password:
-      secret: gitlab-redis-password
+      secret: gitlab-redis-persistent-password
       key: password
     sentinels:
 {% for ip in redis_persistent_int_ips %}
