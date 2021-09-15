@@ -131,7 +131,7 @@
     - name: Install GitLab repo package
       apt:
         name: "{{ gitlab_repo_package }}"
-        state: latest
+        state: "{{ 'present' if gitlab_version != '' else 'latest' }}"
       register: result
       retries: 2
       delay: 3
