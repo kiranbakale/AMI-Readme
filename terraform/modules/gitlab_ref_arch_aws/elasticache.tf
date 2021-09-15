@@ -63,7 +63,7 @@ locals {
   
   ## Use default values if specifics aren't specfied
   redis_cache_engine_version = coalesce(var.elasticache_redis_cache_engine_version, var.elasticache_redis_engine_version)
-  redis_cache_password = coalesce(var.elasticache_redis_cache_password, var.elasticache_redis_password)
+  redis_cache_password = var.elasticache_redis_cache_password != "" ? var.elasticache_redis_cache_password : var.elasticache_redis_password
   redis_cache_port = coalesce(var.elasticache_redis_cache_port, var.elasticache_redis_port)
   redis_cache_multi_az = coalesce(var.elasticache_redis_cache_multi_az, var.elasticache_redis_multi_az)
 }
@@ -133,8 +133,8 @@ locals {
   redis_persistent_kms_key_create = var.elasticache_redis_persistent_node_count > 0 && var.elasticache_redis_persistent_kms_key_arn == null
 
   ## Use default values if specifics aren't specfied
+  redis_persistent_password = var.elasticache_redis_persistent_password != "" ? var.elasticache_redis_persistent_password : var.elasticache_redis_password
   redis_persistent_engine_version = coalesce(var.elasticache_redis_persistent_engine_version, var.elasticache_redis_engine_version)
-  redis_persistent_password = coalesce(var.elasticache_redis_persistent_password, var.elasticache_redis_password)
   redis_persistent_port = coalesce(var.elasticache_redis_persistent_port, var.elasticache_redis_port)
   redis_persistent_multi_az = coalesce(var.elasticache_redis_persistent_multi_az, var.elasticache_redis_multi_az)
 }
