@@ -32,7 +32,7 @@ variable "ssh_key_name" {
 }
 
 variable "disk_type" {
-  default = "gp2"
+  default = "gp3"
 }
 
 variable "disk_size" {
