@@ -14,18 +14,19 @@ locals {
       }
     ]
   ])
+  name_prefix = var.name_override == null ? "${var.prefix}-${var.node_type}" : var.name_override
 }
 
 resource "google_compute_disk" "gitlab" {
   for_each = { for d in local.node_disks : format("%s-%d", d.device_name, d.item) => d }
-  name     = format("%s-%s-%s-%d", var.prefix, var.node_type, each.value.device_name, each.value.item)
+  name     = format("%s-%s-%d", local.name_prefix, each.value.device_name, each.value.item)
   type     = each.value.type
   size     = each.value.size
 }
 
 resource "google_compute_address" "gitlab" {
   count = length(var.external_ips) == 0 && var.setup_external_ip ? var.node_count : 0
-  name  = "${var.prefix}-${var.node_type}-ip-${count.index + 1}"
+  name  = "${local.name_prefix}-ip-${count.index + 1}"
 }
 
 locals {
@@ -34,7 +35,7 @@ locals {
 
 resource "google_compute_instance" "gitlab" {
   count        = var.node_count
-  name         = "${var.prefix}-${var.node_type}-${count.index + 1}"
+  name         = "${local.name_prefix}-${count.index + 1}"
   machine_type = var.machine_type
   tags         = distinct(concat([var.prefix, var.node_type], var.tags))
 
@@ -52,14 +53,14 @@ resource "google_compute_instance" "gitlab" {
     enable-oslogin = "TRUE"
   }
 
-  labels = {
+  labels = merge({
     gitlab_node_prefix    = var.prefix
     gitlab_node_type      = var.node_type
     gitlab_node_level     = var.label_secondaries == true ? (count.index == 0 ? "${var.node_type}-primary" : "${var.node_type}-secondary") : ""
     gitlab_geo_site       = var.geo_site
     gitlab_geo_deployment = var.geo_deployment
     gitlab_geo_full_role  = var.geo_site == null ? null : (count.index == 0 ? "${var.geo_site}-${var.node_type}-primary" : "${var.geo_site}-${var.node_type}-secondary")
-  }
+  }, var.additional_labels)
 
   network_interface {
     network = "default"

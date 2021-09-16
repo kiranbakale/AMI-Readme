@@ -69,3 +69,11 @@ variable "disks" {
 variable "setup_external_ip" {
   default = true
 }
+
+variable "name_override" {
+  default = null
+}
+
+variable "additional_labels" {
+  default = {}
+}
