@@ -1,11 +1,11 @@
 # General
 variable "prefix" {
-  default = null
-  type = string
+  default     = null
+  type        = string
   description = "Prefix to use on all provisioned resources"
 
   validation {
-    condition = can(regex("^[a-z0-9][a-z0-9-]{2,29}$", var.prefix))
+    condition     = can(regex("^[a-z0-9][a-z0-9-]{2,29}$", var.prefix))
     error_message = "The prefix must be all lowercase alphanumeric characters, between 3 and 30 characters in length."
   }
 }

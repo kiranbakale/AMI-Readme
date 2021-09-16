@@ -62,7 +62,7 @@ variable "haproxy_internal_node_count" { default = 0 }
 variable "haproxy_internal_machine_type" { default = "" }
 variable "haproxy_internal_disk_type" { default = null }
 variable "haproxy_internal_disk_size" { default = null }
-variable "haproxy_internal_disks" { default = []}
+variable "haproxy_internal_disks" { default = [] }
 
 variable "monitor_node_count" { default = 0 }
 variable "monitor_machine_type" { default = "" }

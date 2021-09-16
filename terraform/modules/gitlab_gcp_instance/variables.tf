@@ -6,12 +6,12 @@ variable "node_count" {
 }
 
 variable "tags" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 
 variable "external_ips" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 
@@ -36,7 +36,7 @@ variable "label_secondaries" {
 }
 
 variable "scopes" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 
