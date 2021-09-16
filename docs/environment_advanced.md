@@ -317,18 +317,18 @@ In this section we detail how to set up custom config for Omnibus and Helm chart
 Providing custom config for components run as part of an Omnibus environment is done as follows:
 
 1. Create a [gitlab.rb](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template) file in the correct format with the specific custom settings you wish to apply
-1. By default the Toolkit looks for a files in the [environments](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_config/<component>.rb`. Save your file in this location with the same name.
+1. By default the Toolkit looks for a files in the [environments](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/<component>.rb`. Save your file in this location with the same name.
     - If you wish to store your file in a different location or use a different name the full path that Ansible should use can be set via a variable for each different component e.g. `<component>_custom_config_file`
     - Available component options: `consul`, `postgres`, `pgbouncer`, `redis`, `redis_cache`, `redis_persistent`, `praefect_postgres`, `praefect`, `gitaly`, `gitlab_rails`, `sidekiq` and `monitor`.
 
-With the above done the file will be picked up by the Toolkit and used when configuring the Helm charts.
+With the above done the file will be picked up by the Toolkit and used when configuring Omnibus.
 
 ### Helm
 
 Providing custom config for components run via Helm charts in Cloud Native Hybrid environments is done as follows:
 
 1. Create a [GitLab Charts](https://docs.gitlab.com/charts/) yaml file in the correct format with the specific custom settings you wish to apply
-1. By default the Toolkit looks for a file named `gitlab_charts.yml` in the [environments](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_config/gitlab_charts.yml`. Save your file in this location with the same name.
+1. By default the Toolkit looks for a file named `gitlab_charts.yml` in the [environments](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/gitlab_charts.yml`. Save your file in this location with the same name.
     - If you wish to store your file in a different location or use a different name the full path that Ansible should use can be set via the `gitlab_charts_custom_config_file` inventory variable.
 
 With the above done the file will be picked up by the Toolkit and used when configuring the Helm charts.
