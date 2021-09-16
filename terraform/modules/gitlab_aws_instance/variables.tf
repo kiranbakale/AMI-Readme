@@ -6,7 +6,7 @@ variable "node_count" {
 }
 
 variable "elastic_ip_allocation_ids" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 
@@ -23,7 +23,7 @@ variable "instance_type" {
 }
 
 variable "security_group_ids" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 

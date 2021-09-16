@@ -14,12 +14,12 @@ variable "node_count" {
 }
 
 variable "tags" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 
 variable "external_ip_names" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 
@@ -28,12 +28,12 @@ variable "size" {
 }
 
 variable "source_image_reference" {
-  type = map
+  type = map(any)
   default = {
-    "publisher"  = "Canonical"
-    "offer"  = "UbuntuServer"
-    "sku"  = "18.04-LTS"
-    "version"  = "latest"
+    "publisher" = "Canonical"
+    "offer"     = "UbuntuServer"
+    "sku"       = "18.04-LTS"
+    "version"   = "latest"
   }
 }
 

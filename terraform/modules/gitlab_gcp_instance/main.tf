@@ -7,10 +7,10 @@ locals {
     for i in range(var.node_count) :
     [
       for disk in var.disks : {
-        size    = disk.size
-        type    = disk.type
+        size        = disk.size
+        type        = disk.type
         device_name = disk.device_name
-        item    = i
+        item        = i
       }
     ]
   ])
@@ -25,7 +25,7 @@ resource "google_compute_disk" "gitlab" {
 
 resource "google_compute_address" "gitlab" {
   count = length(var.external_ips) == 0 && var.setup_external_ip ? var.node_count : 0
-  name = "${var.prefix}-${var.node_type}-ip-${count.index + 1}"
+  name  = "${var.prefix}-${var.node_type}-ip-${count.index + 1}"
 }
 
 locals {
@@ -33,17 +33,18 @@ locals {
 }
 
 resource "google_compute_instance" "gitlab" {
-  count = var.node_count
-  name = "${var.prefix}-${var.node_type}-${count.index + 1}"
+  count        = var.node_count
+  name         = "${var.prefix}-${var.node_type}-${count.index + 1}"
   machine_type = var.machine_type
-  tags = distinct(concat([var.prefix, var.node_type], var.tags))
+  tags         = distinct(concat([var.prefix, var.node_type], var.tags))
+
   allow_stopping_for_update = true
 
   boot_disk {
     initialize_params {
       image = var.machine_image
-      size = var.disk_size
-      type = var.disk_type
+      size  = var.disk_size
+      type  = var.disk_type
     }
   }
 
@@ -52,12 +53,12 @@ resource "google_compute_instance" "gitlab" {
   }
 
   labels = {
-    gitlab_node_prefix = var.prefix
-    gitlab_node_type = var.node_type
-    gitlab_node_level = var.label_secondaries == true ? (count.index == 0 ? "${var.node_type}-primary" : "${var.node_type}-secondary") : ""
-    gitlab_geo_site = var.geo_site
+    gitlab_node_prefix    = var.prefix
+    gitlab_node_type      = var.node_type
+    gitlab_node_level     = var.label_secondaries == true ? (count.index == 0 ? "${var.node_type}-primary" : "${var.node_type}-secondary") : ""
+    gitlab_geo_site       = var.geo_site
     gitlab_geo_deployment = var.geo_deployment
-    gitlab_geo_full_role = var.geo_site == null ? null : (count.index == 0 ? "${var.geo_site}-${var.node_type}-primary" : "${var.geo_site}-${var.node_type}-secondary")
+    gitlab_geo_full_role  = var.geo_site == null ? null : (count.index == 0 ? "${var.geo_site}-${var.node_type}-primary" : "${var.geo_site}-${var.node_type}-secondary")
   }
 
   network_interface {
@@ -85,7 +86,7 @@ resource "google_compute_instance" "gitlab" {
   dynamic "attached_disk" {
     for_each = var.disks
     content {
-      source = google_compute_disk.gitlab[format("%s-%d", attached_disk.value["device_name"], count.index)].self_link
+      source      = google_compute_disk.gitlab[format("%s-%d", attached_disk.value["device_name"], count.index)].self_link
       device_name = attached_disk.value["device_name"]
     }
   }

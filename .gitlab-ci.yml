@@ -8,6 +8,22 @@ stages:
 ##     Lint Checks     ##
 #########################
 
+check:terraform-fmt:
+  stage: test
+  image:
+    name: "hashicorp/terraform"
+    entrypoint: [ "" ]
+  before_script:
+    - terraform version
+  script:
+    - terraform fmt -check -recursive -diff terraform/
+  only:
+    - master
+    - merge_requests
+  except:
+    - schedules
+    - tags
+
 check:tflint:
   stage: test
   image: alpine

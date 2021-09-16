@@ -1,19 +1,19 @@
 module "monitor" {
   source = "../gitlab_gcp_instance"
 
-  prefix = var.prefix
-  node_type = "monitor"
+  prefix     = var.prefix
+  node_type  = "monitor"
   node_count = var.monitor_node_count
 
-  machine_type = var.monitor_machine_type
+  machine_type  = var.monitor_machine_type
   machine_image = var.machine_image
-  disk_size = coalesce(var.monitor_disk_size, var.default_disk_size)
-  disk_type = coalesce(var.monitor_disk_type, var.default_disk_type)
+  disk_size     = coalesce(var.monitor_disk_size, var.default_disk_size)
+  disk_type     = coalesce(var.monitor_disk_type, var.default_disk_type)
 
-  geo_site = var.geo_site
+  geo_site       = var.geo_site
   geo_deployment = var.geo_deployment
 
-  tags = ["${var.prefix}-web"]
+  tags  = ["${var.prefix}-web"]
   disks = var.monitor_disks
 
   setup_external_ip = var.setup_external_ips

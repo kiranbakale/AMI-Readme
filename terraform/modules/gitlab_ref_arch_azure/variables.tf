@@ -5,16 +5,16 @@ variable "geo_deployment" { default = null }
 
 # Azure
 variable "source_image_reference" {
-  type = map
+  type = map(any)
   default = {
-    "publisher"  = "Canonical"
-    "offer"  = "UbuntuServer"
-    "sku"  = "18.04-LTS"
-    "version"  = "latest"
+    "publisher" = "Canonical"
+    "offer"     = "UbuntuServer"
+    "sku"       = "18.04-LTS"
+    "version"   = "latest"
   }
 }
 
-variable "location" {  default = "East US 2" }
+variable "location" { default = "East US 2" }
 variable "storage_account_name" { default = null }
 variable "resource_group_name" { default = null }
 variable "vm_admin_username" { default = null }
