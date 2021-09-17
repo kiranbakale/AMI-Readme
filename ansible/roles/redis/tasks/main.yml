@@ -17,7 +17,7 @@
   copy:
     src: "{{ lookup('vars', redis_group_name + '_custom_config_file') }}"
     dest: "/etc/gitlab/gitlab.{{ redis_group_name }}.custom.rb"
-    mode: 0755
+    mode: 0644
   tags: reconfigure
   when: redis_custom_config_file_path.stat.exists
 

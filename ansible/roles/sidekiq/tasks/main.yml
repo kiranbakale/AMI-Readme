@@ -26,7 +26,7 @@
   copy:
     src: "{{ sidekiq_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.sidekiq.custom.rb"
-    mode: 0755
+    mode: 0644
   tags: reconfigure
   when: sidekiq_custom_config_file_path.stat.exists
 

@@ -29,7 +29,7 @@
   copy:
     src: "{{ gitaly_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.gitaly.custom.rb"
-    mode: 0755
+    mode: 0644
   tags: reconfigure
   when: gitaly_custom_config_file_path.stat.exists
 

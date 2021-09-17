@@ -36,7 +36,7 @@
   copy:
     src: "{{ postgres_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.postgres.custom.rb"
-    mode: 0755
+    mode: 0644
   tags: reconfigure
   when: postgres_custom_config_file_path.stat.exists
 
