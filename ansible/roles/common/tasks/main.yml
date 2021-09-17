@@ -108,6 +108,8 @@
         dest: "{{ gitlab_repo_script_path }}"
         force: true
       register: repo_file
+      retries: 20
+      delay: 30
       when:
         - omnibus_node
 
