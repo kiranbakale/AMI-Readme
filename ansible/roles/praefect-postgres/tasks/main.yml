@@ -17,7 +17,7 @@
   copy:
     src: "{{ praefect_postgres_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.praefect_postgres.custom.rb"
-    mode: 0755
+    mode: 0644
   tags: reconfigure
   when: praefect_postgres_custom_config_file_path.stat.exists
 

@@ -96,7 +96,7 @@
       copy:
         src: "{{ gitlab_rails_custom_config_file }}"
         dest: "/etc/gitlab/gitlab.gitlab_rails.custom.rb"
-        mode: 0755
+        mode: 0644
       tags:
         - reconfigure
         - db_migrate
@@ -126,7 +126,7 @@
   copy:
     src: "{{ gitlab_rails_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.gitlab_rails.custom.rb"
-    mode: 0755
+    mode: 0644
   tags: reconfigure
   when: gitlab_rails_custom_config_file_path.stat.exists
 
