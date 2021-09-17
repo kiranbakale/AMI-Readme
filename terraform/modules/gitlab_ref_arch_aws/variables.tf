@@ -22,6 +22,16 @@ variable "default_disk_type" { default = "gp3" }
 variable "ssh_public_key_file" { default = null }
 
 variable "object_storage_buckets" { default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads", "registry"] }
+variable "object_storage_force_destroy" {
+  description = "Toggle to enable force-destruction of S3 Bucket. Consider setting this value to false for production systems"
+  type        = bool
+  default     = true
+}
+variable "object_storage_tags" {
+  description = "Tags to apply to S3 buckets"
+  type        = map(any)
+  default     = {}
+}
 
 # Machines
 variable "consul_node_count" { default = 0 }
