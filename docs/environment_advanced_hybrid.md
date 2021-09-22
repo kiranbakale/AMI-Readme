@@ -250,6 +250,7 @@ By design, this file is similar to the one used in a [standard environment](envi
 - `cloud_native_hybrid_environment` - Sets Ansible to know it's configuring a Cloud Native Hybrid Reference Architecture environment. Required.
 - `kubeconfig_setup` - When true, will attempt to automatically configure the `.kubeconfig` file entry for the provisioned Kubernetes cluster.
 - `external_ip` - **GCP only** External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid installs.
+- `external_url` - This cannot be an IP address in a hybrid environment. You will need a domain or sub-domain to which you or your company owns, to which you can add a DNS record.
 - `gcp_zone` - **GCP only** Zone name the GCP project is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
 - `aws_region` - **AWS only** Name of the region where the EKS cluster is located. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
 - `aws_allocation_ids` - **AWS only** A comma separated list of allocation IDs to assign to the AWS load balancer.
