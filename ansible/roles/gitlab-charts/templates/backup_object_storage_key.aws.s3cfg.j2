@@ -1,5 +1,4 @@
 [default]
-access_key = {{ lookup('env','AWS_ACCESS_KEY_ID') }}
-secret_key = {{ lookup('env','AWS_SECRET_ACCESS_KEY') }}
+use_iam_profile = true
 bucket_location = {{ aws_region }}
 multipart_chunk_size_mb = 128

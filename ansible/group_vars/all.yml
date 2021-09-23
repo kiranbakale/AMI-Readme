@@ -212,6 +212,8 @@ aws_backups_object_storage_key: "{{ lookup('template', 'templates/backup_object_
 
 gitlab_charts_show_values: false
 
+use_iam_profile: true
+
 ## Webservice
 gitlab_charts_webservice_requests_memory_gb: 5
 gitlab_charts_webservice_limits_memory_gb: 5.25
