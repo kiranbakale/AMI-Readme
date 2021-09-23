@@ -80,6 +80,21 @@ variable "disks" {
   #   ]
 }
 
+variable "vpc" {
+  type    = string
+  default = "default"
+}
+
+variable "subnet" {
+  type    = string
+  default = "default"
+}
+
+variable "zones" {
+  type    = list(any)
+  default = null
+}
+
 variable "setup_external_ip" {
   type    = bool
   default = true
