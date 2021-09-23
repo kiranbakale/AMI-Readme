@@ -4,6 +4,10 @@ Thank you for your interest in contributing to the GitLab Environment Toolkit! W
 all contributions. By participating in this project, you agree to abide by the
 [code of conduct](#code-of-conduct).
 
+## Technical Design
+
+Before contributing you should read and acknowledge our [Technical Design](TECHNICAL_DESIGN.md) document in full.
+
 ## Merge requests
 
 We welcome merge requests with fixes and improvements to GitLab Environment Toolkit code and/or documentation. 
