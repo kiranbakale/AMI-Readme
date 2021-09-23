@@ -38,6 +38,7 @@ resource "google_compute_instance" "gitlab" {
   name         = "${local.name_prefix}-${count.index + 1}"
   machine_type = var.machine_type
   tags         = distinct(concat([var.prefix, var.node_type], var.tags))
+  zone         = var.zones == null ? null : element(var.zones, count.index)
 
   allow_stopping_for_update = true
 
@@ -63,7 +64,8 @@ resource "google_compute_instance" "gitlab" {
   }, var.additional_labels)
 
   network_interface {
-    network = "default"
+    network    = var.vpc
+    subnetwork = var.subnet
 
     dynamic "access_config" {
       # Dynamic block is used here to be able to completely omit it if not needed.
