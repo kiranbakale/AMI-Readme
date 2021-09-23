@@ -1,5 +1,5 @@
 locals {
-  total_node_pool_count = sum([var.webservice_node_pool_count, var.sidekiq_node_pool_count, var.supporting_node_pool_count])
+  total_node_pool_count = max(sum([var.webservice_node_pool_count, var.sidekiq_node_pool_count, var.supporting_node_pool_count]), 0)
 }
 
 # Cluster
@@ -329,9 +329,10 @@ resource "aws_iam_role_policy_attachment" "gitlab_addon_vpc_cni_policy" {
   role       = aws_iam_role.gitlab_addon_vpc_cni_role[count.index].name
 }
 
-resource "aws_iam_role_policy_attachment" "s3_policy" {
+# Object Storage Role Policy
+resource "aws_iam_role_policy_attachment" "gitlab_s3_eks_role_policy_attachment" {
   count = min(local.total_node_pool_count, length(var.object_storage_buckets), 1)
 
   policy_arn = aws_iam_policy.gitlab_s3_policy[0].arn
-  role       = aws_iam_role.gitlab_eks_role[0].name
+  role       = aws_iam_role.gitlab_eks_node_role[0].name
 }
