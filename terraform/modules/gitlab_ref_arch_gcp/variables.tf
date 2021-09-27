@@ -12,8 +12,6 @@ variable "default_disk_type" { default = "pd-standard" }
 variable "project" { default = null }
 
 variable "object_storage_buckets" { default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"] }
-# To be removed next release, allows users now to remove legacy bucket before next release
-variable "object_storage_create_legacy_bucket" { default = true }
 
 # A NAT will be created if setup_external_ips is set to false
 variable "setup_external_ips" { default = true }
