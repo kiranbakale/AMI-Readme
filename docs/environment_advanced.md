@@ -61,7 +61,7 @@ module "gitlab_ref_arch_*" {
 Next you need to add 2 new labels that helps to identify the machines as belonging to our Geo deployment and if they are part of the primary or secondary site:
 
 - `geo_site` - used to identify if a machine belongs to the primary or secondary site. This must be set to either `geo-primary-site` or `geo-secondary-site`.
-- `geo_deployment` - used to identify that a primary and secondary site belong to the same Geo deployment. This must be unique across all Geo deployments thats will be stored alongside each other.
+- `geo_deployment` - used to identify that a primary and secondary site belong to the same Geo deployment. This must be unique across all Geo deployments that will be stored alongside each other.
 
 The recommended way to do this is to first set them in the `variables.tf` file, for example:
 
@@ -333,11 +333,19 @@ Providing custom config for components run via Helm charts in Cloud Native Hybri
 
 With the above done the file will be picked up by the Toolkit and used when configuring the Helm charts.
 
+### API
+
+Some config in GitLab can only be changed via API. As such, the Toolkit supports passing a custom API Ansible Task list that will be executed during the [Post Configure](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/master/ansible/roles/post-configure/tasks) role from [localhost](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/master/ansible/post-configure.yml). This feature could be used when you want to do further configuration changes to your environment after it's deployed. For example, modifying GitLab [application settings using API](https://docs.gitlab.com/ee/api/settings.html).
+
+Note that this file should be a standard Ansible Tasks yaml file that will be used with [`include_tasks`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_tasks_module.html).
+
+By default, the Toolkit will look for an API Ansible Task file alongside your Ansible inventory in `environments/<inventory name>/files/gitlab_configs/api_tasks.yml`. If you want to store your custom task at another path then you can set the variable `post_configure_api_tasks_file` to point to your custom location.
+
 ## Custom Grafana Dashboards
 
 When using the Toolkit it is possible to pass custom Grafana dashboards during setup to allow Grafana to monitor any metrics required by the user.
 
-By default we recommend storing any custom dashboards along side your Ansible inventory in `environments/<inventory name>/files/grafana/<collection name>/<dashboard files>`. You can create multiple folders to store different dashboards or store everything in a single folder. If you want to store your custom dashboards in a folder other than `environments/<inventory name>/files/grafana/` then you can set the variable `monitor_custom_dashboards_path` to point to your custom location.
+By default we recommend storing any custom dashboards alongside your Ansible inventory in `environments/<inventory name>/files/grafana/<collection name>/<dashboard files>`. You can create multiple folders to store different dashboards or store everything in a single folder. If you want to store your custom dashboards in a folder other than `environments/<inventory name>/files/grafana/` then you can set the variable `monitor_custom_dashboards_path` to point to your custom location.
 
 Once the dashboards are in place you can add the `monitor_custom_dashboards` variable into your `vars.yml` file.
 
