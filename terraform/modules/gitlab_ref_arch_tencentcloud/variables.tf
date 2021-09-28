@@ -372,8 +372,9 @@ variable "k8s_subnet_cidr" {
   default = "172.16.1.0/24"
 }
 variable "k8s_worker_password" {
-  type    = string
-  default = null
+  type      = string
+  default   = null
+  sensitive = true
 }
 variable "k8s_worker_number" {
   type    = number

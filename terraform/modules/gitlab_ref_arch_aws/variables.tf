@@ -434,8 +434,9 @@ variable "rds_postgres_username" {
   default = "gitlab"
 }
 variable "rds_postgres_password" {
-  type    = string
-  default = ""
+  type      = string
+  default   = ""
+  sensitive = true
 }
 variable "rds_postgres_database_name" {
   type    = string
@@ -489,8 +490,9 @@ variable "elasticache_redis_engine_version" {
   default = "6.x"
 }
 variable "elasticache_redis_password" {
-  type    = string
-  default = ""
+  type      = string
+  default   = ""
+  sensitive = true
 }
 variable "elasticache_redis_port" {
   type    = number
@@ -520,8 +522,9 @@ variable "elasticache_redis_cache_engine_version" {
   default = null
 }
 variable "elasticache_redis_cache_password" {
-  type    = string
-  default = ""
+  type      = string
+  default   = ""
+  sensitive = true
 }
 variable "elasticache_redis_cache_port" {
   type    = number
@@ -551,8 +554,9 @@ variable "elasticache_redis_persistent_engine_version" {
   default = null
 }
 variable "elasticache_redis_persistent_password" {
-  type    = string
-  default = ""
+  type      = string
+  default   = ""
+  sensitive = true
 }
 variable "elasticache_redis_persistent_port" {
   type    = number
