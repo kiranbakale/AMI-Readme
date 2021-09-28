@@ -51,3 +51,16 @@
     validate_certs: false
     status_code: 200, 201
     body_format: json
+
+- name: Run custom API tasks
+  block:
+    - name: Check if Custom Config API tasks file exists
+      stat:
+        path: "{{ post_configure_api_tasks_file }}"
+      register: post_configure_api_tasks_file_path
+
+    - name: Run Custom Config API tasks
+      include_tasks: "{{ post_configure_api_tasks_file }}"
+      when: post_configure_api_tasks_file_path.stat.exists
+  tags:
+    - reconfigure
