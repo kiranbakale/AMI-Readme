@@ -378,6 +378,7 @@ variable "ecs_password" {
   description = "The password of instance."
   type        = string
   default     = ""
+  sensitive   = true
 }
 
 variable "k8s_number" {
