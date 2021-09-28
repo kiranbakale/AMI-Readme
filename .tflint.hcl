@@ -30,7 +30,7 @@ rule "terraform_required_providers" {
 }
 
 rule "terraform_typed_variables" {
-  enabled = false
+  enabled = true
 }
 
 rule "terraform_documented_variables" {
