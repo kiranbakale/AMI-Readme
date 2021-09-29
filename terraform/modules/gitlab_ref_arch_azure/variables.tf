@@ -68,7 +68,7 @@ variable "consul_node_count" {
   type    = number
   default = 0
 }
-variable "consul_instance_type" {
+variable "consul_size" {
   type    = string
   default = ""
 }
@@ -85,7 +85,7 @@ variable "elastic_node_count" {
   type    = number
   default = 0
 }
-variable "elastic_instance_type" {
+variable "elastic_size" {
   type    = string
   default = ""
 }
@@ -102,7 +102,7 @@ variable "gitaly_node_count" {
   type    = number
   default = 0
 }
-variable "gitaly_instance_type" {
+variable "gitaly_size" {
   type    = string
   default = ""
 }
@@ -119,7 +119,7 @@ variable "gitlab_nfs_node_count" {
   type    = number
   default = 0
 }
-variable "gitlab_nfs_instance_type" {
+variable "gitlab_nfs_size" {
   type    = string
   default = ""
 }
@@ -136,7 +136,7 @@ variable "gitlab_rails_node_count" {
   type    = number
   default = 0
 }
-variable "gitlab_rails_instance_type" {
+variable "gitlab_rails_size" {
   type    = string
   default = ""
 }
@@ -153,7 +153,7 @@ variable "haproxy_external_node_count" {
   type    = number
   default = 0
 }
-variable "haproxy_external_instance_type" {
+variable "haproxy_external_size" {
   type    = string
   default = ""
 }
@@ -165,7 +165,7 @@ variable "haproxy_external_disk_size" {
   type    = string
   default = null
 }
-variable "haproxy_external_elastic_ip_allocation_ids" {
+variable "haproxy_external_external_ip_names" {
   type    = list(string)
   default = []
 }
@@ -174,7 +174,7 @@ variable "haproxy_internal_node_count" {
   type    = number
   default = 0
 }
-variable "haproxy_internal_instance_type" {
+variable "haproxy_internal_size" {
   type    = string
   default = ""
 }
@@ -191,7 +191,7 @@ variable "monitor_node_count" {
   type    = number
   default = 0
 }
-variable "monitor_instance_type" {
+variable "monitor_size" {
   type    = string
   default = ""
 }
@@ -208,7 +208,7 @@ variable "pgbouncer_node_count" {
   type    = number
   default = 0
 }
-variable "pgbouncer_instance_type" {
+variable "pgbouncer_size" {
   type    = string
   default = ""
 }
@@ -225,7 +225,7 @@ variable "postgres_node_count" {
   type    = number
   default = 0
 }
-variable "postgres_instance_type" {
+variable "postgres_size" {
   type    = string
   default = ""
 }
@@ -242,7 +242,7 @@ variable "praefect_node_count" {
   type    = number
   default = 0
 }
-variable "praefect_instance_type" {
+variable "praefect_size" {
   type    = string
   default = ""
 }
@@ -259,7 +259,7 @@ variable "praefect_postgres_node_count" {
   type    = number
   default = 0
 }
-variable "praefect_postgres_instance_type" {
+variable "praefect_postgres_size" {
   type    = string
   default = ""
 }
@@ -276,7 +276,7 @@ variable "redis_node_count" {
   type    = number
   default = 0
 }
-variable "redis_instance_type" {
+variable "redis_size" {
   type    = string
   default = ""
 }
@@ -293,7 +293,7 @@ variable "redis_cache_node_count" {
   type    = number
   default = 0
 }
-variable "redis_cache_instance_type" {
+variable "redis_cache_size" {
   type    = string
   default = ""
 }
@@ -310,7 +310,7 @@ variable "redis_persistent_node_count" {
   type    = number
   default = 0
 }
-variable "redis_persistent_instance_type" {
+variable "redis_persistent_size" {
   type    = string
   default = ""
 }
@@ -328,7 +328,7 @@ variable "redis_sentinel_cache_node_count" {
   type    = number
   default = 0
 }
-variable "redis_sentinel_cache_instance_type" {
+variable "redis_sentinel_cache_size" {
   type    = string
   default = ""
 }
@@ -345,7 +345,7 @@ variable "redis_sentinel_persistent_node_count" {
   type    = number
   default = 0
 }
-variable "redis_sentinel_persistent_instance_type" {
+variable "redis_sentinel_persistent_size" {
   type    = string
   default = ""
 }
@@ -362,7 +362,7 @@ variable "sidekiq_node_count" {
   type    = number
   default = 0
 }
-variable "sidekiq_instance_type" {
+variable "sidekiq_size" {
   type    = string
   default = ""
 }
