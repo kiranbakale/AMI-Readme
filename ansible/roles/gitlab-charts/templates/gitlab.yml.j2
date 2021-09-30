@@ -219,10 +219,10 @@ global:
     enabled: true
     role: "{{ cloud_native_hybrid_geo_role }}"
     psql:
-      host: "{{ postgres_primary_int_ip }}"
-      port: 5431
+      host: "{{ geo_tracking_postgres_host }}"
+      port: "{{ geo_tracking_postgres_port }}"
       password:
-        secret: gitlab-postgres-password
+        secret: gitlab-geo-tracking-postgres-password
         key: password
 {% endif %}
 

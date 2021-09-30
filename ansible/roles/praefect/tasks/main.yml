@@ -42,7 +42,9 @@
         login_password: "{{ praefect_postgres_password }}"
         name: "{{ praefect_postgres_database_name }}"
         encoding: UTF-8
-  when: "'praefect_postgres' not in groups"
+  when:
+    - ('praefect_postgres' not in groups)
+    - ('geo_secondary_site' not in groups)
   tags:
     - reconfigure
     - db_migrate

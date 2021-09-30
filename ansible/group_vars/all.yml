@@ -135,6 +135,8 @@ praefect_int_ips: "{{ (groups['praefect'] | map('extract', hostvars, internal_ip
 
 ## Praefect Postgres
 praefect_postgres_int_ip: "{{ (groups['praefect_postgres'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_postgres_primary' in groups else '' }}"
+praefect_postgres_host: "{{ praefect_postgres_int_ip if praefect_postgres_int_ip != '' else postgres_host }}"
+praefect_postgres_port: "5432"
 praefect_postgres_username: "praefect"
 praefect_postgres_password: ""
 praefect_postgres_database_name: "praefect_production"
@@ -268,5 +270,15 @@ geo_secondary_site_name: "Secondary Site"
 geo_replication_slot_modifier: "{{ 2 if 'geo_primary_site' in group_names else 1 }}"
 geo_primary_site_postgres_group_name: "{% if 'geo_primary_site_postgres_primary' in groups %}geo_primary_site_postgres_primary{% elif 'geo_primary_site_gitlab_rails_primary' in groups %}geo_primary_site_gitlab_rails_primary{% elif 'postgres_primary' in groups%}postgres_primary{% else %}gitlab_rails_primary{% endif %}"
 geo_primary_site_postgres_int_ip: "{{ (groups[geo_primary_site_postgres_group_name] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) }}"
-geo_secondary_site_postgres_group_name: "{% if 'geo_secondary_site_postgres_primary' in groups %}geo_secondary_site_postgres_primary{% elif 'geo_secondary_site_gitlab_rails_primary' in groups %}geo_secondary_site_gitlab_rails_primary{% else %}gitlab_rails_primary{% endif %}"
-geo_secondary_site_postgres_int_ip: "{{ (groups[geo_secondary_site_postgres_group_name] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) }}"
+geo_secondary_site_postgres_group_name: "{% if 'geo_secondary_site_postgres_primary' in groups %}geo_secondary_site_postgres_primary{% elif 'geo_secondary_site_gitlab_rails_primary' in groups %}geo_secondary_site_gitlab_rails_primary{% else %}{% endif %}"
+geo_secondary_site_postgres_int_ip: "{{ (groups[geo_secondary_site_postgres_group_name] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if geo_secondary_site_postgres_group_name != '' else '' }}"
+
+geo_secondary_postgres_host: ""
+geo_secondary_praefect_postgres_host: ""
+
+# Geo Tracking Postgres
+geo_tracking_postgres_host: "{% if geo_secondary_praefect_postgres_host != '' and postgres_external %}{{ geo_secondary_praefect_postgres_host }}{% elif cloud_native_hybrid_geo and postgres_external %}{{ praefect_postgres_host }}{% else %}{{ geo_secondary_site_postgres_int_ip }}{% endif %}"
+geo_tracking_postgres_user: "gitlab_geo"
+geo_tracking_postgres_port: "5431"
+geo_tracking_postgres_password: "{{ postgres_password }}"
+geo_tracking_postgres_database: "gitlabhq_geo_production"
