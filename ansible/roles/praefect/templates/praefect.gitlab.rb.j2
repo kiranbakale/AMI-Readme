@@ -19,6 +19,12 @@ praefect['auth_token'] = '{{ praefect_external_token }}'
 praefect['database_host'] = '{{ praefect_postgres_host }}'
 praefect['database_port'] = '{{ praefect_postgres_port }}'
 
+## Praefect Cache settings (< 14.0)
+{% if gitlab_version != '' and gitlab_version is version('14.0', '<') %}
+praefect['database_host_no_proxy'] = '{{ praefect_postgres_host }}'
+praefect['database_port_no_proxy'] = '{{ praefect_postgres_port }}'
+{% endif %}
+
 praefect['database_user'] = '{{ praefect_postgres_username }}'
 praefect['database_password'] = '{{ praefect_postgres_password }}'
 praefect['database_dbname'] = '{{ praefect_postgres_database_name }}'
