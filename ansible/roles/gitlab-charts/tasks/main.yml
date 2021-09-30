@@ -12,6 +12,20 @@
     - reconfigure
     - charts
 
+- name: Run custom chart tasks
+  block:
+    - name: Check if Custom Chart tasks file exists
+      stat:
+        path: "{{ gitlab_charts_custom_tasks_file }}"
+      register: gitlab_charts_custom_tasks_file_path
+
+    - name: Run Custom Chart tasks
+      include_tasks: "{{ gitlab_charts_custom_tasks_file }}"
+      when: gitlab_charts_custom_tasks_file_path.stat.exists
+  tags:
+    - reconfigure
+    - charts
+
 - name: Gather facts for Omnibus Postgres cluster
   block:
     - name: Get latest Postgres Leader

@@ -333,6 +333,12 @@ Providing custom config for components run via Helm charts in Cloud Native Hybri
 
 With the above done the file will be picked up by the Toolkit and used when configuring the Helm charts.
 
+Additionally, the Toolkit provides an ability to pass a custom Chart task list that will run against the cluster before installing the [GitLab Charts](https://docs.gitlab.com/charts/). This feature could be used if you need some further customizations, for example creating custom secrets. When creating the file follow these requirements:
+
+- The file should be a standard Ansible Tasks yaml file that will be used with [`include_tasks`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_tasks_module.html).
+- By default, the Toolkit will look for a Chart Ansible Task file alongside your Ansible inventory in `environments/<inventory name>/files/gitlab_configs/charts_tasks.yml`.
+  - If you want to store your custom task at another path then you can set the variable `gitlab_charts_custom_tasks_file` to point to your custom location.
+
 ### API
 
 Some config in GitLab can only be changed via API. As such, the Toolkit supports passing a custom API Ansible Task list that will be executed during the [Post Configure](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/master/ansible/roles/post-configure/tasks) role from [localhost](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/master/ansible/post-configure.yml). This feature could be used when you want to do further configuration changes to your environment after it's deployed. For example, modifying GitLab [application settings using API](https://docs.gitlab.com/ee/api/settings.html).
