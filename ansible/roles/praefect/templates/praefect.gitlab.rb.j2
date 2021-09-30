@@ -16,13 +16,8 @@ praefect['enable'] = true
 praefect['listen_addr'] = '0.0.0.0:2305'
 praefect['auth_token'] = '{{ praefect_external_token }}'
 
-{% if 'praefect_postgres' in groups %}
-praefect['database_host'] = '{{ praefect_postgres_int_ip }}'
-praefect['database_port'] = 5432
-{% else %}
-praefect['database_host'] = '{{ postgres_host }}'
-praefect['database_port'] = '{{ postgres_port }}'
-{% endif %}
+praefect['database_host'] = '{{ praefect_postgres_host }}'
+praefect['database_port'] = '{{ praefect_postgres_port }}'
 
 praefect['database_user'] = '{{ praefect_postgres_username }}'
 praefect['database_password'] = '{{ praefect_postgres_password }}'

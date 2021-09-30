@@ -470,7 +470,124 @@ variable "rds_postgres_kms_key_arn" {
   type    = string
   default = null
 }
+variable "rds_postgres_replication_database_arn" {
+  type    = string
+  default = null
+}
+variable "rds_postgres_backup_retention_period" {
+  type    = number
+  default = null
+}
 
+## Praefect PostgreSQL
+variable "rds_praefect_postgres_instance_type" {
+  type    = string
+  default = ""
+}
+variable "rds_praefect_postgres_port" {
+  type    = number
+  default = 5432
+}
+variable "rds_praefect_postgres_username" {
+  type    = string
+  default = "praefect"
+}
+variable "rds_praefect_postgres_password" {
+  type    = string
+  default = ""
+}
+variable "rds_praefect_postgres_database_name" {
+  type    = string
+  default = "praefect_production"
+}
+variable "rds_praefect_postgres_version" {
+  type    = string
+  default = "12.6"
+}
+variable "rds_praefect_postgres_allocated_storage" {
+  type    = number
+  default = 100
+}
+variable "rds_praefect_postgres_max_allocated_storage" {
+  type    = number
+  default = 1000
+}
+variable "rds_praefect_postgres_multi_az" {
+  type    = bool
+  default = true
+}
+variable "rds_praefect_postgres_iops" {
+  type    = number
+  default = 1000
+}
+variable "rds_praefect_postgres_storage_type" {
+  type    = string
+  default = "io1"
+}
+variable "rds_praefect_postgres_kms_key_arn" {
+  type    = string
+  default = null
+}
+variable "rds_praefect_postgres_backup_retention_period" {
+  type    = number
+  default = null
+}
+
+## Geo Tracking PostgreSQL
+variable "rds_geo_tracking_postgres_instance_type" {
+  type    = string
+  default = ""
+}
+variable "rds_geo_tracking_postgres_port" {
+  type    = number
+  default = 5431
+}
+variable "rds_geo_tracking_postgres_username" {
+  type    = string
+  default = "praefect"
+}
+variable "rds_geo_tracking_postgres_password" {
+  type    = string
+  default = ""
+}
+variable "rds_geo_tracking_postgres_database_name" {
+  type    = string
+  default = "gitlabhq_geo_production"
+}
+variable "rds_geo_tracking_postgres_version" {
+  type    = string
+  default = "12.6"
+}
+variable "rds_geo_tracking_postgres_allocated_storage" {
+  type    = number
+  default = 100
+}
+variable "rds_geo_tracking_postgres_max_allocated_storage" {
+  type    = number
+  default = 1000
+}
+variable "rds_geo_tracking_postgres_multi_az" {
+  type    = bool
+  default = true
+}
+variable "rds_geo_tracking_postgres_iops" {
+  type    = number
+  default = 1000
+}
+variable "rds_geo_tracking_postgres_storage_type" {
+  type    = string
+  default = "io1"
+}
+variable "rds_geo_tracking_postgres_kms_key_arn" {
+  type    = string
+  default = null
+}
+variable "rds_geo_tracking_postgres_backup_retention_period" {
+  type    = number
+  default = null
+}
+
+## Redis
 ### Combined
 variable "elasticache_redis_node_count" {
   type    = number

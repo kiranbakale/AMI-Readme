@@ -45,7 +45,7 @@ def build_ansible_command(inventory, playbook)
 end
 
 def run_playbooks(playbooks)
-  inventory_dir = "#{@ansible_dir}/inventories/#{@opts[:inventory]}"
+  inventory_dir = "#{@ansible_dir}/environments/#{@opts[:inventory]}"
   threads = []
 
   puts Rainbow("\nRunning Playbooks: #{playbooks}").yellow
