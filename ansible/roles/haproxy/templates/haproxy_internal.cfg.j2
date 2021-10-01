@@ -45,7 +45,7 @@ backend gitlab-rails
     option srvtcpka
 
 {% for ip in gitlab_rails_int_ips %}
-    server gitlab-rails{{loop.index}} {{ ip }}:80 check
+    server gitlab-rails{{loop.index}} {{ ip }}:80 check inter 3s fall 1
 {% endfor %}
 {% endif %}
 
@@ -56,7 +56,7 @@ backend pgbouncer
     option srvtcpka
 
 {% for ip in pgbouncer_int_ips %}
-    server pgbouncer{{loop.index}} {{ ip }}:6432 check
+    server pgbouncer{{loop.index}} {{ ip }}:6432 check inter 3s fall 1
 {% endfor %}
 {% endif %}
 
@@ -67,7 +67,7 @@ backend praefect
     option srvtcpka
 
 {% for ip in praefect_int_ips %}
-    server praefect{{loop.index}} {{ ip }}:2305 check
+    server praefect{{loop.index}} {{ ip }}:2305 check inter 3s fall 1
 {% endfor %}
 {% endif %}
 
