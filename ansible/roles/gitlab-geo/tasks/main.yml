@@ -50,6 +50,7 @@
     - secondary
   when:
     - ('gitlab_rails' in group_names)
+    - ('geo_secondary_site_sidekiq_primary' in groups)
     - ('geo_secondary_site' in group_names)
 
 - name: Add secondary Geo site to tracking database
