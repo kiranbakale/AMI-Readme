@@ -37,17 +37,6 @@ variable "object_storage_buckets" {
   default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"]
 }
 
-# A NAT will be created if setup_external_ips is set to false
-variable "setup_external_ips" {
-  type    = bool
-  default = true
-}
-# Set use_existing_nat=true to use a NAT outside of GET
-variable "use_existing_nat" {
-  type    = bool
-  default = false
-}
-
 # Machines
 variable "consul_node_count" {
   type    = number
@@ -483,4 +472,31 @@ variable "supporting_node_pool_disk_type" {
 variable "supporting_node_pool_disk_size" {
   type    = string
   default = null
+}
+
+# Networking
+## Create new network
+variable "create_network" {
+  type    = bool
+  default = false
+}
+
+## Existing network
+variable "vpc_name" {
+  type    = string
+  default = "default"
+}
+variable "subnet_name" {
+  type    = string
+  default = "default"
+}
+variable "subnet_cidr" {
+  type    = string
+  default = "10.86.0.0/16"
+}
+
+## External IPs
+variable "setup_external_ips" {
+  type    = bool
+  default = true
 }

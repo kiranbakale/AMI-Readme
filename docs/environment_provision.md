@@ -209,6 +209,86 @@ Next in the file are the various machine settings, separated the same as the Ref
 - `*_machine_type` - The [GCP Machine Type](https://cloud.google.com/compute/docs/machine-types) (size) for that component
 - `haproxy_external_external_ips` - Set the external HAProxy load balancer to assume the external IP set in `variables.tf`. Note that this is an array setting as the advanced underlying functionality needs to account for the specific setting of IPs for potentially multiple machines. In this case though it should always only be one IP.
 
+##### Configure network setup (GCP)
+
+The module for GCP can configure the [network stack](https://cloud.google.com/vpc/docs/vpc) (VPC, Subnets, etc...) for your environment in several different ways:
+
+- **Default** - Sets up the infrastructure on the default network stack as provided by GCP. This is the default for the module.
+- **Created** - Creates the required network stack for the infrastructure.
+- **Existing** - Will use a provided network stack passed in by the user.
+
+In this section you will find the config required to set up each depending on your requirements.
+
+**{-NOTE: Changing network setup on an existing environment must be treated with the utmost caution-}**. **Doing so can be considered a significant change in GCP and may trigger the recreation of the entire environment leading to data loss**.
+
+**Default**
+
+This is the default setup for the module and is the recommended setup for most standard (Omnibus) environments where GCP will handle the networking by default.
+
+No additional configuration is needed to use this setup.
+
+**Created**
+
+When configured the module will create a network stack to run the environment in. The network stack created is as follows:
+
+- 1 VPC
+- 1 Subnet
+- Firewall rules to allow for required network connections
+
+The environment's machines will be created in the created subnet.
+
+This setup is recommended for users who want a specific network stack for their GitLab environment.
+
+To configure this setup the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf):
+
+- `create_network` - This variable should be set to `true` when you are wanting the module to create a new network stack.
+
+An example of your environment config file then would look like:
+
+```tf
+module "gitlab_ref_arch_gcp" {
+  source = "../../modules/gitlab_ref_arch_gcp"
+
+  prefix = var.prefix
+  project = var.project
+
+  create_network = true
+
+  [...]
+```
+
+In addition to the above the following _optional_ settings change how the network is configured:
+
+- `subnet_cidr`- A [CIDR block](https://cloud.google.com/vpc/docs/vpc#manually_created_subnet_ip_ranges) that will be used for the created subnet. This shouldn't need to be changed in most scenarios unless you want to use a specific CIDR blocks. Default is `"10.86.0.0/16"`
+
+**Existing**
+
+In this setup you have an existing network stack that you want the environment to use.
+
+This is an advanced setup and you must ensure the network stack is configured correctly. This guide doesn't detail the specifics on how to do this but generally a stack should include the same elements as listed in the **Created** for the environment to work properly. Please refer to the GCP docs for more info.
+
+Note that when this is configured the module will configure some GCP Firewall rules in your VPC to enable network access for the environment.
+
+With an existing stack configure the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf):
+
+- `vpc_name` - The name of your existing VPC.
+- `subnet_name` - The name of your existing Subnet. The subnet should be located in the same existing VPC.
+
+An example of your environment config file then would look like:
+
+```tf
+module "gitlab_ref_arch_gcp" {
+  source = "../../modules/gitlab_ref_arch_gcp"
+
+  prefix = var.prefix
+  project = var.project
+
+  vpc_name = "<vpc-name>"
+  subnet_name = "<subnet-name>"
+
+  [...]
+```
+
 #### Configure Authentication (GCP)
 
 Finally the last thing to configure is authentication. This is required so Terraform can access GCP (provider) as well as its State Storage Bucket (backend).

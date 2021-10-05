@@ -9,16 +9,17 @@ module "haproxy_external" {
   machine_image = var.machine_image
   disk_size     = coalesce(var.haproxy_external_disk_size, var.default_disk_size)
   disk_type     = coalesce(var.haproxy_external_disk_type, var.default_disk_type)
-  external_ips  = var.haproxy_external_external_ips
+  disks         = var.haproxy_external_disks
+
+  vpc               = local.vpc_name
+  subnet            = local.subnet_name
+  setup_external_ip = var.setup_external_ips
+  external_ips      = var.haproxy_external_external_ips
 
   geo_site       = var.geo_site
   geo_deployment = var.geo_deployment
 
-  disks = var.haproxy_external_disks
-
   tags = ["${var.prefix}-web", "${var.prefix}-ssh", "${var.prefix}-haproxy", "${var.prefix}-monitor"]
-
-  setup_external_ip = var.setup_external_ips
 }
 
 output "haproxy_external" {
@@ -36,15 +37,16 @@ module "haproxy_internal" {
   machine_image = var.machine_image
   disk_size     = coalesce(var.haproxy_internal_disk_size, var.default_disk_size)
   disk_type     = coalesce(var.haproxy_internal_disk_type, var.default_disk_type)
+  disks         = var.haproxy_internal_disks
+
+  vpc               = local.vpc_name
+  subnet            = local.subnet_name
+  setup_external_ip = var.setup_external_ips
 
   geo_site       = var.geo_site
   geo_deployment = var.geo_deployment
 
-  disks = var.haproxy_internal_disks
-
   tags = ["${var.prefix}-haproxy"]
-
-  setup_external_ip = var.setup_external_ips
 }
 
 output "haproxy_internal" {
