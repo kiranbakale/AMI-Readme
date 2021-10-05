@@ -9,14 +9,16 @@ module "redis" {
   machine_image = var.machine_image
   disk_size     = coalesce(var.redis_disk_size, var.default_disk_size)
   disk_type     = coalesce(var.redis_disk_type, var.default_disk_type)
+  disks         = var.redis_disks
+
+  vpc               = local.vpc_name
+  subnet            = local.subnet_name
+  setup_external_ip = var.setup_external_ips
 
   geo_site       = var.geo_site
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
-  disks             = var.redis_disks
-
-  setup_external_ip = var.setup_external_ips
 }
 
 output "redis" {
@@ -36,14 +38,16 @@ module "redis_cache" {
   machine_image = var.machine_image
   disk_size     = coalesce(var.redis_cache_disk_size, var.default_disk_size)
   disk_type     = coalesce(var.redis_cache_disk_type, var.default_disk_type)
+  disks         = var.redis_cache_disks
+
+  vpc               = local.vpc_name
+  subnet            = local.subnet_name
+  setup_external_ip = var.setup_external_ips
 
   geo_site       = var.geo_site
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
-  disks             = var.redis_cache_disks
-
-  setup_external_ip = var.setup_external_ips
 }
 
 output "redis_cache" {
@@ -61,14 +65,16 @@ module "redis_persistent" {
   machine_image = var.machine_image
   disk_size     = coalesce(var.redis_persistent_disk_size, var.default_disk_size)
   disk_type     = coalesce(var.redis_persistent_disk_type, var.default_disk_type)
+  disks         = var.redis_persistent_disks
+
+  vpc               = local.vpc_name
+  subnet            = local.subnet_name
+  setup_external_ip = var.setup_external_ips
 
   geo_site       = var.geo_site
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
-  disks             = var.redis_persistent_disks
-
-  setup_external_ip = var.setup_external_ips
 }
 
 output "redis_persistent" {
