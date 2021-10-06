@@ -10,8 +10,6 @@ grafana['enable'] = false
 gitlab_exporter['enable'] = false
 nginx['enable'] = false
 
-external_url '{{ external_url_sanitised }}'
-
 # Sidekiq Config
 sidekiq['enable'] = true
 sidekiq['listen_address'] = '0.0.0.0'
