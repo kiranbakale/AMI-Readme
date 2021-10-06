@@ -18,7 +18,7 @@ check:terraform-fmt:
   script:
     - terraform fmt -check -recursive -diff terraform/
   only:
-    - master
+    - main
     - merge_requests
   except:
     - schedules
@@ -51,7 +51,7 @@ check:tflint:
 
       exit $RESULT
   only:
-    - master
+    - main
     - merge_requests
   except:
     - schedules
@@ -65,7 +65,7 @@ check:ansible-lint:
     - cd ansible
     - ansible-lint
   only:
-    - master
+    - main
     - merge_requests
   except:
     - schedules

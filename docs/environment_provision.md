@@ -56,7 +56,7 @@ In this step there are sections for each supported host provider on how to confi
 
 ### Google Cloud Platform (GCP)
 
-The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on GCP is **[`gitlab_ref_arch_gcp`](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/master/terraform/modules/gitlab_ref_arch_gcp)**.
+The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on GCP is **[`gitlab_ref_arch_gcp`](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/main/terraform/modules/gitlab_ref_arch_gcp)**.
 
 In this section we detail all that's needed to configure it.
 
@@ -302,7 +302,7 @@ All of the methods given involve the Service Account file you generated previous
 
 ### Amazon Web Services (AWS)
 
-The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on AWS is **[`gitlab_ref_arch_aws`](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/master/terraform/modules/gitlab_ref_arch_aws)**.
+The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on AWS is **[`gitlab_ref_arch_aws`](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/main/terraform/modules/gitlab_ref_arch_aws)**.
 
 In this section we detail all that's needed to configure it.
 
@@ -552,7 +552,7 @@ Once the two variables are either set locally or in your CI pipeline Terraform w
 
 ### Azure
 
-The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on Azure is **[`gitlab_ref_arch_azure`](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/master/terraform/modules/gitlab_ref_arch_azure)**.
+The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on Azure is **[`gitlab_ref_arch_azure`](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/main/terraform/modules/gitlab_ref_arch_azure)**.
 
 In this section we detail all that's needed to configure it.
 

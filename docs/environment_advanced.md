@@ -316,7 +316,7 @@ In this section we detail how to set up custom config for Omnibus and Helm chart
 
 Providing custom config for components run as part of an Omnibus environment is done as follows:
 
-1. Create a [gitlab.rb](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template) file in the correct format with the specific custom settings you wish to apply
+1. Create a [gitlab.rb](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/main/files/gitlab-config-template/gitlab.rb.template) file in the correct format with the specific custom settings you wish to apply
 1. By default the Toolkit looks for a files in the [environments](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/<component>.rb`. Save your file in this location with the same name.
     - If you wish to store your file in a different location or use a different name the full path that Ansible should use can be set via a variable for each different component e.g. `<component>_custom_config_file`
     - Available component options: `consul`, `postgres`, `pgbouncer`, `redis`, `redis_cache`, `redis_persistent`, `praefect_postgres`, `praefect`, `gitaly`, `gitlab_rails`, `sidekiq` and `monitor`.
@@ -341,7 +341,7 @@ Additionally, the Toolkit provides an ability to pass a custom Chart task list t
 
 ### API
 
-Some config in GitLab can only be changed via API. As such, the Toolkit supports passing a custom API Ansible Task list that will be executed during the [Post Configure](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/master/ansible/roles/post-configure/tasks) role from [localhost](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/master/ansible/post-configure.yml). This feature could be used when you want to do further configuration changes to your environment after it's deployed. For example, modifying GitLab [application settings using API](https://docs.gitlab.com/ee/api/settings.html).
+Some config in GitLab can only be changed via API. As such, the Toolkit supports passing a custom API Ansible Task list that will be executed during the [Post Configure](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/main/ansible/roles/post-configure/tasks) role from [localhost](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/main/ansible/post-configure.yml). This feature could be used when you want to do further configuration changes to your environment after it's deployed. For example, modifying GitLab [application settings using API](https://docs.gitlab.com/ee/api/settings.html).
 
 Note that this file should be a standard Ansible Tasks yaml file that will be used with [`include_tasks`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_tasks_module.html).
 
