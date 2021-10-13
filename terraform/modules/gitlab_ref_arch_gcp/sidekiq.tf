@@ -1,9 +1,10 @@
 module "sidekiq" {
   source = "../gitlab_gcp_instance"
 
-  prefix     = var.prefix
-  node_type  = "sidekiq"
-  node_count = var.sidekiq_node_count
+  prefix            = var.prefix
+  node_type         = "sidekiq"
+  node_count        = var.sidekiq_node_count
+  additional_labels = var.additional_labels
 
   machine_type  = var.sidekiq_machine_type
   machine_image = var.machine_image

@@ -500,3 +500,8 @@ variable "setup_external_ips" {
   type    = bool
   default = true
 }
+
+variable "additional_labels" {
+  type    = map(any)
+  default = {}
+}
