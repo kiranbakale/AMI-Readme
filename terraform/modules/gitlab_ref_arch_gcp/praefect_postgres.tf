@@ -1,9 +1,10 @@
 module "praefect_postgres" {
   source = "../gitlab_gcp_instance"
 
-  prefix     = var.prefix
-  node_type  = "praefect-postgres"
-  node_count = var.praefect_postgres_node_count
+  prefix            = var.prefix
+  node_type         = "praefect-postgres"
+  node_count        = var.praefect_postgres_node_count
+  additional_labels = var.additional_labels
 
   machine_type  = var.praefect_postgres_machine_type
   machine_image = var.machine_image
