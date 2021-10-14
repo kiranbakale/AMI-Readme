@@ -25,7 +25,7 @@ resource "azurerm_network_security_group" "haproxy" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_ranges    = ["22", "1936", "80", "443", "2222", "9122", "9090", "5601"]
+    destination_port_ranges    = ["22", "80", "443", "2222", "9122"]
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
