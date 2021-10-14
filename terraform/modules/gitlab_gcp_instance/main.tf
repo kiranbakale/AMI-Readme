@@ -37,7 +37,7 @@ resource "google_compute_instance" "gitlab" {
   count        = var.node_count
   name         = "${local.name_prefix}-${count.index + 1}"
   machine_type = var.machine_type
-  tags         = distinct(concat([var.prefix, var.node_type], var.tags))
+  tags         = distinct(concat([var.prefix, var.node_type, "${var.prefix}-${var.node_type}"], var.tags))
   zone         = var.zones == null ? null : element(var.zones, count.index)
 
   allow_stopping_for_update = true
