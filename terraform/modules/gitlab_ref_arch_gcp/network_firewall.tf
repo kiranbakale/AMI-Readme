@@ -28,31 +28,16 @@ resource "google_compute_firewall" "gitlab_ssh" {
   target_tags = ["${var.prefix}-ssh"]
 }
 
-resource "google_compute_firewall" "haproxy_stats" {
-  count   = min(var.haproxy_external_node_count + var.haproxy_internal_node_count, 1)
-  name    = "${var.prefix}-haproxy-stats"
-  network = local.vpc_name
-
-  description = "Allow HAProxy Stats access on the ${local.vpc_name} network"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["1936"]
-  }
-
-  target_tags = ["${var.prefix}-haproxy"]
-}
-
 resource "google_compute_firewall" "monitor" {
   count   = min(var.monitor_node_count, 1)
   name    = "${var.prefix}-monitor"
   network = local.vpc_name
 
-  description = "Allow Prometheus and InfluxDB exporter access on the ${local.vpc_name} network"
+  description = "Allow InfluxDB exporter access on the ${local.vpc_name} network"
 
   allow {
     protocol = "tcp"
-    ports    = ["9122", "9090", "5601"]
+    ports    = ["9122"]
   }
 
   target_tags = ["${var.prefix}-monitor"]

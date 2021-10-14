@@ -415,7 +415,5 @@ With the above steps completed you should now have a running environment. Head t
 Along with the main environment there are several other services that should be automatically accessible:
 
 - Grafana - `http://<external_ip_or_url>/-/grafana`
-- Prometheus - `http://<external_ip_or_url>:9090`
-- HAProxy stats - `http://<external_ip_or_url>:1936`
 
 Next you should consider any [advanced setups](environment_advanced.md) you may wish to explore, the notes on [Upgrades](environment_upgrades.md) as well as reading through the [considerations after deployment](environment_post_considerations.md) such as backups and security.
