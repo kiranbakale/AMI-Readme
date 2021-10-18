@@ -733,6 +733,48 @@ Terraform provides multiple ways to authenticate with the [provider](https://reg
 
 If you are planning to run the toolkit locally it'll be easier to use [Azure CLI](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli) authentication method. Otherwise you can use either a Service Principal or Managed Service Identity when running Terraform non-interactively, please refer to [Authenticating to Azure](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure) documentation for details. Once you have selected the authentication method and obtained the credentials you may export them as Environment Variables following the Terraform instructions for the specific authentication type to fully authenticate for both the provider and backend.
 
+### Sensitive variable handling in Terraform
+
+There may be times when you have to pass in sensitive variables in the Terraform modules, such as passwords for [Cloud Services](environment_advanced_services.md).
+
+The Toolkit has been designed to be open in terms of sensitive variables as there are various strategies that could be used to secure them depending on your preferences. As long as the variables are configured in Terraform at runtime the Toolkit isn't concerned where they come from.
+
+Some of these strategies are Environment Variables and [Terraform Data Sources](https://www.terraform.io/docs/language/data-sources/index.html), the latter being able to pull in variables from various sources such as Secret Managers.
+
+Below are some examples of select sources that are well suited to this.
+
+#### Environment Variables
+
+[Terraform can read any Environment Variable on the machine running it](https://www.terraform.io/docs/cli/config/environment-variables.html#tf_var_name) with the prefix `TF_VAR_*`. 
+
+Terraform will treat all `TF_VAR_*` environment variables as variables and you can set those in your config as desired. This is ideal for sensitive variables and in CI for overriding any variables as desired.
+
+As an example, on an AWS environment, if you wanted to set the `ssh_public_key_file` variable via an Environment Variable you would just set `TF_VAR_ssh_public_key_file` and run as normal.
+
+#### Terraform Data Sources
+
+Terraform has multiple [Data Sources](https://www.terraform.io/docs/language/data-sources/index.html) available depending on the cloud provider that you can utilize to pull in variables from other sources, such as Secret Managers.
+
+As the Terraform config files you've configured are normal Terraform files, you can configure Data Sources to first collect variables and then pass them into the Toolkit's modules.
+
+As an example, on an AWS environment, if you wanted to set the `ssh_public_key_file` variable via a JSON Key-Value secret that's named the same with a key also under the same name on [AWS Secret Manager](https://aws.amazon.com/secrets-manager/) you would use the [`aws_secretsmanager_secret_version` data source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/secretsmanager_secret_version) as follows:
+
+```tf
+data "aws_secretsmanager_secret_version" "ssh_public_key_file" {
+  secret_id = "ssh_public_key_file"
+}
+
+module "gitlab_ref_arch_aws" {
+  source = "../../modules/gitlab_ref_arch_aws"
+
+  prefix = var.prefix
+  ssh_public_key_file = jsondecode(aws_secretsmanager_secret_version.ssh_public_key_file.secret_string)["ssh_public_key_file"]
+[...]
+}
+```
+
+Any Terraform Data Source can be used in a similar way. Refer to the specific Data Source docs for more info.
+
 ## 3. Provision
 
 After the config has been setup you're now ready to provision the environment. This is done as follows:
