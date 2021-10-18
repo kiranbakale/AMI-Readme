@@ -249,3 +249,10 @@ The variables to set are dependent on if the setup is to have combined or separa
 Once set, Ansible can then be run as normal. During the run it will configure the various GitLab components to use the database as well as any additional tasks such as setting up a separate database in the same instance for Praefect.
 
 After Ansible is finished running your environment will now be ready.
+
+### Sensitive variable handling
+
+When configuring these services you'll need to configure sensitive values such as passwords. Earlier in the docs guidance was given on how to handle these more securely in both Terraform and Ansible. Refer to the below sections for further information.
+
+- [Sensitive variable handling in Terraform](environment_provision.md#sensitive-variable-handling-in-terraform)
+- [Sensitive variable handling in Ansible](environment_configure.md#sensitive-variable-handling-in-ansible)

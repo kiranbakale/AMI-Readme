@@ -351,11 +351,42 @@ Passwords and Secrets settings are what they suggest - all of the various passwo
 - `praefect_internal_token` **_Gitaly Cluster only_** - Sets the [internal access token for Gitaly Cluster and Praefect](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#secrets).
 - `praefect_postgres_password` **_Gitaly Cluster only_** - Sets the [password for Praefect's database user](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#secrets).
 
-Note that this documentation doesn't provide instructions on how to keep these values safe but this is recommended in line with your security requirements.
+#### Sensitive variable handling in Ansible
 
-#### Configure Files
+As shown above, various sensitive variables such as passwords are required when configuring GitLab with the Toolkit. Storing passwords in plaintext should always be avoided in production systems and with any files stored in source control.
 
-<img src="https://gitlab.com/uploads/-/system/project/avatar/1304532/infrastructure-avatar.png" alt="Under Construction" width="100"/>
+The Toolkit has been designed to be open in terms of sensitive variables as there are various strategies that could be used to secure them depending on your preferences. As long as the variables are configured in Ansible at runtime the Toolkit isn't concerned where they come from.
+
+One of these strategies is [Ansible Lookup plugins](https://docs.ansible.com/ansible/latest/plugins/lookup.html), which can be configured to pull in variables from various sources such as Environment Variables or Secret Managers.
+
+There are numerous available [Lookup plugins](https://docs.ansible.com/ansible/latest/collections/index_lookup.html) that you could use here based on your preferences or requirements. Below are some examples of select plugins that are well suited to this to give you an idea of how to do this.
+
+##### Environment Variables
+
+It's possible to set your passwords as Environment Variables and then configure the Toolkit to pull these in at runtime via the [`env lookup` plugin](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/env_lookup.html).
+
+For example if you set an environment variable containing the GitLab Rails password named `GITLAB_RAILS_PASSWORD` Ansible can be configured to use this as follows in your
+`vars.yml` file:
+
+```yaml
+gitlab_rails_password: "{{ lookup('env', 'GITLAB_RAILS_PASSWORD') }}"
+```
+
+This option is particularly useful for usage in CI, where passing variables in via Environment Variables is common.
+
+##### Secret Managers
+
+There are several plugins available for well known Secret Managers such as [AWS Secret Manager](https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_secret_lookup.html#ansible-collections-amazon-aws-aws-secret-lookup) or [HashiCorp Vault](https://docs.ansible.com/ansible/latest/collections/community/hashi_vault/hashi_vault_lookup.html#ansible-collections-community-hashi-vault-hashi-vault-lookup).
+
+These sorts of plugins will typically need authentication configured, which is usually done via environment variables (refer to each plugin's docs for more info).
+
+As an example - AWS Secret Manager can be favorable here for AWS environments as the same authentication is used as the one for the Dynamic Inventory, so no further authentication is required. If we had a secret configured in AWS Secret Manager for GitLab Rails Password called `gitlab_rails_password` this can be configured as follows:
+
+```yaml
+gitlab_rails_password: "{{ lookup('amazon.aws.aws_secret', 'gitlab_rails_password', region=aws_region) }}"
+```
+
+Note that region is required here but since you've already configured it earlier in your `vars.yml` file as `aws_region` this can be reused.
 
 #### Selecting what GitLab version to install
 
