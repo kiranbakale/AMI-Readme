@@ -46,19 +46,8 @@
         - gitlab_json_config_file.stat.size < 500
       tags: reconfigure
 
-    - name: Install system packages
-      apt:
-        name: "{{ system_packages }}"
-        update_cache: true
-      register: result
-      retries: 20
-      delay: 30
-      until: result is success
-      tags: packages
-
-    - name: Install python packages
-      pip:
-        name: "{{ python_packages }}"
+    - name: Setup Packages
+      import_tasks: packages.yml
       tags:
         - packages
         - reconfigure

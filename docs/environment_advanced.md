@@ -417,3 +417,30 @@ In this setup however some tweaks will need to be made to ansible:
 - It will need to be run from a box that can access the boxes via internal IPs
 - When using the Dynamic Inventory it will need to be adjusted to return internal IPs. This can be done by changing the `compose.ansible_host` setting to `private_ip_address`
 - The `external_url` setting should be set to the URL that the instance will be reachable internally
+
+## System Packages
+
+The Toolkit will install system packages on every node it requires for setting up GitLab.
+
+In addition to this it will configure automated security upgrades and can optionally go further and run full package upgrades if desired. Refer to each section below for more information.
+
+### Automatic Security Upgrades
+
+The Toolkit will install the [Unattended Upgrades](https://help.ubuntu.com/community/AutomaticSecurityUpdates) package on all boxes by default via the [`jnv.unattended-upgrades` Galaxy role](https://galaxy.ansible.com/jnv/unattended-upgrades) to automatically install any security updates for the OS.
+
+The default settings are used in this install which will configure the following:
+
+- Security updates will be installed at least once per day
+- The Toolkit will also run the same updates directly whenever it's run
+- Automatic reboots are disabled to ensure runtime
+
+The package can be configured further as required by simply adding its config into your Ansible environment config file (`vars.yml`). Refer to the [role's docs](https://galaxy.ansible.com/jnv/unattended-upgrades) for more.
+
+While not recommended, if this behaviour is not desired you can disable this completely by setting the `unattended_upgrades` variable to `false`. Note if setting this after it was previously configured the `unattended-upgrades` package will still need to be purged manually on affected boxes (the Toolkit can't handle this directly as it may interfere with other manual installs of this system package).
+
+### Optional Package Maintenance
+
+The Toolkit can also optionally upgrade all packages and clean up unneeded packages on your nodes on each run. The following settings control this behaviour and can be set in your Ansible environment config file (`vars.yml`) if desired:
+
+- `system_package_upgrades`: Configures the Toolkit to upgrade all packages on nodes. Default is `false`. Can also be set as via the environment variable `SYSTEM_PACKAGE_UPGRADES`.
+- `system_package_autoremove`: Configures the Toolkit to autoremove any old or unneeded packages on nodes. Default is `false`. Can also be set as via the environment variable `SYSTEM_PACKAGE_AUTOREMOVE`.

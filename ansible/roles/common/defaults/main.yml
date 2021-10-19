@@ -13,3 +13,6 @@ disk_mounts: []
 # Example:
 #   - { device_name: 'log', mount_dir: '/var/log/gitlab' }
 #   - { device_name: 'data', mount_dir: '/var/opt/gitlab' }
+
+# Unattended Upgrades
+unattended_upgrades: true
