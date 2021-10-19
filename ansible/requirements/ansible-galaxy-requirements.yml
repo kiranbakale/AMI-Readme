@@ -2,6 +2,7 @@ roles:
   - cloudalchemy.node_exporter
   - geerlingguy.docker
   - geerlingguy.swap
+  - jnv.unattended-upgrades
 
 collections:
   - google.cloud

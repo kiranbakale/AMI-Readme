@@ -1,0 +1,33 @@
+---
+- name: Install system packages
+  apt:
+    name: "{{ system_packages }}"
+    update_cache: true
+  register: result
+  retries: 20
+  delay: 5
+  until: result is success
+
+- name: Upgrade apt packages to their latest version if configured
+  apt:
+    name: "*"
+    state: latest
+  when: system_packages_upgrade | bool
+
+- name: Remove apt packages that are no longer required if configured
+  apt:
+    autoremove: true
+  when: system_packages_autoremove | bool
+
+- name: Configure Unattended Upgrades
+  include_role:
+    name: jnv.unattended-upgrades
+  when: unattended_upgrades
+
+- name: Run Unattended Upgrades directly
+  command: unattended-upgrade
+  when: unattended_upgrades
+
+- name: Install python packages
+  pip:
+    name: "{{ python_packages }}"
