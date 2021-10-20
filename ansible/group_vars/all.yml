@@ -7,7 +7,7 @@ swap_file_size_mb: "2048"
 swap_swappiness: "10"
 internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
 
-system_packages: [aptitude, curl, openssh-server, ca-certificates, glances, nano, tzdata, ack-grep, tree, python3-pip, nfs-common, postfix, jq, libpq-dev]
+system_packages: [aptitude, curl, openssh-server, ca-certificates, glances, nano, tzdata, ack-grep, tree, python3-pip, nfs-common, postfix, jq, libpq-dev, nvme-cli]
 system_packages_upgrade: "{{ lookup('env','SYSTEM_PACKAGES_UPGRADE') | default(false, true) }}"
 system_packages_autoremove: "{{ lookup('env','SYSTEM_PACKAGES_AUTOREMOVE') | default(false, true) }}"
 
@@ -19,6 +19,9 @@ python_packages: [requests==2.26.0, google-auth==2.0.1, netaddr==0.8.0, openshif
 
 internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address'], alicloud: ['private_ip_address'], tencentcloud: ['private_ip_address']}
 external_ip_lookup: {gcp: ['networkInterfaces', 0, 'accessConfigs', 0, 'natIP'], azure: ['public_ipv4_addresses', 0], aws: ['public_ip_address'], alicloud: ['public_ip_address'], tencentcloud: ['public_ip_address'] }
+
+cloud_provider: ''
+cloud_provider_labels_name: "{{ 'labels' if cloud_provider == 'gcp' else 'tags' }}"
 
 ## GCP
 gcp_service_account_host_file: "{{ service_account_file | default('', true) }}"
@@ -73,6 +76,8 @@ omnibus_node: true
 
 gitlab_version: ""
 gitlab_edition: "gitlab-ee"
+
+gitlab_node_type: "{{ lookup('vars', cloud_provider_labels_name).gitlab_node_type | default('', true) }}"
 
 ## Set to env var, package with version wildcard or just latest
 gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default(gitlab_edition + '=' + gitlab_version + '*' if gitlab_version != '' else 'gitlab-ee', true) }}"
@@ -212,9 +217,6 @@ cloud_native_hybrid_geo_role: ""
 kubeconfig_setup: false
 
 gitlab_charts_release_namespace: default
-gcp_backups_object_storage_key: "{{ lookup('file', gcp_service_account_host_file) | tojson }}"
-aws_backups_object_storage_key: "{{ lookup('template', 'templates/backup_object_storage_key.aws.s3cfg.j2') }}"
-
 gitlab_charts_show_values: false
 
 use_iam_profile: true

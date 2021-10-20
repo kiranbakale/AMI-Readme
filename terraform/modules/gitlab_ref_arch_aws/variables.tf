@@ -74,6 +74,10 @@ variable "consul_disk_size" {
   type    = string
   default = null
 }
+variable "consul_data_disks" {
+  type    = list(any)
+  default = []
+}
 
 variable "elastic_node_count" {
   type    = number
@@ -90,6 +94,10 @@ variable "elastic_disk_type" {
 variable "elastic_disk_size" {
   type    = string
   default = "500"
+}
+variable "elastic_data_disks" {
+  type    = list(any)
+  default = []
 }
 
 variable "gitaly_node_count" {
@@ -108,6 +116,10 @@ variable "gitaly_disk_size" {
   type    = string
   default = "500"
 }
+variable "gitaly_data_disks" {
+  type    = list(any)
+  default = []
+}
 
 variable "gitlab_nfs_node_count" {
   type    = number
@@ -125,6 +137,10 @@ variable "gitlab_nfs_disk_size" {
   type    = string
   default = null
 }
+variable "gitlab_nfs_data_disks" {
+  type    = list(any)
+  default = []
+}
 
 variable "gitlab_rails_node_count" {
   type    = number
@@ -141,6 +157,10 @@ variable "gitlab_rails_disk_type" {
 variable "gitlab_rails_disk_size" {
   type    = string
   default = null
+}
+variable "gitlab_rails_data_disks" {
+  type    = list(any)
+  default = []
 }
 
 variable "haproxy_external_node_count" {
@@ -163,6 +183,10 @@ variable "haproxy_external_elastic_ip_allocation_ids" {
   type    = list(string)
   default = []
 }
+variable "haproxy_external_data_disks" {
+  type    = list(any)
+  default = []
+}
 
 variable "haproxy_internal_node_count" {
   type    = number
@@ -179,6 +203,10 @@ variable "haproxy_internal_disk_type" {
 variable "haproxy_internal_disk_size" {
   type    = string
   default = null
+}
+variable "haproxy_internal_data_disks" {
+  type    = list(any)
+  default = []
 }
 
 variable "monitor_node_count" {
@@ -197,6 +225,10 @@ variable "monitor_disk_size" {
   type    = string
   default = null
 }
+variable "monitor_data_disks" {
+  type    = list(any)
+  default = []
+}
 
 variable "pgbouncer_node_count" {
   type    = number
@@ -213,6 +245,10 @@ variable "pgbouncer_disk_type" {
 variable "pgbouncer_disk_size" {
   type    = string
   default = null
+}
+variable "pgbouncer_data_disks" {
+  type    = list(any)
+  default = []
 }
 
 variable "postgres_node_count" {
@@ -231,6 +267,10 @@ variable "postgres_disk_size" {
   type    = string
   default = null
 }
+variable "postgres_data_disks" {
+  type    = list(any)
+  default = []
+}
 
 variable "praefect_node_count" {
   type    = number
@@ -247,6 +287,10 @@ variable "praefect_disk_type" {
 variable "praefect_disk_size" {
   type    = string
   default = null
+}
+variable "praefect_data_disks" {
+  type    = list(any)
+  default = []
 }
 
 variable "praefect_postgres_node_count" {
@@ -265,6 +309,10 @@ variable "praefect_postgres_disk_size" {
   type    = string
   default = null
 }
+variable "praefect_postgres_data_disks" {
+  type    = list(any)
+  default = []
+}
 
 variable "redis_node_count" {
   type    = number
@@ -281,6 +329,10 @@ variable "redis_disk_type" {
 variable "redis_disk_size" {
   type    = string
   default = null
+}
+variable "redis_data_disks" {
+  type    = list(any)
+  default = []
 }
 
 variable "redis_cache_node_count" {
@@ -299,6 +351,10 @@ variable "redis_cache_disk_size" {
   type    = string
   default = null
 }
+variable "redis_cache_data_disks" {
+  type    = list(any)
+  default = []
+}
 
 variable "redis_persistent_node_count" {
   type    = number
@@ -316,6 +372,11 @@ variable "redis_persistent_disk_size" {
   type    = string
   default = null
 }
+variable "redis_persistent_data_disks" {
+  type    = list(any)
+  default = []
+}
+
 
 # Separate Redis Sentinel is Deprecated - To be removed in future release
 variable "redis_sentinel_cache_node_count" {
@@ -368,6 +429,11 @@ variable "sidekiq_disk_size" {
   type    = string
   default = null
 }
+variable "sidekiq_data_disks" {
+  type    = list(any)
+  default = []
+}
+
 
 # Kubernetes \ Helm
 variable "webservice_node_pool_count" {

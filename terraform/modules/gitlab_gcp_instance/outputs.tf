@@ -13,3 +13,7 @@ output "external_addresses" {
 output "self_links" {
   value = google_compute_instance.gitlab[*].self_link
 }
+
+output "data_disk_device_names" {
+  value = flatten(google_compute_instance.gitlab[*].attached_disk[*].device_name)
+}

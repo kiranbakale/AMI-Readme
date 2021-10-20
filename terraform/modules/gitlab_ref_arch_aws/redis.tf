@@ -9,6 +9,7 @@ module "redis" {
   ami_id        = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
   disk_size     = coalesce(var.redis_disk_size, var.default_disk_size)
   disk_type     = coalesce(var.redis_disk_type, var.default_disk_type)
+  data_disks    = var.redis_data_disks
   subnet_ids    = local.subnet_ids
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
@@ -40,6 +41,7 @@ module "redis_cache" {
   ami_id        = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
   disk_size     = coalesce(var.redis_cache_disk_size, var.default_disk_size)
   disk_type     = coalesce(var.redis_cache_disk_type, var.default_disk_type)
+  data_disks    = var.redis_cache_data_disks
   subnet_ids    = local.subnet_ids
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
@@ -69,6 +71,7 @@ module "redis_persistent" {
   ami_id        = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
   disk_size     = coalesce(var.redis_persistent_disk_size, var.default_disk_size)
   disk_type     = coalesce(var.redis_persistent_disk_type, var.default_disk_type)
+  data_disks    = var.redis_persistent_data_disks
   subnet_ids    = local.subnet_ids
 
   ssh_key_name = aws_key_pair.ssh_key.key_name

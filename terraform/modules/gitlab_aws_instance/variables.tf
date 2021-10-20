@@ -56,6 +56,11 @@ variable "disk_iops" {
   default = null
 }
 
+variable "data_disks" {
+  type    = list(any)
+  default = []
+}
+
 variable "label_secondaries" {
   type    = bool
   default = false

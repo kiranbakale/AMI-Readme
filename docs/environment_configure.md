@@ -6,7 +6,8 @@
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Services](environment_advanced_services.md)
-- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Custom Config and more](environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
+- [GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
@@ -315,7 +316,7 @@ all:
 Ansible Settings are specific config for Ansible to be able to connect to the machines:
 
 - `ansible_user` - The SSH username that Ansible should use to SSH into the machines with. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](environment_prep.md#2-setup-ssh-authentication-aws), [Azure](environment_prep.md#3-setup-ssh-authentication-azure)).
-- `ansible_ssh_private_key_file` - Path to the private SSH key file. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](environment_prep.md#2-setup-ssh-authentication-aws), [Azure]((environment_prep.md#3-setup-ssh-authentication-azure)))
+- `ansible_ssh_private_key_file` - Path to the private SSH key file. Previously created in the `Setup SSH Authentication` step ([GCP](environment_prep.md#4-setup-ssh-authentication-ssh-os-login-for-gcp-service-account), [AWS](environment_prep.md#2-setup-ssh-authentication-aws), [Azure](environment_prep.md#3-setup-ssh-authentication-azure))
 
 Cloud settings are specific config relating to the cloud provider is running on. They're used primarily for the parts of the environment that require direct configuration on the provider, e.g. Object Storage.
 
@@ -430,7 +431,7 @@ The same commands are used when you wish to update an existing environment.
 
 ### Running with ansible-deployer (optional)
 
-An alternative way to run the playbooks is with the `ansible-deployer` script. This script will run multiple playbooks in parallel where possible while maintaining the required run order. The script can either run all the playbooks by default or a custom list as passed via the `-p` flag. It should be noted that due to the script running tasks in parallel, if any issues arise during setup then the playbooks would be better run sequentially via the [Using ansible-playbook](using-ansible-playbook) steps to help debug the problem(s).
+An alternative way to run the playbooks is with the `ansible-deployer` script. This script will run multiple playbooks in parallel where possible while maintaining the required run order. The script can either run all the playbooks by default or a custom list as passed via the `-p` flag. It should be noted that due to the script running tasks in parallel, if any issues arise during setup then the playbooks would be better run sequentially via the standard `ansible-playbook` command to help debug the problem(s).
 
 The script can be run as follows:
 

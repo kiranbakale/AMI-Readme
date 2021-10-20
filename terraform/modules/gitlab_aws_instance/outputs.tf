@@ -9,3 +9,7 @@ output "external_addresses" {
 output "internal_addresses" {
   value = aws_instance.gitlab[*].private_ip
 }
+
+output "data_disk_device_names" {
+  value = [for k, v in aws_volume_attachment.gitlab : "${k} = ${v.device_name}"]
+}
