@@ -31,22 +31,23 @@ The process used to build the environments follows the documentation for [Geo fo
 
 1. Provision 2 environments with Terraform
     - Each environment will share some common labels to identify them as being part of the same Geo deployment
-    - One environment will be identified as being a Primary site and one will be a Secondary
+    - Each environment will be identified with a unique site name
 1. Configure the environments with Ansible
     - Each environment will work as a separate environment until Geo is configured
 1. Configure Geo on the Primary and Secondary sites
+    - One environment will be identified as being a Primary site and one will be a Secondary
 
 ### Terraform
 
-When creating a new Terraform site for Geo it is recommended to create a new subfolder for your Geo deployment with 2 sub-folders below that for the primary and secondary config. Although not required this does help to keep all the config for a single Geo deployment in one location. The 2 separate environments however will always still need their own folders here for Terraform to manage their State correctly.
+When creating a new Terraform site for Geo it is recommended to create a new subfolder for your Geo deployment with 2 sub-folders below that for each Geo sites config. Although not required this does help to keep all the config for a single Geo deployment in one location. The 2 separate environments however will always still need their own folders here for Terraform to manage their State correctly.
 
 ```bash
 my-geo-deployment
-    ├── primary
-    └── secondary
+    ├── site1
+    └── site2
 ```
 
-After this it is recommended to copy an existing reference architecture for the primary and secondary folders. You could copy the 25k reference architecture to use as your primary site and the 3k for your secondary, or use 5k for both your primary and secondary sites, the Geo process will work for any combination with the same steps.
+After this it is recommended to copy an existing reference architecture for each sites folders. You could copy the 25k reference architecture to use as your primary site and the 3k for your secondary, or use 5k for both your primary and secondary sites, the Geo process will work for any combination with the same steps.
 
 The main steps for [GitLab Environment Toolkit - Building environments](environment_provision.md) should be followed when creating a new Terraform project.
 
@@ -61,14 +62,14 @@ module "gitlab_ref_arch_*" {
 
 Next you need to add 2 new labels that helps to identify the machines as belonging to our Geo deployment and if they are part of the primary or secondary site:
 
-- `geo_site` - used to identify if a machine belongs to the primary or secondary site. This must be set to either `geo-primary-site` or `geo-secondary-site`.
-- `geo_deployment` - used to identify that a primary and secondary site belong to the same Geo deployment. This must be unique across all Geo deployments that will be stored alongside each other.
+- `geo_site` - used to identify if a machine belongs to the primary or secondary site. This should be a unique way to identify a site e.g. `london-office`. We recommend avoiding terms like primary and secondary in these site names, this is because the primary and secondary sites can change when performing failover.
+- `geo_deployment` - used to identify that primary and secondary sites belong to the same Geo deployment. This must be unique across all Geo deployments that will be stored alongside each other.
 
 The recommended way to do this is to first set them in the `variables.tf` file, for example:
 
 ```tf
 variable "geo_site" {
-    default = "geo-primary-site"
+    default = "geo-site-london"
 }
 
 variable "geo_deployment" {
@@ -94,7 +95,7 @@ Once each site is configured we can run the `terraform apply` command against ea
 
 ### Ansible
 
-We will need to start by creating new inventories for a Geo deployment. For Geo we will require 3 inventories: `primary`, `secondary` and `all`. It is recommended to store these in one parent folder to keep all the config together.
+We will need to start by creating new inventories for a Geo deployment. For Geo we will require 3 inventories: 1 for each site and 1 for all sites. It is recommended to store these in one parent folder to keep all the config together.
 
 ```bash
 ansible
@@ -103,28 +104,32 @@ ansible
         ├── all
         |   ├── files
         |   └── inventory
-        ├── primary
+        ├── site1
         |   ├── files
         |   └── inventory
-        └── secondary
+        └── site2
             ├── files
             └── inventory
 ```
 
-For Omnibus environments the `primary` and `secondary` folders are treated the same as non Geo environments and as such the steps for [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md) should be followed.
+For Omnibus environments the site folders are treated the same as non Geo environments with the exception of needing 1 new variable:
 
-However you should remove the GitLab license from the secondary site before running the `ansible-playbook` command. To remove the license from the secondary site you can just remove the `gitlab_license_file` setting from the secondary `vars.yml` file.
+- `geo_primary_site_group_name`/`geo_secondary_site_group_name`: These should match the `geo_site` that was set in terraform for the site you want to use as a primary/secondary, any `-` should be replaced with `_` as the names are altered when pulled from the cloud provider. Each setting only needs to go into the site that corresponds to its role i.e. primary or secondary.
 
-For Cloud Native Hybrid environments some variables will need to be added to the primary and secondary `vars.yml` files.
+You can also remove the GitLab license from the sites that will not be set as the primary before running the `ansible-playbook` command. To remove the license from the secondary site you can just remove the `gitlab_license_file` setting from the secondary `vars.yml` file.
 
-Primary `vars.yml`:
+Once the new settings are added the steps for [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md) should be followed for each site.
+
+For Cloud Native Hybrid environments some variables will need to be added to the primary and secondary site `vars.yml` files.
+
+Primary Sites `vars.yml`:
 
 ```yml
 cloud_native_hybrid_geo: true
 cloud_native_hybrid_geo_role: primary
 ```
 
-Secondary `vars.yml`:
+Secondary Site `vars.yml`:
 
 ```yml
 cloud_native_hybrid_geo: true
@@ -158,7 +163,7 @@ Azure:
 Once the inventories for primary and secondary are complete you can use Ansible to configure GitLab. Once complete you will have 2 independent instances of GitLab. The primary site should have a license installed and the secondary will not.
 As these environments are still separate from each other at this point, they can be built at the same time and are not reliant on each other. Once complete you should be able to log into each environment before continuing.
 
-The `all` inventory is very similar to the `primary` and `secondary`, it allows Ansible to see both sites instead of one for the tasks that require coordination across both environments. To create the `all` inventory files it is easiest to copy them from `primary` and modify some values as follows:
+The `all` inventory is very similar to the other sites, it allows Ansible to see all the sites instead of one for the tasks that require coordination across all environments. To create the `all` inventory files it is easiest to copy them from the site used as a primary and modify some values as follows:
 
 #### Dynamic Inventory - `all.*.yml`
 
@@ -248,9 +253,14 @@ keyed_groups:
 
 #### Environment config - `vars.yml`
 
-Add the line `secondary_external_url` which needs to match the `external_url` in the `secondary` inventory vars file.
+Add the line `secondary_external_url` which needs to match the `external_url` for the secondary sites inventory vars file.
 
-You can also remove the properties: `prefix`, `gitlab_license_file` and any password vars with the exception of `postgres_password` which is still required. These are not used when configuring Geo and as such should only be set in the `primary` and `secondary` inventories.
+You can also remove the properties: `prefix`, `gitlab_license_file` and any password vars with the exception of `postgres_password` which is still required. These are not used when configuring Geo and as such should only be set in the individual site inventories.
+
+Next we need to define which site will be used as the primary and which will be a secondary, for this we have the below variables that can be configured:
+
+- `geo_primary_site_group_name`/`geo_secondary_site_group_name`: These should match the `geo_site` that was set in terraform for the site you want to use as a primary/secondary, any `-` should be replaced with `_` as the names are altered when pulled from the cloud provider.
+- `geo_primary_site_name`/`geo_secondary_site_name`: This is will be used to identify the sites in the Geo Settings UI. This can be set to any string value.
 
 For Cloud Native Hybrid environments you will need to leave some of the password variables in the `vars.yml` file as well as adding some Geo specific variables:
 

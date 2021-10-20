@@ -63,7 +63,7 @@ external_ssl_files_host_key_file: "{{ external_ssl_files_host_path }}/{{ externa
 
 ## HAProxy
 ### haproxy_internal_primary_site_group_name: Sets the group name for haproxy_internal_int_ip for Geo or non Geo deployments
-haproxy_internal_primary_site_group_name: "{% if 'geo_primary_site_haproxy_internal_primary' in groups %}geo_primary_site_haproxy_internal_primary{% elif 'haproxy_internal' in groups %}haproxy_internal{% else %}{% endif %}"
+haproxy_internal_primary_site_group_name: "{% if geo_primary_site_group_name + '_haproxy_internal_primary' in groups %}{{ geo_primary_site_group_name }}_haproxy_internal_primary{% elif 'haproxy_internal' in groups %}haproxy_internal{% else %}{% endif %}"
 haproxy_internal_int_ip: "{{ (groups[haproxy_internal_primary_site_group_name] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_internal' in groups else ''}}"
 haproxy_external_int_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
 haproxy_external_ext_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, external_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
@@ -270,13 +270,16 @@ gitlab_charts_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_s
 ## GitLab Geo Settings
 ################################################################################
 
+geo_primary_site_group_name: "geo_primary_site"
+geo_secondary_site_group_name: "geo_secondary_site"
+
 geo_primary_site_name: "Primary Site"
 geo_secondary_site_name: "Secondary Site"
 
 geo_replication_slot_modifier: "{{ 2 if 'geo_primary_site' in group_names else 1 }}"
-geo_primary_site_postgres_group_name: "{% if 'geo_primary_site_postgres_primary' in groups %}geo_primary_site_postgres_primary{% elif 'geo_primary_site_gitlab_rails_primary' in groups %}geo_primary_site_gitlab_rails_primary{% elif 'postgres_primary' in groups%}postgres_primary{% else %}gitlab_rails_primary{% endif %}"
+geo_primary_site_postgres_group_name: "{% if geo_primary_site_group_name + '_postgres_primary' in groups %}{{ geo_primary_site_group_name }}_postgres_primary{% elif geo_primary_site_group_name + '_gitlab_rails_primary' in groups %}{{ geo_primary_site_group_name }}_gitlab_rails_primary{% elif 'postgres_primary' in groups%}postgres_primary{% else %}gitlab_rails_primary{% endif %}"
 geo_primary_site_postgres_int_ip: "{{ (groups[geo_primary_site_postgres_group_name] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) }}"
-geo_secondary_site_postgres_group_name: "{% if 'geo_secondary_site_postgres_primary' in groups %}geo_secondary_site_postgres_primary{% elif 'geo_secondary_site_gitlab_rails_primary' in groups %}geo_secondary_site_gitlab_rails_primary{% else %}{% endif %}"
+geo_secondary_site_postgres_group_name: "{% if geo_secondary_site_group_name + '_postgres_primary' in groups %}{{ geo_secondary_site_group_name }}_postgres_primary{% elif geo_secondary_site_group_name + '_gitlab_rails_primary' in groups %}{{ geo_secondary_site_group_name }}_gitlab_rails_primary{% else %}{% endif %}"
 geo_secondary_site_postgres_int_ip: "{{ (groups[geo_secondary_site_postgres_group_name] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if geo_secondary_site_postgres_group_name != '' else '' }}"
 
 geo_secondary_postgres_host: ""

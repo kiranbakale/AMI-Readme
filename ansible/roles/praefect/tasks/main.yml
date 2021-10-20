@@ -44,7 +44,7 @@
         encoding: UTF-8
   when:
     - ('praefect_postgres' not in groups)
-    - ('geo_secondary_site' not in groups)
+    - (geo_secondary_site_group_name not in groups)
   tags:
     - reconfigure
     - db_migrate

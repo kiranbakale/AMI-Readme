@@ -12,12 +12,12 @@
       command: gitlab-ctl restart
   when:
     - ('postgres_primary' in group_names)
-    - ('geo_secondary_site' in group_names)
+    - (geo_secondary_site_group_name in group_names)
 
 - name: Get random host to use as deploy node
   run_once: true
   set_fact:
-    deploy_host: "{{ groups['geo_secondary_site'] | random }}"
+    deploy_host: "{{ groups[geo_secondary_site_group_name] | random }}"
   when:
     - postgres_external
     - geo_secondary_praefect_postgres_host == geo_tracking_postgres_host

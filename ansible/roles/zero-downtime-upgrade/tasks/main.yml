@@ -2,13 +2,13 @@
   import_tasks: zero-downtime-update.yml
   when:
     - omnibus_node
-    - ('geo_primary_site' not in groups or 'geo_primary_site' in group_names)
+    - (geo_primary_site_group_name not in groups or geo_primary_site_group_name in group_names)
 
 - name: Run Zero Downtime Updates on Geo Secondary Site if present
   import_tasks: zero-downtime-update.yml
   when:
     - omnibus_node
-    - ('geo_secondary_site' in group_names)
+    - (geo_secondary_site_group_name in group_names)
 
 - name: Run post-deployment migrations
   import_tasks: post-deployment-migrations.yml

@@ -29,7 +29,7 @@ frontend internal-praefect-tcp-in
     default_backend praefect
 {% endif %}
 
-{% if 'geo_primary_site' in group_names and postgres_replication_manager == 'patroni' %}
+{% if geo_primary_site_group_name in group_names and postgres_replication_manager == 'patroni' %}
 frontend internal-postgresql-tcp-in
     bind *:5432
     mode tcp
@@ -73,7 +73,7 @@ backend praefect
 {% endfor %}
 {% endif %}
 
-{% if 'geo_primary_site' in group_names and postgres_replication_manager == 'patroni' %}
+{% if geo_primary_site_group_name in group_names and postgres_replication_manager == 'patroni' %}
 backend postgresql
     mode tcp
     option httpchk
