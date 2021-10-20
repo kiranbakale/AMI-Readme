@@ -6,7 +6,8 @@
 - [**GitLab Environment Toolkit - Advanced - Cloud Native Hybrid**](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Services](environment_advanced_services.md)
-- [GitLab Environment Toolkit - Advanced - Geo, Advanced Search, Custom Config and more](environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
+- [GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
@@ -35,7 +36,7 @@ For the Toolkit to be able to provision and configure Kubernetes clusters and He
 
 Latest info on version requirements for both tools can be found in the [GitLab Charts docs](https://docs.gitlab.com/charts/installation/tools.html). Also note that both of the above tools will need to be found on the PATH for them to be used by the Toolkit.
 
-In addition to the above and as [stated earlier in the docs](docs/environment_prep.md) you should have cloud providers tooling installed also, e.g. `gcloud`, to assist with authentication, etc...
+In addition to the above and as [stated earlier in the docs](environment_prep.md) you should have cloud providers tooling installed also, e.g. `gcloud`, to assist with authentication, etc...
 
 ## 2. Provisioning the Kubernetes Cluster with Terraform
 

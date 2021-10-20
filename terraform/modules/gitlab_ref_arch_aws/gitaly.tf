@@ -10,6 +10,7 @@ module "gitaly" {
   disk_size     = coalesce(var.gitaly_disk_size, var.default_disk_size)
   disk_type     = coalesce(var.gitaly_disk_type, var.default_disk_type)
   disk_iops     = 8000
+  data_disks    = var.gitaly_data_disks
   subnet_ids    = local.subnet_ids
 
   ssh_key_name = aws_key_pair.ssh_key.key_name

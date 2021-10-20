@@ -73,8 +73,24 @@
         # Calculate maximum pod count by either the max that can fit in 95% of available CPUs or Memory
         # Memory: K8s reports memory in KiB which needs to be converted to GB
         # CPU: Can be fractional, e.g. 0.5, so converted to whole numbers by multiplying by a 100 to allow correct division
-        webservice_pods: "{{ [((webservice_memory | int) * 1.024 / 1024 / 1024 / webservice_limits_memory_gb | int * 0.95), ((webservice_cpus | int * 100) / (webservice_requests_cpu | int  * 100) * 0.95)] | map('int') | min }}"
+        webservice_pods: "{{ [((webservice_memory | int) * 1.024 / 1024 / 1024 / (webservice_limits_memory_gb | float) * 0.95), ((webservice_cpus | int * 100) / (webservice_requests_cpu | float  * 100) * 0.95)] | map('int') | min }}"
         sidekiq_pods: "{{ [((sidekiq_memory | int) * 1.024 / 1024 / 1024 / gitlab_charts_sidekiq_limits_memory_gb * 0.95), ((sidekiq_cpus | int * 100) / (gitlab_charts_sidekiq_requests_cpu * 100) * 0.95)] | map('int') | min }}"
+
+    - name: Show calculated numbers for charts
+      debug:
+        msg: |
+          webservice_cpus: {{ webservice_cpus }}
+          webservice_memory: {{ webservice_memory }}
+          sidekiq_cpus: {{ sidekiq_cpus }}
+          sidekiq_memory: {{ sidekiq_memory }}
+
+          webservice_requests_cpu: {{ webservice_requests_cpu }}
+          webservice_requests_memory_gb: {{ webservice_requests_memory_gb }}
+          webservice_limits_memory_gb: {{ webservice_limits_memory_gb }}
+
+          webservice_pods: {{ webservice_pods }}
+          sidekiq_pods: {{ sidekiq_pods }}
+      when: gitlab_charts_show_values
   tags:
     - reconfigure
     - charts

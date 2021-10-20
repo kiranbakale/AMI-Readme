@@ -26,30 +26,11 @@ check:terraform-fmt:
 
 check:tflint:
   stage: test
-  image: alpine
-  before_script:
-    - apk add curl
-    - curl -L "$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip && unzip tflint.zip -d /usr/bin
+  image:
+    name: ghcr.io/terraform-linters/tflint:latest
+    entrypoint: [""]
   script:
-    - |
-      set +e
-      tflint --init
-      cd terraform/modules
-
-      RESULT=0
-
-      for dir in */; do
-        echo "************************************************************************"
-        echo "Executing tflint for module: $dir"
-        echo "************************************************************************"
-        tflint -c ${CI_PROJECT_DIR}/.tflint.hcl $dir
-        status=$?
-        if [ $status -gt 0 ]; then
-          RESULT=$status
-        fi
-      done
-
-      exit $RESULT
+    - find terraform/modules/* -type d -print0 | xargs -0 -n1 -I % sh -c "printf '\n%\n' && tflint -c .tflint.hcl %"
   only:
     - main
     - merge_requests
@@ -64,6 +45,35 @@ check:ansible-lint:
     - chmod 700 ansible
     - cd ansible
     - ansible-lint
+  only:
+    - main
+    - merge_requests
+  except:
+    - schedules
+    - tags
+
+check:markdownlint:
+  stage: test
+  image:
+    name: node:lts-alpine3.14
+    entrypoint: [ "" ]
+  script:
+    - npm add -g markdownlint markdownlint-cli
+    - markdownlint *.md docs/*.md
+  only:
+    - main
+    - merge_requests
+  except:
+    - schedules
+    - tags
+
+check:markdown-link-check:
+  stage: test
+  image:
+    name: ghcr.io/tcort/markdown-link-check
+    entrypoint: [""]
+  script:
+    - find *.md docs/*.md -print0 | xargs -0 -n1 /src/markdown-link-check
   only:
     - main
     - merge_requests

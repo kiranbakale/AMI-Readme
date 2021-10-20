@@ -12,40 +12,6 @@
         - ansible_hostname != inventory_hostname
       tags: hostname
 
-    - name: Mount data disk if given
-      import_tasks: data_disk.yml
-      when: data_disk is defined
-
-    - name: Mount disks if disks are given
-      import_tasks: disk_mounts.yml
-      when: disk_mounts|length > 0
-
-    - name: Add GitLab repository GPG key
-      apt_key:
-        url: https://packages.gitlab.com/gpg.key
-        state: present
-      register: result
-      retries: 2
-      delay: 3
-      until: result is success
-      when: omnibus_node
-      tags: gpg
-
-    - name: Get GitLab json config file stats if it exists
-      stat:
-        path: "/opt/gitlab/embedded/nodes/{{ ansible_fqdn }}.json"
-      register: gitlab_json_config_file
-      tags: reconfigure
-
-    - name: Delete GitLab json config file if malformed
-      file:
-        path: "/opt/gitlab/embedded/nodes/{{ ansible_fqdn }}.json"
-        state: absent
-      when:
-        - gitlab_json_config_file.stat.exists
-        - gitlab_json_config_file.stat.size < 500
-      tags: reconfigure
-
     - name: Setup Packages
       import_tasks: packages.yml
       tags:
@@ -61,6 +27,33 @@
         state: present
         reload: true
       tags: sysctl
+
+    - name: Mount any data disks
+      block:
+        - name: Mount data disk if given (legacy)  # Deprecated
+          import_tasks: data_disk_legacy.yml
+          when: data_disk is defined
+
+        - name: Get Group Data Disks Config
+          set_fact:
+            group_data_disks: "{{ lookup('vars', gitlab_node_type + '_data_disks', default=[]) }}"
+          tags: nvme
+
+        - name: Mount data disks
+          import_tasks: data_disks.yml
+          when: group_data_disks | length > 0
+      tags: data_disks
+
+    - name: Add GitLab repository GPG key
+      apt_key:
+        url: https://packages.gitlab.com/gpg.key
+        state: present
+      register: result
+      retries: 2
+      delay: 3
+      until: result is success
+      when: omnibus_node
+      tags: gpg
 
     # Removes the official release repo if it's present as we typically want to stick with Nightly
     # Prevents apt from switching to the release channel (when an official release is younger than nightly)
@@ -90,6 +83,21 @@
         path: /etc/gitlab/skip-unmigrated-data-check
         state: touch
       when: omnibus_node
+
+    - name: Get GitLab json config file stats if it exists
+      stat:
+        path: "/opt/gitlab/embedded/nodes/{{ ansible_fqdn }}.json"
+      register: gitlab_json_config_file
+      tags: reconfigure
+
+    - name: Delete GitLab json config file if malformed
+      file:
+        path: "/opt/gitlab/embedded/nodes/{{ ansible_fqdn }}.json"
+        state: absent
+      when:
+        - gitlab_json_config_file.stat.exists
+        - gitlab_json_config_file.stat.size < 500
+      tags: reconfigure
 
     - name: Download GitLab repository installation script
       get_url:
