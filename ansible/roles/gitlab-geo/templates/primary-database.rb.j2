@@ -1,4 +1,4 @@
-{% if 'geo_primary_site_postgres_primary' in groups %}
+{% if geo_primary_site_group_name + '_postgres_primary' in groups %}
 geo_primary_role['enable'] = true
 {% else %}
 gitlab_rails['db_password'] = "{{ postgres_password }}"

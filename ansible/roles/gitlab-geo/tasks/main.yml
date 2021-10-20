@@ -11,8 +11,8 @@
     - primary
   when:
     - ('postgres' in group_names) or
-      ('gitlab_rails' in group_names and 'geo_primary_site_postgres_primary' not in groups and not postgres_external)
-    - ('geo_primary_site' in group_names)
+      ('gitlab_rails' in group_names and geo_primary_site_group_name + '_postgres_primary' not in groups and not postgres_external)
+    - (geo_primary_site_group_name in group_names)
 
 - name: Copy gitlab-secrets from primary site to secondary
   import_tasks: copy-secrets.yml
@@ -25,8 +25,8 @@
     - secondary
   when:
     - ('postgres' in group_names) or
-      ('gitlab_rails' in group_names and 'geo_secondary_site_postgres_primary' not in groups and not postgres_external)
-    - ('geo_secondary_site' in group_names)
+      ('gitlab_rails' in group_names and geo_secondary_site_group_name + '_postgres_primary' not in groups and not postgres_external)
+    - (geo_secondary_site_group_name in group_names)
 
 - name: Configure the main read-only replica PostgreSQL database on the secondary site
   import_tasks: read-only-replica.yml
@@ -35,7 +35,7 @@
     - secondary
   when:
     - ('postgres_primary' in group_names) or ('gitlab_rails' in group_names and postgres_external)
-    - ('geo_secondary_site' in group_names)
+    - (geo_secondary_site_group_name in group_names)
 
 - name: Configure the tracking database for the secondary site
   import_tasks: tracking-database.yml
@@ -50,8 +50,8 @@
     - secondary
   when:
     - ('gitlab_rails' in group_names)
-    - ('geo_secondary_site_sidekiq_primary' in groups)
-    - ('geo_secondary_site' in group_names)
+    - (geo_secondary_site_group_name + '_sidekiq_primary' in groups)
+    - (geo_secondary_site_group_name in group_names)
 
 - name: Add secondary Geo site to tracking database
   import_tasks: add-site-name.yml
@@ -66,7 +66,7 @@
     - secondary
   when:
     - ('sidekiq' in group_names)
-    - ('geo_secondary_site' in group_names)
+    - (geo_secondary_site_group_name in group_names)
 
 - name: Enable object storage replication on all secondary sites
   import_tasks: enable-object-storage-replication.yml

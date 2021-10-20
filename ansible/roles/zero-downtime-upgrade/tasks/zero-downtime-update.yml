@@ -76,7 +76,7 @@
     SKIP_POST_DEPLOYMENT_MIGRATIONS: true
   when:
     - ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
-    - ('geo_secondary_site' in group_names)
+    - (geo_secondary_site_group_name in group_names)
 
 - name: Start services on deploy node
   command: gitlab-ctl start
