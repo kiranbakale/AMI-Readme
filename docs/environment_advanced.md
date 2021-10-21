@@ -96,7 +96,7 @@ This is done with Terraform and as such will require additional config in your [
 
 The config for this area is given per node type and is passed an array of hashes, where each hash represents a disk. Please note config differs between cloud providers and below are sections for each provider with full examples and descriptions below:
 
-#### GCP
+**GCP**
 
 ```tf
 gitaly_disks = [
@@ -110,7 +110,7 @@ gitaly_disks = [
   - `size` - The size of the disk in GB. __Optional__, default is `100`.
   - `type` - The [type](https://cloud.google.com/compute/docs/disks) of the disk. __Optional__, default is `pd-standard`.
 
-#### AWS
+**AWS**
 
 ```tf
 gitaly_data_disks = [
@@ -134,11 +134,9 @@ This is done with Ansible and as such will require additional config in your [`v
 
 It's worth noting that the Toolkit will always mount disks via UUID to ensure the correct disks are always mounted in the same way through reboots, etc...
 
-The config for this area is given per node type and is passed an array of dictionaries, where each dictionary represents a disk. Please note config differs between cloud providers and below are sections for each provider with full examples and descriptions below:
+The config for this area is given per node type and is passed an array of dictionaries, where each dictionary represents a disk. The config has been designed to be platform agnostic but the actual values may differ, in such a case the difference will be called out clearly. Below is an example of this config with full details after:
 
-#### GCP
-
-In Ansible, set the `disk_mounts` variable to mount and format them when instances are configured, for example:
+**GCP**
 
 ```yaml
 gitaly_data_disks:
@@ -146,11 +144,7 @@ gitaly_data_disks:
   - { device_name: 'logs', mount_dir: '/var/log/gitlab' }
 ```
 
-- `*_disks` - The main setting for each node group.
-  - `device_name` - The block device name of the disk. For GCP this is the same as its name. Can be either the short name of the attached disks, e.g. `data`, or the full path, e.g. `/dev/disk/by-id/google-data`. **Required**.
-  - `mount_dir` - The path on the machine to mount the disk on.
-
-#### AWS
+**AWS**
 
 ```yaml
 gitaly_data_disks:
@@ -159,7 +153,9 @@ gitaly_data_disks:
 ```
 
 - `*_disks` - The main setting for each node group.
-  - `device_name` - The block device name of the disk. For AWS this must be the block device name you provisioned with Terraform (i.e. `/dev/sd[f-p]`). Can be either the short name of device name, e.g. `sdf`, or the full path, e.g. `/dev/sdf`. **Required**.
+  - `device_name` - The block device name of the disk. Differs depending on Cloud Provider (see below). **Required**.
+    - GCP - Device name is the same as its main name. Can be either the short name of the attached disks, e.g. `data`, or the full path, e.g. `/dev/disk/by-id/google-data`.
+    - AWS - Must be the block device name you provisioned with Terraform (i.e. `/dev/sd[f-p]`). Can be either the short name of device name, e.g. `sdf`, or the full path, e.g. `/dev/sdf`.
   - `mount_dir` - The path on the machine to mount the disk on.
 
 Note that for AWS, the Toolkit will create symlinks to [match the block device name to the attached NVMe path](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/nvme-ebs-volumes.html#identify-nvme-ebs-device).
