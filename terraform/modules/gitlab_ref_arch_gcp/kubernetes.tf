@@ -1,5 +1,6 @@
 locals {
   total_node_pool_count = sum([var.webservice_node_pool_count, var.sidekiq_node_pool_count, var.supporting_node_pool_count])
+  node_pool_zones       = var.kubernetes_zones != null ? var.kubernetes_zones : var.zones
 }
 
 resource "google_container_cluster" "gitlab_cluster" {
@@ -31,10 +32,11 @@ resource "google_container_cluster" "gitlab_cluster" {
 }
 
 resource "google_container_node_pool" "gitlab_webservice_pool" {
-  count      = min(var.webservice_node_pool_count, 1)
-  name       = "${var.prefix}-webservice"
-  cluster    = google_container_cluster.gitlab_cluster[count.index].name
-  node_count = var.webservice_node_pool_count
+  count          = min(var.webservice_node_pool_count, 1)
+  name           = "${var.prefix}-webservice"
+  cluster        = google_container_cluster.gitlab_cluster[0].name
+  node_count     = local.node_pool_zones != null ? ceil(var.webservice_node_pool_count / length(local.node_pool_zones)) : var.webservice_node_pool_count
+  node_locations = local.node_pool_zones
 
   node_config {
     machine_type = var.webservice_node_pool_machine_type
@@ -48,10 +50,11 @@ resource "google_container_node_pool" "gitlab_webservice_pool" {
 }
 
 resource "google_container_node_pool" "gitlab_sidekiq_pool" {
-  count      = min(var.sidekiq_node_pool_count, 1)
-  name       = "${var.prefix}-sidekiq"
-  cluster    = google_container_cluster.gitlab_cluster[count.index].name
-  node_count = var.sidekiq_node_pool_count
+  count          = min(var.sidekiq_node_pool_count, 1)
+  name           = "${var.prefix}-sidekiq"
+  cluster        = google_container_cluster.gitlab_cluster[0].name
+  node_count     = local.node_pool_zones != null ? ceil(var.sidekiq_node_pool_count / length(local.node_pool_zones)) : var.sidekiq_node_pool_count
+  node_locations = local.node_pool_zones
 
   node_config {
     machine_type = var.sidekiq_node_pool_machine_type
@@ -65,10 +68,11 @@ resource "google_container_node_pool" "gitlab_sidekiq_pool" {
 }
 
 resource "google_container_node_pool" "gitlab_supporting_pool" {
-  count      = min(var.supporting_node_pool_count, 1)
-  name       = "${var.prefix}-supporting"
-  cluster    = google_container_cluster.gitlab_cluster[count.index].name
-  node_count = var.supporting_node_pool_count
+  count          = min(var.supporting_node_pool_count, 1)
+  name           = "${var.prefix}-supporting"
+  cluster        = google_container_cluster.gitlab_cluster[0].name
+  node_count     = local.node_pool_zones != null ? ceil(var.supporting_node_pool_count / length(local.node_pool_zones)) : var.supporting_node_pool_count
+  node_locations = local.node_pool_zones
 
   node_config {
     machine_type = var.supporting_node_pool_machine_type

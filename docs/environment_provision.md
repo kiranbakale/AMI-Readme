@@ -92,7 +92,7 @@ variable "external_ip" {
 - `prefix` - Used to set the names and labels of the VMs in a consistent way. Once set this should not be changed. An example of what this could be is `gitlab-qa-10k`.
 - `project` - The [ID](https://support.google.com/googleapi/answer/7014113?hl=en) of the GCP project the environment is to be deployed to.
 - `region` - The GCP region of the project, e.g. `us-east1`.
-- `zone` - The GCP zone of the project, e.g. `us-east1-c`.
+- `zone` - The default GCP zone of the project, e.g. `us-east1-c`.
 - `external_ip` - The static external IP the environment will be accessible one. Previously created in the [Create Static External IP - GCP](environment_prep.md#6-create-static-external-ip-gcp) step.
 
 #### Configure Terraform settings - `main.tf`
@@ -131,7 +131,7 @@ provider "google" {
 - `provider "google"` - Config block for the [Google provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs).
   - `project` - The [ID](https://support.google.com/googleapi/answer/7014113?hl=en) of the GCP project to connect to. Set in `variables.tf`.
   - `region` - The GCP region of the project. Set in `variables.tf`.
-  - `zone` - The GCP zone of the project. Set in `variables.tf`.
+  - `zone` - The default GCP zone of the project. Set in `variables.tf`.
 
 #### Configure Module settings - `environment.tf`
 
@@ -288,7 +288,35 @@ module "gitlab_ref_arch_gcp" {
   subnet_name = "<subnet-name>"
 
   [...]
+}
 ```
+
+###### Zones
+
+With GCP you can spread optionally spread resources across multiple [Availability Zones](https://cloud.google.com/compute/docs/regions-zones) in the selected region, overriding the default Zone configured in `variables.tf`. By doing this it adds additional resilience for the environment in the case a Zone ever went down.
+
+NOTE: Cross Zone networking does have an additional cost. Refer to the [GCP pricing page](https://cloud.google.com/vpc/network-pricing) for more info.
+
+No matter what Network design above you have selected, spreading resources across Zones can also be applied in the [module's environment config file](#configure-module-settings-environmenttf) with the following variables:
+
+- `zones` - A list of Zone names that resources should be spread across. Default is `null`. Optional.
+
+An example of your environment config file then would look like when using the Default network in the `us-east1` region:
+
+```tf
+module "gitlab_ref_arch_gcp" {
+  source = "../../modules/gitlab_ref_arch_gcp"
+
+  prefix = var.prefix
+  project = var.project
+
+  zones = ["us-east1-b", "us-east1-c", "us-east1-d"]
+
+  [...]
+}
+```
+
+Note that the default zone configured in `variables.tf` is still required in this setup as a backup for other resources.
 
 #### Configure Authentication (GCP)
 
