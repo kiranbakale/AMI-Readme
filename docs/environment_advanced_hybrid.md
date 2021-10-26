@@ -57,7 +57,7 @@ Each node pool setting configures the following. To avoid repetition we'll descr
 - `*_node_pool_machine_type` - **GCP only** The [GCP Machine Type](https://cloud.google.com/compute/docs/machine-types) (size) for each machine in the node pool
 - `*_node_pool_instance_type` - **AWS only** The [AWS Instance Type](https://aws.amazon.com/ec2/instance-types/) (size) for each machine in the node pool
 
-Below are examples for an `environment.tf` file with all config for each cloud provider based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative):
+Below are examples for an `environment.tf` file with all config for each cloud provider based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) with additional Cloud Specific guidances as required:
 
 ### Google Cloud Platform (GCP)
 
@@ -119,6 +119,24 @@ output "gitlab_ref_arch_gcp" {
   value = module.gitlab_ref_arch_gcp
 }
 ```
+
+#### Networking (GCP)
+
+As detailed in the earlier [Configuring network setup (GCP)](environment_provision.md#configure-network-setup-gcp) section the same networking options apply for Hybrid environments on GCP.
+
+However there are some additional networking considerations below that you should be aware of before building the environment.
+
+##### Zones
+
+When you optionally configure Zones for GCP resources to be spread across for Kubernetes this will configure a [Multi-Zonal Cluster](https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters#multi-zonal_clusters).
+
+In this setup however it would deploy the target count of nodes in _every_ zone. So for example if you set up a Node Pool with a Node count of 4 but then also give it 2 Zones to spread across it would proceed to deploy 8 Nodes.
+
+The Toolkit will attempt to manage this for you and try to honor the target node count you have given in config. However if the number of Zones and Node Counts given are different in terms of parity (e.g. when the number of Zones is even and Node Count is odd) it will result in additional nodes being deployed and costing extra. To help with this it's possible to specifically set Zones for the Kubernetes cluster to use as follows:
+
+- `kubernetes_zones` - A list of Zone names inside the target region that any Kubernetes resources should be spread across. This will override what's given in the `zones` variable to allow for additional flexibility. If unset it will follow the former. Default is the same as `zones` (`null`). Optional.
+
+It's recommended that in any environment where multiple Zones are to be used that you match the parity of Node Pool counts, i.e. all Zone and Node Pool counts should be either even or odd.
 
 ### Amazon Web Services (AWS)
 
@@ -192,18 +210,21 @@ output "gitlab_ref_arch_aws" {
 }
 ```
 
-#### Networking Options
+#### Networking (AWS)
 
-With EKS the GitLab Environment Toolkit is able to configure the networking for your environment in several different ways:
+As detailed in the earlier [Configuring network setup (AWS)](environment_provision.md#configure-network-setup-aws) section the same networking options apply for Hybrid environments on AWS.
 
-- Default - Sets up the infrastructure on the default network stack as provided by AWS. Using the variable `default_subnet_use_count` it is recommended to limit the number of subnets that the cluster will attach to, by default it will attach to all subnets. Using the default VPC is only recommended if there will be no other network traffic using it.
-- Created - Creates the required network stack for the infrastructure. This is the recommended option as GitLab will be isolated to its own [network stack](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html).
-- Default - Sets up the infrastructure on the default network stack as provided by AWS. Using the variable `default_subnet_use_count` it is recommended to limit the number of subnets that the cluster will attach to, by default it will attach to all subnets. Using the default VPC is only recommended if there will be no other network traffic using it.
-- Existing - Will use a provided network stack passed in by the user. This should be used if you wish to create your own network stack and have the toolkit use this for your EKS cluster.
+However there are some additional networking considerations below that you should be aware of before building the environment.
 
-More information can be found in the docs for [Configuring network setup (AWS)](environment_provision.md#configure-network-setup-aws).
+##### Zones
 
-NOTE: If you ever want to deprovision resources created, with a Cloud Native Hybrid on AWS **you must run [helm uninstall gitlab](https://helm.sh/docs/helm/helm_uninstall/)** before running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html). This ensure all resources are correctly removed.
+For EKS a [Cluster is required to be spread across at least 2 Availability Zones](https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html).
+
+The Toolkit, when using the default network or creating one for you, will look to do this by default. However, when providing an existing network it's required that it has at least 2 subnets, each on a separate Zone.
+
+#### Deprovisioning
+
+If you ever want to deprovision resources created, with a Cloud Native Hybrid on AWS **you must run [helm uninstall gitlab](https://helm.sh/docs/helm/helm_uninstall/)** before running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html). This ensure all resources are correctly removed.
 
 #### Defining AWS Auth Roles with `aws_auth_roles`
 
@@ -252,7 +273,7 @@ By design, this file is similar to the one used in a [standard environment](envi
 - `kubeconfig_setup` - When true, will attempt to automatically configure the `.kubeconfig` file entry for the provisioned Kubernetes cluster.
 - `external_ip` - **GCP only** External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid installs.
 - `external_url` - This cannot be an IP address in a hybrid environment. You will need a domain or sub-domain to which you or your company owns, to which you can add a DNS record.
-- `gcp_zone` - **GCP only** Zone name the GCP project is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
+- `gcp_zone` - **GCP only** Default Zone name the GCP project is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
 - `aws_region` - **AWS only** Name of the region where the EKS cluster is located. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
 - `aws_allocation_ids` - **AWS only** A comma separated list of allocation IDs to assign to the AWS load balancer.
   - With AWS you **must have an [Elastic IP](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/main/docs/environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) for each subnet being used**, each Elastic IP will have an allocation ID that must be stored in this list.

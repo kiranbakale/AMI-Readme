@@ -501,6 +501,17 @@ variable "setup_external_ips" {
   default = true
 }
 
+## Zones
+variable "zones" {
+  type    = list(any)
+  default = null
+}
+variable "kubernetes_zones" {
+  type    = list(any)
+  default = null
+}
+
+## Labels
 variable "additional_labels" {
   type    = map(any)
   default = {}

@@ -44,6 +44,7 @@ module "redis_cache" {
 
   vpc               = local.vpc_name
   subnet            = local.subnet_name
+  zones             = var.zones
   setup_external_ip = var.setup_external_ips
 
   geo_site       = var.geo_site
@@ -72,6 +73,7 @@ module "redis_persistent" {
 
   vpc               = local.vpc_name
   subnet            = local.subnet_name
+  zones             = var.zones
   setup_external_ip = var.setup_external_ips
 
   geo_site       = var.geo_site
