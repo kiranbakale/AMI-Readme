@@ -1,0 +1,121 @@
+- name: Disable Primary Site Omnibus nodes
+  block:
+    - name: Stop Primary Site
+      command: gitlab-ctl stop
+
+    - name: Disable GitLab service
+      service:
+        name: gitlab-runsvdir
+        enabled: false
+  when:
+    - omnibus_node
+    - (geo_primary_site_group_name in group_names)
+
+- name: Disable Primary Site for Cloud Native Hybrid environments
+  block:
+    - name: Configure kubeconfig credentials for Geo primary site
+      become: false
+      delegate_to: localhost
+      run_once: true
+      import_tasks: kubeconfig.yml
+      vars:
+        geo_site_prefix: "{{ geo_primary_site_prefix }}"
+        geo_site_gcp_project: "{{ geo_primary_site_gcp_project if cloud_provider == 'gcp' else '' }}"
+        geo_site_gcp_zone: "{{ geo_primary_site_gcp_zone if cloud_provider == 'gcp' else '' }}"
+        geo_site_aws_region: "{{ geo_primary_site_aws_region if cloud_provider == 'aws' else '' }}"
+
+    - name: Disable Webservice pods
+      become: false
+      delegate_to: localhost
+      run_once: true
+      community.kubernetes.k8s_scale:
+        name: gitlab-webservice-default
+        kind: Deployment
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        replicas: 0
+
+    - name: Disable Sidekiq pods
+      become: false
+      delegate_to: localhost
+      run_once: true
+      community.kubernetes.k8s_scale:
+        name: gitlab-sidekiq-all-in-1-v1
+        kind: Deployment
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        replicas: 0
+  when: cloud_native_hybrid_geo
+
+- name: Promote Secondary Site Postgres and Sidekiq Omnibus nodes
+  command: gitlab-ctl geo promote -f
+  when:
+    - ('postgres' in group_names or 'sidekiq' in group_names)
+    - (geo_secondary_site_group_name in group_names)
+
+- name: Promote GitLab Rails nodes for Omnibus environments
+  command: gitlab-ctl geo promote -f
+  when:
+    - ('gitlab_rails' in group_names)
+    - (geo_secondary_site_group_name in group_names)
+
+- name: Promote Secondary Site for Cloud Native Hybrid environments
+  block:
+    - name: Configure kubeconfig credentials for Geo secondary site
+      become: false
+      delegate_to: localhost
+      run_once: true
+      import_tasks: kubeconfig.yml
+      vars:
+        geo_site_prefix: "{{ geo_secondary_site_prefix }}"
+        geo_site_gcp_project: "{{ geo_secondary_site_gcp_project if cloud_provider == 'gcp' else '' }}"
+        geo_site_gcp_zone: "{{ geo_secondary_site_gcp_zone if cloud_provider == 'gcp' else '' }}"
+        geo_site_aws_region: "{{ geo_secondary_site_aws_region if cloud_provider == 'aws' else '' }}"
+
+    - name: Promote to Primary Site
+      become: false
+      delegate_to: localhost
+      run_once: true
+      community.kubernetes.k8s_exec:
+        pod: "{{ task_runner_info.resources[0].metadata.name }}"
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        command: gitlab-rake geo:set_secondary_as_primary
+
+    - name: Get GitLab Charts values
+      become: false
+      delegate_to: localhost
+      run_once: true
+      community.kubernetes.helm_info:
+        name: gitlab
+        release_namespace: "{{ gitlab_charts_release_namespace }}"
+      register: gitlab_info
+
+    - name: Update Geo Role
+      become: false
+      delegate_to: localhost
+      run_once: true
+      set_fact:
+        gitlab_values: "{{ item.value | regex_replace(\"'role': 'secondary'\", \"'role': 'primary'\") }}"
+      loop: "{{ lookup('dict', gitlab_info.status) }}"
+      when: "'values' in item.key"
+
+    - name: Update GitLab Charts
+      become: false
+      delegate_to: localhost
+      run_once: true
+      community.kubernetes.helm:
+        name: gitlab
+        chart_ref: gitlab/gitlab
+        chart_version: "{{ gitlab_charts_version | default(None) }}"
+        update_repo_cache: true
+        release_namespace: "{{ gitlab_charts_release_namespace }}"
+        force: true
+        values: "{{ gitlab_values }}"
+  when: cloud_native_hybrid_geo
+
+# Workaround - Gitaly is picking up the wrong gitlab-secrets values and needs a restart to use the correct values.
+# Discussion: https://gitlab.com/gitlab-org/gitlab/-/issues/335924#note_697853737
+# MR: https://gitlab.com/gitlab-org/omnibus-gitlab/-/merge_requests/5691
+- name: Restart gitaly
+  command: gitlab-ctl restart
+  when:
+    - ('gitaly' in group_names)
+    - (geo_secondary_site_group_name in group_names)
