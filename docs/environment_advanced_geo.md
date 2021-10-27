@@ -18,7 +18,7 @@ On this page we'll detail how to setup Geo. We recommend you only do these setup
 
 [[_TOC_]]
 
-## Overview
+## Creating a Geo Deployment
 
 When provisioning a Geo deployment there are a few differences to a single environment that need to be made throughout the process to allow the Toolkit to properly manage the deployment:
 
@@ -292,3 +292,23 @@ grafana_password: '<grafana_password>'
 Once done we can then run the command `ansible-playbook -i environments/my-geo-deployment/inventory/all gitlab-geo.yml`.
 
 Once complete the 2 sites will now be part of the same Geo deployment.
+
+## Failover
+
+> The Toolkit automated Geo failover process is available for Geo deployments running GitLab versions 14.2 or above.
+
+The Toolkit provides the ability to failover from a Geo primary site to a secondary site. This process will disable the current primary site and promotes the secondary site to be a standalone GitLab instance.
+
+Before running the failover process you should ensure you have read and completed any required steps outlined in the [Disaster recovery for planned failover](https://docs.gitlab.com/ee/administration/geo/disaster_recovery/planned_failover.html) documentation.
+
+Once you get to the [Promote the secondary node](https://docs.gitlab.com/ee/administration/geo/disaster_recovery/planned_failover.html#promote-the-secondary-node) step in the documentation you can proceed to perform a failover. To do the failover you can use the existing `all` inventory to disable the primary and promote the secondary in a single command `ansible-playbook -i environments/my-geo-deployment/inventory/all gitlab-geo-failover.yml`
+
+After failover has occurred it is important to update your inventories to reflect the new roles they now perform. The original primary and secondary inventories will only need updating in cloud native hybrid environments. For a cloud native hybrid environment you will need to update the `cloud_native_hybrid_geo_role` variable to reflect the sites new role.
+
+All environment types will need the `all` inventory to be updated, the following variables should be updated to reflect the newly promoted/demoted sites.
+
+- `external_url`/`secondary_external_url`
+- `geo_primary_site_group_name`/`geo_secondary_site_group_name`
+- `geo_primary_site_name`/`geo_secondary_site_name`
+
+Finally in the Terraform config for the original secondary site you will need to remove the `rds_postgres_replication_database_arn` variable to prevent any misconfiguration happening on the next Terraform run.
