@@ -25,6 +25,7 @@ Created and maintained by the GitLab Quality Engineering Enablement team, the To
 - Zero Downtime Upgrades support
 - Built in Load Balancing and Monitoring (Prometheus, Grafana) setup
 - External SSL termination
+- Alternative sources (Cloud Services, Custom Servers) for select components (Load Balancers, PostgreSQL, Redis)
 
 By design the Toolkit is meant to be **_one for all_** and aims to deploy a production GitLab environment that will be a good base that can be customized further depending on your requirements.
 
@@ -70,7 +71,7 @@ Note that the Toolkit currently has the following requirements (with related iss
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](docs/environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](docs/environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](docs/environment_advanced_ssl.md)
-- [GitLab Environment Toolkit - Advanced - Cloud Services](docs/environment_advanced_services.md)
+- [GitLab Environment Toolkit - Advanced - Component Cloud Services \ Custom (Load Balancers, PostgreSQL, Redis)](docs/environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](docs/environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more](docs/environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](docs/environment_upgrades.md)

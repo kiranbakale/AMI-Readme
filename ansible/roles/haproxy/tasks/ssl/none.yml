@@ -10,5 +10,5 @@
     path: "{{ item }}"
     state: absent
   loop:
-    - "/opt/haproxy/{{ external_hostname }}.pem"
-    - "/opt/haproxy/{{ external_hostname }}.pem.key"
+    - "/opt/haproxy/{{ external_host }}.pem"
+    - "/opt/haproxy/{{ external_host }}.pem.key"

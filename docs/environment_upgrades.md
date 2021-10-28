@@ -5,7 +5,7 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
-- [GitLab Environment Toolkit - Advanced - Cloud Services](environment_advanced_services.md)
+- [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more](environment_advanced.md)
 - [**GitLab Environment Toolkit - Upgrade Notes**](environment_upgrades.md)
@@ -60,7 +60,7 @@ However the [standard GitLab Upgrade rules still apply](https://docs.gitlab.com/
 
 For Zero Downtime Updates, the toolkit follows the [GitLab documented process](https://docs.gitlab.com/omnibus/update/README.html#zero-downtime-updates) and as such the documentation should be read and understood before proceeding with an update.
 
-> As with any update process there may rarely be times where a small number of requests fail when the update is in progress. For example, when updating a primary node it can take up to a few seconds for a new leader to be elected.
+:information_source:&nbsp; As with any update process there may rarely be times where a small number of requests fail when the update is in progress. For example, when updating a primary node it can take up to a few seconds for a new leader to be elected.
 
 Running the zero downtime update process with GET is done in the same way as building the initial environment but with a different playbook instead:
 
@@ -73,7 +73,7 @@ Running the zero downtime update process with GET is done in the same way as bui
 
     `ansible-playbook -i environments/10k/inventory praefect-postgres.yml`
 
-> This will cause downtime due to GET only using a single Praefect Postgres node.
+:information_source:&nbsp; This will cause downtime due to GET only using a single Praefect Postgres node.
   If you want to have a highly available setup, Praefect requires a third-party PostgreSQL database and will need to be updated manually.
 
 The update process can take a couple of hours to complete and the full runtime will depend on the number of nodes in the deployment.

@@ -5,7 +5,7 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
-- [GitLab Environment Toolkit - Advanced - Cloud Services](environment_advanced_services.md)
+- [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
@@ -220,7 +220,7 @@ The module for GCP can configure the [network stack](https://cloud.google.com/vp
 
 In this section you will find the config required to set up each depending on your requirements.
 
-**{-NOTE: Changing network setup on an existing environment must be treated with the utmost caution-}**. **Doing so can be considered a significant change in GCP and may trigger the recreation of the entire environment leading to data loss**.
+:warning:&nbsp; **{- Changing network setup on an existing environment must be treated with the utmost caution-}**. **Doing so can be considered a significant change in GCP and may trigger the recreation of the entire environment leading to data loss**.
 
 **Default**
 
@@ -295,7 +295,7 @@ module "gitlab_ref_arch_gcp" {
 
 With GCP you can spread optionally spread resources across multiple [Availability Zones](https://cloud.google.com/compute/docs/regions-zones) in the selected region, overriding the default Zone configured in `variables.tf`. By doing this it adds additional resilience for the environment in the case a Zone ever went down.
 
-NOTE: Cross Zone networking does have an additional cost. Refer to the [GCP pricing page](https://cloud.google.com/vpc/network-pricing) for more info.
+:information_source:&nbsp; Cross Zone networking does have an additional cost. Refer to the [GCP pricing page](https://cloud.google.com/vpc/network-pricing) for more info.
 
 No matter what Network design above you have selected, spreading resources across Zones can also be applied in the [module's environment config file](#configure-module-settings-environmenttf) with the following variables:
 
@@ -488,15 +488,11 @@ The module for AWS can configure the [network stack](https://docs.aws.amazon.com
 
 In this section you will find the config required to set up each depending on your requirements.
 
-**{-NOTE: Changing network setup on an existing environment must be avoided-}**. **Doing so is considered a significant change in AWS and will essentially trigger the recreation of the entire environment leading to data loss**.
+:warning:&nbsp; **{- Changing network setup on an existing environment must be avoided-}**. **Doing so is considered a significant change in AWS and will essentially trigger the recreation of the entire environment leading to data loss**.
 
 **Default**
 
-This is the default setup for the module and is the recommended setup for most standard (Omnibus) environments where AWS will handle the networking by default.
-
-No additional configuration is needed to use this setup. However several parts of the provisioned architecture may require attaching to a number of Subnets in the network stack to function correctly. The actual number of subnets to be attached can be configured as follows:
-
-- `default_subnet_use_count` - Set to the number of subnets in the default network stack that should be attached to by parts that require it. Default is 2.
+This is the default setup for the module where AWS will handle the networking by default.
 
 **Created**
 
@@ -815,7 +811,7 @@ After the config has been setup you're now ready to provision the environment. T
 1. To apply any changes run `terraform apply` and select yes
     - **Warning - running this command will likely apply changes to shared infrastructure. Only run this command if you have permission to do so.**
 
-NOTE: If you ever want to deprovision resources created, you can do so by running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html).
+:information_source:&nbsp; If you ever want to deprovision resources created, you can do so by running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html).
 
 ## Next Steps 
 

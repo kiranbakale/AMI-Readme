@@ -1,12 +1,14 @@
 locals {
   create_geo_tracking_kms_key  = var.rds_geo_tracking_postgres_instance_type != "" && var.rds_geo_tracking_postgres_kms_key_arn == null
   create_geo_tracking_resource = var.rds_geo_tracking_postgres_instance_type != "" ? 1 : 0
+
+  rds_geo_tracking_subnet_ids = local.subnet_ids != null ? local.subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_geo_tracking_default_subnet_count)
 }
 
 resource "aws_db_subnet_group" "gitlab_geo" {
   count      = local.create_geo_tracking_resource
   name       = "${var.prefix}-geo-rds-subnet-group"
-  subnet_ids = coalesce(local.subnet_ids, local.default_subnet_ids)
+  subnet_ids = local.rds_geo_tracking_subnet_ids
 
   tags = {
     Name = "${var.prefix}-geo-rds-subnet-group"
@@ -58,11 +60,11 @@ resource "aws_db_instance" "gitlab_geo_tracking" {
 
 output "rds_geo_tracking_postgres_connection" {
   value = {
-    "rds_address"           = try(aws_db_instance.gitlab_geo_tracking[0].address, "")
-    "rds_port"              = try(aws_db_instance.gitlab_geo_tracking[0].port, "")
-    "rds_database_name"     = try(aws_db_instance.gitlab_geo_tracking[0].name, "")
-    "rds_database_username" = try(aws_db_instance.gitlab_geo_tracking[0].username, "")
-    "rds_database_arn"      = try(aws_db_instance.gitlab_geo_tracking[0].arn, "")
-    "rds_kms_key_arn"       = try(aws_db_instance.gitlab_geo_tracking[0].kms_key_id, "")
+    "rds_geo_host"              = try(aws_db_instance.gitlab_geo_tracking[0].address, "")
+    "rds_geo_port"              = try(aws_db_instance.gitlab_geo_tracking[0].port, "")
+    "rds_geo_database_name"     = try(aws_db_instance.gitlab_geo_tracking[0].name, "")
+    "rds_geo_database_username" = try(aws_db_instance.gitlab_geo_tracking[0].username, "")
+    "rds_geo_database_arn"      = try(aws_db_instance.gitlab_geo_tracking[0].arn, "")
+    "rds_geo_kms_key_arn"       = try(aws_db_instance.gitlab_geo_tracking[0].kms_key_id, "")
   }
 }

@@ -5,7 +5,7 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
-- [GitLab Environment Toolkit - Advanced - Cloud Services](environment_advanced_services.md)
+- [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
@@ -27,7 +27,7 @@ For setting up backups in general we recommend implementing a strategy as per yo
 - The Toolkit _does_ create a `backups` Object Storage bucket and configures GitLab to use it by default as a convenience with its Rake task. Automated backups aren't configured however so if using this Object Storage as the backup source the actual backup Rake process [should be configured as desired](https://docs.gitlab.com/ee/raketasks/backup_restore.html#configuring-cron-to-make-daily-backups).
 - Object Storage buckets such as `uploads`, etc... are **not** backed up with the GitLab provided Rake tasks. It's recommended to enable backups for these buckets as per the object storage provider used.
 
-NOTE: If using Terraform from the Toolkit it must be noted that a `terraform destroy` command will **destroy all data and lead to data loss**. Issuing this command in any situation must be considered fully.
+:information_source:&nbsp; If using Terraform from the Toolkit it must be noted that a `terraform destroy` command will **destroy all data and lead to data loss**. Issuing this command in any situation must be considered fully.
 
 ## Security
 

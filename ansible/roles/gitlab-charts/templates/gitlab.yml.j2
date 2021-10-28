@@ -86,7 +86,7 @@ global:
     enabled: false # Gitaly runs outside of cluster
     external:
     - name: default
-      hostname: "{{ haproxy_internal_int_ip }}"
+      hostname: "{{ internal_lb_host }}"
       port: 2305
       tlsEnabled: false
 {% elif 'gitaly' in groups %}
@@ -140,7 +140,7 @@ global:
     username: "{{ postgres_username }}"
     database: "{{ postgres_database_name }}"
 {% elif 'postgres' in groups %}
-    host: "{{ haproxy_internal_int_ip if 'haproxy_internal' in groups else postgres_host }}"
+    host: "{{ internal_lb_host if 'haproxy_internal' in groups else postgres_host }}"
     port: "{{ 6432 if 'haproxy_internal' in groups else postgres_port }}"
 {% endif %}
 # Redis
@@ -250,6 +250,7 @@ nginx-ingress:
       annotations:
         service.beta.kubernetes.io/aws-load-balancer-type: nlb
         service.beta.kubernetes.io/aws-load-balancer-eip-allocations: "{{ aws_allocation_ids | replace(' ', '') }}"
+        service.beta.kubernetes.io/aws-load-balancer-attributes: load_balancing.cross_zone.enabled=true
 {% endif %}
     nodeSelector:
       workload: "support"

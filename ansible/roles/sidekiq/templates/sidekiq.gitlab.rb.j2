@@ -143,7 +143,7 @@ gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['db_database'] = '{{ postgres_database_name }}'
 
 {% elif 'postgres' in groups %}
-gitlab_rails['db_host'] = '{{ haproxy_internal_int_ip }}'
+gitlab_rails['db_host'] = '{{ internal_lb_host }}'
 gitlab_rails['db_port'] = 6432
 gitlab_rails['db_password'] = '{{ postgres_password }}'
 
@@ -167,7 +167,7 @@ gitlab_rails['env'] = {
 gitaly['enable'] = false
 git_data_dirs({
   "default" => {
-    "gitaly_address" => "tcp://{{ haproxy_internal_int_ip }}:2305",
+    "gitaly_address" => "tcp://{{ internal_lb_host }}:2305",
     "gitaly_token" => '{{ praefect_external_token }}'
   }
 })

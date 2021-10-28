@@ -12,6 +12,11 @@ resource "aws_default_vpc" "default" {
 data "aws_subnet_ids" "defaults" {
   count  = local.create_network ? 0 : 1
   vpc_id = aws_default_vpc.default[0].id
+
+  filter {
+    name   = "default-for-az"
+    values = ["true"]
+  }
 }
 
 data "aws_availability_zones" "defaults" {}
@@ -68,5 +73,6 @@ resource "aws_default_route_table" "gitlab_vpc_rt" {
 locals {
   vpc_id             = local.create_network ? aws_vpc.gitlab_vpc[0].id : var.vpc_id
   subnet_ids         = local.create_network ? aws_subnet.gitlab_vpc_sn_pub[*].id : var.subnet_ids
-  default_subnet_ids = var.create_network ? null : slice(tolist(data.aws_subnet_ids.defaults[0].ids), 0, var.default_subnet_use_count)
+  default_vpc_id     = local.create_network ? null : aws_default_vpc.default[0].id
+  default_subnet_ids = local.create_network ? null : data.aws_subnet_ids.defaults[0].ids
 }
