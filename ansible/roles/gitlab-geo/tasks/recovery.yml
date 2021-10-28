@@ -1,0 +1,37 @@
+- name: Delete Geo config
+  block:
+    - name: Find Geo config files
+      find:
+        paths: "/etc/gitlab"
+        recurse: true
+        patterns: "gitlab.geo.*.rb"
+      register: geo_config_files
+
+    - name: Remove existing Geo config
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ geo_config_files.files }}"
+
+    - name: Remove existing Geo role settings
+      file:
+        path: /etc/gitlab/gitlab-cluster.json
+        state: absent
+  when: omnibus_node
+
+- name: Enable and start Secondary Site Omnibus nodes
+  block:
+    - name: Enable and start GitLab service
+      service:
+        name: gitlab-runsvdir
+        enabled: true
+        state: started
+
+    - name: Start GitLab
+      command: gitlab-ctl start
+  when:
+    - omnibus_node
+    - (geo_secondary_site_group_name in group_names)
+
+- name: Run GitLab Geo Recovery
+  import_tasks: main.yml

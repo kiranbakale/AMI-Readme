@@ -293,7 +293,9 @@ Once done we can then run the command `ansible-playbook -i environments/my-geo-d
 
 Once complete the 2 sites will now be part of the same Geo deployment.
 
-## Failover
+## Failover and Recovery
+
+### Failover
 
 > The Toolkit automated Geo failover process is available for Geo deployments running GitLab versions 14.2 or above.
 
@@ -303,7 +305,7 @@ Before running the failover process you should ensure you have read and complete
 
 Once you get to the [Promote the secondary node](https://docs.gitlab.com/ee/administration/geo/disaster_recovery/planned_failover.html#promote-the-secondary-node) step in the documentation you can proceed to perform a failover. To do the failover you can use the existing `all` inventory to disable the primary and promote the secondary in a single command `ansible-playbook -i environments/my-geo-deployment/inventory/all gitlab-geo-failover.yml`
 
-After failover has occurred it is important to update your inventories to reflect the new roles they now perform. The original primary and secondary inventories will only need updating in cloud native hybrid environments. For a cloud native hybrid environment you will need to update the `cloud_native_hybrid_geo_role` variable to reflect the sites new role.
+After failover has occurred it's important to update your inventories to reflect the new roles they now perform and to avoid misconfiguration on subsequent runs. The original primary and secondary inventories need updating. For a cloud native hybrid environment you will need to update the `cloud_native_hybrid_geo_role` variable to reflect the sites new role. For all environment types you will need to update the `geo_primary_site_group_name`/`geo_secondary_site_group_name` also.
 
 All environment types will need the `all` inventory to be updated, the following variables should be updated to reflect the newly promoted/demoted sites.
 
@@ -312,3 +314,15 @@ All environment types will need the `all` inventory to be updated, the following
 - `geo_primary_site_name`/`geo_secondary_site_name`
 
 Finally in the Terraform config for the original secondary site you will need to remove the `rds_postgres_replication_database_arn` variable to prevent any misconfiguration happening on the next Terraform run.
+
+### Recovery
+
+After a failover has been performed it's then possible to take the old Geo primary site and turn it into a secondary. This will attach the old primary to the new primary site and begin the replication process. For a planned failover this could occur as soon as the new primary has been promoted, for an unplanned failover the old primary site should be checked for any issues before performing this step.
+
+Before performing a recovery the `all` inventory must be updated to reflect each site's new roles. The below settings should all be updated to point to the new primary and secondary sites.
+
+- `external_url`/`secondary_external_url`
+- `geo_primary_site_group_name`/`geo_secondary_site_group_name`
+- `geo_primary_site_name`/`geo_secondary_site_name`
+
+Once done you can perform the recovery process by running the command `ansible-playbook -i environments/my-geo-deployment/inventory/all gitlab-geo-recovery.yml`
