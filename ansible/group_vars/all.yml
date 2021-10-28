@@ -46,7 +46,7 @@ tencentcloud_endpoint: ""
 ################################################################################
 
 external_url_sanitised: "{{ external_url | regex_replace('\\/$', '') }}"
-external_hostname: "{{ external_url | regex_replace('^https?:\/\/') }}"
+external_host: "{{ external_url | regex_replace('^https?:\/\/') }}"
 external_ip: ""  # IP is only used for Cloud Native Hybrid deployments - provided by user
 
 ## External SSL
@@ -58,15 +58,20 @@ external_ssl_letsencrypt_issuer_email: ""
 
 ### User Provided Certificates
 external_ssl_files_host_path: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/certificates"
-external_ssl_files_host_certificate_file: "{{ external_ssl_files_host_path }}/{{ external_hostname }}.pem"
-external_ssl_files_host_key_file: "{{ external_ssl_files_host_path }}/{{ external_hostname }}.key"
+external_ssl_files_host_certificate_file: "{{ external_ssl_files_host_path }}/{{ external_host }}.pem"
+external_ssl_files_host_key_file: "{{ external_ssl_files_host_path }}/{{ external_host }}.key"
 
-## HAProxy
-### haproxy_internal_primary_site_group_name: Sets the group name for haproxy_internal_int_ip for Geo or non Geo deployments
+## Load Balancers
+
+### HAProxy
+#### haproxy_internal_primary_site_group_name: Sets the group name for haproxy_internal_int_ip for Geo or non Geo deployments
 haproxy_internal_primary_site_group_name: "{% if geo_primary_site_group_name + '_haproxy_internal_primary' in groups %}{{ geo_primary_site_group_name }}_haproxy_internal_primary{% elif 'haproxy_internal' in groups %}haproxy_internal{% else %}{% endif %}"
 haproxy_internal_int_ip: "{{ (groups[haproxy_internal_primary_site_group_name] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_internal' in groups else ''}}"
 haproxy_external_int_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
 haproxy_external_ext_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, external_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
+
+### Internal Load Balancer
+internal_lb_host: "{{ haproxy_internal_int_ip }}"
 
 ################################################################################
 ## GitLab Install Settings
@@ -134,7 +139,7 @@ postgres_replication_manager: "{{ 'patroni' if ((groups['postgres'] is defined) 
 # Gitaly
 gitaly_primary_int_ip: "{{ (groups['gitaly_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'gitaly_primary' in groups else '' }}"
 gitaly_secondary_int_ips: "{{ (groups['gitaly_secondary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'gitaly_secondary' in groups else [] }}"
-gitaly_callback_internal_api_url: "{{ ('http://' + haproxy_internal_int_ip) if 'haproxy_internal' in groups and 'gitlab_rails' in groups else external_url_sanitised }}"
+gitaly_callback_internal_api_url: "{{ ('http://' + internal_lb_host) if 'haproxy_internal' in groups and 'gitlab_rails' in groups else external_url_sanitised }}"
 
 # Praefect
 praefect_primary_int_ip: "{{ (groups['praefect_primary'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_primary' in groups else '' }}"

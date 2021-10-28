@@ -1,47 +1,114 @@
-# Advanced - Cloud Services
+# Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)
 
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
-- [**GitLab Environment Toolkit - Advanced - Cloud Services**](environment_advanced_services.md)
+- [**GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)**](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 
-The Toolkit supports using Cloud Services for select components instead of deploying them directly via Omnibus or the Helm charts - namely PostgreSQL and Redis. The Toolkit includes both provisioning and configuration of these services seamlessly within AWS.
+The Toolkit supports using alternative sources for select components, such as cloud services or custom servers, instead of deploying them directly. This is supported for the Load Balancer(s), PostgreSQL and Redis components as follows:
 
-On this page we'll detail how to setup the Toolkit to provision and configure these services. **It's worth noting this guide is supplementary to the rest of the docs and it will assume this throughout.**
+- Cloud Services - The Toolkit supports both _provisioning_ and _configuration_ for environments to use.
+- Custom Servers - For servers, provided by users, the Toolkit supports the _configuration_ for environments to use.
+
+On this page we'll detail how to setup the Toolkit to provision and/or configure these alternatives. **It's also worth noting this guide is supplementary to the rest of the docs and it will assume this throughout.** 
 
 [[_TOC_]]
 
 ## Overview
 
-It can be more convenient to use a Cloud Service for select components rather than having to manage them more directly. These services have built in HA and don't require instance level maintenance.
+It can be more convenient to use an alternative source for select components rather than having to manage them more directly. For example, cloud services have built in HA and don't require instance level maintenance.
 
-Two components of the GitLab setup can be switched to a Cloud Service:
+Several components of the GitLab setup can be switched to a cloud service or custom server:
 
-- [PostgreSQL](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#provide-your-own-postgresql-instance) - [AWS RDS](https://aws.amazon.com/rds/postgresql/), [Google Cloud SQL](https://cloud.google.com/sql/docs/postgres)
-- [Redis](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#providing-your-own-redis-instance) - [AWS Elasticache](https://aws.amazon.com/elasticache/redis/), [Google Memorystore](https://cloud.google.com/memorystore/docs/redis)
+- [Load Balancers](https://docs.gitlab.com/ee/administration/load_balancer.html) - [AWS ELB](https://aws.amazon.com/elasticloadbalancing/), _Custom_
+- [PostgreSQL](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#provide-your-own-postgresql-instance) - [AWS RDS](https://aws.amazon.com/rds/postgresql/), _Custom_
+- [Redis](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#providing-your-own-redis-instance) - [AWS Elasticache](https://aws.amazon.com/elasticache/redis/), _Custom_
+
+:information_source:&nbsp; Support for more services is ongoing. Unless specified otherwise the above is the current supported services by the Toolkit.
+
+## Load Balancers
+
+The Toolkit supports provisioning and/or configuring Load Balancer(s) for the both types of balancers GitLab requires - External and Internal.
+
+When using an alternative Load Balancer the following changes apply when deploying via the Toolkit (depending on the load balancer):
+
+External:
+
+- HAProxy External node no longer needs to be provisioned via Terraform
+- External URL settings in Ansible are set to the Load Balancer host as given by the service
+
+Internal:
+
+- HAProxy Internal node no longer needs to be provisioned via Terraform
+- Internal Load Balancer host name in Ansible is set to the Load Balancer host as given by the service
+
+Head to the relevant section(s) below for details on how to provision and/or configure.
+
+### Provisioning with Terraform
+
+Provisioning the alternative Load Balancer(s) via cloud services is handled directly by the relevant Toolkit module. As such, it only requires some different config in your Environment's config file (`environment.tf`).
+
+Like the main provisioning docs there are sections for each supported provider on how to achieve this. Follow the section for your selected provider and then move onto the next step.
+
+#### AWS ELB
+
+##### Internal (NLB)
+
+The Toolkit supports provisioning an AWS NLB service as the Internal Load Balancer with everything GitLab requires set up.
+
+The variable(s) for this service start with the prefix `elb_internal_*` and should replace any previous `haproxy_internal_*` settings. The available variable(s) are as follows:
+
+- `elb_internal_create` - Create the Internal Load Balancer service. Defaults to `false`.
+
+To set up a standard AWS NLB service for the Internal Load Balancer it should look like the following in your `environment.tf` file:
+
+```tf
+module "gitlab_ref_arch_aws" {
+  source = "../../modules/gitlab_ref_arch_aws"
+
+  [...]
+
+  elb_internal_create = true
+}
+```
+
+Once the variables are set in your file you can proceed to provision the service as normal. Note that this can take several minutes on AWS's side.
+
+Once provisioned you'll see a new output at the end of the process - `elb_internal_host`. This contains the hostname for the Load Balancer that then needs to be passed to Ansible to configure. Take a note of this hostname for the next step.
+
+### Configuring with Ansible
+
+Configuring GitLab to use alternative Load Balancer(s) with Ansible is the same regardless of its origin. All that's required is additional config in your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) to point the Toolkit at the Load Balancer(s).
+
+:information_source:&nbsp; This config is the same for custom Load Balancers. Although please note, in this setup it's expected that all required balancing rules are in place and the URL to connect to the Balancer(s) never change. For the latest balancer rules you need to configure you should refer to the HAProxy config files provided as part of the Toolkit - [External](../ansible/roles/haproxy/templates/haproxy_external.cfg.j2), [Internal](../ansible/roles/haproxy/templates/haproxy_internal.cfg.j2).
+
+The available variables in Ansible for this are as follows:
+
+- `external_url` - The external load balancer URL. This is expected to be the same as the main URL that the environment is to be accessed on.
+- `internal_lb_host` - The hostname of the Internal Load Balancer (not URL). Provided in Terraform outputs if provisioned earlier.
 
 ## PostgreSQL
 
-The Toolkit supports provisioning and configuring a PostgreSQL Cloud Service and then pointing GitLab to use it accordingly, much in the same way as configuring Omnibus Postgres.
+The Toolkit supports provisioning and/or configuring an alternative PostgreSQL database and then pointing GitLab to use it accordingly, much in the same way as configuring Omnibus Postgres.
 
-When using a PostgreSQL Cloud Service the following changes apply when deploying via the Toolkit:
+When using an alternative PostgreSQL database the following changes apply when deploying via the Toolkit:
 
 - Postgres and PgBouncer nodes don't need to be provisioned via Terraform.
 - Praefect will use the same database instance. As such the Praefect Postgres node also doesn't need to be provisioned.
 - Consul doesn't need to be provisioned via Terraform unless you're deploying Prometheus via the Monitor node (needed for monitoring auto discovery).
 
-Refer to the specific cloud service section below on how to configure.
+Head to the relevant section(s) below for details on how to provision and/or configure.
 
 ### Provisioning with Terraform
 
-Provisioning the PostgreSQL Cloud Service differs slightly per provider but has been designed in the Toolkit to be as similar as possible to deploying PostgreSQL via Omnibus. As such, it only requires some different config in your Environment's config file (`environment.tf`).
+Provisioning a PostgreSQL database via a cloud service differs slightly per provider but has been designed in the Toolkit to be as similar as possible to deploying PostgreSQL via Omnibus. As such, it only requires some different config in your Environment's config file (`environment.tf`).
 
 Like the main provisioning docs there are sections for each supported provider on how to achieve this. Follow the section for your selected provider and then move onto the next step.
 
@@ -59,7 +126,8 @@ The variables for this service start with the prefix `rds_postgres_*` and should
 - `rds_postgres_version` - The version of the PostgreSQL instance. Should only be changed to versions that are supported by GitLab. Optional, default is `12.6`.
 - `rds_postgres_allocated_storage` - The initial disk size for the instance. Optional, default is `100`.
 - `rds_postgres_max_allocated_storage` - The max disk size for the instance. Optional, default is `1000`.
-- `rds_postgres_multi_az` - Specifies if the RDS instance is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`
+- `rds_postgres_multi_az` - Specifies if the RDS instance is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`.
+- `rds_postgres_default_subnet_count` - Specifies the number of default subnets to use when running on the default network. Optional, default is `2`.
 - `rds_postgres_iops` - The amount of provisioned IOPS. Setting this implies a storage_type of "io1". Optional, default is `1000`.
 - `rds_postgres_storage_type` - The type of storage to use. Optional, default is `io1`.
 - `rds_postgres_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt the database instance. If not provided a new one will be generated by Terraform for the RDS instance. Optional, default is `null`.
@@ -81,7 +149,7 @@ module "gitlab_ref_arch_aws" {
 
 Once the variables are set in your file you can proceed to provision the service as normal. Note that this can take several minutes on AWS's side.
 
-Once provisioned you'll see several new outputs at the end of the process. Key from this is the `rds_address` output, which contains the address for the database instance that then needs to be passed to Ansible to configure. Take a note of this address for the next step.
+Once provisioned you'll see several new outputs at the end of the process. Key from this is the `rds_host` output, which contains the address for the database instance that then needs to be passed to Ansible to configure. Take a note of this address for the next step.
 
 ##### Geo
 
@@ -108,9 +176,9 @@ Please note that on the primary site it is possible to use a single RDS instance
 
 ### Configuring with Ansible
 
-Configuring GitLab to use a non Omnibus PostgreSQL instance with Ansible is the same regardless of which cloud provider you choose. All that's required is a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) to point the Toolkit at the PostgreSQL instance.
+Configuring GitLab to use an alternative PostgreSQL database with Ansible is the same regardless of its origin. All that's required is a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) to point the Toolkit at the PostgreSQL instance.
 
-It's worth noting this config will also work for a custom PostgreSQL instance that has been provisioned outside of Omnibus or Cloud Services. Although please note, in this setup it's expected that HA is in place and the URL to connect to the PostgreSQL instance never changes.
+:information_source:&nbsp; This config is the same for custom PostgreSQL databases that have been provisioned outside of Omnibus or Cloud Services. Although please note, in this setup it's expected that HA is in place and the URL to connect to the PostgreSQL instance never changes.
 
 The available variables in Ansible for this are as follows:
 
@@ -153,19 +221,19 @@ When setting up Geo with RDS you must specify some extra settings to configure t
 
 ## Redis
 
-The Toolkit supports provisioning and configuring a Redis Cloud Service and then pointing GitLab to use it accordingly, much in the same way as configuring Omnibus Redis.
+The Toolkit supports provisioning and/or configuring an alternative Redis store and then pointing GitLab to use it accordingly, much in the same way as configuring Omnibus Redis.
 
-When using a Redis Cloud Service the following changes apply when deploying via the Toolkit:
+When using an alternative Redis store the following changes apply when deploying via the Toolkit:
 
-- The Toolkit can provision either a combined Redis service or separated ones for Cache and Persistent queues respectively, much like Omnibus Redis, depending on the size of Reference Architecture being followed.
+- The Toolkit can provision either a combined Redis store or separated ones for Cache and Persistent queues respectively, much like Omnibus Redis, depending on the size of Reference Architecture being followed.
 - Redis, Redis Cache or Redis Persistent nodes don't need to be provisioned via Terraform.
 - [GitLab specifically doesn't support Redis Cluster](https://docs.gitlab.com/ee/administration/redis/replication_and_failover_external.html#requirements). As such the Toolkit is always setting up Redis in a replica setup.
 
-Refer to the specific cloud service section below on how to configure.
+Head to the relevant section(s) below for details on how to provision and/or configure.
 
 ### Provisioning with Terraform
 
-Provisioning the Redis Cloud Service differs slightly per provider but has been designed in the Toolkit to be as similar as possible to deploying Redis via Omnibus. As such, it only requires some different config in your Environment's config file (`environment.tf`).
+Provisioning an alternative Redis store via a cloud service differs slightly per provider but has been designed in the Toolkit to be as similar as possible to deploying Redis via Omnibus. As such, it only requires some different config in your Environment's config file (`environment.tf`).
 
 Like the main provisioning docs there are sections for each supported provider on how to achieve this. Follow the section for your selected provider and then move onto the next step.
 
@@ -197,6 +265,7 @@ For optional variables they work in a default like manner. When configuring for 
   - Optionally `elasticache_redis_cache_port` or `elasticache_redis_persistent_port` can be used to override for separate services.
 - `elasticache_redis_multi_az` - Specifies if the Redis instance is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`.
   - Optionally `elasticache_redis_cache_multi_az` or `elasticache_redis_persistent_multi_az` can be used to override for separate services.
+- `elasticache_redis_default_subnet_count` - Specifies the number of default subnets to use when running on the default network. Optional, default is `2`.
 
 If deploying a combined Redis setup that contains all queues (5k and lower) the following settings should be set (replacing any previous `redis_*` settings):
 
@@ -231,21 +300,21 @@ module "gitlab_ref_arch_aws" {
 
 Once the variables are set in your file you can proceed to provision the service as normal. Note that this can take several minutes on AWS's side.
 
-Once provisioned you'll see several new outputs at the end of the process. Key from this is the `elasticache_redis*_address` output, which contains the address for the Redis instance that then needs to be passed to Ansible to configure. Take a note of this address for the next step.
+Once provisioned you'll see several new outputs at the end of the process. Key from this is the `elasticache_redis*_host` output, which contains the address for the Redis instance that then needs to be passed to Ansible to configure. Take a note of this address for the next step.
 
 ### Configuring with Ansible
 
-Configuring GitLab to use non Omnibus Redis instance(s) with Ansible is the same regardless of which cloud provider you choose. All that's required is a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) to point the Toolkit at the Redis instance(s).
+Configuring GitLab to use alternative Redis store(s) with Ansible is the same regardless of its origin. All that's required is a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) to point the Toolkit at the Redis instance(s).
 
-It's worth noting this config will also work for custom Redis instance(s) that have been provisioned outside of Omnibus or Cloud Services. Although please note, in this setup it's expected that HA is in place and the URL to connect to the Redis instance(s) never changes.
+:information_source:&nbsp; This config is the same for custom Redis instance(s) that have been provisioned outside of Omnibus or Cloud Services. Although please note, in this setup it's expected that HA is in place and the URL to connect to the Redis instance(s) never changes.
 
 The variables to set are dependent on if the setup is to have combined or separated Redis queues depending on the target Reference Architecture. The only different is that the prefix of each variable changes depending on what Redis instances you're provisioning - `redis_*`, `redis_cache_*` and `redis_persistent_*` respectively. All of the variables are the same for each instance type and are described once below:
 
 - `redis_host` - The hostname of the Redis instance. Provided in Terraform outputs if provisioned earlier. **Required**.
-  - Becomes `redis_cache_host` or `redis_persistent_host` when setting up separate services.
+  - Becomes `redis_cache_host` or `redis_persistent_host` when setting up separate stores.
 - `redis_port` - The port of the Redis instance. Should only be changed if required. Optional, default is `6379`.
-  - Becomes `redis_cache_port` or `redis_persistent_port` when setting up separate services. Will default to `redis_port` if not specified.
-- `redis_external_ssl` - Sets GitLab to use SSL connections to the external Redis service. Redis services provisioned by the Toolkit will always use SSL. Should only be changed when using a custom Redis service that doesn't have SSL configured. Optional, default is `true`.
+  - Becomes `redis_cache_port` or `redis_persistent_port` when setting up separate stores. Will default to `redis_port` if not specified.
+- `redis_external_ssl` - Sets GitLab to use SSL connections to the Redis store. Redis stores provisioned by the Toolkit will always use SSL. Should only be changed when using a custom Redis store that doesn't have SSL configured. Optional, default is `true`.
 
 Once set, Ansible can then be run as normal. During the run it will configure the various GitLab components to use the database as well as any additional tasks such as setting up a separate database in the same instance for Praefect.
 
@@ -253,7 +322,7 @@ After Ansible is finished running your environment will now be ready.
 
 ### Sensitive variable handling
 
-When configuring these services you'll need to configure sensitive values such as passwords. Earlier in the docs guidance was given on how to handle these more securely in both Terraform and Ansible. Refer to the below sections for further information.
+When configuring these alternatives you'll sometimes need to configure sensitive values such as passwords. Earlier in the docs guidance was given on how to handle these more securely in both Terraform and Ansible. Refer to the below sections for further information.
 
 - [Sensitive variable handling in Terraform](environment_provision.md#sensitive-variable-handling-in-terraform)
 - [Sensitive variable handling in Ansible](environment_configure.md#sensitive-variable-handling-in-ansible)

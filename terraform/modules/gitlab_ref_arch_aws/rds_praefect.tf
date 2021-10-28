@@ -1,12 +1,14 @@
 locals {
   create_praefect_kms_key  = var.rds_praefect_postgres_instance_type != "" && var.rds_praefect_postgres_kms_key_arn == null
   create_praefect_resource = var.rds_praefect_postgres_instance_type != "" ? 1 : 0
+
+  rds_praefect_postgres_subnet_ids = local.subnet_ids != null ? local.subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_praefect_postgres_default_subnet_count)
 }
 
 resource "aws_db_subnet_group" "gitlab_praefect" {
   count      = local.create_praefect_resource
   name       = "${var.prefix}-praefect-rds-subnet-group"
-  subnet_ids = coalesce(local.subnet_ids, local.default_subnet_ids)
+  subnet_ids = local.rds_praefect_postgres_subnet_ids
 
   tags = {
     Name = "${var.prefix}-praefect-rds-subnet-group"
@@ -58,11 +60,11 @@ resource "aws_db_instance" "gitlab_praefect" {
 
 output "rds_praefect_postgres_connection" {
   value = {
-    "rds_address"           = try(aws_db_instance.gitlab_praefect[0].address, "")
-    "rds_port"              = try(aws_db_instance.gitlab_praefect[0].port, "")
-    "rds_database_name"     = try(aws_db_instance.gitlab_praefect[0].name, "")
-    "rds_database_username" = try(aws_db_instance.gitlab_praefect[0].username, "")
-    "rds_database_arn"      = try(aws_db_instance.gitlab_praefect[0].arn, "")
-    "rds_kms_key_arn"       = try(aws_db_instance.gitlab_praefect[0].kms_key_id, "")
+    "rds_praefect_host"              = try(aws_db_instance.gitlab_praefect[0].address, "")
+    "rds_praefect_port"              = try(aws_db_instance.gitlab_praefect[0].port, "")
+    "rds_praefect_database_name"     = try(aws_db_instance.gitlab_praefect[0].name, "")
+    "rds_praefect_database_username" = try(aws_db_instance.gitlab_praefect[0].username, "")
+    "rds_praefect_database_arn"      = try(aws_db_instance.gitlab_praefect[0].arn, "")
+    "rds_praefect_kms_key_arn"       = try(aws_db_instance.gitlab_praefect[0].kms_key_id, "")
   }
 }

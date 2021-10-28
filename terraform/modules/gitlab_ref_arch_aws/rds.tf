@@ -1,12 +1,14 @@
 locals {
   create_postgres_kms_key  = var.rds_postgres_instance_type != "" && var.rds_postgres_kms_key_arn == null
   create_postgres_resource = var.rds_postgres_instance_type != "" ? 1 : 0
+
+  rds_postgres_subnet_ids = local.subnet_ids != null ? local.subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_postgres_default_subnet_count)
 }
 
 resource "aws_db_subnet_group" "gitlab" {
   count      = local.create_postgres_resource
   name       = "${var.prefix}-rds-subnet-group"
-  subnet_ids = coalesce(local.subnet_ids, local.default_subnet_ids)
+  subnet_ids = local.rds_postgres_subnet_ids
 
   tags = {
     Name = "${var.prefix}-rds-subnet-group"
@@ -66,7 +68,7 @@ resource "aws_db_instance" "gitlab" {
 
 output "rds_postgres_connection" {
   value = {
-    "rds_address"           = try(aws_db_instance.gitlab[0].address, "")
+    "rds_host"              = try(aws_db_instance.gitlab[0].address, "")
     "rds_port"              = try(aws_db_instance.gitlab[0].port, "")
     "rds_database_name"     = try(aws_db_instance.gitlab[0].name, "")
     "rds_database_username" = try(aws_db_instance.gitlab[0].username, "")

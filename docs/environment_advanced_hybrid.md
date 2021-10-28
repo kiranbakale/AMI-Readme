@@ -5,7 +5,7 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [**GitLab Environment Toolkit - Advanced - Cloud Native Hybrid**](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
-- [GitLab Environment Toolkit - Advanced - Cloud Services](environment_advanced_services.md)
+- [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
@@ -218,9 +218,11 @@ However there are some additional networking considerations below that you shoul
 
 ##### Zones
 
-For EKS a [Cluster is required to be spread across at least 2 Availability Zones](https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html).
+For EKS a [Cluster is required to be spread across at least 2 Availability Zones](https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html). How this is handled depends on the network setup you've gone for:
 
-The Toolkit, when using the default network or creating one for you, will look to do this by default. However, when providing an existing network it's required that it has at least 2 subnets, each on a separate Zone.
+- Default - Will attach to a number of default subnets. This is configurable via the `eks_default_subnet_count` variable that has a default of `2`.
+- Create - Will create a number of subnets. This is configurable via the `subnet_pub_count` variable that has a default of `2`.
+- Existing - When providing an existing network it's required that it has at least 2 subnets, each on a separate Zone.
 
 #### Deprovisioning
 

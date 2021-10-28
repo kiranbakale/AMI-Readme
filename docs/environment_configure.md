@@ -5,7 +5,7 @@
 - [**GitLab Environment Toolkit - Configuring the environment with Ansible**](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
-- [GitLab Environment Toolkit - Advanced - Cloud Services](environment_advanced_services.md)
+- [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
@@ -113,7 +113,7 @@ ansible
         └── inventory
 ```
 
-> Previously we suggested a different folder structure under the `inventories` folder. While this will continue to work we recommend moving to the above structure moving forward.
+:information_source:&nbsp; Previously we suggested a different folder structure under the `inventories` folder. While this will continue to work we recommend moving to the above structure moving forward.
 
 With the above structure in place we can now look at the files to be configured. The rest of this guide will assume this structure is being used.
 
@@ -407,7 +407,7 @@ The Toolkit can install other GitLab versions from `13.2.0` onwards through two 
 
 All Ansible config can be viewed directly in the project under the [`group_vars`](../ansible/group_vars) folder. Most config will be found in the [`all.yml`](../ansible/group_vars/all.yml) file, where config applies to all machines. Additional config that only needs to apply to select machines can be found under specific group names under this folder. As mentioned earlier, we may also refer to additional variables in detail later in these docs under the [Advanced sections](environment_advanced.md) where they are applicable.
 
-## 3. Configure \ Update
+## 3. Configure
 
 After the config has been setup you're now ready to configure the environment. This is done as follows:
 

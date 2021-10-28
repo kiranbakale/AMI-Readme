@@ -434,8 +434,14 @@ variable "sidekiq_data_disks" {
   default = []
 }
 
+# EKS - Kubernetes \ Helm
+## Defaults
+variable "eks_default_subnet_count" {
+  type    = number
+  default = 2
+}
 
-# Kubernetes \ Helm
+## Webservice
 variable "webservice_node_pool_count" {
   type    = number
   default = 0
@@ -449,6 +455,7 @@ variable "webservice_node_pool_disk_size" {
   default = "100"
 }
 
+## Sidekiq
 variable "sidekiq_node_pool_count" {
   type    = number
   default = 0
@@ -462,6 +469,7 @@ variable "sidekiq_node_pool_disk_size" {
   default = "100"
 }
 
+## Supporting
 variable "supporting_node_pool_count" {
   type    = number
   default = 0
@@ -475,7 +483,7 @@ variable "supporting_node_pool_disk_size" {
   default = null
 }
 
-# AWS Kubernetes Auth Map
+## AWS Kubernetes Auth Map
 variable "aws_auth_roles" {
   type = list(object({
     rolearn       = string       # The IAM role ARN for the role that requires access
@@ -523,6 +531,10 @@ variable "rds_postgres_max_allocated_storage" {
 variable "rds_postgres_multi_az" {
   type    = bool
   default = true
+}
+variable "rds_postgres_default_subnet_count" {
+  type    = number
+  default = 2
 }
 variable "rds_postgres_iops" {
   type    = number
@@ -582,6 +594,10 @@ variable "rds_praefect_postgres_multi_az" {
   type    = bool
   default = true
 }
+variable "rds_praefect_postgres_default_subnet_count" {
+  type    = number
+  default = 2
+}
 variable "rds_praefect_postgres_iops" {
   type    = number
   default = 1000
@@ -636,6 +652,10 @@ variable "rds_geo_tracking_postgres_multi_az" {
   type    = bool
   default = true
 }
+variable "rds_geo_tracking_default_subnet_count" {
+  type    = number
+  default = 2
+}
 variable "rds_geo_tracking_postgres_iops" {
   type    = number
   default = 1000
@@ -654,7 +674,7 @@ variable "rds_geo_tracking_postgres_backup_retention_period" {
 }
 
 ## Redis
-### Combined
+### Combined \ Defaults
 variable "elasticache_redis_node_count" {
   type    = number
   default = 0
@@ -667,7 +687,6 @@ variable "elasticache_redis_kms_key_arn" {
   type    = string
   default = null
 }
-
 variable "elasticache_redis_engine_version" {
   type    = string
   default = "6.x"
@@ -685,6 +704,10 @@ variable "elasticache_redis_multi_az" {
   type    = bool
   default = true
 }
+variable "elasticache_redis_default_subnet_count" {
+  type    = number
+  default = 2
+}
 
 ### Separate - Cache
 variable "elasticache_redis_cache_node_count" {
@@ -699,7 +722,6 @@ variable "elasticache_redis_cache_kms_key_arn" {
   type    = string
   default = null
 }
-
 variable "elasticache_redis_cache_engine_version" {
   type    = string
   default = null
@@ -731,7 +753,6 @@ variable "elasticache_redis_persistent_kms_key_arn" {
   type    = string
   default = null
 }
-
 variable "elasticache_redis_persistent_engine_version" {
   type    = string
   default = null
@@ -779,8 +800,9 @@ variable "subnet_ids" {
   default = null
 }
 
-## Default Network
-variable "default_subnet_use_count" {
-  type    = number
-  default = 2
+## AWS Load Balancers
+### Internal
+variable "elb_internal_create" {
+  type    = bool
+  default = false
 }

@@ -5,7 +5,7 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [**GitLab Environment Toolkit - Advanced - External SSL**](environment_advanced_ssl.md)
-- [GitLab Environment Toolkit - Advanced - Cloud Services](environment_advanced_services.md)
+- [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
@@ -29,13 +29,12 @@ With External SSL termination, the external entry point for the environment will
 When External SSL termination is enabled the following should be noted:
 
 - The main GitLab application as well as Grafana will be served externally via `https`. Any requests made to these over `http` will be redirected to `https`.
-- Other accessible endpoints such as HAProxy stats will still be served over `http`.
 
 Below are the details on how to set this up with either source.
 
 ## 1. Prepare Certificates and Toolkit
 
-The first step is to prepare files and \ or config for the Toolkit.
+The first step is to prepare files and/or config for the Toolkit.
 
 The steps for this differ depending on certificate source - head to the section below that's for your selected source:
 
@@ -54,7 +53,7 @@ The first step is to provide the certificates themselves for the Toolkit to use.
 
 - That certificate and key files are located in the `ansible/environments/<env_name>/files/certificates` folder
 - That certificate and key files are named in the formats `<hostname>.pem` and `<hostname>.key` respectively.
-  - `pem` is used here by default as this is now the typically used standard across various tools such as HAProxy \ Let's Encrypt, etc...
+  - `pem` is used here by default as this is now the typically used standard across various tools such as HAProxy / Let's Encrypt, etc...
 - That the certificate file contains the [full chain](https://www.digicert.com/kb/ssl-support/pem-ssl-creation.htm)
 
 You can optionally store your SSL files in a different location as well as use different names if desired with additional configuration. This will be detailed further in the next section.
