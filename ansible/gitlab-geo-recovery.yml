@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Run GitLab Geo Recovery
+      include_role:
+        name: gitlab-geo
+        tasks_from: recovery
