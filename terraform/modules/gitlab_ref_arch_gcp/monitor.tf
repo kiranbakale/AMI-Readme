@@ -21,6 +21,8 @@ module "monitor" {
   geo_deployment = var.geo_deployment
 
   tags = ["${var.prefix}-web"]
+
+  allow_stopping_for_update = var.allow_stopping_for_update
 }
 
 output "monitor" {

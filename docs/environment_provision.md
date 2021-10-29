@@ -203,12 +203,19 @@ output "gitlab_ref_arch_gcp" {
   - `source` - The relative path to the `gitlab_ref_arch_gcp` module. We assume you're creating config in the `terraform/environments/` folder here but if you're in a different location this setting must be updated to the correct path.
   - `prefix` - The name prefix of the project. Set in `variables.tf`.
   - `project` - The [ID](https://support.google.com/googleapi/answer/7014113?hl=en) of the GCP project to connect to. Set in `variables.tf`.
+  - `allow_stopping_for_update` - Controls whether Terraform can restart VMs when making changes (required in some cases). Should only be disabled for additional resilience. Refer to [Allow Stopping for Updates (GCP)](#allow-stopping-for-updates-gcp) for more info. Defaults to `true`.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
 
 - `*_node_count` - The number of machines to set up for that component
 - `*_machine_type` - The [GCP Machine Type](https://cloud.google.com/compute/docs/machine-types) (size) for that component
 - `haproxy_external_external_ips` - Set the external HAProxy load balancer to assume the external IP set in `variables.tf`. Note that this is an array setting as the advanced underlying functionality needs to account for the specific setting of IPs for potentially multiple machines. In this case though it should always only be one IP.
+
+##### Allow Stopping for Updates (GCP)
+
+For GCP, changing some settings such as `*_machine_type` on a started instance will require restarting it.
+
+As an additional level of resilience you can disable this behaviour by setting `allow_stopping_for_update` to `false` in the [module's environment config file](#configure-module-settings-environmenttf). Note though that when you wish to upgrade in the future you may need to re-enable this setting.
 
 ##### Configure network setup (GCP)
 

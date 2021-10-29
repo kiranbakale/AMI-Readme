@@ -22,6 +22,8 @@ module "haproxy_external" {
   geo_deployment = var.geo_deployment
 
   tags = ["${var.prefix}-web", "${var.prefix}-ssh", "${var.prefix}-haproxy", "${var.prefix}-monitor"]
+
+  allow_stopping_for_update = var.allow_stopping_for_update
 }
 
 output "haproxy_external" {
@@ -51,6 +53,8 @@ module "haproxy_internal" {
   geo_deployment = var.geo_deployment
 
   tags = ["${var.prefix}-haproxy"]
+
+  allow_stopping_for_update = var.allow_stopping_for_update
 }
 
 output "haproxy_internal" {

@@ -516,3 +516,8 @@ variable "additional_labels" {
   type    = map(any)
   default = {}
 }
+
+variable "allow_stopping_for_update" {
+  type    = bool
+  default = true
+}
