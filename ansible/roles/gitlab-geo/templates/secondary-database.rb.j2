@@ -27,4 +27,4 @@ patroni['password'] = '{{ patroni_password }}'
 {% endif %}
 {% endif %}
 
-geo_logcursor['enable'] = false
+geo_logcursor['enable'] = {{ ('sidekiq' not in groups and not cloud_native_hybrid_geo) | lower }}
