@@ -62,7 +62,7 @@
   tags: reconfigure
   register: gitlab_rails_custom_config_file_path
 
-- name: Omnibus database related tasks
+- name: Get Omnibus Postgres Primary
   block:
     - name: Gather facts for Omnibus Postgres cluster
       block:
@@ -81,7 +81,11 @@
       tags:
         - reconfigure
         - db_migrate
+  when: "'postgres' in groups"
+  run_once: true
 
+- name: Run Database Migrations
+  block:
     - name: Setup GitLab deploy node config file with DB Migrations
       template:
         src: templates/gitlab-rails.gitlab.rb.j2
@@ -110,7 +114,6 @@
       tags:
         - reconfigure
         - db_migrate
-  when: "'postgres' in groups"
   run_once: true
 
 - name: Setup all GitLab Rails config files
@@ -138,7 +141,7 @@
   tags: reconfigure
 
 - name: Restart GitLab
-  command: gitlab-ctl stop && gitlab-ctl start
+  shell: gitlab-ctl stop && gitlab-ctl start
   register: result
   retries: 2
   until: result is success
