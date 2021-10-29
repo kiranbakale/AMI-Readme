@@ -19,6 +19,8 @@ module "gitlab_nfs" {
 
   geo_site       = var.geo_site
   geo_deployment = var.geo_deployment
+
+  allow_stopping_for_update = var.allow_stopping_for_update
 }
 
 output "gitlab_nfs" {

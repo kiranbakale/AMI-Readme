@@ -21,6 +21,8 @@ module "praefect_postgres" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+
+  allow_stopping_for_update = var.allow_stopping_for_update
 }
 
 output "praefect_postgres" {

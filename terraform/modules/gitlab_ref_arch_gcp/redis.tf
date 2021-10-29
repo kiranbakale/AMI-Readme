@@ -20,6 +20,8 @@ module "redis" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+
+  allow_stopping_for_update = var.allow_stopping_for_update
 }
 
 output "redis" {
@@ -51,6 +53,8 @@ module "redis_cache" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+
+  allow_stopping_for_update = var.allow_stopping_for_update
 }
 
 output "redis_cache" {
@@ -80,6 +84,9 @@ module "redis_persistent" {
   geo_deployment = var.geo_deployment
 
   label_secondaries = true
+
+  allow_stopping_for_update = var.allow_stopping_for_update
+
 }
 
 output "redis_persistent" {

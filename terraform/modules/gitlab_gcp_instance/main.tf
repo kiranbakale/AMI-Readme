@@ -42,7 +42,7 @@ resource "google_compute_instance" "gitlab" {
   tags         = distinct(concat([var.prefix, var.node_type, "${var.prefix}-${var.node_type}"], var.tags))
   zone         = var.zones == null ? null : element(var.zones, count.index)
 
-  allow_stopping_for_update = true
+  allow_stopping_for_update = var.allow_stopping_for_update
 
   boot_disk {
     initialize_params {
