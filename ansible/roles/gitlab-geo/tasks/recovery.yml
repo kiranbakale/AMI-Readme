@@ -34,4 +34,6 @@
     - (geo_secondary_site_group_name in group_names)
 
 - name: Run GitLab Geo Recovery
+  vars:
+    geo_recovery: true
   import_tasks: main.yml
