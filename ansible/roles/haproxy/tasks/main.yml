@@ -5,14 +5,6 @@
     state: directory
   tags: reconfigure
 
-- name: Remove old HAProxy container
-  docker_container:
-    name: haproxy
-    state: absent
-  tags:
-    - reconfigure
-    - restart
-
 - name: Configure External SSL
   block:
     - name: Configure Let's Encrypt certificates
@@ -46,7 +38,8 @@
     name: haproxy
     image: haproxy:alpine
     pull: true
-    restart_policy: always
+    recreate: true
+    restart_policy: unless-stopped
     state: started
     ports: ['80:80', '6432:6432', '2305:2305', '1936:1936', '5432:5432']
     volumes:
@@ -61,7 +54,8 @@
     name: haproxy
     image: haproxy:alpine
     pull: true
-    restart_policy: always
+    recreate: true
+    restart_policy: unless-stopped
     state: started
     ports: ['80:80', '443:443', '1936:1936', '2222:2222', '9090:9090', '9122:9122', '5601:5601']
     volumes:
@@ -77,6 +71,26 @@
   until: haproxy_docker_status.stdout == 'running'
   retries: 10
   delay: 2
+  tags:
+    - reconfigure
+    - restart
+
+# Failsafe for when HAproxy External docker is timing out externally
+# Happens randomly on certain cloud providers
+- name: Check if HAProxy External is timing out
+  block:
+    - name: Check if HAProxy External is timing out
+      uri:
+        url: "{{ external_url_sanitised }}"
+        timeout: 5
+      register: haproxy_ext_res
+      failed_when: haproxy_ext_res.status == -1
+  rescue:
+    - name: Restart HAProxy External docker on failure
+      docker_container:
+        name: haproxy
+        restart: true
+  when: "'haproxy_external' in group_names"
   tags:
     - reconfigure
     - restart
