@@ -357,49 +357,6 @@ variable "redis_persistent_disks" {
   default = []
 }
 
-# Separate Redis Sentinel is Deprecated - To be removed in future release
-variable "redis_sentinel_cache_node_count" {
-  type    = number
-  default = 0
-}
-variable "redis_sentinel_cache_machine_type" {
-  type    = string
-  default = ""
-}
-variable "redis_sentinel_cache_disk_type" {
-  type    = string
-  default = null
-}
-variable "redis_sentinel_cache_disk_size" {
-  type    = string
-  default = null
-}
-variable "redis_sentinel_cache_disks" {
-  type    = list(any)
-  default = []
-}
-
-variable "redis_sentinel_persistent_node_count" {
-  type    = number
-  default = 0
-}
-variable "redis_sentinel_persistent_machine_type" {
-  type    = string
-  default = ""
-}
-variable "redis_sentinel_persistent_disk_type" {
-  type    = string
-  default = null
-}
-variable "redis_sentinel_persistent_disk_size" {
-  type    = string
-  default = null
-}
-variable "redis_sentinel_persistent_disks" {
-  type    = list(any)
-  default = []
-}
-
 variable "sidekiq_node_count" {
   type    = number
   default = 0

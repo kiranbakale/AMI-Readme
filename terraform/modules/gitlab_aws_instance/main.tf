@@ -23,6 +23,9 @@ resource "aws_instance" "gitlab" {
     volume_type = var.disk_type
     volume_size = var.disk_size
     iops        = var.disk_iops
+
+    encrypted  = var.disk_encrypt
+    kms_key_id = var.disk_kms_key_arn
   }
 
   tags = {
@@ -71,6 +74,9 @@ resource "aws_ebs_volume" "gitlab" {
   size              = each.value.size
   iops              = each.value.iops
   availability_zone = each.value.availability_zone
+
+  encrypted  = true
+  kms_key_id = var.disk_kms_key_arn
 
   tags = {
     Name = each.key

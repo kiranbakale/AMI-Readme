@@ -8,10 +8,12 @@ frontend http-in
     http-request set-header X-Forwarded-Ssl on if { ssl_fc }
 {% endif %}
 
+{% if 'monitor' in groups %}
     acl grafana path_beg -i /-/grafana
     use_backend grafana if grafana
 
     default_backend gitlab-rails
+{% endif %}
 
 frontend gitlab-ssh-in
     bind *:2222
@@ -21,6 +23,7 @@ frontend gitlab-ssh-in
 
     default_backend gitlab-rails-ssh
 
+{% if 'monitor' in groups %}
 frontend prometheus
     bind *:9090
 
@@ -30,11 +33,14 @@ frontend influxdb_exporter
     bind *:9122
 
     default_backend influxdb_exporter
+{% endif %}
 
+{% if 'elastic' in groups %}
 frontend kibana
     bind *:5601
 
     default_backend kibana
+{% endif %}
 
 backend gitlab-rails
     option httpchk GET /-/readiness
@@ -53,6 +59,7 @@ backend gitlab-rails-ssh
     server gitlab-rails{{loop.index}} {{ ip }}:22 track gitlab-rails/gitlab-rails{{loop.index}}
 {% endfor %}
 
+{% if 'monitor' in groups %}
 backend grafana
     option httpchk GET /-/grafana/api/health
 
@@ -67,8 +74,11 @@ backend influxdb_exporter
     option httpchk GET /ping
 
     server influxdb_exporter {{ monitor_int_ip }}:9122 check
+{% endif %}
 
+{% if 'elastic' in groups %}
 backend kibana
     option httpchk GET /api/status
 
     server kibana {{ elastic_primary_int_ip }}:5601 check
+{% endif %}

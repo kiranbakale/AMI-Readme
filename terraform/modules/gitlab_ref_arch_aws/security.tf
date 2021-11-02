@@ -82,6 +82,24 @@ resource "aws_security_group" "gitlab_external_http_https" {
   }
 }
 
+# https://github.com/hashicorp/terraform/issues/8617
+# To be investigated
+resource "aws_security_group" "gitlab_external_haproxy_stats" {
+  count  = min(var.haproxy_external_node_count + var.haproxy_internal_node_count, 1)
+  name   = "${var.prefix}-external-haproxy-stats"
+  vpc_id = local.vpc_id
+  ingress {
+    from_port   = 1936
+    to_port     = 1936
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.prefix}-external-haproxy-stats"
+  }
+}
+
 resource "aws_security_group" "gitlab_external_monitor" {
   count  = min(var.monitor_node_count, 1)
   name   = "${var.prefix}-external-monitor"

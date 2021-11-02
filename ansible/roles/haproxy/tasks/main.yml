@@ -44,6 +44,8 @@
     ports: ['80:80', '6432:6432', '2305:2305', '1936:1936', '5432:5432']
     volumes:
       - /opt/haproxy:/usr/local/etc/haproxy:ro
+    sysctls:
+      net.ipv4.ip_unprivileged_port_start: 0
   when: "'haproxy_internal' in group_names"
   tags:
     - reconfigure
@@ -60,6 +62,8 @@
     ports: ['80:80', '443:443', '1936:1936', '2222:2222', '9090:9090', '9122:9122', '5601:5601']
     volumes:
       - /opt/haproxy:/usr/local/etc/haproxy:ro
+    sysctls:
+      net.ipv4.ip_unprivileged_port_start: 0
   when: "'haproxy_external' in group_names"
   tags:
     - reconfigure

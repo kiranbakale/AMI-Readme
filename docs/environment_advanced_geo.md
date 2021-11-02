@@ -89,7 +89,7 @@ module "gitlab_ref_arch_*" {
   [...]
 ```
 
-:information_source: When using repmgr on the secondary site the `node_count` in `postgres.tf` should be set to 1 for the secondary sites config. When using Patroni, this can be left at its original value.
+:information_source:&nbsp; When using repmgr on the secondary site the `node_count` in `postgres.tf` should be set to 1 for the secondary sites config. When using Patroni, this can be left at its original value.
 
 Once each site is configured we can run the `terraform apply` command against each project. You can run this command against the primary and secondary sites at the same time.
 

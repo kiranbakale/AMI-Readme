@@ -1,12 +1,11 @@
 locals {
-  create_postgres_kms_key  = var.rds_postgres_instance_type != "" && var.rds_postgres_kms_key_arn == null
-  create_postgres_resource = var.rds_postgres_instance_type != "" ? 1 : 0
+  rds_postgres_create = var.rds_postgres_instance_type != ""
 
   rds_postgres_subnet_ids = local.subnet_ids != null ? local.subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_postgres_default_subnet_count)
 }
 
 resource "aws_db_subnet_group" "gitlab" {
-  count      = local.create_postgres_resource
+  count      = local.rds_postgres_create ? 1 : 0
   name       = "${var.prefix}-rds-subnet-group"
   subnet_ids = local.rds_postgres_subnet_ids
 
@@ -15,18 +14,16 @@ resource "aws_db_subnet_group" "gitlab" {
   }
 }
 
-resource "aws_kms_key" "gitlab_rds_postgres_kms_key" {
-  count = local.create_postgres_kms_key ? 1 : 0
+# aws_db_instance doesn't look to follow standard null design for kms_key_id - will ignore changes
+# This ensures default key is used
+data "aws_kms_key" "aws_rds" {
+  count = local.rds_postgres_create && var.rds_postgres_kms_key_arn == null && var.default_kms_key_arn == null ? 1 : 0
 
-  description = "${var.prefix} RDS Postgres KMS Key"
-
-  tags = {
-    Name = "${var.prefix}-rds-postgres-kms-key"
-  }
+  key_id = "alias/aws/rds"
 }
 
 resource "aws_db_instance" "gitlab" {
-  count = local.create_postgres_resource
+  count = local.rds_postgres_create ? 1 : 0
 
   identifier     = "${var.prefix}-rds"
   engine         = "postgres"
@@ -48,10 +45,12 @@ resource "aws_db_instance" "gitlab" {
   replicate_source_db = var.rds_postgres_replication_database_arn
   apply_immediately   = true
 
-  allocated_storage       = var.rds_postgres_allocated_storage
-  max_allocated_storage   = var.rds_postgres_max_allocated_storage
-  storage_encrypted       = true
-  kms_key_id              = local.create_postgres_kms_key ? aws_kms_key.gitlab_rds_postgres_kms_key[0].arn : var.rds_postgres_kms_key_arn
+  allocated_storage     = var.rds_postgres_allocated_storage
+  max_allocated_storage = var.rds_postgres_max_allocated_storage
+  storage_encrypted     = true
+  kms_key_id            = coalesce(var.rds_postgres_kms_key_arn, var.default_kms_key_arn, data.aws_kms_key.aws_rds[0].arn)
+
+  backup_window           = var.rds_postgres_backup_window
   backup_retention_period = var.rds_postgres_backup_retention_period
 
   allow_major_version_upgrade = true

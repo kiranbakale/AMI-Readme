@@ -14,21 +14,6 @@ resource "aws_elasticache_subnet_group" "gitlab" {
 }
 
 # Redis Combined
-
-locals {
-  elasticache_redis_kms_key_create = var.elasticache_redis_node_count > 0 && var.elasticache_redis_kms_key_arn == null
-}
-
-resource "aws_kms_key" "gitlab_elasticache_redis_kms_key" {
-  count = local.elasticache_redis_kms_key_create ? 1 : 0
-
-  description = "${var.prefix} Elasticache Redis KMS Key"
-
-  tags = {
-    Name = "${var.prefix}-rds-elasticache-redis-key"
-  }
-}
-
 resource "aws_elasticache_replication_group" "gitlab_redis" {
   count = var.elasticache_redis_node_count > 0 ? 1 : 0
 
@@ -43,8 +28,11 @@ resource "aws_elasticache_replication_group" "gitlab_redis" {
   automatic_failover_enabled = true
   at_rest_encryption_enabled = true
   transit_encryption_enabled = true
-  kms_key_id                 = local.elasticache_redis_kms_key_create ? aws_kms_key.gitlab_elasticache_redis_kms_key[0].arn : var.elasticache_redis_kms_key_arn
+  kms_key_id                 = var.elasticache_redis_kms_key_arn != null ? var.elasticache_redis_kms_key_arn : var.default_kms_key_arn
   auth_token                 = var.elasticache_redis_password
+
+  snapshot_retention_limit = var.elasticache_redis_snapshot_retention_limit
+  snapshot_window          = var.elasticache_redis_snapshot_window
 
   subnet_group_name = aws_elasticache_subnet_group.gitlab[0].name
   security_group_ids = [
@@ -54,32 +42,23 @@ resource "aws_elasticache_replication_group" "gitlab_redis" {
 
 output "elasticache_redis_connection" {
   value = {
-    "elasticache_redis_host"        = try(aws_elasticache_replication_group.gitlab_redis[0].primary_endpoint_address, "")
+    "elasticache_redis_address"     = try(aws_elasticache_replication_group.gitlab_redis[0].primary_endpoint_address, "")
     "elasticache_redis_port"        = try(aws_elasticache_replication_group.gitlab_redis[0].port, "")
-    "elasticache_redis_kms_key_arn" = try(aws_elasticache_replication_group.gitlab_redis[0].kms_key_id, "")
+    "elasticache_redis_kms_key_arn" = try(aws_elasticache_replication_group.gitlab_redis_cache[0].kms_key_id, "")
   }
 }
 
 # Redis Separate Cache
 
 locals {
-  elasticache_redis_cache_kms_key_create = var.elasticache_redis_cache_node_count > 0 && var.elasticache_redis_cache_kms_key_arn == null
-
   ## Use default values if specifics aren't specfied
-  elasticache_redis_cache_engine_version = coalesce(var.elasticache_redis_cache_engine_version, var.elasticache_redis_engine_version)
-  elasticache_redis_cache_password       = var.elasticache_redis_cache_password != "" ? var.elasticache_redis_cache_password : var.elasticache_redis_password
-  elasticache_redis_cache_port           = coalesce(var.elasticache_redis_cache_port, var.elasticache_redis_port)
-  elasticache_redis_cache_multi_az       = coalesce(var.elasticache_redis_cache_multi_az, var.elasticache_redis_multi_az)
-}
-
-resource "aws_kms_key" "gitlab_elasticache_redis_cache_kms_key" {
-  count = local.elasticache_redis_cache_kms_key_create ? 1 : 0
-
-  description = "${var.prefix} Elasticache Redis Cache KMS Key"
-
-  tags = {
-    Name = "${var.prefix}-rds-elasticache-redis-cache-key"
-  }
+  elasticache_redis_cache_engine_version           = coalesce(var.elasticache_redis_cache_engine_version, var.elasticache_redis_engine_version)
+  elasticache_redis_cache_password                 = var.elasticache_redis_cache_password != "" ? var.elasticache_redis_cache_password : var.elasticache_redis_password
+  elasticache_redis_cache_port                     = coalesce(var.elasticache_redis_cache_port, var.elasticache_redis_port)
+  elasticache_redis_cache_multi_az                 = coalesce(var.elasticache_redis_cache_multi_az, var.elasticache_redis_multi_az)
+  elasticache_redis_cache_kms_key_arn              = var.elasticache_redis_cache_kms_key_arn != null ? var.elasticache_redis_cache_kms_key_arn : var.elasticache_redis_kms_key_arn
+  elasticache_redis_cache_snapshot_retention_limit = var.elasticache_redis_cache_snapshot_retention_limit != null ? var.elasticache_redis_cache_snapshot_retention_limit : var.elasticache_redis_snapshot_retention_limit
+  elasticache_redis_cache_snapshot_window          = var.elasticache_redis_cache_snapshot_window != null ? var.elasticache_redis_cache_snapshot_window : var.elasticache_redis_snapshot_window
 }
 
 resource "aws_elasticache_parameter_group" "gitlab_redis_cache" {
@@ -115,8 +94,11 @@ resource "aws_elasticache_replication_group" "gitlab_redis_cache" {
 
   at_rest_encryption_enabled = true
   transit_encryption_enabled = true
-  kms_key_id                 = local.elasticache_redis_cache_kms_key_create ? aws_kms_key.gitlab_elasticache_redis_cache_kms_key[0].arn : var.elasticache_redis_cache_kms_key_arn
+  kms_key_id                 = local.elasticache_redis_cache_kms_key_arn != null ? local.elasticache_redis_cache_kms_key_arn : var.default_kms_key_arn
   auth_token                 = local.elasticache_redis_cache_password
+
+  snapshot_retention_limit = local.elasticache_redis_cache_snapshot_retention_limit
+  snapshot_window          = local.elasticache_redis_cache_snapshot_window
 
   subnet_group_name = aws_elasticache_subnet_group.gitlab[0].name
   security_group_ids = [
@@ -135,23 +117,14 @@ output "elasticache_redis_cache_connection" {
 # Redis Separate Persistent
 
 locals {
-  elasticache_redis_persistent_kms_key_create = var.elasticache_redis_persistent_node_count > 0 && var.elasticache_redis_persistent_kms_key_arn == null
-
   ## Use default values if specifics aren't specfied
-  elasticache_redis_persistent_password       = var.elasticache_redis_persistent_password != "" ? var.elasticache_redis_persistent_password : var.elasticache_redis_password
-  elasticache_redis_persistent_engine_version = coalesce(var.elasticache_redis_persistent_engine_version, var.elasticache_redis_engine_version)
-  elasticache_redis_persistent_port           = coalesce(var.elasticache_redis_persistent_port, var.elasticache_redis_port)
-  elasticache_redis_persistent_multi_az       = coalesce(var.elasticache_redis_persistent_multi_az, var.elasticache_redis_multi_az)
-}
-
-resource "aws_kms_key" "gitlab_elasticache_redis_persistent_kms_key" {
-  count = local.elasticache_redis_persistent_kms_key_create ? 1 : 0
-
-  description = "${var.prefix} Elasticache Redis Persistent KMS Key"
-
-  tags = {
-    Name = "${var.prefix}-rds-elasticache-redis-persistent-key"
-  }
+  elasticache_redis_persistent_password                 = var.elasticache_redis_persistent_password != "" ? var.elasticache_redis_persistent_password : var.elasticache_redis_password
+  elasticache_redis_persistent_engine_version           = coalesce(var.elasticache_redis_persistent_engine_version, var.elasticache_redis_engine_version)
+  elasticache_redis_persistent_port                     = coalesce(var.elasticache_redis_persistent_port, var.elasticache_redis_port)
+  elasticache_redis_persistent_multi_az                 = coalesce(var.elasticache_redis_persistent_multi_az, var.elasticache_redis_multi_az)
+  elasticache_redis_persistent_kms_key_arn              = var.elasticache_redis_persistent_kms_key_arn != null ? var.elasticache_redis_persistent_kms_key_arn : var.elasticache_redis_kms_key_arn
+  elasticache_redis_persistent_snapshot_retention_limit = var.elasticache_redis_persistent_snapshot_retention_limit != null ? var.elasticache_redis_persistent_snapshot_retention_limit : var.elasticache_redis_snapshot_retention_limit
+  elasticache_redis_persistent_snapshot_window          = var.elasticache_redis_persistent_snapshot_window != null ? var.elasticache_redis_persistent_snapshot_window : var.elasticache_redis_snapshot_window
 }
 
 resource "aws_elasticache_replication_group" "gitlab_redis_persistent" {
@@ -168,8 +141,11 @@ resource "aws_elasticache_replication_group" "gitlab_redis_persistent" {
   automatic_failover_enabled = true
   at_rest_encryption_enabled = true
   transit_encryption_enabled = true
-  kms_key_id                 = local.elasticache_redis_persistent_kms_key_create ? aws_kms_key.gitlab_elasticache_redis_persistent_kms_key[0].arn : var.elasticache_redis_persistent_kms_key_arn
+  kms_key_id                 = local.elasticache_redis_persistent_kms_key_arn != null ? local.elasticache_redis_persistent_kms_key_arn : var.default_kms_key_arn
   auth_token                 = local.elasticache_redis_persistent_password
+
+  snapshot_retention_limit = local.elasticache_redis_persistent_snapshot_retention_limit
+  snapshot_window          = local.elasticache_redis_persistent_snapshot_window
 
   subnet_group_name = aws_elasticache_subnet_group.gitlab[0].name
   security_group_ids = [

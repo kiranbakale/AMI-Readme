@@ -31,10 +31,18 @@ variable "default_disk_size" {
   type    = string
   default = "100"
 }
-
 variable "default_disk_type" {
   type    = string
   default = "gp3"
+}
+variable "default_disk_encrypt" {
+  type    = bool
+  default = false
+}
+
+variable "default_kms_key_arn" {
+  type    = string
+  default = null
 }
 
 variable "ssh_public_key_file" {
@@ -56,6 +64,10 @@ variable "object_storage_tags" {
   type        = map(any)
   default     = {}
 }
+variable "object_storage_kms_key_arn" {
+  type    = string
+  default = null
+}
 
 # Machines
 variable "consul_node_count" {
@@ -71,6 +83,14 @@ variable "consul_disk_type" {
   default = null
 }
 variable "consul_disk_size" {
+  type    = string
+  default = null
+}
+variable "consul_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "consul_disk_kms_key_arn" {
   type    = string
   default = null
 }
@@ -95,6 +115,14 @@ variable "elastic_disk_size" {
   type    = string
   default = "500"
 }
+variable "elastic_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "elastic_disk_kms_key_arn" {
+  type    = string
+  default = null
+}
 variable "elastic_data_disks" {
   type    = list(any)
   default = []
@@ -116,6 +144,14 @@ variable "gitaly_disk_size" {
   type    = string
   default = "500"
 }
+variable "gitaly_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "gitaly_disk_kms_key_arn" {
+  type    = string
+  default = null
+}
 variable "gitaly_data_disks" {
   type    = list(any)
   default = []
@@ -134,6 +170,14 @@ variable "gitlab_nfs_disk_type" {
   default = null
 }
 variable "gitlab_nfs_disk_size" {
+  type    = string
+  default = null
+}
+variable "gitlab_nfs_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "gitlab_nfs_disk_kms_key_arn" {
   type    = string
   default = null
 }
@@ -158,6 +202,14 @@ variable "gitlab_rails_disk_size" {
   type    = string
   default = null
 }
+variable "gitlab_rails_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "gitlab_rails_disk_kms_key_arn" {
+  type    = string
+  default = null
+}
 variable "gitlab_rails_data_disks" {
   type    = list(any)
   default = []
@@ -179,12 +231,20 @@ variable "haproxy_external_disk_size" {
   type    = string
   default = null
 }
-variable "haproxy_external_elastic_ip_allocation_ids" {
-  type    = list(string)
-  default = []
+variable "haproxy_external_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "haproxy_external_disk_kms_key_arn" {
+  type    = string
+  default = null
 }
 variable "haproxy_external_data_disks" {
   type    = list(any)
+  default = []
+}
+variable "haproxy_external_elastic_ip_allocation_ids" {
+  type    = list(string)
   default = []
 }
 
@@ -201,6 +261,14 @@ variable "haproxy_internal_disk_type" {
   default = null
 }
 variable "haproxy_internal_disk_size" {
+  type    = string
+  default = null
+}
+variable "haproxy_internal_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "haproxy_internal_disk_kms_key_arn" {
   type    = string
   default = null
 }
@@ -225,6 +293,14 @@ variable "monitor_disk_size" {
   type    = string
   default = null
 }
+variable "monitor_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "monitor_disk_kms_key_arn" {
+  type    = string
+  default = null
+}
 variable "monitor_data_disks" {
   type    = list(any)
   default = []
@@ -243,6 +319,14 @@ variable "pgbouncer_disk_type" {
   default = null
 }
 variable "pgbouncer_disk_size" {
+  type    = string
+  default = null
+}
+variable "pgbouncer_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "pgbouncer_disk_kms_key_arn" {
   type    = string
   default = null
 }
@@ -267,6 +351,14 @@ variable "postgres_disk_size" {
   type    = string
   default = null
 }
+variable "postgres_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "postgres_disk_kms_key_arn" {
+  type    = string
+  default = null
+}
 variable "postgres_data_disks" {
   type    = list(any)
   default = []
@@ -285,6 +377,14 @@ variable "praefect_disk_type" {
   default = null
 }
 variable "praefect_disk_size" {
+  type    = string
+  default = null
+}
+variable "praefect_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "praefect_disk_kms_key_arn" {
   type    = string
   default = null
 }
@@ -309,6 +409,14 @@ variable "praefect_postgres_disk_size" {
   type    = string
   default = null
 }
+variable "praefect_postgres_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "praefect_postgres_disk_kms_key_arn" {
+  type    = string
+  default = null
+}
 variable "praefect_postgres_data_disks" {
   type    = list(any)
   default = []
@@ -327,6 +435,14 @@ variable "redis_disk_type" {
   default = null
 }
 variable "redis_disk_size" {
+  type    = string
+  default = null
+}
+variable "redis_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "redis_disk_kms_key_arn" {
   type    = string
   default = null
 }
@@ -351,6 +467,14 @@ variable "redis_cache_disk_size" {
   type    = string
   default = null
 }
+variable "redis_cache_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "redis_cache_disk_kms_key_arn" {
+  type    = string
+  default = null
+}
 variable "redis_cache_data_disks" {
   type    = list(any)
   default = []
@@ -372,45 +496,17 @@ variable "redis_persistent_disk_size" {
   type    = string
   default = null
 }
+variable "redis_persistent_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "redis_persistent_disk_kms_key_arn" {
+  type    = string
+  default = null
+}
 variable "redis_persistent_data_disks" {
   type    = list(any)
   default = []
-}
-
-
-# Separate Redis Sentinel is Deprecated - To be removed in future release
-variable "redis_sentinel_cache_node_count" {
-  type    = number
-  default = 0
-}
-variable "redis_sentinel_cache_instance_type" {
-  type    = string
-  default = ""
-}
-variable "redis_sentinel_cache_disk_type" {
-  type    = string
-  default = null
-}
-variable "redis_sentinel_cache_disk_size" {
-  type    = string
-  default = null
-}
-
-variable "redis_sentinel_persistent_node_count" {
-  type    = number
-  default = 0
-}
-variable "redis_sentinel_persistent_instance_type" {
-  type    = string
-  default = ""
-}
-variable "redis_sentinel_persistent_disk_type" {
-  type    = string
-  default = null
-}
-variable "redis_sentinel_persistent_disk_size" {
-  type    = string
-  default = null
 }
 
 variable "sidekiq_node_count" {
@@ -426,6 +522,14 @@ variable "sidekiq_disk_type" {
   default = null
 }
 variable "sidekiq_disk_size" {
+  type    = string
+  default = null
+}
+variable "sidekiq_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "sidekiq_disk_kms_key_arn" {
   type    = string
   default = null
 }
@@ -556,6 +660,10 @@ variable "rds_postgres_backup_retention_period" {
   type    = number
   default = null
 }
+variable "rds_postgres_backup_window" {
+  type    = string
+  default = null
+}
 
 ## Praefect PostgreSQL
 variable "rds_praefect_postgres_instance_type" {
@@ -612,6 +720,10 @@ variable "rds_praefect_postgres_kms_key_arn" {
 }
 variable "rds_praefect_postgres_backup_retention_period" {
   type    = number
+  default = null
+}
+variable "rds_praefect_postgres_backup_window" {
+  type    = string
   default = null
 }
 
@@ -672,6 +784,10 @@ variable "rds_geo_tracking_postgres_backup_retention_period" {
   type    = number
   default = null
 }
+variable "rds_geo_tracking_postgres_backup_window" {
+  type    = string
+  default = null
+}
 
 ## Redis
 ### Combined \ Defaults
@@ -703,6 +819,14 @@ variable "elasticache_redis_port" {
 variable "elasticache_redis_multi_az" {
   type    = bool
   default = true
+}
+variable "elasticache_redis_snapshot_retention_limit" {
+  type    = number
+  default = null
+}
+variable "elasticache_redis_snapshot_window" {
+  type    = string
+  default = null
 }
 variable "elasticache_redis_default_subnet_count" {
   type    = number
@@ -739,6 +863,14 @@ variable "elasticache_redis_cache_multi_az" {
   type    = bool
   default = null
 }
+variable "elasticache_redis_cache_snapshot_retention_limit" {
+  type    = number
+  default = null
+}
+variable "elasticache_redis_cache_snapshot_window" {
+  type    = string
+  default = null
+}
 
 ### Separate - Persistent
 variable "elasticache_redis_persistent_node_count" {
@@ -768,6 +900,14 @@ variable "elasticache_redis_persistent_port" {
 }
 variable "elasticache_redis_persistent_multi_az" {
   type    = bool
+  default = null
+}
+variable "elasticache_redis_persistent_snapshot_retention_limit" {
+  type    = number
+  default = null
+}
+variable "elasticache_redis_persistent_snapshot_window" {
+  type    = string
   default = null
 }
 

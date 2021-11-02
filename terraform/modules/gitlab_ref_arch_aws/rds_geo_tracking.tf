@@ -1,32 +1,21 @@
 locals {
-  create_geo_tracking_kms_key  = var.rds_geo_tracking_postgres_instance_type != "" && var.rds_geo_tracking_postgres_kms_key_arn == null
-  create_geo_tracking_resource = var.rds_geo_tracking_postgres_instance_type != "" ? 1 : 0
+  rds_geo_tracking_postgres_create = var.rds_geo_tracking_postgres_instance_type != ""
 
-  rds_geo_tracking_subnet_ids = local.subnet_ids != null ? local.subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_geo_tracking_default_subnet_count)
+  rds_geo_tracking_postgres_subnet_ids = local.subnet_ids != null ? local.subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_geo_tracking_default_subnet_count)
 }
 
 resource "aws_db_subnet_group" "gitlab_geo" {
-  count      = local.create_geo_tracking_resource
+  count      = local.rds_geo_tracking_postgres_create ? 1 : 0
   name       = "${var.prefix}-geo-rds-subnet-group"
-  subnet_ids = local.rds_geo_tracking_subnet_ids
+  subnet_ids = local.rds_geo_tracking_postgres_subnet_ids
 
   tags = {
     Name = "${var.prefix}-geo-rds-subnet-group"
   }
 }
 
-resource "aws_kms_key" "gitlab_geo_tracking_kms_key" {
-  count = local.create_geo_tracking_kms_key ? 1 : 0
-
-  description = "${var.prefix} RDS Geo Tracking Postgres KMS Key"
-
-  tags = {
-    Name = "${var.prefix}-rds-geo-postgres-kms-key"
-  }
-}
-
 resource "aws_db_instance" "gitlab_geo_tracking" {
-  count = local.create_geo_tracking_resource
+  count = local.rds_geo_tracking_postgres_create ? 1 : 0
 
   identifier     = "${var.prefix}-rds-geo-tracking"
   engine         = "postgres"
@@ -46,10 +35,12 @@ resource "aws_db_instance" "gitlab_geo_tracking" {
     aws_security_group.gitlab_internal_networking.id
   ]
 
-  allocated_storage       = var.rds_geo_tracking_postgres_allocated_storage
-  max_allocated_storage   = var.rds_geo_tracking_postgres_max_allocated_storage
-  storage_encrypted       = true
-  kms_key_id              = local.create_geo_tracking_kms_key ? aws_kms_key.gitlab_geo_tracking_kms_key[0].arn : var.rds_geo_tracking_postgres_kms_key_arn
+  allocated_storage     = var.rds_geo_tracking_postgres_allocated_storage
+  max_allocated_storage = var.rds_geo_tracking_postgres_max_allocated_storage
+  storage_encrypted     = true
+  kms_key_id            = coalesce(var.rds_geo_tracking_postgres_kms_key_arn, var.default_kms_key_arn, data.aws_kms_key.aws_rds[0].arn)
+
+  backup_window           = var.rds_geo_tracking_postgres_backup_window
   backup_retention_period = var.rds_geo_tracking_postgres_backup_retention_period
 
   allow_major_version_upgrade = true

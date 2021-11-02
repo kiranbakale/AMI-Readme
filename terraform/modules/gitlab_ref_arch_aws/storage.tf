@@ -3,6 +3,16 @@ resource "aws_s3_bucket" "gitlab_object_storage_buckets" {
   bucket        = "${var.prefix}-${each.value}"
   force_destroy = var.object_storage_force_destroy
 
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm     = "aws:kms"
+        kms_master_key_id = var.object_storage_kms_key_arn != null ? var.object_storage_kms_key_arn : var.default_kms_key_arn
+      }
+      bucket_key_enabled = true
+    }
+  }
+
   tags = var.object_storage_tags
 }
 

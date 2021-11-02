@@ -16,7 +16,6 @@
       import_tasks: packages.yml
       tags:
         - packages
-        - reconfigure
 
     # https://about.gitlab.com/blog/2019/11/15/tracking-down-missing-tcp-keepalives/
     - name: Configure TCP keepalive settings

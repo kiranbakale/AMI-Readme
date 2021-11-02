@@ -9,6 +9,8 @@ module "haproxy_external" {
   ami_id                    = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
   disk_size                 = coalesce(var.haproxy_external_disk_size, var.default_disk_size)
   disk_type                 = coalesce(var.haproxy_external_disk_type, var.default_disk_type)
+  disk_encrypt              = coalesce(var.haproxy_external_disk_encrypt, var.default_disk_encrypt)
+  disk_kms_key_arn          = var.haproxy_external_disk_kms_key_arn != null ? var.haproxy_external_disk_kms_key_arn : var.default_kms_key_arn
   data_disks                = var.haproxy_external_data_disks
   subnet_ids                = local.subnet_ids
   elastic_ip_allocation_ids = var.haproxy_external_elastic_ip_allocation_ids
@@ -36,12 +38,14 @@ module "haproxy_internal" {
   node_type  = "haproxy-internal"
   node_count = var.haproxy_internal_node_count
 
-  instance_type = var.haproxy_internal_instance_type
-  ami_id        = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
-  disk_size     = coalesce(var.haproxy_internal_disk_size, var.default_disk_size)
-  disk_type     = coalesce(var.haproxy_internal_disk_type, var.default_disk_type)
-  data_disks    = var.haproxy_internal_data_disks
-  subnet_ids    = local.subnet_ids
+  instance_type    = var.haproxy_internal_instance_type
+  ami_id           = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
+  disk_size        = coalesce(var.haproxy_internal_disk_size, var.default_disk_size)
+  disk_type        = coalesce(var.haproxy_internal_disk_type, var.default_disk_type)
+  disk_encrypt     = coalesce(var.haproxy_internal_disk_encrypt, var.default_disk_encrypt)
+  disk_kms_key_arn = var.haproxy_internal_disk_kms_key_arn != null ? var.haproxy_internal_disk_kms_key_arn : var.default_kms_key_arn
+  data_disks       = var.haproxy_internal_data_disks
+  subnet_ids       = local.subnet_ids
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
   security_group_ids = [
