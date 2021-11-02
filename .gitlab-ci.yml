@@ -1,8 +1,29 @@
 include:
-  - template: Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 stages:
   - test
+
+#################################
+##     Dependency Scanning     ##
+#################################
+
+.on_merge_request_and_merged_events:
+  rules:
+    - if: '$CI_BUILD_REF_NAME == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"'
+
+gemnasium-dependency_scanning:
+  rules:
+    - !reference [.on_merge_request_and_merged_events, rules]
+
+gemnasium-python-dependency_scanning:
+  rules:
+    - !reference [.on_merge_request_and_merged_events, rules]
+
+bundler-audit-dependency_scanning:
+  rules:
+    - !reference [.on_merge_request_and_merged_events, rules]
+
 
 #########################
 ##     Lint Checks     ##
@@ -91,6 +112,7 @@ check_requirements:
     - pip install -r ansible/requirements/requirements.txt
     - ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
   rules:
-    - changes:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
         - ansible/requirements/requirements.txt
         - ansible/requirements/ansible-galaxy-requirements.yml
