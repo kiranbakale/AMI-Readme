@@ -569,6 +569,59 @@ module "gitlab_ref_arch_aws" {
   [...]
 ```
 
+##### Storage Encryption (AWS)
+
+By default AWS doesn't encrypt storages such as disks or object storage buckets.
+
+The Toolkit will aim to encrypt these by default where possible utilizing the built in AWS [default KMS keys](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#kms_keys). It also allows for you to pass in your own KMS key(s) as desired in a flexible manner.
+
+An overview of how the Toolkit handles this encryption is as follows:
+
+- By default it will aim to encrypt all storages and services with AWS managed KMS keys.
+  - Note that for Root Block Devices this is currently disabled by default to ensure backwards compatibility as changing this will cause disks to be deleted and data loss to occur.
+- A custom KMS key ARN (one that's available in AWS KMS) can be configured for use instead for all storages and services.
+- Additionally it's possible to pass custom KMS key(s) for individual storages and services as desired.
+
+The above is also the precedence of how the Toolkit will handle this. For example if you provided a custom KMS key for a specific storage only the Toolkit will use it as configured but then use the default key for the rest.
+
+There are several variables available to configure in the [module's environment config file](#configure-module-settings-environmenttf) for the encryption strategy desired. To cover the scenarios above we'll split each into its own section and how to configure blow.
+
+:warning:&nbsp; **{- Changing encryption settings setup on an existing environment must be treated with the utmost caution-}**. **Doing so is typically considered a significant change and will trigger the recreation of the affected storages and services leading to data loss**.
+
+###### Default Encryption
+
+Encryption is enabled by default for all storages and services except for Root Block Devices (RBS - the main disks on VMS).
+
+To configure encryption for RBS all that's required is to set the `default_disk_encrypt` variable to `true` in the [module's environment config file](#configure-module-settings-environmenttf) as follows:
+
+```tf
+module "gitlab_ref_arch_aws" {
+  source = "../../modules/gitlab_ref_arch_aws"
+
+  prefix = var.prefix
+  ssh_public_key_file = file(var.ssh_public_key_file)
+
+  default_disk_encrypt = true
+
+  [...]
+```
+
+It's also possible to specify this setting for each component, e.g. `gitaly_disk_encrypt`, for more control as desired.
+
+:warning:&nbsp; **{- Changing this setting on an existing environment will trigger the recreation of all nodes and will lead to data loss-}**. Snapshots should be taken before doing this and then restores onto the new encrypted disks, refer to the [AWS docs for more info](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#encrypt-unencrypted).
+
+###### Encryption with user provided KMS keys
+
+Encryption for all storage and services with your own KMS keys is supported by the Toolkit.
+
+Note that these keys must be [available in AWS KMS](https://docs.aws.amazon.com/kms/latest/developerguide/create-keys.html) beforehand. Once available, you can configure them to be used with the following variables be configured with the following variables. Note that for individual storages or services the same variable suffix is used throughout, for readability this is defined once only:
+
+- `default_kms_key_arn` - The AWS KMS key ARN to use for all storages and services unless configured otherwise. Defaults to `null`.
+  - This setting is also used for any [cloud services](environment_advanced_services.md).
+- `*_kms_key_arn` - The AWS KMS key ARN to be used for a specific storage. For example `gitaly_kms_key_arn` will configure a specific key for all its disk(s) and `object_storage_kms_key_arn` configures a key for all buckets.
+  - Note that the key used for `object_storage_kms_key_arn` should have the default policy applied to allow for IAM authentication by GitLab.
+  - For cloud services specific variables [refer to their specific docs](environment_advanced_services.md).
+
 #### Configure Authentication (AWS)
 
 Finally the last thing to configure is authentication. This is required so Terraform can access AWS (provider) as well as its State Storage Bucket (backend).

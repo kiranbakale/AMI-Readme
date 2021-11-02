@@ -56,6 +56,16 @@ variable "disk_iops" {
   default = null
 }
 
+variable "disk_encrypt" {
+  type    = bool
+  default = false
+}
+
+variable "disk_kms_key_arn" {
+  type    = string
+  default = null
+}
+
 variable "data_disks" {
   type    = list(any)
   default = []

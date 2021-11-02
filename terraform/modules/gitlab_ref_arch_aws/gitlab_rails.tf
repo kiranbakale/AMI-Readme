@@ -9,6 +9,8 @@ module "gitlab_rails" {
   ami_id               = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
   disk_size            = coalesce(var.gitlab_rails_disk_size, var.default_disk_size)
   disk_type            = coalesce(var.gitlab_rails_disk_type, var.default_disk_type)
+  disk_encrypt         = coalesce(var.gitlab_rails_disk_encrypt, var.default_disk_encrypt)
+  disk_kms_key_arn     = var.gitlab_rails_disk_kms_key_arn != null ? var.gitlab_rails_disk_kms_key_arn : var.default_kms_key_arn
   data_disks           = var.gitlab_rails_data_disks
   subnet_ids           = local.subnet_ids
   iam_instance_profile = try(aws_iam_instance_profile.gitlab_s3_profile[0].name, null)

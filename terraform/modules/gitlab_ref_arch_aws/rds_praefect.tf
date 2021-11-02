@@ -1,12 +1,11 @@
 locals {
-  create_praefect_kms_key  = var.rds_praefect_postgres_instance_type != "" && var.rds_praefect_postgres_kms_key_arn == null
-  create_praefect_resource = var.rds_praefect_postgres_instance_type != "" ? 1 : 0
+  rds_praefect_postgres_create = var.rds_praefect_postgres_instance_type != ""
 
   rds_praefect_postgres_subnet_ids = local.subnet_ids != null ? local.subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_praefect_postgres_default_subnet_count)
 }
 
 resource "aws_db_subnet_group" "gitlab_praefect" {
-  count      = local.create_praefect_resource
+  count      = local.rds_praefect_postgres_create ? 1 : 0
   name       = "${var.prefix}-praefect-rds-subnet-group"
   subnet_ids = local.rds_praefect_postgres_subnet_ids
 
@@ -15,18 +14,8 @@ resource "aws_db_subnet_group" "gitlab_praefect" {
   }
 }
 
-resource "aws_kms_key" "gitlab_praefect_kms_key" {
-  count = local.create_praefect_kms_key ? 1 : 0
-
-  description = "${var.prefix} RDS Praefect Postgres KMS Key"
-
-  tags = {
-    Name = "${var.prefix}-rds-praefect-postgres-kms-key"
-  }
-}
-
 resource "aws_db_instance" "gitlab_praefect" {
-  count = local.create_praefect_resource
+  count = local.rds_praefect_postgres_create ? 1 : 0
 
   identifier     = "${var.prefix}-rds-praefect"
   engine         = "postgres"
@@ -46,10 +35,12 @@ resource "aws_db_instance" "gitlab_praefect" {
     aws_security_group.gitlab_internal_networking.id
   ]
 
-  allocated_storage       = var.rds_praefect_postgres_allocated_storage
-  max_allocated_storage   = var.rds_praefect_postgres_max_allocated_storage
-  storage_encrypted       = true
-  kms_key_id              = local.create_praefect_kms_key ? aws_kms_key.gitlab_praefect_kms_key[0].arn : var.rds_praefect_postgres_kms_key_arn
+  allocated_storage     = var.rds_praefect_postgres_allocated_storage
+  max_allocated_storage = var.rds_praefect_postgres_max_allocated_storage
+  storage_encrypted     = true
+  kms_key_id            = coalesce(var.rds_praefect_postgres_kms_key_arn, var.default_kms_key_arn, data.aws_kms_key.aws_rds[0].arn)
+
+  backup_window           = var.rds_praefect_postgres_backup_window
   backup_retention_period = var.rds_praefect_postgres_backup_retention_period
 
   allow_major_version_upgrade = true
