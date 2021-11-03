@@ -29,7 +29,7 @@ gitlab:
         memory: "{{ gitlab_charts_sidekiq_requests_memory_gb }}G"
     nodeSelector:
       workload: sidekiq
-  task-runner:
+  "{{ 'task-runner' if ((gitlab_version != '') and (gitlab_version is version('14.5', '<'))) else 'toolbox' }}":
     backups:
       objectStorage:
         {{ lookup('template', 'task_runner_backups_object_storage.' + cloud_provider + '.yml.j2') | indent(width=8) }}

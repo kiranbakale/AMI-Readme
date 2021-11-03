@@ -27,7 +27,7 @@
       community.kubernetes.k8s_info:
         kind: Pod
         label_selectors:
-          - app = task-runner
+          - app in (task-runner, toolbox)
       register: task_runner_pod_list
 
     - name: Save Task Runner pod name

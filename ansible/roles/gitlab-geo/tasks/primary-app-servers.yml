@@ -33,7 +33,7 @@
       delegate_to: localhost
       run_once: true
       community.kubernetes.k8s_exec:
-        pod: "{{ task_runner_info.resources[0].metadata.name }}"
+        pod: "{{ task_runner_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: gitlab-rake geo:set_primary_node
   when: cloud_native_hybrid_geo
