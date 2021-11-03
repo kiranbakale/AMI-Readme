@@ -23,7 +23,7 @@
       delegate_to: localhost
       run_once: true
       community.kubernetes.k8s_exec:
-        pod: "{{ task_runner_info.resources[0].metadata.name }}"
+        pod: "{{ task_runner_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: |
           gitlab-rails runner "GeoNode.find_or_create_by(name: '{{ geo_secondary_site_name }}', url: '{{ secondary_external_url }}')"
