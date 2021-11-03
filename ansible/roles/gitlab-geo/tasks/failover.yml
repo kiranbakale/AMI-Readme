@@ -45,10 +45,10 @@
         replicas: 0
   when: cloud_native_hybrid_geo
 
-- name: Promote Secondary Site Postgres and Sidekiq Omnibus nodes
+- name: Promote Secondary Site Postgres, Sidekiq, and Gitaly Omnibus nodes
   command: gitlab-ctl geo promote -f
   when:
-    - ('postgres' in group_names or 'sidekiq' in group_names)
+    - ('postgres' in group_names or 'sidekiq' in group_names or 'gitaly' in group_names)
     - (geo_secondary_site_group_name in group_names)
 
 - name: Promote GitLab Rails nodes for Omnibus environments
@@ -110,12 +110,3 @@
         force: true
         values: "{{ gitlab_values }}"
   when: cloud_native_hybrid_geo
-
-# Workaround - Gitaly is picking up the wrong gitlab-secrets values and needs a restart to use the correct values.
-# Discussion: https://gitlab.com/gitlab-org/gitlab/-/issues/335924#note_697853737
-# MR: https://gitlab.com/gitlab-org/omnibus-gitlab/-/merge_requests/5691
-- name: Restart gitaly
-  command: gitlab-ctl restart
-  when:
-    - ('gitaly' in group_names)
-    - (geo_secondary_site_group_name in group_names)
