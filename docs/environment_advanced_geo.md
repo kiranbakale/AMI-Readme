@@ -326,3 +326,33 @@ Before performing a recovery the `all` inventory must be updated to reflect each
 - `geo_primary_site_name`/`geo_secondary_site_name`
 
 Once done you can perform the recovery process by running the command `ansible-playbook -i environments/my-geo-deployment/inventory/all gitlab-geo-recovery.yml`
+
+### AWS RDS
+
+The failover and recovery process when using RDS is largely the same as the non RDS process. However it will also require the use of Terraform.
+
+:information_source:&nbsp; Before running `terraform apply` it is advised to check the output of `terraform plan` and ensure that all changes are expected.
+
+#### Failover
+
+To perform a failover the following terraform settings will need to be updated for the site that will be promoted:
+
+- Set `rds_postgres_replication_database_arn` to `null`.
+- Set `rds_postgres_password` to your Postgres password.
+- Set `rds_postgres_backup_retention_period` to a value between 0 and 35.
+
+Terraform will complete straight away, however the process can take a few minutes to complete and you will need to wait for AWS to show the database as `Available` before continuing. Once completed, the following additional settings will need to be updated and then the failover process can be followed as normal:
+
+- `postgres_host`
+- `geo_secondary_postgres_host`
+- `geo_secondary_praefect_postgres_host`
+- `geo_tracking_postgres_host`
+
+#### Recovery
+
+The RDS recovery process involves deleting the old primary RDS instance, this is done by removing the `rds_postgres_instance_type` setting from the `environment.tf` file for the site currently being recovered and running `terraform apply`. Once deleted, Add the `rds_postgres_instance_type` setting back into `environment.tf` along with the following settings:
+
+- Set `rds_postgres_replication_database_arn` to the ARN for the new primary site.
+- Set `rds_postgres_kms_key_arn` to the KMS key used for the primary site's RDS instance.
+- Remove `rds_postgres_password`.
+- Remove `rds_postgres_backup_retention_period`.

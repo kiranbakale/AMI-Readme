@@ -57,12 +57,6 @@ resource "aws_db_instance" "gitlab" {
   auto_minor_version_upgrade  = false
 
   skip_final_snapshot = true
-
-  lifecycle {
-    ignore_changes = [
-      replicate_source_db
-    ]
-  }
 }
 
 output "rds_postgres_connection" {
