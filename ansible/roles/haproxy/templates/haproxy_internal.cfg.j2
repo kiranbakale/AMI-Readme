@@ -24,7 +24,6 @@ frontend internal-praefect-tcp-in
     mode tcp
     option tcplog
     option clitcpka
-    timeout client 361m
 
     default_backend praefect
 {% endif %}
@@ -66,7 +65,6 @@ backend praefect
     mode tcp
     option tcp-check
     option srvtcpka
-    timeout server 361m
 
 {% for ip in praefect_int_ips %}
     server praefect{{loop.index}} {{ ip }}:2305 check inter 3s fall 1
