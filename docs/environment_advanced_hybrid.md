@@ -383,4 +383,4 @@ Once your config file is in place as desired you can proceed to [configure as no
 
 ## Geo
 
-More information on setting up Geo within GET can be found in our [Advanced - Geo, Advanced Search and more](environment_advanced.md#geo) documentation.
+More information on setting up Geo within GET can be found in our [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md) documentation.
