@@ -45,6 +45,7 @@ Currently, we do not plan to include:
 
 - Cloud accounts management
 - Observability stack beyond Prometheus and Grafana
+- Direct Omniauth and Email support (see [Custom Config](docs/environment_advanced.md#custom-config))
 
 ## How It Works
 
