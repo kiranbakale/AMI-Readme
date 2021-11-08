@@ -271,6 +271,8 @@ For optional variables they work in a default like manner. When configuring for 
 - [`elasticache_redis_snapshot_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group#snapshot_window) - The daily time range where backups will be taken, e.g. `09:46-10:16`. Optional, default is `null`.
   - Optionally `elasticache_redis_cache_snapshot_window` or `elasticache_redis_persistent_snapshot_window` can be used to override for separate services.
 - `elasticache_redis_default_subnet_count` - Specifies the number of default subnets to use when running on the default network. Optional, default is `2`.
+- `elasticache_redis_apply_immediately` - Apply certain modifications immediately such as node type, engine version, or changing the number of nodes in a cluster in the Terraform run. When true it will restart the service and false the changes will be applied next maintenance window. Optional, default is `true`.
+  - Optionally `elasticache_redis_cache_apply_immediately` or `elasticache_redis_persistent_apply_immediately` can be used to override for separate services.
 
 If deploying a combined Redis setup that contains all queues (5k and lower) the following settings should be set (replacing any previous `redis_*` settings):
 
