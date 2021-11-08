@@ -828,10 +828,6 @@ variable "elasticache_redis_snapshot_window" {
   type    = string
   default = null
 }
-variable "elasticache_redis_apply_immediately" {
-  type    = bool
-  default = true
-}
 variable "elasticache_redis_default_subnet_count" {
   type    = number
   default = 2
@@ -875,10 +871,6 @@ variable "elasticache_redis_cache_snapshot_window" {
   type    = string
   default = null
 }
-variable "elasticache_redis_cache_apply_immediately" {
-  type    = bool
-  default = null
-}
 
 ### Separate - Persistent
 variable "elasticache_redis_persistent_node_count" {
@@ -916,10 +908,6 @@ variable "elasticache_redis_persistent_snapshot_retention_limit" {
 }
 variable "elasticache_redis_persistent_snapshot_window" {
   type    = string
-  default = null
-}
-variable "elasticache_redis_persistent_apply_immediately" {
-  type    = bool
   default = null
 }
 
