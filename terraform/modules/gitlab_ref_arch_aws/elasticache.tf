@@ -31,6 +31,8 @@ resource "aws_elasticache_replication_group" "gitlab_redis" {
   kms_key_id                 = var.elasticache_redis_kms_key_arn != null ? var.elasticache_redis_kms_key_arn : var.default_kms_key_arn
   auth_token                 = var.elasticache_redis_password
 
+  apply_immediately = var.elasticache_redis_apply_immediately
+
   snapshot_retention_limit = var.elasticache_redis_snapshot_retention_limit
   snapshot_window          = var.elasticache_redis_snapshot_window
 
@@ -59,6 +61,7 @@ locals {
   elasticache_redis_cache_kms_key_arn              = var.elasticache_redis_cache_kms_key_arn != null ? var.elasticache_redis_cache_kms_key_arn : var.elasticache_redis_kms_key_arn
   elasticache_redis_cache_snapshot_retention_limit = var.elasticache_redis_cache_snapshot_retention_limit != null ? var.elasticache_redis_cache_snapshot_retention_limit : var.elasticache_redis_snapshot_retention_limit
   elasticache_redis_cache_snapshot_window          = var.elasticache_redis_cache_snapshot_window != null ? var.elasticache_redis_cache_snapshot_window : var.elasticache_redis_snapshot_window
+  elasticache_redis_cache_apply_immediately        = coalesce(var.elasticache_redis_cache_apply_immediately, var.elasticache_redis_apply_immediately)
 }
 
 resource "aws_elasticache_parameter_group" "gitlab_redis_cache" {
@@ -97,6 +100,8 @@ resource "aws_elasticache_replication_group" "gitlab_redis_cache" {
   kms_key_id                 = local.elasticache_redis_cache_kms_key_arn != null ? local.elasticache_redis_cache_kms_key_arn : var.default_kms_key_arn
   auth_token                 = local.elasticache_redis_cache_password
 
+  apply_immediately = local.elasticache_redis_cache_apply_immediately
+
   snapshot_retention_limit = local.elasticache_redis_cache_snapshot_retention_limit
   snapshot_window          = local.elasticache_redis_cache_snapshot_window
 
@@ -125,6 +130,7 @@ locals {
   elasticache_redis_persistent_kms_key_arn              = var.elasticache_redis_persistent_kms_key_arn != null ? var.elasticache_redis_persistent_kms_key_arn : var.elasticache_redis_kms_key_arn
   elasticache_redis_persistent_snapshot_retention_limit = var.elasticache_redis_persistent_snapshot_retention_limit != null ? var.elasticache_redis_persistent_snapshot_retention_limit : var.elasticache_redis_snapshot_retention_limit
   elasticache_redis_persistent_snapshot_window          = var.elasticache_redis_persistent_snapshot_window != null ? var.elasticache_redis_persistent_snapshot_window : var.elasticache_redis_snapshot_window
+  elasticache_redis_persistent_apply_immediately        = coalesce(var.elasticache_redis_persistent_apply_immediately, var.elasticache_redis_apply_immediately)
 }
 
 resource "aws_elasticache_replication_group" "gitlab_redis_persistent" {
@@ -143,6 +149,8 @@ resource "aws_elasticache_replication_group" "gitlab_redis_persistent" {
   transit_encryption_enabled = true
   kms_key_id                 = local.elasticache_redis_persistent_kms_key_arn != null ? local.elasticache_redis_persistent_kms_key_arn : var.default_kms_key_arn
   auth_token                 = local.elasticache_redis_persistent_password
+
+  apply_immediately = local.elasticache_redis_persistent_apply_immediately
 
   snapshot_retention_limit = local.elasticache_redis_persistent_snapshot_retention_limit
   snapshot_window          = local.elasticache_redis_persistent_snapshot_window
