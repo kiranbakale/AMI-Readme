@@ -336,7 +336,7 @@ General settings are config used across the playbooks to configure GitLab:
 Component settings are specific component for GitLab components, e.g. Postgres:
 
 - `patroni_remove_data_directory_on_rewind_failure` - A specific Patroni flag that enables resetting of database data on a secondary node if attempts to sync with the primary can't be achieved. **This may lead to data loss**, refer to the [GitLab Postgres documentation](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#customizing-patroni-failover-behavior) for further info.
-- `patroni_remove_data_directory_on_rewind_failure` - A specific Patroni flag that enables resetting of database data on a secondary node if timelines have diverged with the primary. **This may lead to data loss**, refer to the [GitLab Postgres documentation](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#customizing-patroni-failover-behavior) for further info.
+- `patroni_remove_data_directory_on_diverged_timelines` - A specific Patroni flag that enables resetting of database data on a secondary node if timelines have diverged with the primary. **This may lead to data loss**, refer to the [GitLab Postgres documentation](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#customizing-patroni-failover-behavior) for further info.
 
 Passwords and Secrets settings are what they suggest - all of the various passwords and secrets that GitLab requires to be configured by the user.
 
