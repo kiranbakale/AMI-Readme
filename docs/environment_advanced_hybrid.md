@@ -219,6 +219,21 @@ For EKS a [Cluster is required to be spread across at least 2 Availability Zones
 
 If you ever want to deprovision resources created, with a Cloud Native Hybrid on AWS **you must run [helm uninstall gitlab](https://helm.sh/docs/helm/helm_uninstall/)** before running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html). This ensure all resources are correctly removed.
 
+#### Defining AWS Auth Roles with `aws_auth_roles`
+
+By default EKS automatically grants the IAM entity user or role that creates the cluster `system:masters` permissions in the cluster's RBAC configuration in the control plane. All other IAM users or roles require explicit access. This is defined through the `kube-system/aws-auth` config map. More details are available in the EKS documentation on [Managing users or IAM roles for your cluster](https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html), while full details of the expected format of the `aws-auth` configmap can be found in the [`aws-iam-authenticator` source code repository](https://github.com/kubernetes-sigs/aws-iam-authenticator#full-configuration-format).
+
+This approach means that the IAM user or role that was used to provisioning GET will have exclusive access to the EKS cluster. No other users or roles will have access.
+
+In order to grant access to the EKS cluster for other IAM user or roles, consult the [EKS documentation](https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html). Note that you will need to [configure authentication to the provisioned Kubernetes cluster](#3-setting-up-authentication-for-the-provisioned-kubernetes-cluster) first.
+
+```shell
+# Configure kubeconfig access to the EKS cluster
+aws eks --region <AWS REGION NAME> update-kubeconfig --name <CLUSTER NAME>`. Where `<CLUSTER NAME>
+# Update the configmap/aws-auth config map with additional users
+kubectl edit -n kube-system configmap/aws-auth
+```
+
 ## 3. Setting up authentication for the provisioned Kubernetes Cluster
 
 Authenticating with Kubernetes is different compared to other services, and can be [considered a challenge](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/using_gke_with_terraform#interacting-with-kubernetes) in terms of automation.
@@ -247,7 +262,7 @@ By design, this file is similar to the one used in a [standard environment](envi
 - `aws_allocation_ids` - **AWS only** A comma separated list of allocation IDs to assign to the AWS load balancer.
   - With AWS you **must have an [Elastic IP](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/main/docs/environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) for each subnet being used**, each Elastic IP will have an allocation ID that must be stored in this list.
 Below are examples for a `vars.yml` file with all config for each cloud provider based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative):
-  
+
 ### Google Cloud Platform (GCP)
 
 ```yml
