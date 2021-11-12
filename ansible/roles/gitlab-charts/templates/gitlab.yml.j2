@@ -15,6 +15,11 @@ gitlab:
       proxyBodySize: 0  # Bigger file uploads, e.g. imports
     nodeSelector:
       workload: webservice
+# Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
+{% if not (cloud_provider == 'aws' and external_url_ssl and external_ssl_source != '') %}
+    registry:
+      enabled: false
+{% endif %}
   sidekiq:
     maxReplicas: "{{ gitlab_charts_sidekiq_max_replicas if gitlab_charts_sidekiq_max_replicas != '' else sidekiq_pods }}"
     minReplicas: "{{ gitlab_charts_sidekiq_min_replicas if gitlab_charts_sidekiq_min_replicas != '' else (sidekiq_pods | int * gitlab_charts_sidekiq_min_replicas_scaler) | int }}"
@@ -38,6 +43,11 @@ gitlab:
     backups:
       objectStorage:
         {{ lookup('template', 'task_runner_backups_object_storage.' + cloud_provider + '.yml.j2') | indent(width=8) }}
+# Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
+{% if not (cloud_provider == 'aws' and external_url_ssl and external_ssl_source != '') %}
+    registry:
+      enabled: false
+{% endif %}
   migrations:
     psql:
       password:
