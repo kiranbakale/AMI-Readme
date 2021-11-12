@@ -194,15 +194,6 @@ module "gitlab_ref_arch_aws" {
   redis_cache_instance_type = "m5.xlarge"
   redis_persistent_node_count = 3
   redis_persistent_instance_type = "m5.xlarge"
-
-  // Add any AWS Auth mappings to this array
-  // This defaults to an empty array
-  // See `aws_auth_roles` section in documentation for more details
-  // aws_auth_roles: [{
-  //   rolearn = 'arn:aws:iam::12345:AWS_ROLE_ARN'
-  //   kube_username = 'my_kube_username:{{SessionName}}'
-  //   kube_groups = ['system:masters']
-  // }]
 }
 
 output "gitlab_ref_arch_aws" {
@@ -227,30 +218,6 @@ For EKS a [Cluster is required to be spread across at least 2 Availability Zones
 #### Deprovisioning
 
 If you ever want to deprovision resources created, with a Cloud Native Hybrid on AWS **you must run [helm uninstall gitlab](https://helm.sh/docs/helm/helm_uninstall/)** before running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html). This ensure all resources are correctly removed.
-
-#### Defining AWS Auth Roles with `aws_auth_roles`
-
-By default EKS automatically grants the IAM entity user or role that creates the cluster `system:masters` permissions in the cluster's RBAC configuration in the control plane. All other IAM users or roles require explicit access. This is defined through the `kube-system/aws-auth` config map. More details are available in the EKS documentation on [Managing users or IAM roles for your cluster](https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html), while full details of the expected format of the `aws-auth` configmap can be found in the [`aws-iam-authenticator` source code repository](https://github.com/kubernetes-sigs/aws-iam-authenticator#full-configuration-format).
-
-```tf
-module "gitlab_ref_arch_aws" {
-  // other variables...
-
-  aws_auth_roles: [{
-    rolearn = 'arn:aws:iam::12345:AWS_ROLE_ARN'        // IAM Role ARN
-    kube_username = 'my_kube_username:{{SessionName}}' // Kubernetes RBAC username to map for the Role ARN
-    kube_groups = ['system:masters']                   // Kubernetes RBAC groups to map for Role ARN
-  }]
-}
-```
-
-##### Updating `aws-auth` after initialization
-
-If you would like to add additional roles, these can be added through the `aws_auth_roles` variable. When this is set, GET will initialize the `kube-system/aws-auth` config map with the configured rules.
-
-Note that after the initialization, GET will not update this config map. This is because Terraform's default behaviour would overwrite any future changes to the config map. Other EKS processes outside of Terraform may update the `aws-auth` config map, so Terraform would overwrite those changes. As a result, we have disabled updates to the `kube-system/aws-auth` config map after the initial configuration.
-
-If you would like to update the AWS Auth config map after the initial provisioning, use `kubectl edit -n kube-system configmap/aws-auth` to edit the namespace manually. Further details can be found in the AWS EKS Documentation.
 
 ## 3. Setting up authentication for the provisioned Kubernetes Cluster
 
