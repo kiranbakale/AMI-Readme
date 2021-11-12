@@ -31,6 +31,24 @@ praefect['database_dbname'] = '{{ praefect_postgres_database_name }}'
 
 praefect['auto_migrate'] = {{ (db_migrate is defined and db_migrate == true) | lower }}
 
+{% if gitlab_version == '' or gitlab_version is version('14.0', '>=') %}
+praefect['virtual_storages'] = {
+  'default' => {
+    'nodes' => {
+      'gitaly-1' => {
+        'address' => 'tcp://{{ gitaly_primary_int_ip }}:8075',
+        'token'   => '{{ praefect_internal_token }}'
+      },
+{% for ip in gitaly_secondary_int_ips %}
+      'gitaly-{{ loop.index + 1 }}' => {
+        'address' => 'tcp://{{ ip }}:8075',
+        'token'   => '{{ praefect_internal_token }}'
+      },
+{% endfor %}
+    }
+  }
+}
+{% else %}
 praefect['virtual_storages'] = {
   'default' => {
     'gitaly-1' => {
@@ -45,6 +63,7 @@ praefect['virtual_storages'] = {
 {% endfor %}
   }
 }
+{% endif %}
 
 gitlab_rails['rake_cache_clear'] = false
 gitlab_rails['auto_migrate'] = false
