@@ -15,6 +15,7 @@ module "gitlab_rails" {
   vm_admin_username        = var.vm_admin_username
   ssh_public_key_file_path = var.ssh_public_key_file_path
   location                 = var.location
+  external_ip_type         = var.external_ip_type
 
   network_security_group = azurerm_network_security_group.ssh
 

@@ -743,6 +743,7 @@ module "gitlab_ref_arch_azure" {
   storage_account_name = var.storage_account_name
   vm_admin_username = var.vm_admin_username
   ssh_public_key_file_path = var.ssh_public_key_file_path
+  external_ip_type = "Standard"
 
   # 10k
   consul_node_count = 3
@@ -803,6 +804,7 @@ output "gitlab_ref_arch_azure" {
   - `storage_account_name` - The name of the storage account. Set in `variables.tf`.
   - `vm_admin_username` - The username of the administrator for the virtual machines. Set in `variables.tf`.
   - `ssh_public_key_file_path` - The file path of the public SSH key. Set in `variables.tf`.
+  - `external_ip_type` - [The type of Public IP](https://docs.microsoft.com/en-us/azure/virtual-network/ip-services/public-ip-addresses) that will be created for each VM. Can be either `Standard` (recommended) or `Basic`. Default is `Basic` for backwards compatability.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
 
