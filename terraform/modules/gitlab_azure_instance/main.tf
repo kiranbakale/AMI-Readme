@@ -19,6 +19,7 @@ resource "azurerm_public_ip" "gitlab" {
   resource_group_name = var.resource_group_name
   location            = var.location
   allocation_method   = "Static"
+  sku                 = var.external_ip_type
 }
 
 resource "azurerm_network_interface" "gitlab" {

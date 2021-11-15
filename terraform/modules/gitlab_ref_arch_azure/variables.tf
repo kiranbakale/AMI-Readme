@@ -43,6 +43,10 @@ variable "ssh_public_key_file_path" {
   type    = string
   default = null
 }
+variable "external_ip_type" {
+  type    = string
+  default = "Basic"
+}
 
 variable "default_disk_size" {
   type    = string

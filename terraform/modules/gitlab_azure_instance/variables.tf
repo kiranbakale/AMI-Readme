@@ -42,6 +42,11 @@ variable "external_ip_names" {
   default = []
 }
 
+variable "external_ip_type" {
+  type    = string
+  default = "Basic"
+}
+
 variable "size" {
   type    = string
   default = "Standard_D2s_v3"

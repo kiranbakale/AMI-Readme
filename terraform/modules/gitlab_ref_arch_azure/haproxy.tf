@@ -15,6 +15,7 @@ module "haproxy_external" {
   vm_admin_username        = var.vm_admin_username
   ssh_public_key_file_path = var.ssh_public_key_file_path
   location                 = var.location
+  external_ip_type         = var.external_ip_type
 
   external_ip_names      = var.haproxy_external_external_ip_names
   network_security_group = var.haproxy_external_node_count == 0 ? null : azurerm_network_security_group.haproxy[0]
@@ -44,6 +45,7 @@ module "haproxy_internal" {
   vm_admin_username        = var.vm_admin_username
   ssh_public_key_file_path = var.ssh_public_key_file_path
   location                 = var.location
+  external_ip_type         = var.external_ip_type
 
   network_security_group = azurerm_network_security_group.ssh
 
