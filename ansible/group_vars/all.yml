@@ -131,6 +131,7 @@ postgres_port: "5432"
 postgres_username: "gitlab"
 postgres_password: ""
 postgres_database_name: "gitlabhq_production"
+postgres_load_balancing_hosts: []
 postgres_external: "{{ 'postgres' not in groups and postgres_host != '' }}"
 
 ## Postgres Omnibus
