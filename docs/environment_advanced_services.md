@@ -188,6 +188,7 @@ The available variables in Ansible for this are as follows:
 - `postgres_username` - The username of the PostgreSQL instance. Optional, default is `gitlab`.
 - `postgres_database_name` - The name of the main database in the instance for use by GitLab. Optional, default is `gitlabhq_production`.
 - `postgres_port` - The port of the PostgreSQL instance. Should only be changed if the instance isn't running with the default port. Optional, default is `5432`.
+- `postgres_load_balancing_hosts` - A list of all PostgreSQL hostnames to use in [Database Load Balancing](https://docs.gitlab.com/ee/administration/postgresql/database_load_balancing.html). This is only applicable when running with an alternative Postgres setup (non Omnibus) where you have multiple read replicas. The main host should also be included in this list to be used in load balancing. Optional, default is `[]`.
 
 Along with the above there are some additional settings specific to Praefect and how its database will be set up on the PostgreSQL instance:
 

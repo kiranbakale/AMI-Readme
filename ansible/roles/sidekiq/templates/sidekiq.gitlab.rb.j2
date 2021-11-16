@@ -142,10 +142,18 @@ gitlab_rails['db_username'] = '{{ postgres_username }}'
 gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['db_database'] = '{{ postgres_database_name }}'
 
+{% if postgres_load_balancing_hosts | length > 0 and not (gitlab_version != '' and gitlab_version is version('14.1', '<')) %} %}
+gitlab_rails['db_load_balancing'] = { 'hosts' => {{ postgres_load_balancing_hosts }} }
+{% endif %}
+
 {% elif 'postgres' in groups %}
 gitlab_rails['db_host'] = '{{ internal_lb_host }}'
 gitlab_rails['db_port'] = 6432
 gitlab_rails['db_password'] = '{{ postgres_password }}'
+
+{% if groups['postgres'] | length > 1 %}
+gitlab_rails['db_load_balancing'] = { 'hosts' => {{ postgres_int_ips }} }
+{% endif %}
 
 {% endif %}
 

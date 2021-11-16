@@ -154,9 +154,23 @@ global:
     port: "{{ postgres_port }}"
     username: "{{ postgres_username }}"
     database: "{{ postgres_database_name }}"
+{% if postgres_load_balancing_hosts | length > 0 %}
+    load_balancing:
+      hosts:
+{% for postgres_load_balancing_host in postgres_load_balancing_hosts %}
+        - "{{ postgres_load_balancing_host }}"
+{% endfor %}
+{% endif %}
 {% elif 'postgres' in groups %}
     host: "{{ internal_lb_host if 'haproxy_internal' in groups else postgres_host }}"
     port: "{{ 6432 if 'haproxy_internal' in groups else postgres_port }}"
+{% if groups['postgres'] | length > 1 %}
+    load_balancing:
+      hosts:
+{% for postgres_int_ip in postgres_int_ips %}
+        - "{{ postgres_int_ip }}"
+{% endfor %}
+{% endif %}
 {% endif %}
 # Redis
   redis:

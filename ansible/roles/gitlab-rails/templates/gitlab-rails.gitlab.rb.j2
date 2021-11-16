@@ -187,6 +187,10 @@ gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['db_database'] = '{{ postgres_database_name }}'
 gitlab_rails['auto_migrate'] = {{ (('gitlab_rails_primary' in group_names) and (geo_secondary_site_group_name not in groups)) | lower }}
 
+{% if postgres_load_balancing_hosts | length > 0 %}
+gitlab_rails['db_load_balancing'] = { 'hosts' => {{ postgres_load_balancing_hosts }} }
+{% endif %}
+
 {% elif 'postgres' in groups %}
 ## Postgres Omnibus - Separate Node(s)
 postgresql['enable'] = false
@@ -201,6 +205,11 @@ gitlab_rails['db_host'] = "{{ internal_lb_host }}"
 gitlab_rails['db_port'] = 6432
 gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['auto_migrate'] = false
+
+{% if groups['postgres'] | length > 1 %}
+gitlab_rails['db_load_balancing'] = { 'hosts' => {{ postgres_int_ips }} }
+{% endif %}
+
 {% endif %}
 
 {% else %}
