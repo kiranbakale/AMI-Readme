@@ -40,7 +40,7 @@ node_exporter['listen_address'] = '0.0.0.0:9100'
 gitaly['prometheus_listen_addr'] = "0.0.0.0:9236"
 
 {% if 'praefect' in groups %}
-gitaly['auth_token'] = "{{ praefect_internal_token }}"
+gitaly['auth_token'] = '{{ praefect_internal_token }}'
 
 git_data_dirs({
   "gitaly-{{ gitaly_number }}" => {
@@ -49,7 +49,7 @@ git_data_dirs({
 })
 
 {% else %}
-gitaly['auth_token'] = "{{ gitaly_token }}"
+gitaly['auth_token'] = '{{ gitaly_token }}'
 
 git_data_dirs({
 {% if 'gitaly_primary' in group_names %}
