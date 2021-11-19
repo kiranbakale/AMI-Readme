@@ -72,23 +72,52 @@ A Service Account is created as follows if you're an admin:
 
 ### 4. Setup SSH Authentication - SSH OS Login for GCP Service Account
 
-In addition to creating the Service Account and saving the key we need to also setup [OS Login](https://cloud.google.com/compute/docs/instances/managing-instance-access) for the account to enable SSH access to the created VMs on GCP, which is required by Ansible. This is done as follows:
+In addition to creating the Service Account and saving the key we need to also setup [OS Login](https://cloud.google.com/compute/docs/instances/managing-instance-access)
+for the account to enable SSH access to the created VMs on GCP, which is required by Ansible. This is done as follows:
 
-- [Generate an SSH key pair](https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair) and store it in the [`keys`](../keys) directory.
-- With the `gcloud` command set it to point at your intended project - `gcloud config set project <project-id>`
-  - Note that you need the project's [ID](https://support.google.com/googleapi/answer/7014113?hl=en) here and not the name. This can be seen on the home page for the project.
-- Now login as the Service Account user via its key created in the last step - `gcloud auth activate-service-account --key-file=serviceaccount-<project-name>.json`
-- Proceed to add the project's public SSH key to the account - `gcloud compute os-login ssh-keys add --key-file=<SSH key>.pub`
-- Take a note of the service account SSH username printed in the output of the above comamnd. This is in the format of `sa_<ID>`. It will be used with Ansible later in these docs.
-- Finish with switching gcloud back to be logged in as your account `gcloud config set account <account-email-address>`, where the email address to use would be your own.
+1. [Generate an SSH key pair](https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair) and store it in the [`keys`](../keys) directory.
+1. With the `gcloud` command set it to point at your intended project
 
-SSH access should now be enabled on the Service Account and this will be used by Ansible to SSH login to each VM. More info on OS Login and how it's configured can be found in this [blog post by Alex Dzyoba](https://alex.dzyoba.com/blog/gcp-ansible-service-account/).
+   ```terminal
+   gcloud config set project <project-id>
+   ```
+
+   **Important**: You need the project's [ID](https://support.google.com/googleapi/answer/7014113?hl=en) here and not the name.
+   You can find it in project's dashboard in GCP Console.
+1. Login as the Service Account user via its key created in the last step
+
+   ```terminal
+   gcloud auth activate-service-account --key-file=serviceaccount-<project-name>.json
+   ```
+
+1. Add the project's public SSH key to the account
+
+   ```terminal
+   gcloud compute os-login ssh-keys add --key-file=<SSH key>.pub
+   ```
+
+1. Note down the service account SSH username printed in the output of the above comamnd.
+   This is in the format of `sa_<ID>`. It will be used with Ansible later in these docs.
+1. Switch back your logged in account in `gcloud` to your regular account using your email address.
+
+   ```terminal
+   gcloud config set account <account-email-address>
+   ```
+
+SSH access should now be enabled on the Service Account and this will be used by Ansible to SSH login to each VM.
+More info on OS Login and how it's configured can be found in this [blog post by Alex Dzyoba](https://alex.dzyoba.com/blog/gcp-ansible-service-account/).
 
 That's all that's required for now. Later on in this guide we'll configure the Toolkit to use the key for accessing machines.
 
 ### 5. Setup Terraform State Storage Bucket - GCP Cloud Storage
 
-Create a standard [GCP storage bucket](https://cloud.google.com/storage/docs/creating-buckets) on the intended environment's project for its Terraform State. Give this a meaningful name such as `<env_short_name>-terraform-state`.
+Create a standard [GCP storage bucket](https://cloud.google.com/storage/docs/creating-buckets) on the intended environment's project
+for its Terraform State. Give this a meaningful name such as `<env_short_name>-terraform-state`:
+
+```terminal
+# List of locations: https://cloud.google.com/storage/docs/locations
+gsutil mb -l BUCKET_LOCATION gs://<env_shortname>-terraform-state
+```
 
 After the Bucket is created this is all that's required for now. We'll configure Terraform to use it later in these docs.
 
@@ -182,10 +211,10 @@ After the container is created this is all that's required for now. We'll config
 A static IP can be generated in Azure as follows:
 
 - Reserve a static external IP address in your resource group [as detailed in the Azure docs](https://docs.microsoft.com/en-us/azure/virtual-network/create-public-ip-portal?tabs=option-create-public-ip-standard-zones)
-- Make sure to select the *[Standard SKU](https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses#standard)* to ensure that the allocation is static 
+- Make sure to select the *[Standard SKU](https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses#standard)* to ensure that the allocation is static
 
 Once the IP is available take note of its name for later.
 
-## Next Steps 
+## Next Steps
 
 After the above steps have been completed you can proceed to [Provisioning the environment with Terraform](environment_provision.md).
