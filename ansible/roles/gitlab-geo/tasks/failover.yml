@@ -28,7 +28,7 @@
       become: false
       delegate_to: localhost
       run_once: true
-      community.kubernetes.k8s_scale:
+      kubernetes.core.k8s_scale:
         name: gitlab-webservice-default
         kind: Deployment
         namespace: "{{ gitlab_charts_release_namespace }}"
@@ -38,7 +38,7 @@
       become: false
       delegate_to: localhost
       run_once: true
-      community.kubernetes.k8s_scale:
+      kubernetes.core.k8s_scale:
         name: gitlab-sidekiq-all-in-1-v1
         kind: Deployment
         namespace: "{{ gitlab_charts_release_namespace }}"
@@ -74,7 +74,7 @@
       become: false
       delegate_to: localhost
       run_once: true
-      community.kubernetes.k8s_exec:
+      kubernetes.core.k8s_exec:
         pod: "{{ task_runner_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: gitlab-rake geo:set_secondary_as_primary
@@ -83,7 +83,7 @@
       become: false
       delegate_to: localhost
       run_once: true
-      community.kubernetes.helm_info:
+      kubernetes.core.helm_info:
         name: gitlab
         release_namespace: "{{ gitlab_charts_release_namespace }}"
       register: gitlab_info
@@ -101,7 +101,7 @@
       become: false
       delegate_to: localhost
       run_once: true
-      community.kubernetes.helm:
+      kubernetes.core.helm:
         name: gitlab
         chart_ref: gitlab/gitlab
         chart_version: "{{ gitlab_charts_version | default(None) }}"

@@ -50,7 +50,7 @@
 - name: Gather facts for Node Pools
   block:
     - name: Gather all Node Pool Info
-      community.kubernetes.k8s_info:
+      kubernetes.core.k8s_info:
         kind: Node
       register: node_info
 
@@ -105,7 +105,7 @@
     - charts_values
 
 - name: Add GitLab Charts repo
-  community.kubernetes.helm_repository:
+  kubernetes.core.helm_repository:
     name: gitlab
     repo_url: "https://charts.gitlab.io/"
   tags:
@@ -184,7 +184,7 @@
   when: gitlab_charts_show_values
 
 - name: Install GitLab Charts
-  community.kubernetes.helm:
+  kubernetes.core.helm:
     name: gitlab
     chart_ref: gitlab/gitlab
     chart_version: "{{ gitlab_charts_version | default(None) }}"
@@ -205,7 +205,7 @@
         mode: '0664'
 
     - name: Apply metrics-server manifest to the cluster.
-      community.kubernetes.k8s:
+      kubernetes.core.k8s:
         state: present
         src: /tmp/metrics-server.yaml
   when: cloud_provider == 'aws'

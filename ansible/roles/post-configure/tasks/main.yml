@@ -24,7 +24,7 @@
 - name: Get details for GitLab Charts Task Runner Pod if present
   block:
     - name: Check for Task Runner pod
-      community.kubernetes.k8s_info:
+      kubernetes.core.k8s_info:
         kind: Pod
         label_selectors:
           - app in (task-runner, toolbox)
@@ -68,7 +68,7 @@
       when: "'gitlab_rails' in groups"
 
     - name: Generate Access Token via GitLab Charts Task Runner Pod
-      community.kubernetes.k8s_exec:
+      kubernetes.core.k8s_exec:
         pod: "{{ task_runner_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: |
@@ -130,7 +130,7 @@
       when: "'gitlab_rails' in groups"
 
     - name: Remove Access Token via GitLab Charts Task Runner Pod
-      community.kubernetes.k8s_exec:
+      kubernetes.core.k8s_exec:
         pod: "{{ task_runner_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: |

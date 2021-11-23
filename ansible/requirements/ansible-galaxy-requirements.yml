@@ -7,5 +7,5 @@ roles:
 collections:
   - google.cloud
   - azure.azcollection
-  - community.kubernetes
+  - kubernetes.core
   - community.postgresql

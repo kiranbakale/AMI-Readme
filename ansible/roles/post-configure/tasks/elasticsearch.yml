@@ -29,7 +29,7 @@
           when: "'gitlab_rails' in groups"
 
         - name: Delete old Elasticsearch index for GitLab via GitLab Task Runner pod
-          community.kubernetes.k8s_exec:
+          kubernetes.core.k8s_exec:
             pod: "{{ task_runner_pod }}"
             namespace: "{{ gitlab_charts_release_namespace }}"
             command: "{{ item }}"
@@ -111,7 +111,7 @@
           when: "'gitlab_rails' in groups"
 
         - name: Create empty index for GitLab via GitLab Task Runner pod
-          community.kubernetes.k8s_exec:
+          kubernetes.core.k8s_exec:
             pod: "{{ task_runner_pod }}"
             namespace: "{{ gitlab_charts_release_namespace }}"
             command: gitlab-rake gitlab:elastic:create_empty_index
@@ -147,7 +147,7 @@
           when: "'gitlab_rails' in groups"
 
         - name: Index all GitLab projects via GitLab Task Runner pod
-          community.kubernetes.k8s_exec:
+          kubernetes.core.k8s_exec:
             pod: "{{ task_runner_pod }}"
             namespace: "{{ gitlab_charts_release_namespace }}"
             command: gitlab-rake gitlab:elastic:index_projects
@@ -169,7 +169,7 @@
           when: "'gitlab_rails' in groups"
 
         - name: Wait until indexing is complete via GitLab Task Runner pod
-          community.kubernetes.k8s_exec:
+          kubernetes.core.k8s_exec:
             pod: "{{ task_runner_pod }}"
             namespace: "{{ gitlab_charts_release_namespace }}"
             command: gitlab-rake gitlab:elastic:index_projects_status

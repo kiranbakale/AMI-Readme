@@ -25,7 +25,7 @@
   become: false
   delegate_to: localhost
   run_once: true
-  community.kubernetes.helm_info:
+  kubernetes.core.helm_info:
     name: gitlab
     release_namespace: "{{ gitlab_charts_release_namespace }}"
   register: gitlab_info
@@ -34,7 +34,7 @@
   become: false
   delegate_to: localhost
   run_once: true
-  community.kubernetes.helm:
+  kubernetes.core.helm:
     name: gitlab
     release_state: absent
     release_namespace: "{{ gitlab_charts_release_namespace }}"
@@ -67,7 +67,7 @@
   become: false
   delegate_to: localhost
   run_once: true
-  community.kubernetes.helm:
+  kubernetes.core.helm:
     name: gitlab
     chart_ref: gitlab/gitlab
     chart_version: "{{ gitlab_charts_version | default(None) }}"
