@@ -22,7 +22,7 @@
       become: false
       delegate_to: localhost
       run_once: true
-      community.kubernetes.k8s_exec:
+      kubernetes.core.k8s_exec:
         pod: "{{ task_runner_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: |

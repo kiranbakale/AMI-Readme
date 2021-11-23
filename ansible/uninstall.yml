@@ -4,7 +4,7 @@
 
   tasks:
   - name: Uninstall GitLab Charts
-    community.kubernetes.helm:
+    kubernetes.core.helm:
       name: gitlab
       purge: true
     when:
