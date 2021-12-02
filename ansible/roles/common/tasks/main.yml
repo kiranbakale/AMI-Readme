@@ -51,7 +51,9 @@
       retries: 2
       delay: 3
       until: result is success
-      when: omnibus_node
+      when:
+        - omnibus_node
+        - ansible_facts['os_family'] == "Debian"
       tags: gpg
 
     # Removes the official release repo if it's present as we typically want to stick with Nightly
@@ -63,6 +65,7 @@
       when:
         - omnibus_node
         - gitlab_repo_script_url != "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh"
+        - ansible_facts['os_family'] == "Debian"
 
     # Allows GET to run on a node after running gitlab-ctl cleanse. The current behavior of cleanse is to
     # delete the /etc/gitlab folder, this will cause an error when we try to copy files to the dir.
@@ -126,6 +129,7 @@
       until: result is success
       when:
         - omnibus_node
+        - ansible_facts['os_family'] == "Debian"
 
     # Install GitLab Package via repo. State of latest means always run apt install
     # If gitlab_version is passed then this will always install that version
@@ -142,6 +146,7 @@
         - gitlab_repo_package != ''
         - gitlab_deb_download_url == ''
         - gitlab_deb_host_path == ''
+        - ansible_facts['os_family'] == "Debian"
 
     - name: Download GitLab deb package
       get_url:
@@ -152,6 +157,7 @@
       when:
         - omnibus_node
         - gitlab_deb_download_url != ''
+        - ansible_facts['os_family'] == "Debian"
 
     - name: Copy GitLab deb package
       copy:
@@ -162,6 +168,7 @@
       when:
         - omnibus_node
         - gitlab_deb_host_path != ''
+        - ansible_facts['os_family'] == "Debian"
 
     - name: Install GitLab deb package
       apt:
@@ -170,6 +177,7 @@
       when:
         - omnibus_node
         - (gitlab_deb_host_path != '') or (gitlab_deb_download_url != '')
+        - ansible_facts['os_family'] == "Debian"
 
     - name: Lock GitLab package updates
       command: apt-mark hold gitlab-ee
@@ -179,6 +187,7 @@
       until: result is success
       when:
         - omnibus_node
+        - ansible_facts['os_family'] == "Debian"
 
     - name: Configure sshguard whitelist if present
       block:

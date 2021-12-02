@@ -7,17 +7,23 @@
   retries: 20
   delay: 5
   until: result is success
+  when:
+    - ansible_facts['os_family'] == "Debian"
 
 - name: Upgrade apt packages to their latest version if configured
   apt:
     name: "*"
     state: latest
-  when: system_packages_upgrade | bool
+  when:
+    - system_packages_upgrade | bool
+    - ansible_facts['os_family'] == "Debian"
 
 - name: Remove apt packages that are no longer required if configured
   apt:
     autoremove: true
-  when: system_packages_autoremove | bool
+  when:
+    - system_packages_autoremove | bool
+    - ansible_facts['os_family'] == "Debian"
 
 - name: Configure Unattended Upgrades
   include_role:
