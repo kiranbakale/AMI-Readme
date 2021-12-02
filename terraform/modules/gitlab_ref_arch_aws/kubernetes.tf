@@ -56,6 +56,9 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
     aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
     aws_iam_role.gitlab_addon_vpc_cni_role,
+    # Don't create the node-pools until kube-proxy and vpc_cni plugins are created
+    aws_eks_addon.kube_proxy,
+    aws_eks_addon.vpc_cni,
   ]
 }
 
@@ -83,6 +86,9 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
     aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
     aws_iam_role.gitlab_addon_vpc_cni_role,
+    # Don't create the node-pools until kube-proxy and vpc_cni plugins are created
+    aws_eks_addon.kube_proxy,
+    aws_eks_addon.vpc_cni,
   ]
 }
 
@@ -110,6 +116,9 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
     aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
     aws_iam_role.gitlab_addon_vpc_cni_role,
+    # Don't create the node-pools until kube-proxy and vpc_cni plugins are created
+    aws_eks_addon.kube_proxy,
+    aws_eks_addon.vpc_cni,
   ]
 }
 
@@ -191,16 +200,30 @@ resource "aws_eks_addon" "coredns" {
 
   cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
   addon_name   = "coredns"
+
+  # coredns needs nodes to run on, so don't create it until
+  # the node-pools have been created
+  depends_on = [
+    aws_eks_node_group.gitlab_webservice_pool,
+    aws_eks_node_group.gitlab_sidekiq_pool,
+    aws_eks_node_group.gitlab_supporting_pool
+  ]
 }
 
 ## vpc-cni Addon
-
 resource "aws_eks_addon" "vpc_cni" {
   count = min(local.total_node_pool_count, 1)
 
   cluster_name             = aws_eks_cluster.gitlab_cluster[count.index].name
   addon_name               = "vpc-cni"
   service_account_role_arn = aws_iam_role.gitlab_addon_vpc_cni_role[count.index].arn
+  resolve_conflicts        = "OVERWRITE"
+
+  depends_on = [
+    aws_eks_addon.kube_proxy,
+    # Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster.
+    aws_iam_openid_connect_provider.gitlab_cluster_openid
+  ]
 }
 
 data "tls_certificate" "gitlab_cluster_oidc" {
