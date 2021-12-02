@@ -185,6 +185,198 @@ Enabling Advanced Search on your environment is designed to be as easy possible 
 - The Toolkit will also setup a Kibana Docker container on the Primary Elasticsearch node for administration and debugging purposes. Kibana will be accessible on your external IP / URL and port `5602` by default, e.g. `http://<external_ip_or_url>:5602`.
 - Ansible will then configure the GitLab environment near the end of its run to enable Advanced Search against those nodes and perform the first index.
 
+## Custom Servers (On Prem)
+
+While the Toolkit has primarily been designed to support Cloud Providers, there is partial support for configuring Custom Servers (e.g. On prem servers running locally in your network) with Ansible via a [Static Inventory](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html).
+
+Please note the following caveats before proceeding:
+
+- Your milage may vary - Due to the sheer potential number of customizations this support is offered on a best effort basis.
+- Custom Server setups must follow the [requirements](../README.md#requirements).
+- Terraform support is not available. VMs and services must be provisioned separately.
+- Object Storage config must be configured via [Custom Config](#custom-config) on any GitLab Rails or Sidekiq nodes as well as Helm Chart for Cloud Native Hybrid environments.
+- Data Disks configuration is not supported. These must be configured separately.
+- On Cloud Native Hybrid environments the Kubernetes cluster must be configured as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) and `kubeconfig` file created separately.
+
+To configure Custom Servers with Ansible the setup process involves the following:
+
+1. Creating a Static Inventory fine
+1. Generating the Facts Cache
+1. Configuring the [Environment `vars.yml` file](environment_configure.md#environment-config-varsyml)
+
+Refer to each section below for how to do each:
+
+### Static Config
+
+First an [Ansible Static Inventory](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html) is required instead of a [Dynamic Inventory](environment_configure.md#configure-dynamic-inventory).
+
+Using the same recommended structure the Static Inventory file should be saved in the inventory folder, e.g. `environments/<env_name>/inventory` alongside the [Environment `vars.yml` file](environment_configure.md#environment-config-varsyml). Several file formats are supported by Ansible but for consistency we'll use `yml` format.
+
+An example of a 10k environment's static inventory file that's Toolkit compatible would be as follows:
+
+```yml
+all:
+  children:
+    consul:
+      hosts:
+        <CONSUL-1-ADDRESS>:
+        <CONSUL-2-ADDRESS>:
+        <CONSUL-3-ADDRESS>:
+    gitaly:
+      hosts:
+        <GITALY-1-ADDRESS>:
+        <GITALY-2-ADDRESS>:
+        <GITALY-3-ADDRESS>:
+    gitaly_primary:
+      hosts:
+        <GITALY-1-ADDRESS>:
+    gitaly_secondary:
+      hosts:
+        <GITALY-2-ADDRESS>:
+        <GITALY-3-ADDRESS>:
+    gitlab_nfs:
+      hosts:
+        <GITLAB-NFS-1-ADDRESS>:
+    gitlab_rails:
+      hosts:
+        <GITLAB-RAILS-1-ADDRESS>:
+        <GITLAB-RAILS-3-ADDRESS>:
+        <GITLAB-RAILS-3-ADDRESS>:
+    gitlab_rails_primary:
+      hosts:
+        <GITLAB-RAILS-1-ADDRESS>:
+    gitlab_rails_secondary:
+      hosts:
+        <GITLAB-RAILS-2-ADDRESS>:
+        <GITLAB-RAILS-3-ADDRESS>:
+    haproxy_external:
+      hosts:
+        <HAPROXY-EXTERNAL-1-ADDRESS>:
+    haproxy_internal:
+      hosts:
+        <HAPROXY-INTERNAL-1-ADDRESS>:
+    monitor:
+      hosts:
+        <MONITOR-1-ADDRESS>:
+    pgbouncer:
+      hosts:
+        <PGBOUNCER-1-ADDRESS>:
+        <PGBOUNCER-2-ADDRESS>:
+        <PGBOUNCER-3-ADDRESS>:
+    postgres:
+      hosts:
+        <POSTGRES-1-ADDRESS>:
+        <POSTGRES-2-ADDRESS>:
+        <POSTGRES-3-ADDRESS>:
+    postgres_primary:
+      hosts:
+        <POSTGRES-1-ADDRESS>:
+    postgres_secondary:
+      hosts:
+        <POSTGRES-2-ADDRESS>:
+        <POSTGRES-3-ADDRESS>:
+    praefect:
+      hosts:
+        <PRAEFECT-1-ADDRESS>:
+        <PRAEFECT-2-ADDRESS>:
+        <PRAEFECT-3-ADDRESS>:
+    praefect_primary:
+      hosts:
+        <PRAEFECT-1-ADDRESS>:
+    praefect_secondary:
+      hosts:
+        <PRAEFECT-2-ADDRESS>:
+        <PRAEFECT-3-ADDRESS>:
+    praefect_postgres:
+      hosts:
+        <PRAEFECT-POSTGRES-1-ADDRESS>:
+    praefect_postgres_primary:
+      hosts:
+        <PRAEFECT-POSTGRES-1-ADDRESS>:
+    redis_cache:
+      hosts:
+        <REDIS-CACHE-1-ADDRESS>:
+        <REDIS-CACHE-2-ADDRESS>:
+        <REDIS-CACHE-3-ADDRESS>:
+    redis_cache_primary:
+      hosts:
+        <REDIS-CACHE-1-ADDRESS>:
+    redis_cache_secondary:
+      hosts:
+        <REDIS-CACHE-2-ADDRESS>:
+        <REDIS-CACHE-3-ADDRESS>:
+    redis_persistent:
+      hosts:
+        <REDIS-PERSISTENT-1-ADDRESS>:
+        <REDIS-PERSISTENT-2-ADDRESS>:
+        <REDIS-PERSISTENT-3-ADDRESS>:
+    redis_persistent_primary:
+      hosts:
+        <REDIS-PERSISTENT-1-ADDRESS>:
+    redis_persistent_secondary:
+      hosts:
+        <REDIS-PERSISTENT-2-ADDRESS>:
+        <REDIS-PERSISTENT-3-ADDRESS>:
+    sidekiq:
+      hosts:
+        <SIDEKIQ-1-ADDRESS>:
+        <SIDEKIQ-2-ADDRESS>:
+        <SIDEKIQ-3-ADDRESS>:
+        <SIDEKIQ-4-ADDRESS>:
+    sidekiq_primary:
+      hosts:
+        <SIDEKIQ-1-ADDRESS>:
+    sidekiq_secondary:
+      hosts:
+        <SIDEKIQ-2-ADDRESS>:
+        <SIDEKIQ-3-ADDRESS>:
+        <SIDEKIQ-4-ADDRESS>:
+    ungrouped:
+```
+
+The above file would be tweaked to suit your target environment and each address above should be replaced accordingly. The structure here, including any `*_primary` / `*_secondary` entries should be maintained as the Toolkit requires this.
+
+:information_source:&nbsp; For smaller environments where Redis is combined it would look as follows:
+
+```yml
+all:
+  children:
+    redis:
+      hosts:
+        <REDIS-1-ADDRESS>:
+        <REDIS-2-ADDRESS>:
+        <REDIS-3-ADDRESS>:
+    redis_primary:
+      hosts:
+        <REDIS-1-ADDRESS>:
+    redis_secondary:
+      hosts:
+        <REDIS-2-ADDRESS>:
+        <REDIS-3-ADDRESS>:
+```
+
+### Environment Config
+
+Configuring the environment config `vars.yml` file is [much the same as it would be normally](environment_configure.md#environment-config-varsyml) with the following differences:
+
+- `cloud_provider` **must** be set to `none`. This should be set when running with any static inventory.
+- Any Cloud Provider specific variables, such as `gcp_project` should be removed.
+- `prefix` can also be removed.
+
+### Facts Cache (Optional)
+
+When running select playbooks, e.g. running a playbook only for `haproxy` - `ansible-playbook -i <inventory> haproxy.yml`, some additional preparation is required when using a Static Inventory.
+
+Unlike Dynamic Inventories, in this scenario only facts for the HAProxy hosts and no others are collected. This will cause the play to fail as the Toolkit expects to be able to access facts for all hosts throughout.
+
+:information_source:&nbsp; This *doesn't* affect playbooks that run on all hosts, such as `all.yml`, as these will gather facts at runtime.
+
+To workaround this limitation a persistent [Fact Cache](https://docs.ansible.com/ansible/latest/plugins/cache.html#cache-plugins) is recommended where all host facts are saved and made available on subsequent runs.
+
+An example would be the [`jsonfile`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/jsonfile_cache.html#ansible-collections-ansible-builtin-jsonfile-cache) cache where all facts are saved to disk. This would only need to be generated once initially and only run again if any of the hosts change.
+
+Refer to the [Ansible docs](https://docs.ansible.com/ansible/latest/plugins/cache.html#cache-plugins) for more info.
+
 ## Container Registry (AWS Hybrid)
 
 Container Registry is enabled by default if you're deploying [Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/#available-reference-architectures) configured with external SSL via GET using AWS cloud provider. Container Registry in that case will run in k8s and use an s3 bucket for storage.

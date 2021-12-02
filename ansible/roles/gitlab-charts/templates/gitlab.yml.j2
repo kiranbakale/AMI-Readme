@@ -40,9 +40,11 @@ gitlab:
       enabled: false
 {% endif %}
   "{{ 'task-runner' if ((gitlab_version != '') and (gitlab_version is version('14.5', '<'))) else 'toolbox' }}":
+{% if cloud_provider != 'none' %}
     backups:
       objectStorage:
         {{ lookup('template', 'task_runner_backups_object_storage.' + cloud_provider + '.yml.j2') | indent(width=8) }}
+{% endif %}
 # Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
 {% if not (cloud_provider == 'aws' and external_url_ssl and external_ssl_source != '') %}
     registry:
@@ -62,6 +64,7 @@ gitlab:
 
 global:
   appConfig:
+{% if cloud_provider != 'none' %}
     object_store:
       enabled: true
       connection:
@@ -84,6 +87,7 @@ global:
       bucket: "{{ gitlab_object_storage_terraform_state_bucket }}"
     uploads:
       bucket: "{{ gitlab_object_storage_uploads_bucket }}"
+{% endif %}
   initialRootPassword:
     secret: gitlab-initial-root-password
     key: password

@@ -41,6 +41,7 @@
         - name: Mount data disks
           import_tasks: data_disks.yml
           when: group_data_disks | length > 0
+      when: cloud_provider != 'none'
       tags: data_disks
 
     - name: Add GitLab repository GPG key

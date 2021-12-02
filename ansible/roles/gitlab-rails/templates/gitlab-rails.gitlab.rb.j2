@@ -51,6 +51,7 @@ gitlab_rails['external_diffs_when'] = 'outdated'
 # Storage Config
 ## Object Storage - consolidated object storage configuration
 
+{% if cloud_provider != 'none' %}
 gitlab_rails['object_store']['enabled'] = true
 gitlab_rails['object_store']['proxy_download'] = true
 
@@ -72,6 +73,7 @@ gitlab_rails['backup_upload_connection'] = {
   {{ lookup('template', 'object_storage.' + cloud_provider + '.rb.j2') | indent(width=2) }}
 }
 gitlab_rails['backup_upload_remote_directory'] = "{{ gitlab_object_storage_backups_bucket }}"
+{% endif %}
 
 ## NFS
 gitlab_rails['uploads_directory'] = '{{ gitlab_nfs_path }}/uploads'

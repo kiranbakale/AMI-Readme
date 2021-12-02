@@ -16,6 +16,7 @@ ansible/environments/*
 !ansible/environments/README.md
 ansible/inventories/*
 !ansible/inventories/README.md
+ansible/fact_cache
 keys/*
 !keys/README.md
 config/*
