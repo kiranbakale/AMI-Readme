@@ -17,8 +17,8 @@ python_packages: [requests==2.26.0, google-auth==2.0.1, netaddr==0.8.0, openshif
 ## Cloud Provider Settings
 ################################################################################
 
-internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address'], alicloud: ['private_ip_address'], tencentcloud: ['private_ip_address']}
-external_ip_lookup: {gcp: ['networkInterfaces', 0, 'accessConfigs', 0, 'natIP'], azure: ['public_ipv4_addresses', 0], aws: ['public_ip_address'], alicloud: ['public_ip_address'], tencentcloud: ['public_ip_address'] }
+internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address'], alicloud: ['private_ip_address'], tencentcloud: ['private_ip_address'], none: ['ansible_default_ipv4', 'address']}
+external_ip_lookup: {gcp: ['networkInterfaces', 0, 'accessConfigs', 0, 'natIP'], azure: ['public_ipv4_addresses', 0], aws: ['public_ip_address'], alicloud: ['public_ip_address'], tencentcloud: ['public_ip_address'], none: ['inventory_hostname']}
 
 cloud_provider: ''
 cloud_provider_labels_name: "{{ 'labels' if cloud_provider == 'gcp' else 'tags' }}"
@@ -77,6 +77,7 @@ internal_lb_host: "{{ haproxy_internal_int_ip }}"
 ## GitLab Install Settings
 ################################################################################
 
+prefix: ''
 omnibus_node: true
 
 gitlab_version: ""
