@@ -52,6 +52,11 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
     workload = "webservice"
   }
 
+  tags = {
+    gitlab_node_prefix = var.prefix
+    gitlab_node_type   = "webservice-pool"
+  }
+
   depends_on = [
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
     aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
@@ -79,6 +84,11 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
     workload = "sidekiq"
   }
 
+  tags = {
+    gitlab_node_prefix = var.prefix
+    gitlab_node_type   = "sidekiq-pool"
+  }
+
   depends_on = [
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
     aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
@@ -104,6 +114,11 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
 
   labels = {
     workload = "support"
+  }
+
+  tags = {
+    gitlab_node_prefix = var.prefix
+    gitlab_node_type   = "supporting-pool"
   }
 
   depends_on = [
