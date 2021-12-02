@@ -4,6 +4,8 @@
     name: certbot
     state: absent
     purge: true
+  when:
+    - ansible_facts['os_family'] == "Debian"
 
 - name: Delete any existing SSL files or config
   file:
