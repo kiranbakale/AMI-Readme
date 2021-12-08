@@ -429,6 +429,12 @@ After the config has been setup you're now ready to configure the environment. T
 
 The same commands are used when you wish to update an existing environment.
 
+:information_source:&nbsp; If you ever want to uninstall GitLab, you can do so by running:
+
+```shell
+ansible-playbook -i environments/10k/inventory uninstall.yml
+```
+
 ### Running with ansible-deployer (optional)
 
 An alternative way to run the playbooks is with the `ansible-deployer` script. This script will run multiple playbooks in parallel where possible while maintaining the required run order. The script can either run all the playbooks by default or a custom list as passed via the `-p` flag. It should be noted that due to the script running tasks in parallel, if any issues arise during setup then the playbooks would be better run sequentially via the standard `ansible-playbook` command to help debug the problem(s).

@@ -1,0 +1,21 @@
+---
+- name: Uninstall GitLab package
+  command: "{{ item }}"
+  args:
+    warn: false
+  with_items:
+    - apt-mark install gitlab-ee
+    - apt-get remove gitlab-ee -y
+
+- name: Uninstall any GitLab repositories
+  command: "{{ item }}"
+  args:
+    warn: false
+  with_items:
+    - apt-add-repository -r https://packages.gitlab.com/gitlab/nightly-builds/ubuntu/
+    - apt-add-repository -r https://packages.gitlab.com/gitlab/gitlab-ee/ubuntu/
+
+- name: Remove the repository script file
+  file:
+    path: "{{ gitlab_repo_script_path }}"
+    state: absent
