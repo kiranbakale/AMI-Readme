@@ -1,18 +1,19 @@
 ---
 - hosts: all:!ungrouped
+  become: true
 
   tasks:
     - name: Uninstall GitLab Omnibus
-      become: true
       include_role:
         name: common
         tasks_from: uninstall
       when:
         - omnibus_node
 
+- hosts: localhost
+
+  tasks:
     - name: Uninstall GitLab Charts
-      become: false
-      delegate_to: localhost
       include_role:
         name: gitlab-charts
         tasks_from: uninstall
