@@ -128,9 +128,13 @@ postgres_int_ips: "{{ (groups['postgres'] | map('extract', hostvars, internal_ip
 pgbouncer_int_ips: "{{ (groups['pgbouncer'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'pgbouncer' in groups else [] }}"
 
 postgres_host: "{{ postgres_primary_int_ip }}"
-postgres_port: "5432"
+postgres_port: '5432'
+postgres_migrations_host: "{{ postgres_host }}"
+postgres_migrations_port: '5432'
 postgres_username: "gitlab"
 postgres_password: ""
+postgres_admin_username: "{{ postgres_username }}"
+postgres_admin_password: "{{ postgres_password }}"
 postgres_database_name: "gitlabhq_production"
 postgres_load_balancing_hosts: []
 postgres_external: "{{ 'postgres' not in groups and postgres_host != '' }}"
@@ -151,10 +155,17 @@ praefect_int_ips: "{{ (groups['praefect'] | map('extract', hostvars, internal_ip
 ## Praefect Postgres
 praefect_postgres_int_ip: "{{ (groups['praefect_postgres'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_postgres_primary' in groups else '' }}"
 praefect_postgres_host: "{{ praefect_postgres_int_ip if praefect_postgres_int_ip != '' else postgres_host }}"
-praefect_postgres_port: "5432"
+praefect_postgres_port: '5432'
+praefect_postgres_cache_host: "{{ praefect_postgres_host }}"
+praefect_postgres_cache_port: '5432'
+praefect_postgres_migrations_host: "{{ praefect_postgres_host }}"
+praefect_postgres_migrations_port: '5432'
 praefect_postgres_username: "praefect"
 praefect_postgres_password: ""
+praefect_postgres_admin_username: "{{ praefect_postgres_username if praefect_postgres_host != postgres_host else postgres_admin_username }}"
+praefect_postgres_admin_password: "{{ praefect_postgres_password if praefect_postgres_host != postgres_host else postgres_admin_password }}"
 praefect_postgres_database_name: "praefect_production"
+praefect_postgres_external: "{{ 'praefect_postgres' not in groups and praefect_postgres_host != '' }}"
 
 # GitLab Monitor
 monitor_int_ip: "{{ (groups['monitor'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'monitor' in groups else '' }}"

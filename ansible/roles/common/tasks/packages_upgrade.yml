@@ -1,15 +1,3 @@
----
-- name: Install system packages
-  apt:
-    name: "{{ system_packages }}"
-    update_cache: true
-  register: result
-  retries: 20
-  delay: 5
-  until: result is success
-  when:
-    - ansible_facts['os_family'] == "Debian"
-
 - name: Upgrade apt packages to their latest version if configured
   apt:
     name: "*"
@@ -25,15 +13,6 @@
     - system_packages_autoremove | bool
     - ansible_facts['os_family'] == "Debian"
 
-- name: Configure Unattended Upgrades
-  include_role:
-    name: jnv.unattended-upgrades
-  when: unattended_upgrades
-
 - name: Run Unattended Upgrades directly
   command: unattended-upgrade
   when: unattended_upgrades
-
-- name: Install python packages
-  pip:
-    name: "{{ python_packages }}"

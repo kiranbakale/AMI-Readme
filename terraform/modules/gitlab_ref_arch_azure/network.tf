@@ -1,6 +1,6 @@
 resource "azurerm_virtual_network" "gitlab" {
   name                = "${var.prefix}-default-network"
-  address_space       = ["172.17.0.0/16"]
+  address_space       = ["172.16.0.0/12"]
   location            = var.location
   resource_group_name = var.resource_group_name
 }

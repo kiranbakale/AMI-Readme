@@ -16,20 +16,30 @@ praefect['enable'] = true
 praefect['listen_addr'] = '0.0.0.0:2305'
 praefect['auth_token'] = '{{ praefect_external_token }}'
 
+{% if db_migrate is defined and db_migrate == true %}
+praefect['auto_migrate'] = true
+
+praefect['database_host'] = '{{ praefect_postgres_migrations_host }}'
+praefect['database_port'] = '{{ praefect_postgres_migrations_port }}'
+{% else %}
+praefect['auto_migrate'] = false
+
 praefect['database_host'] = '{{ praefect_postgres_host }}'
 praefect['database_port'] = '{{ praefect_postgres_port }}'
+{% endif %}
 
-## Praefect Cache settings (< 14.0)
+## Praefect Cache settings
 {% if gitlab_version != '' and gitlab_version is version('14.0', '<') %}
-praefect['database_host_no_proxy'] = '{{ praefect_postgres_host }}'
-praefect['database_port_no_proxy'] = '{{ praefect_postgres_port }}'
+praefect['database_host_no_proxy'] = '{{ praefect_postgres_cache_host }}'
+praefect['database_port_no_proxy'] = '{{ praefect_postgres_cache_port }}'
+{% else %}
+praefect['database_direct_host'] = '{{ praefect_postgres_cache_host }}'
+praefect['database_direct_port'] = '{{ praefect_postgres_cache_port }}'
 {% endif %}
 
 praefect['database_user'] = '{{ praefect_postgres_username }}'
 praefect['database_password'] = '{{ praefect_postgres_password }}'
 praefect['database_dbname'] = '{{ praefect_postgres_database_name }}'
-
-praefect['auto_migrate'] = {{ (db_migrate is defined and db_migrate == true) | lower }}
 
 {% if gitlab_version == '' or gitlab_version is version('14.0', '>=') %}
 praefect['virtual_storages'] = {

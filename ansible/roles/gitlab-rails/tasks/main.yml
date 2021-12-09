@@ -66,24 +66,61 @@
 
 - name: Get Omnibus Postgres Primary
   block:
-    - name: Gather facts for Omnibus Postgres cluster
-      block:
-        - name: Get latest Postgres primary
-          command: gitlab-ctl get-postgresql-primary
-          register: postgres_leader_int_address
-          delegate_to: "{{ groups['postgres'][0] }}"
-          delegate_facts: true
-          become: true
+    - name: Get latest Postgres primary
+      command: gitlab-ctl get-postgresql-primary
+      register: postgres_leader_int_address
+      delegate_to: "{{ groups['postgres'][0] }}"
+      delegate_facts: true
+      become: true
 
-        - name: Update Postgres primary IP and Port
-          set_fact:
-            postgres_host: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
-            postgres_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
-      when: postgres_replication_manager == 'patroni'
-      tags:
-        - reconfigure
-        - db_migrate
-  when: "'postgres' in groups"
+    - name: Update Postgres primary IP and Port
+      set_fact:
+        postgres_host: "{{ postgres_leader_int_address.stdout.split(':')[0] }}"
+        postgres_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
+  when:
+    - "'postgres' in groups and groups['postgres'] | length > 1"
+    - postgres_replication_manager == 'patroni'
+  tags:
+    - reconfigure
+    - db_migrate
+
+- name: Non Omnibus database related tasks
+  block:
+    - name: Create Database User
+      community.postgresql.postgresql_user:
+        login_host: "{{ postgres_host }}"
+        login_port: "{{ postgres_port }}"
+        login_user: "{{ postgres_admin_username }}"
+        login_password: "{{ postgres_admin_password }}"
+        db: "template1"
+        name: "{{ postgres_username.split('@')[0] }}"
+        password: "{{ postgres_password }}"
+        role_attr_flags: CREATEDB
+        expires: infinity
+
+    - name: Create Database
+      community.postgresql.postgresql_db:
+        login_host: "{{ postgres_host }}"
+        login_port: "{{ postgres_port }}"
+        login_user: "{{ postgres_username }}"
+        login_password: "{{ postgres_password }}"
+        name: "{{ postgres_database_name }}"
+        encoding: UTF-8
+
+    - name: Enable required Postgres extensions
+      community.postgresql.postgresql_ext:
+        login_host: "{{ postgres_host }}"
+        login_port: "{{ postgres_port }}"
+        login_user: "{{ postgres_admin_username }}"
+        login_password: "{{ postgres_admin_password }}"
+        name: "{{ item }}"
+        db: "{{ postgres_database_name }}"
+      loop: ['pg_trgm', 'btree_gist', 'plpgsql']
+  when: postgres_external
+  tags:
+    - reconfigure
+    - db_migrate
+    - postgres_external
   run_once: true
 
 - name: Run Database Migrations

@@ -24,10 +24,10 @@
   block:
     - name: Create Praefect Database User
       community.postgresql.postgresql_user:
-        login_host: "{{ postgres_host }}"
-        login_port: "{{ postgres_port }}"
-        login_user: "{{ postgres_username }}"
-        login_password: "{{ postgres_password }}"
+        login_host: "{{ praefect_postgres_host }}"
+        login_port: "{{ praefect_postgres_port }}"
+        login_user: "{{ praefect_postgres_admin_username }}"
+        login_password: "{{ praefect_postgres_admin_password }}"
         db: "template1"
         name: "{{ praefect_postgres_username.split('@')[0] }}"
         password: "{{ praefect_postgres_password }}"
@@ -36,18 +36,29 @@
 
     - name: Create Praefect Database
       community.postgresql.postgresql_db:
-        login_host: "{{ postgres_host }}"
-        login_port: "{{ postgres_port }}"
+        login_host: "{{ praefect_postgres_host }}"
+        login_port: "{{ praefect_postgres_port }}"
         login_user: "{{ praefect_postgres_username }}"
         login_password: "{{ praefect_postgres_password }}"
         name: "{{ praefect_postgres_database_name }}"
         encoding: UTF-8
+
+    - name: Enable required Postgres extensions
+      community.postgresql.postgresql_ext:
+        login_host: "{{ praefect_postgres_host }}"
+        login_port: "{{ praefect_postgres_port }}"
+        login_user: "{{ praefect_postgres_admin_username }}"
+        login_password: "{{ praefect_postgres_admin_password }}"
+        name: "{{ item }}"
+        db: "{{ praefect_postgres_database_name }}"
+      loop: ['pg_trgm', 'btree_gist', 'plpgsql']
   when:
-    - ('praefect_postgres' not in groups)
+    - praefect_postgres_external
     - (geo_secondary_site_group_name not in groups)
   tags:
     - reconfigure
     - db_migrate
+    - postgres_external
   run_once: true
 
 - name: Perform database migrations
