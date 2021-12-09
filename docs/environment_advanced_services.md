@@ -96,13 +96,31 @@ The available variables in Ansible for this are as follows:
 
 ## PostgreSQL
 
-The Toolkit supports provisioning and/or configuring an alternative PostgreSQL database and then pointing GitLab to use it accordingly, much in the same way as configuring Omnibus Postgres.
+The Toolkit supports provisioning and/or configuring alternative PostgreSQL database(s) and then pointing GitLab to use them accordingly, much in the same way as configuring Omnibus Postgres.
 
-When using an alternative PostgreSQL database the following changes apply when deploying via the Toolkit:
+When using alternative PostgreSQL database(s) the following changes apply when deploying via the Toolkit:
 
 - Postgres and PgBouncer nodes don't need to be provisioned via Terraform.
 - Praefect will use the same database instance. As such the Praefect Postgres node also doesn't need to be provisioned.
 - Consul doesn't need to be provisioned via Terraform unless you're deploying Prometheus via the Monitor node (needed for monitoring auto discovery).
+
+### Database Setup Options
+
+There are several databases GitLab can use depending on the setup as follows:
+
+- GitLab - The main database for the application
+- Praefect - The database for Praefect to track Gitaly node status
+- Geo Tracking - The database for Geo to track sync status on a secondary site
+
+How and where these are configured can be done in several ways depending on if Geo is being used:
+
+- Non Geo
+  - GitLab and Praefect can be configured on the same Database instance (recommended) or separated
+- Geo 
+  - GitLab and Praefect should be separated to avoid replication of the latter.
+  - Geo Tracking DB can be configured on the same Database instance as Praefect on the secondary site (recommended) or separated
+
+This section starts with the non Geo combined databases route with guidance being given on the alternatives where appropriate.
 
 Head to the relevant section(s) below for details on how to provision and/or configure.
 
@@ -148,6 +166,8 @@ module "gitlab_ref_arch_aws" {
 }
 ```
 
+:information_source:&nbsp; If a separate Database Instance for Praefect is desired then this can be done with the same settings above but with the `rds_praefect_postgres_*` prefix instead.
+
 Once the variables are set in your file you can proceed to provision the service as normal. Note that this can take several minutes on AWS's side.
 
 Once provisioned you'll see several new outputs at the end of the process. Key from this is the `rds_host` output, which contains the address for the database instance that then needs to be passed to Ansible to configure. Take a note of this address for the next step.
@@ -177,11 +197,13 @@ Please note that on the primary site it is possible to use a single RDS instance
 
 ### Configuring with Ansible
 
-Configuring GitLab to use an alternative PostgreSQL database with Ansible is the same regardless of its origin. All that's required is a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) to point the Toolkit at the PostgreSQL instance.
+Configuring GitLab to use an alternative PostgreSQL database with Ansible is the same regardless of its origin. All that's required are a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) to point the Toolkit at the PostgreSQL instance(s).
 
 :information_source:&nbsp; This config is the same for custom PostgreSQL databases that have been provisioned outside of Omnibus or Cloud Services. Although please note, in this setup it's expected that HA is in place and the URL to connect to the PostgreSQL instance never changes.
 
-The available variables in Ansible for this are as follows:
+As detailed in [Database Setup Options](#database-setup-options) GitLab has several potential databases to configure. This section will start with the combined non Geo route with additional guidance given for the alternatives.
+
+The required variables in Ansible for this are as follows:
 
 - `postgres_host` - The hostname of the PostgreSQL instance. Provided in Terraform outputs if provisioned earlier. **Required**.
 - `postgres_password` - The password for the instance. **Required**.
@@ -189,12 +211,21 @@ The available variables in Ansible for this are as follows:
 - `postgres_database_name` - The name of the main database in the instance for use by GitLab. Optional, default is `gitlabhq_production`.
 - `postgres_port` - The port of the PostgreSQL instance. Should only be changed if the instance isn't running with the default port. Optional, default is `5432`.
 - `postgres_load_balancing_hosts` - A list of all PostgreSQL hostnames to use in [Database Load Balancing](https://docs.gitlab.com/ee/administration/postgresql/database_load_balancing.html). This is only applicable when running with an alternative Postgres setup (non Omnibus) where you have multiple read replicas. The main host should also be included in this list to be used in load balancing. Optional, default is `[]`.
-
-Along with the above there are some additional settings specific to Praefect and how its database will be set up on the PostgreSQL instance:
-
-- `postgres_password` - The password for the Praefect user on the PostgreSQL instance. **Required**.
 - `praefect_postgres_username` - The username to create for Praefect on the PostgreSQL instance. Optional, default is `praefect`.
+- `praefect_postgres_password` - The password for the Praefect user on the PostgreSQL instance. **Required**.
 - `praefect_postgres_database_name` - The name of the database to create for Praefect on the PostgreSQL instance. Optional, default is `praefect_production`.
+
+Depending on your Database instance setup some additional config may be required:
+
+- `postgres_migrations_host` / `postgres_migrations_port` - Required for running GitLab Migrations if the main connection is not direct (e.g. via a connection pooler like PgBouncer). This should be set to the direct connection details of your database.
+- `postgres_admin_username` / `postgres_admin_password` - Required if the admin username for the Database instance differs from the main one.
+
+If a separate Database instance is to be used for Praefect then the additional following config may be required:
+
+- `praefect_postgres_host` / `praefect_postgres_port` - Host and port for the Praefect database.
+- `praefect_postgres_cache_host` / `praefect_postgres_cache_port` - Host and port for the [Praefect cache connection](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#reads-distribution-caching). This should be either set to the direct connection or through a PgBouncer connection that has session pooling enabled.
+- `praefect_postgres_migrations_host` / `praefect_postgres_migrations_port` - Required for running Praefect Migrations if the main connection is not direct (e.g. via a connection pooler like PgBouncer). This should be set to the direct connection details of your database.
+- `praefect_postgres_admin_username` / `praefect_postgres_admin_password` - Required if the admin username for the Database instance differs from the main one.
 
 Once set, Ansible can then be run as normal. During the run it will configure the various GitLab components to use the database as well as any additional tasks such as setting up a separate database in the same instance for Praefect.
 

@@ -13,9 +13,8 @@
       tags: hostname
 
     - name: Setup Packages
-      import_tasks: packages.yml
-      tags:
-        - packages
+      import_tasks: packages_setup.yml
+      tags: packages
 
     # https://about.gitlab.com/blog/2019/11/15/tracking-down-missing-tcp-keepalives/
     - name: Configure TCP keepalive settings
@@ -110,8 +109,7 @@
       register: repo_file
       retries: 20
       delay: 30
-      when:
-        - omnibus_node
+      when: omnibus_node
 
     - name: Install GitLab repository
       command: bash /tmp/gitlab_install_repository.sh
@@ -189,6 +187,7 @@
       when:
         - omnibus_node
         - ansible_facts['os_family'] == "Debian"
+      tags: packages
 
     - name: Configure sshguard whitelist if present
       block:
@@ -205,6 +204,10 @@
             state: restarted
           when: sshguard_whitelist.changed
       when: "'sshguard' in services"
+
+    - name: Upgrade Packages
+      import_tasks: packages_upgrade.yml
+      tags: packages
 
     - name: Mark common has run
       set_fact:

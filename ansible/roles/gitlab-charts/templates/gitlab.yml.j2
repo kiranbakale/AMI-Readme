@@ -55,8 +55,8 @@ gitlab:
       password:
         secret: gitlab-postgres-password
         key: password
-      host: "{{ postgres_host }}"
-      port: "{{ postgres_port }}"
+      host: "{{ postgres_migrations_host }}"
+      port: "{{ postgres_migrations_port }}"
 {% if 'postgres' not in groups %}
       username: "{{ postgres_username }}"
       database: "{{ postgres_database_name }}"

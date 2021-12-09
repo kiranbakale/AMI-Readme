@@ -28,8 +28,8 @@
       community.postgresql.postgresql_user:
         login_host: "{{ geo_secondary_praefect_postgres_host }}"
         login_port: "{{ praefect_postgres_port }}"
-        login_user: "{{ praefect_postgres_username }}"
-        login_password: "{{ praefect_postgres_password }}"
+        login_user: "{{ praefect_postgres_admin_username }}"
+        login_password: "{{ praefect_postgres_admin_password }}"
         db: "template1"
         name: "{{ geo_tracking_postgres_user }}"
         password: "{{ geo_tracking_postgres_password }}"
@@ -44,6 +44,16 @@
         login_password: "{{ geo_tracking_postgres_password }}"
         name: "{{ geo_tracking_postgres_database }}"
         encoding: UTF-8
+
+    - name: Enable required Postgres extensions
+      community.postgresql.postgresql_ext:
+        login_host: "{{ geo_secondary_praefect_postgres_host }}"
+        login_port: "{{ praefect_postgres_port }}"
+        login_user: "{{ praefect_postgres_admin_username }}"
+        login_password: "{{ praefect_postgres_admin_password }}"
+        name: "{{ item }}"
+        db: "{{ geo_tracking_postgres_database }}"
+      loop: ['pg_trgm', 'btree_gist', 'plpgsql']
   when:
     - deploy_host is defined
     - inventory_hostname == deploy_host
