@@ -24,6 +24,12 @@ For the Toolkit we recommend Terraform `1.x` but versions from `0.14.x` versions
 
 Terraform generally works best when all users for an environment are using the same major version due to its State. Improvements have been made that allow for the easier upgrading and downgrading of state however. As such it's recommended that all users sync on the same version of Terraform when working against the same environment and any Terraform upgrades are done in unison.
 
+### Using Terraform inside a Docker container
+
+With Docker the only prerequisite is installation, the Toolkit's image contains everything else you'll need. The official [Docker installation instructions](https://docs.docker.com/engine/install/) should be followed to correctly install and run Docker.
+
+### Install Terraform using asdf
+
 With the above considerations then we recommend installing Terraform with a Version Manager such as [`asdf`](https://asdf-vm.com/#/) (if supported on your machine(s)).
 
 Installing Terraform with a version manager such as `asdf` has several benefits:
@@ -152,12 +158,12 @@ module "gitlab_ref_arch_gcp" {
   consul_node_count = 3
   consul_machine_type = "n1-highcpu-2"
 
-  elastic_node_count = 3 
+  elastic_node_count = 3
   elastic_machine_type = "n1-highcpu-16"
 
   gitaly_node_count = 3
   gitaly_machine_type = "n1-standard-16"
-  
+
   praefect_node_count = 3
   praefect_machine_type = "n1-highcpu-2"
 
@@ -401,7 +407,7 @@ provider "aws" {
 - `terraform` - The main Terraform config block.
   - `backend "s3"` - The [`s3` backend](https://www.terraform.io/docs/language/settings/backends/s3.html) config block.
     - `bucket` - The name of the bucket [previously created](environment_prep.md#3-setup-terraform-state-storage-s3) to store the State.
-    - `key` - The file path and name to store the state in (example: `path/to/my/key`- [must not start with '/'](https://github.com/hashicorp/terraform/blob/main/internal/backend/remote-state/s3/backend.go#L30-L41)). 
+    - `key` - The file path and name to store the state in (example: `path/to/my/key`- [must not start with '/'](https://github.com/hashicorp/terraform/blob/main/internal/backend/remote-state/s3/backend.go#L30-L41)).
     - `region` - The AWS region of the bucket.
   - `required_providers` - Config block for the required provider(s) Terraform needs to download and use.
     - `aws` - Config block for the AWS provider. Sets where to source the provider and what version to download and use.
@@ -427,7 +433,7 @@ module "gitlab_ref_arch_aws" {
   consul_node_count = 3
   consul_instance_type = "c5.large"
 
-  elastic_node_count = 3 
+  elastic_node_count = 3
   elastic_instance_type = "c5.4xlarge"
 
   gitaly_node_count = 3
@@ -749,12 +755,12 @@ module "gitlab_ref_arch_azure" {
   consul_node_count = 3
   consul_size = "Standard_F2s_v2"
 
-  elastic_node_count = 3 
+  elastic_node_count = 3
   elastic_size = "Standard_F16s_v2"
 
   gitaly_node_count = 3
   gitaly_size = "Standard_D16s_v3"
-  
+
   praefect_node_count = 3
   praefect_size = "Standard_F2s_v2"
 
@@ -832,7 +838,7 @@ Below are some examples of select sources that are well suited to this.
 
 #### Environment Variables
 
-[Terraform can read any Environment Variable on the machine running it](https://www.terraform.io/docs/cli/config/environment-variables.html#tf_var_name) with the prefix `TF_VAR_*`. 
+[Terraform can read any Environment Variable on the machine running it](https://www.terraform.io/docs/cli/config/environment-variables.html#tf_var_name) with the prefix `TF_VAR_*`.
 
 Terraform will treat all `TF_VAR_*` environment variables as variables and you can set those in your config as desired. This is ideal for sensitive variables and in CI for overriding any variables as desired.
 
@@ -862,7 +868,44 @@ module "gitlab_ref_arch_aws" {
 
 Any Terraform Data Source can be used in a similar way. Refer to the specific Data Source docs for more info.
 
-## 3. Provision
+## 3. Run the GitLab Environment Toolkit's Docker container (optional)
+
+Before running the Docker container you will need to setup your environment config files by following [# 2. Setup the Environment's config](#2-setup-the-environments-config). The container can be started once the Terraform config has been setup. When starting the container it is important to pass in your config files and keys, as well as set any authentication based environment variables.
+
+Below is an example of how to run the container when using a GCP service account:
+
+```sh
+docker run -it \
+  -e GOOGLE_APPLICATION_CREDENTIALS="/gitlab-environment-toolkit/keys/<service account file>" \
+  -v <path to keys directory>:/gitlab-environment-toolkit/keys \
+  -v <path to Terraform config>:/gitlab-environment-toolkit/terraform/environments/<environment name> \
+  gitlab/gitlab-environment-toolkit:latest
+```
+
+You can also use a simplified command if you store your config outside of the toolkit. Using the folder structure below you're able to store multiple environments alongside each other and when using the Toolkits container you can simply pass in a single folder and still have access to all your different environments.
+
+```sh
+get_environments
+├──keys
+└──<environment name>
+|  └──terraform
+|     ├── environment.tf
+|     ├── main.tf
+|     └── variables.tf
+└──<environment name>
+   └──terraform
+```
+
+```sh
+docker run -it \
+  -e GOOGLE_APPLICATION_CREDENTIALS="/gitlab-environment-toolkit/keys/<service account file>" \
+  -v <path to `get_environments` directory>:/environments \
+  gitlab/gitlab-environment-toolkit:latest
+```
+
+> :information_source:&nbsp; The Docker image is currently not available from the Toolkit's project, this will be blocked until [the project is moved](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/319). Until this is completed you can build and run the image locally with `docker build -t gitlab/gitlab-environment-toolkit:latest .`, you can then run the above commands for running the image.
+
+## 4. Provision
 
 After the config has been setup you're now ready to provision the environment. This is done as follows:
 
@@ -875,6 +918,6 @@ After the config has been setup you're now ready to provision the environment. T
 
 :information_source:&nbsp; If you ever want to deprovision resources created, you can do so by running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html).
 
-## Next Steps 
+## Next Steps
 
 After the above steps have been completed you can proceed to [Configuring the environment with Ansible](environment_configure.md).
