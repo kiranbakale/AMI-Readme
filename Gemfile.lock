@@ -17,7 +17,7 @@ GEM
       rubocop-performance (~> 1.5.2)
       rubocop-rails (~> 2.5)
       rubocop-rspec (~> 1.36)
-    i18n (1.8.10)
+    i18n (1.8.11)
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.4)
     minitest (5.14.4)
@@ -25,7 +25,7 @@ GEM
     open3 (0.1.1)
     optimist (3.0.1)
     parallel (1.21.0)
-    parser (3.0.2.0)
+    parser (3.0.3.2)
       ast (~> 2.4.1)
     rack (2.2.3)
     rainbow (3.0.0)
@@ -52,7 +52,7 @@ GEM
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     unicode-display_width (1.8.0)
-    zeitwerk (2.4.2)
+    zeitwerk (2.5.1)
 
 PLATFORMS
   ruby
@@ -68,7 +68,7 @@ DEPENDENCIES
   rubocop-rspec (~> 1.37.1)
 
 RUBY VERSION
-   ruby 2.6.6p146
+   ruby 2.7.5p203
 
 BUNDLED WITH
-   2.1.4
+   2.2.32

@@ -62,11 +62,15 @@ Hopefully with this overview it's clearer how Ansible in the Toolkit works. Belo
 
 ## 1. Install Ansible
 
-The Toolkit requires Ansible to be installed. You can either use a Python virtual environment or install Ansible globally. We recommend using the python virtual environment.
+The Toolkit requires Ansible to be installed. You can either use a Python virtual environment or install Ansible globally. Additionally you can avoid installing anything by using the Toolkit's Docker image. We recommend using the method you're most familiar with.
 
-### Option 1a: Install Ansible with a Virtual Environment
+### Using Ansible inside a Docker container
 
-We recommend using this approach as your local environment will be isolated from other python packages that you install on your machine. Additionally, your local environment will match the environment used for testing, validation, and building docker images, so there is less chance of package changes affecting the ansible environment you are running locally.
+With Docker the only prerequisite is installation, the Toolkit's image contains everything else you'll need. The official [Docker installation instructions](https://docs.docker.com/engine/install/) should be followed to correctly install and run Docker.
+
+### Installing Ansible with a Virtual Environment
+
+If installing Ansible locally, we recommend using this approach as your local environment will be isolated from other python packages that you install on your machine. Additionally, your local environment will match the environment used for testing, validation, and building docker images, so there is less chance of package changes affecting the ansible environment you are running locally.
 
 To setup the Python virtual environment the first time, run:
 
@@ -84,7 +88,7 @@ pip install -r ansible/requirements/requirements.txt
 ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
 ```
 
-### Option 1b: Bring-Your-Own Ansible
+### Bring-Your-Own Ansible
 
 If you have installed Ansible inside a virtual environment, you can skip this step.
 
@@ -408,7 +412,45 @@ The Toolkit can install other GitLab versions from `13.2.0` onwards through two 
 
 All Ansible config can be viewed directly in the project under the [`group_vars`](../ansible/group_vars) folder. Most config will be found in the [`all.yml`](../ansible/group_vars/all.yml) file, where config applies to all machines. Additional config that only needs to apply to select machines can be found under specific group names under this folder. As mentioned earlier, we may also refer to additional variables in detail later in these docs under the [Advanced sections](environment_advanced.md) where they are applicable.
 
-## 3. Configure
+## 3. Run the GitLab Environment Toolkit's Docker container (optional)
+
+Before running the Docker container you will need to setup your Inventory files by following [2. Setup the Environment's Inventory and Config](#2-setup-the-environments-inventory-and-config). The container can be started once the Inventory has been configured. When starting the container it is important to pass in your inventory files and keys, as well as set any authentication based environment variables.
+
+Below is an example of how to run the container when using a GCP service account:
+
+```sh
+docker run -it \
+  -e GOOGLE_APPLICATION_CREDENTIALS="/gitlab-environment-toolkit/keys/<service account file>" \
+  -v <path to keys directory>:/gitlab-environment-toolkit/keys \
+  -v <path to Ansible inventory>:/gitlab-environment-toolkit/ansible/environments/<environment name> \
+  gitlab/gitlab-environment-toolkit:latest
+```
+
+You can also use a simplified command if you store your Inventory outside of the toolkit. Using the folder structure below you're able to store multiple environments alongside each other and when using the Toolkits container you can simply pass in a single folder and still have access to all your different environments.
+
+```sh
+get_environments
+├──keys
+└──<environment name>
+|  └──ansible
+|     └── inventory
+|         ├── <environment name>.gcp.yml
+|         └── vars.yml
+└──<environment name>
+   └──ansible
+      └── inventory
+```
+
+```sh
+docker run -it \
+  -e GOOGLE_APPLICATION_CREDENTIALS="/gitlab-environment-toolkit/keys/<service account file>" \
+  -v <path to `get_environments` directory>:/environments \
+  gitlab/gitlab-environment-toolkit:latest
+```
+
+> :information_source:&nbsp; The Docker image is currently not available from the Toolkit's project, this will be blocked until [the project is moved](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/319). Until this is completed you can build and run the image locally with `docker build -t gitlab/gitlab-environment-toolkit:latest .`, you can then run the above commands for running the image.
+
+## 4. Configure
 
 After the config has been setup you're now ready to configure the environment. This is done as follows:
 
