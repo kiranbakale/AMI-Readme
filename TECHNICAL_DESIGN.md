@@ -107,7 +107,7 @@ To recap there are five main concepts for Ansible:
 Utilizing the above the run flow of our code in Ansible is as follows:
 
 - Inventories list the machines with categories based on the labels they already have applied in our Terraform modules.
-- Variables are constructed at runtime, pulling from Inventory, Group and Role variables based on the precedence we've set in the `ansible.cfg` file.
+- Variables are constructed at runtime, pulling from Inventory, Group and Roles. See the [Variables](#variables) section for more info.
 - Playbooks select nodes based on the above mentioned labels and run the corresponding Role(s) in the correct order required for GitLab.
 - Role(s) run tasks on the selected nodes in order, utilizing the constructed Variables or any specific files they have as required.
 
@@ -115,7 +115,18 @@ Some general implementation rules we follow for Ansible:
 
 - Roles should only be added when there's a clear need for them and they have a good purpose. This is to prevent code fragmentation that in turn will impact maintainability.
 - It's allowed to repeat select tasks or config across Roles following the principle of [AHA](#aha-avoid-hasty-abstractions). Tasks should be viewed as equivalent to function calls.
-- Variables that are required by more than one Role should be moved to the Group level (and vice versa). They should only be placed by default in either the Group or Role level to maintain maintainability and reduce fragmentation.
+
+#### Variables
+
+[Ansible's variable precedence](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable) can be hard to work with, especially with an Inventory led variable design like the Toolkit's where the goal is for users to pass in their own (overriding) config for each environment.
+
+Previously the Toolkit was created with a Group Vars led design, this has now changed to Role Defaults to better fit Ansible's default precedence.
+
+For the Toolkit, variables must be placed in one of three places depending on their scope to ensure correct precedence as follows:
+
+- Common Vars Role Defaults (`common_vars/defaults/main.yml`) - For any variables that are to be used in more than one Role. All Roles and Playbooks pull this role in as a dependency for this purpose.
+- Specific Role Defaults (`<role_name>/defaults/main.yml`) - For any variables that are used in a single role only.
+- Group Defaults (`group_vars/<group_name>.yml`) - For any variables that should be applied for a group of nodes.
 
 #### Version Support
 

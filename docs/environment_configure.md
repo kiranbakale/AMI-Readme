@@ -410,7 +410,14 @@ The Toolkit can install other GitLab versions from `13.2.0` onwards through two 
 
 #### Full config list and further examples
 
-All Ansible config can be viewed directly in the project under the [`group_vars`](../ansible/group_vars) folder. Most config will be found in the [`all.yml`](../ansible/group_vars/all.yml) file, where config applies to all machines. Additional config that only needs to apply to select machines can be found under specific group names under this folder. As mentioned earlier, we may also refer to additional variables in detail later in these docs under the [Advanced sections](environment_advanced.md) where they are applicable.
+The default Ansible config is defined as [Role Defaults](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#understanding-variable-precedence) to ensure correct precedence in the [`common_vars`](../ansible/roles/common_vars/defaults/main.yml) role.
+
+Additional config can be found in the following locations:
+
+- `group_vars/<group_name>.yml` - Variables specific to a group of nodes.
+- `<role>/defaults/main.yml` - Variables specific to that role.
+
+As mentioned earlier, we may also refer to additional variables in detail later in these docs under the [Advanced sections](environment_advanced.md) where they are applicable.
 
 ## 3. Run the GitLab Environment Toolkit's Docker container (optional)
 

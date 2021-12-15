@@ -2,6 +2,9 @@
 - hosts: all:!ungrouped
   become: true
 
+  roles:
+    - common_vars
+
   tasks:
     - name: Uninstall GitLab Omnibus
       include_role:
@@ -11,6 +14,9 @@
         - omnibus_node
 
 - hosts: localhost
+
+  roles:
+    - common_vars
 
   tasks:
     - name: Uninstall GitLab Charts
