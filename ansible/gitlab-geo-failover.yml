@@ -2,6 +2,9 @@
 - hosts: all
   become: true
 
+  roles:
+    - common_vars
+
   tasks:
     - name: Run GitLab Geo Failover
       include_role:
