@@ -3,6 +3,10 @@ resource "aws_key_pair" "ssh_key" {
   public_key = var.ssh_public_key_file
 }
 
+data "aws_vpc" "selected" {
+  id = coalesce(local.vpc_id, local.default_vpc_id)
+}
+
 resource "aws_security_group" "gitlab_internal_networking" {
   # Allows for machine internal connections as well as outgoing internet access
   name   = "${var.prefix}-internal-networking"
@@ -13,7 +17,7 @@ resource "aws_security_group" "gitlab_internal_networking" {
     to_port     = 0
     protocol    = "-1"
     self        = true
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [data.aws_vpc.selected.cidr_block]
   }
 
   egress {
