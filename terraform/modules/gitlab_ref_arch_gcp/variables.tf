@@ -478,3 +478,8 @@ variable "allow_stopping_for_update" {
   type    = bool
   default = true
 }
+
+variable "machine_secure_boot" {
+  type    = bool
+  default = false
+}

@@ -44,6 +44,10 @@ resource "google_compute_instance" "gitlab" {
 
   allow_stopping_for_update = var.allow_stopping_for_update
 
+  shielded_instance_config {
+    enable_secure_boot = var.machine_secure_boot
+  }
+
   boot_disk {
     initialize_params {
       image = var.machine_image

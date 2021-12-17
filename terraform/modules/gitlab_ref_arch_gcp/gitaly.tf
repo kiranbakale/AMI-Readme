@@ -23,6 +23,7 @@ module "gitaly" {
   label_secondaries = true
 
   allow_stopping_for_update = var.allow_stopping_for_update
+  machine_secure_boot       = var.machine_secure_boot
 }
 
 output "gitaly" {

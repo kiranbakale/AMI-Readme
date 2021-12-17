@@ -23,6 +23,7 @@ module "praefect_postgres" {
   label_secondaries = true
 
   allow_stopping_for_update = var.allow_stopping_for_update
+  machine_secure_boot       = var.machine_secure_boot
 }
 
 output "praefect_postgres" {

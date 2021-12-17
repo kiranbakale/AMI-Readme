@@ -22,6 +22,7 @@ module "redis" {
   label_secondaries = true
 
   allow_stopping_for_update = var.allow_stopping_for_update
+  machine_secure_boot       = var.machine_secure_boot
 }
 
 output "redis" {
@@ -55,6 +56,7 @@ module "redis_cache" {
   label_secondaries = true
 
   allow_stopping_for_update = var.allow_stopping_for_update
+  machine_secure_boot       = var.machine_secure_boot
 }
 
 output "redis_cache" {
@@ -86,7 +88,7 @@ module "redis_persistent" {
   label_secondaries = true
 
   allow_stopping_for_update = var.allow_stopping_for_update
-
+  machine_secure_boot       = var.machine_secure_boot
 }
 
 output "redis_persistent" {

@@ -223,6 +223,14 @@ For GCP, changing some settings such as `*_machine_type` on a started instance w
 
 As an additional level of resilience you can disable this behaviour by setting `allow_stopping_for_update` to `false` in the [module's environment config file](#configure-module-settings-environmenttf). Note though that when you wish to upgrade in the future you may need to re-enable this setting.
 
+##### Machine Secure Boot (GCP)
+
+Compute instances in GCP can be configured to run with [Secure Boot](https://cloud.google.com/security/shielded-cloud/shielded-vm#secure-boot). This feature is enabled by default and can be disabled by setting the variable `machine_secure_boot = false`.
+
+> Secure Boot helps ensure that the system only runs authentic software by verifying the digital signature of all boot components, and halting the boot process if signature verification fails.
+
+Secure boot can only be enabled for OS Images that support the `Shielded VM` feature. The default value for the variable `machine_image` contain the value of an image that supports this feature. If you plan on changing this, you can find which OS images on [Google's documentation]([GCP documentation](https://cloud.google.com/compute/docs/images/os-details#security-features)).
+
 ##### Configure network setup (GCP)
 
 The module for GCP can configure the [network stack](https://cloud.google.com/vpc/docs/vpc) (VPC, Subnets, etc...) for your environment in several different ways:
