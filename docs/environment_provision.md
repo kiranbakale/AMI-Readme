@@ -152,12 +152,12 @@ module "gitlab_ref_arch_gcp" {
   consul_node_count = 3
   consul_machine_type = "n1-highcpu-2"
 
-  elastic_node_count = 3 
+  elastic_node_count = 3
   elastic_machine_type = "n1-highcpu-16"
 
   gitaly_node_count = 3
   gitaly_machine_type = "n1-standard-16"
-  
+
   praefect_node_count = 3
   praefect_machine_type = "n1-highcpu-2"
 
@@ -216,6 +216,14 @@ Next in the file are the various machine settings, separated the same as the Ref
 For GCP, changing some settings such as `*_machine_type` on a started instance will require restarting it.
 
 As an additional level of resilience you can disable this behaviour by setting `allow_stopping_for_update` to `false` in the [module's environment config file](#configure-module-settings-environmenttf). Note though that when you wish to upgrade in the future you may need to re-enable this setting.
+
+##### Machine Secure Boot (GCP)
+
+Compute instances in GCP can be configured to run with [Secure Boot](https://cloud.google.com/security/shielded-cloud/shielded-vm#secure-boot). This feature is enabled by default and can be disabled by setting the variable `machine_secure_boot = false`.
+
+> Secure Boot helps ensure that the system only runs authentic software by verifying the digital signature of all boot components, and halting the boot process if signature verification fails.
+
+Secure boot can only be enabled for OS Images that support the `Shielded VM` feature. The default value for the variable `machine_image` contain the value of an image that supports this feature. If you plan on changing this, you can find which OS images on [Google's documentation]([GCP documentation](https://cloud.google.com/compute/docs/images/os-details#security-features)).
 
 ##### Configure network setup (GCP)
 
@@ -401,7 +409,7 @@ provider "aws" {
 - `terraform` - The main Terraform config block.
   - `backend "s3"` - The [`s3` backend](https://www.terraform.io/docs/language/settings/backends/s3.html) config block.
     - `bucket` - The name of the bucket [previously created](environment_prep.md#3-setup-terraform-state-storage-s3) to store the State.
-    - `key` - The file path and name to store the state in (example: `path/to/my/key`- [must not start with '/'](https://github.com/hashicorp/terraform/blob/main/internal/backend/remote-state/s3/backend.go#L30-L41)). 
+    - `key` - The file path and name to store the state in (example: `path/to/my/key`- [must not start with '/'](https://github.com/hashicorp/terraform/blob/main/internal/backend/remote-state/s3/backend.go#L30-L41)).
     - `region` - The AWS region of the bucket.
   - `required_providers` - Config block for the required provider(s) Terraform needs to download and use.
     - `aws` - Config block for the AWS provider. Sets where to source the provider and what version to download and use.
@@ -427,7 +435,7 @@ module "gitlab_ref_arch_aws" {
   consul_node_count = 3
   consul_instance_type = "c5.large"
 
-  elastic_node_count = 3 
+  elastic_node_count = 3
   elastic_instance_type = "c5.4xlarge"
 
   gitaly_node_count = 3
@@ -749,12 +757,12 @@ module "gitlab_ref_arch_azure" {
   consul_node_count = 3
   consul_size = "Standard_F2s_v2"
 
-  elastic_node_count = 3 
+  elastic_node_count = 3
   elastic_size = "Standard_F16s_v2"
 
   gitaly_node_count = 3
   gitaly_size = "Standard_D16s_v3"
-  
+
   praefect_node_count = 3
   praefect_size = "Standard_F2s_v2"
 
@@ -832,7 +840,7 @@ Below are some examples of select sources that are well suited to this.
 
 #### Environment Variables
 
-[Terraform can read any Environment Variable on the machine running it](https://www.terraform.io/docs/cli/config/environment-variables.html#tf_var_name) with the prefix `TF_VAR_*`. 
+[Terraform can read any Environment Variable on the machine running it](https://www.terraform.io/docs/cli/config/environment-variables.html#tf_var_name) with the prefix `TF_VAR_*`.
 
 Terraform will treat all `TF_VAR_*` environment variables as variables and you can set those in your config as desired. This is ideal for sensitive variables and in CI for overriding any variables as desired.
 
@@ -875,6 +883,6 @@ After the config has been setup you're now ready to provision the environment. T
 
 :information_source:&nbsp; If you ever want to deprovision resources created, you can do so by running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html).
 
-## Next Steps 
+## Next Steps
 
 After the above steps have been completed you can proceed to [Configuring the environment with Ansible](environment_configure.md).

@@ -21,6 +21,7 @@ module "consul" {
   geo_deployment = var.geo_deployment
 
   allow_stopping_for_update = var.allow_stopping_for_update
+  machine_secure_boot       = var.machine_secure_boot
 }
 
 output "consul" {

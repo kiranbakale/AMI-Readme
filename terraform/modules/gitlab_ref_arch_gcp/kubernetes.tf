@@ -12,6 +12,7 @@ resource "google_container_cluster" "gitlab_cluster" {
   # node pool and immediately delete it.
   remove_default_node_pool = true
   initial_node_count       = 1
+  enable_shielded_nodes    = true
 
   network    = local.vpc_name
   subnetwork = local.subnet_name
@@ -29,6 +30,13 @@ resource "google_container_cluster" "gitlab_cluster" {
     gitlab_node_prefix = var.prefix
     gitlab_node_type   = "gitlab-cluster"
   }
+
+  node_config {
+    shielded_instance_config {
+      enable_secure_boot = var.machine_secure_boot
+    }
+  }
+
 }
 
 resource "google_container_node_pool" "gitlab_webservice_pool" {
@@ -42,6 +50,10 @@ resource "google_container_node_pool" "gitlab_webservice_pool" {
     machine_type = var.webservice_node_pool_machine_type
     disk_type    = coalesce(var.webservice_node_pool_disk_type, var.default_disk_type)
     disk_size_gb = coalesce(var.webservice_node_pool_disk_size, var.default_disk_size)
+
+    shielded_instance_config {
+      enable_secure_boot = var.machine_secure_boot
+    }
 
     labels = {
       workload = "webservice"
@@ -61,6 +73,10 @@ resource "google_container_node_pool" "gitlab_sidekiq_pool" {
     disk_type    = coalesce(var.sidekiq_node_pool_disk_type, var.default_disk_type)
     disk_size_gb = coalesce(var.sidekiq_node_pool_disk_size, var.default_disk_size)
 
+    shielded_instance_config {
+      enable_secure_boot = var.machine_secure_boot
+    }
+
     labels = {
       workload = "sidekiq"
     }
@@ -78,6 +94,9 @@ resource "google_container_node_pool" "gitlab_supporting_pool" {
     machine_type = var.supporting_node_pool_machine_type
     disk_type    = coalesce(var.supporting_node_pool_disk_type, var.default_disk_type)
     disk_size_gb = coalesce(var.supporting_node_pool_disk_size, var.default_disk_size)
+    shielded_instance_config {
+      enable_secure_boot = var.machine_secure_boot
+    }
 
     labels = {
       workload = "support"

@@ -24,6 +24,7 @@ module "haproxy_external" {
   tags = ["${var.prefix}-web", "${var.prefix}-ssh", "${var.prefix}-haproxy", "${var.prefix}-monitor"]
 
   allow_stopping_for_update = var.allow_stopping_for_update
+  machine_secure_boot       = var.machine_secure_boot
 }
 
 output "haproxy_external" {
@@ -55,6 +56,7 @@ module "haproxy_internal" {
   tags = ["${var.prefix}-haproxy"]
 
   allow_stopping_for_update = var.allow_stopping_for_update
+  machine_secure_boot       = var.machine_secure_boot
 }
 
 output "haproxy_internal" {
