@@ -210,6 +210,7 @@ output "gitlab_ref_arch_gcp" {
   - `prefix` - The name prefix of the project. Set in `variables.tf`.
   - `project` - The [ID](https://support.google.com/googleapi/answer/7014113?hl=en) of the GCP project to connect to. Set in `variables.tf`.
   - `allow_stopping_for_update` - Controls whether Terraform can restart VMs when making changes (required in some cases). Should only be disabled for additional resilience. Refer to [Allow Stopping for Updates (GCP)](#allow-stopping-for-updates-gcp) for more info. Defaults to `true`.
+  - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
 
@@ -492,6 +493,7 @@ output "gitlab_ref_arch_aws" {
   - `source` - The relative path to the `gitlab_ref_arch_aws` module. We assume you're creating config in the `terraform/environments/` folder here but if you're in a different location this setting must be updated to the correct path.
   - `prefix` - The name prefix of the project. Set in `variables.tf`.
   - `ssh_public_key_file` - The file path of the public SSH key. Set in `variables.tf`.
+  - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
 

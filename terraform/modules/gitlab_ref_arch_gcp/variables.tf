@@ -479,6 +479,18 @@ variable "allow_stopping_for_update" {
   default = true
 }
 
+variable "object_storage_force_destroy" {
+  description = "Toggle to enable force-destruction of object storage buckets. Consider setting this value to false for production systems"
+  type        = bool
+  default     = true
+}
+
+variable "object_storage_labels" {
+  description = "Labels to apply to object storage buckets"
+  type        = map(any)
+  default     = {}
+}
+
 variable "machine_secure_boot" {
   type    = bool
   default = false
