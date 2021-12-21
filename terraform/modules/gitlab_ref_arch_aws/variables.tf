@@ -936,3 +936,8 @@ variable "elb_internal_create" {
   type    = bool
   default = false
 }
+
+variable "additional_tags" {
+  type    = map(any)
+  default = {}
+}

@@ -19,10 +19,10 @@ resource "aws_eks_cluster" "gitlab_cluster" {
     ]
   }
 
-  tags = {
+  tags = merge({
     gitlab_node_prefix = var.prefix
     gitlab_node_type   = "gitlab-cluster"
-  }
+  }, var.additional_tags)
 
   depends_on = [
     aws_iam_role_policy_attachment.amazon_eks_cluster_policy,
@@ -52,10 +52,10 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
     workload = "webservice"
   }
 
-  tags = {
+  tags = merge({
     gitlab_node_prefix = var.prefix
     gitlab_node_type   = "webservice-pool"
-  }
+  }, var.additional_tags)
 
   depends_on = [
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
@@ -87,10 +87,10 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
     workload = "sidekiq"
   }
 
-  tags = {
+  tags = merge({
     gitlab_node_prefix = var.prefix
     gitlab_node_type   = "sidekiq-pool"
-  }
+  }, var.additional_tags)
 
   depends_on = [
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
@@ -122,10 +122,10 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
     workload = "support"
   }
 
-  tags = {
+  tags = merge({
     gitlab_node_prefix = var.prefix
     gitlab_node_type   = "supporting-pool"
-  }
+  }, var.additional_tags)
 
   depends_on = [
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,

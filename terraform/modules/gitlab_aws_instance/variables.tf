@@ -90,3 +90,8 @@ variable "subnet_ids" {
   type    = list(string)
   default = null
 }
+
+variable "additional_tags" {
+  type    = map(any)
+  default = {}
+}

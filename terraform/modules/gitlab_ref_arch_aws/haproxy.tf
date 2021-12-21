@@ -1,9 +1,10 @@
 module "haproxy_external" {
   source = "../gitlab_aws_instance"
 
-  prefix     = var.prefix
-  node_type  = "haproxy-external"
-  node_count = var.haproxy_external_node_count
+  prefix          = var.prefix
+  node_type       = "haproxy-external"
+  node_count      = var.haproxy_external_node_count
+  additional_tags = var.additional_tags
 
   instance_type             = var.haproxy_external_instance_type
   ami_id                    = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
@@ -34,9 +35,10 @@ output "haproxy_external" {
 module "haproxy_internal" {
   source = "../gitlab_aws_instance"
 
-  prefix     = var.prefix
-  node_type  = "haproxy-internal"
-  node_count = var.haproxy_internal_node_count
+  prefix          = var.prefix
+  node_type       = "haproxy-internal"
+  node_count      = var.haproxy_internal_node_count
+  additional_tags = var.additional_tags
 
   instance_type    = var.haproxy_internal_instance_type
   ami_id           = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)

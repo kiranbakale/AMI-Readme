@@ -151,6 +151,9 @@ This is straightforward with AWS. All that's required is for a key to be created
 
 It is also possible to use an existing SSH key pair, but it is recommended to use a new key to avoid any potential security implications.
 
+SSH usernames are provided by AWS depending on the [AMI Image](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connection-prereqs.html#connection-prereqs-get-info-about-instance) used. With the Toolkit's defaults this will typically be `ubuntu`.
+Take a note of this username as later, in the [Environment config - vars.yml](environment_configure.md#environment-config-varsyml) section, it will be used to configure Ansible.
+
 That's all that's required for now. Later on in this guide we'll configure the Toolkit to use this key for adding into the AWS machines as well as accessing them.
 
 ### 3. Setup Terraform State Storage - AWS S3
