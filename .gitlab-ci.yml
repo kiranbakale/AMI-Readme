@@ -17,6 +17,8 @@ gemnasium-dependency_scanning:
     - !reference [.on_merge_request_and_merged_events, rules]
 
 gemnasium-python-dependency_scanning:
+  variables:
+    DS_MAJOR_VERSION: 2-python-3.9
   rules:
     - !reference [.on_merge_request_and_merged_events, rules]
 
