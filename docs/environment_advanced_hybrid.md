@@ -33,10 +33,10 @@ For the Toolkit to be able to provision and configure Kubernetes clusters and He
 
 - `kubectl` - [Install guide](https://kubernetes.io/docs/tasks/tools/#kubectl)
 - `helm` - [Install guide](https://helm.sh/docs/intro/install/)
+- `gcloud` - [Install guide](https://cloud.google.com/sdk/install). (GCP only)
+- `aws cli` - [Install guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)(AWS only)
 
 Latest info on version requirements for both tools can be found in the [GitLab Charts docs](https://docs.gitlab.com/charts/installation/tools.html). Also note that both of the above tools will need to be found on the PATH for them to be used by the Toolkit.
-
-In addition to the above and as [stated earlier in the docs](environment_prep.md) you should have cloud providers tooling installed also, e.g. `gcloud`, to assist with authentication, etc...
 
 ## 2. Provisioning the Kubernetes Cluster with Terraform
 
@@ -256,11 +256,11 @@ By design, this file is similar to the one used in a [standard environment](envi
 - `cloud_native_hybrid_environment` - Sets Ansible to know it's configuring a Cloud Native Hybrid Reference Architecture environment. Required.
 - `kubeconfig_setup` - When true, will attempt to automatically configure the `.kubeconfig` file entry for the provisioned Kubernetes cluster.
 - `external_ip` - **GCP only** External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid installs.
-- `external_url` - This cannot be an IP address in a hybrid environment. You will need a domain or sub-domain to which you or your company owns, to which you can add a DNS record.
+- `external_url` - This cannot be an IP address in a hybrid environment. You will need to use an `A` type DNS entry (for example `http://gitlab.somecompany.com`) pointing to the Elastic IP created in the [Create Static External IP - AWS Elastic IP Allocation](environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) step. Alternatively, this could be set to `http://<AWS_Elastic_IP>.nip.io`.
 - `gcp_zone` - **GCP only** Default Zone name the GCP project is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
 - `aws_region` - **AWS only** Name of the region where the EKS cluster is located. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
-- `aws_allocation_ids` - **AWS only** A comma separated list of allocation IDs to assign to the AWS load balancer.
-  - With AWS you **must have an [Elastic IP](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/main/docs/environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) for each subnet being used**, each Elastic IP will have an allocation ID that must be stored in this list.
+- `aws_allocation_ids` - **AWS only** A comma separated list of Elastic IP allocation IDs, that will be assigned to the AWS load balancer.
+  - With AWS you **must have an [Elastic IP](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/main/docs/environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) for each subnet being used**. For example using a VPC with 3 subnets will require the creation of 3 Elastic IPs and their individual allocation IDs will need to be stored in this list.
 Below are examples for a `vars.yml` file with all config for each cloud provider based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative):
 
 ### Google Cloud Platform (GCP)

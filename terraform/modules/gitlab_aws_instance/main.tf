@@ -28,7 +28,7 @@ resource "aws_instance" "gitlab" {
     kms_key_id = var.disk_kms_key_arn
   }
 
-  tags = {
+  tags = merge({
     Name                  = "${var.prefix}-${var.node_type}-${count.index + 1}"
     gitlab_node_prefix    = var.prefix
     gitlab_node_type      = var.node_type
@@ -36,7 +36,7 @@ resource "aws_instance" "gitlab" {
     gitlab_geo_site       = var.geo_site
     gitlab_geo_deployment = var.geo_deployment
     gitlab_geo_full_role  = var.geo_site == null ? null : (count.index == 0 ? "${var.geo_site}-${var.node_type}-primary" : "${var.geo_site}-${var.node_type}-secondary")
-  }
+  }, var.additional_tags)
 
   lifecycle {
     ignore_changes = [

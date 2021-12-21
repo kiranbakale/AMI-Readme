@@ -1,9 +1,10 @@
 module "monitor" {
   source = "../gitlab_aws_instance"
 
-  prefix     = var.prefix
-  node_type  = "monitor"
-  node_count = var.monitor_node_count
+  prefix          = var.prefix
+  node_type       = "monitor"
+  node_count      = var.monitor_node_count
+  additional_tags = var.additional_tags
 
   instance_type    = var.monitor_instance_type
   ami_id           = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)

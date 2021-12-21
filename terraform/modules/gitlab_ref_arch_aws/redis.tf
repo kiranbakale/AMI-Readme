@@ -1,9 +1,10 @@
 module "redis" {
   source = "../gitlab_aws_instance"
 
-  prefix     = var.prefix
-  node_type  = "redis"
-  node_count = var.redis_node_count
+  prefix          = var.prefix
+  node_type       = "redis"
+  node_count      = var.redis_node_count
+  additional_tags = var.additional_tags
 
   instance_type    = var.redis_instance_type
   ami_id           = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
@@ -35,9 +36,10 @@ output "redis" {
 module "redis_cache" {
   source = "../gitlab_aws_instance"
 
-  prefix     = var.prefix
-  node_type  = "redis-cache"
-  node_count = var.redis_cache_node_count
+  prefix          = var.prefix
+  node_type       = "redis-cache"
+  node_count      = var.redis_cache_node_count
+  additional_tags = var.additional_tags
 
   instance_type    = var.redis_cache_instance_type
   ami_id           = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
@@ -67,9 +69,10 @@ output "redis_cache" {
 module "redis_persistent" {
   source = "../gitlab_aws_instance"
 
-  prefix     = var.prefix
-  node_type  = "redis-persistent"
-  node_count = var.redis_persistent_node_count
+  prefix          = var.prefix
+  node_type       = "redis-persistent"
+  node_count      = var.redis_persistent_node_count
+  additional_tags = var.additional_tags
 
   instance_type    = var.redis_persistent_instance_type
   ami_id           = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
