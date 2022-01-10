@@ -171,6 +171,8 @@ A static IP, AKA an Elastic IP, can be generated in AWS as follows:
 
 Once the IP is available take note of its allocation ID for later.
 
+:information_source:&nbsp;  if you are deploying a Cloud Native Hybrid GitLab setup you'll need to allocate one Elastic IP for each subnet in the VPC instead of a single one.
+
 ## Azure
 
 ### 1. Create Azure Resource Group
