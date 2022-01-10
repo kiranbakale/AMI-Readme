@@ -98,9 +98,8 @@ Once you've installed Ansible, install the required dependencies. You'll need to
 
 To do this you only have to run the following before proceeding:
 
-1. `cd` to the `ansible/` directory
-1. First install the Python packages via `pip3 install -r requirements/ansible-python-packages.txt`.
-1. Next, run the following command to install the roles - `ansible-galaxy install -r requirements/ansible-galaxy-requirements.yml`
+1. First install the Python packages via `pip3 install -r ansible/requirements/ansible-python-packages.txt`.
+1. Next, run the following command to install the roles - `ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml`
 1. Note that if you're on a Mac OS machine you also need to install `gnu-tar` - `brew install gnu-tar`
 
 ## 2. Setup the Environment's Inventory and Config
