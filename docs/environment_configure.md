@@ -88,6 +88,8 @@ pip install -r ansible/requirements/requirements.txt
 ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
 ```
 
+:information_source:&nbsp; Note that if you're on a Mac OS machine you also need to install `gnu-tar` - `brew install gnu-tar`
+
 ### Bring-Your-Own Ansible
 
 If you have installed Ansible inside a virtual environment, you can skip this step.
