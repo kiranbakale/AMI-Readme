@@ -35,14 +35,11 @@ Several components of the GitLab setup can be switched to a cloud service or cus
 
 ## Load Balancers
 
-The Toolkit supports provisioning and/or configuring Load Balancer(s) for the both types of balancers GitLab requires - External and Internal.
+The Toolkit supports select provisioning and/or configuring Load Balancer(s) that GitLab requires.
+
+:information_source:&nbsp; Load Balancer service support will continue to expand in the future. Custom load balancers are also supported.
 
 When using an alternative Load Balancer the following changes apply when deploying via the Toolkit (depending on the load balancer):
-
-External:
-
-- HAProxy External node no longer needs to be provisioned via Terraform
-- External URL settings in Ansible are set to the Load Balancer host as given by the service
 
 Internal:
 
@@ -101,7 +98,7 @@ The Toolkit supports provisioning and/or configuring alternative PostgreSQL data
 When using alternative PostgreSQL database(s) the following changes apply when deploying via the Toolkit:
 
 - Postgres and PgBouncer nodes don't need to be provisioned via Terraform.
-- Praefect will use the same database instance. As such the Praefect Postgres node also doesn't need to be provisioned.
+- Praefect may use the same database instance unless Geo is being used. In such a case the Praefect Postgres node doesn't need to be provisioned.
 - Consul doesn't need to be provisioned via Terraform unless you're deploying Prometheus via the Monitor node (needed for monitoring auto discovery).
 
 ### Database Setup Options
