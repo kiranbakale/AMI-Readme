@@ -40,7 +40,9 @@ If using Terraform, one important caveat is preparing its [State](https://www.te
 
 To ensure the state is correct for everyone using the toolkit we store it on the environment cloud platform in a specific bucket. This needs to be configured manually for each environment once.
 
-Each project's State bucket is a standard one and will typically follow a simple naming convention - `<env_short_name>-terraform-state`. The name can be anything as desired though as long as it's configured subsequently in the environment's `main.tf` file.
+Each project's State bucket is a standard one and will typically follow a simple naming convention, e.g. `<env_short_name>-terraform-state`. The name can be anything as desired though as long as it's configured subsequently in the environment's `main.tf` file.
+
+:information_source:&nbsp; Note that GitLab itself provides a feature where it can store Terraform state, which will be created with the name `<prefix>-terraform-state`. The Terraform state bucket then for the environment itself must avoid this name as a result.
 
 ### Static External IP
 
