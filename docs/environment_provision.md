@@ -220,6 +220,8 @@ Next in the file are the various machine settings, separated the same as the Ref
 
 :information_source:&nbsp; Redis prefixes depend on the target Reference Architecture - set `redis_*` for combined Redis, `redis_cache_*` and `redis_persistent_*` for separated Redis setup.
 
+:information_source:&nbsp; The Toolkit currently **requires** a NFS node to distribute select config.
+
 ##### Allow Stopping for Updates (GCP)
 
 For GCP, changing some settings such as `*_machine_type` on a started instance will require restarting it.

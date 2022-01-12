@@ -63,6 +63,7 @@ Note that the Toolkit currently has the following requirements (with related iss
   - Note that additionally at this time GET supports clean Ubuntu installs and may work with existing ones but this is not guaranteed at this time.
   - Admin access to the OS is also required by GET to install various dependencies
 - Types of environment: The Toolkit is designed to deploy the official GitLab [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) (Standard or Cloud Native Hybrid) as environments.
+  - The Toolkit currently requires a NFS node to distribute select config.
   - Advanced usage is possible where users can make tweaks to the environments as desired, such as increasing the number of nodes or their specs, but this is generally unrecommended.
 
 ## Documentation
