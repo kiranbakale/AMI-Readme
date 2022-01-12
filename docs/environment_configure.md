@@ -174,7 +174,7 @@ compose:
 
 Finally the last thing to configure is authentication. This is required so Ansible can access GCP to build its dynamic inventory.
 
-Ansible provides several ways to authenticate with [GCP](https://docs.ansible.com/ansible/latest/collections/google/cloud/gcp_compute_inventory.html#parameters), you can select any method that is desired.
+Ansible provides several ways to authenticate with [GCP](https://docs.ansible.com/ansible/latest/scenario_guides/guide_gce.html#credentials), you can select any method that is desired.
 
 All of the methods given involve the Service Account file you generated previously. We've found the authentication methods that work best with the Toolkit in terms of ease of use are as follows:
 
@@ -183,7 +183,7 @@ All of the methods given involve the Service Account file you generated previous
 - `gcloud` login - Authentication can also occur automatically through the [`gcloud`](https://cloud.google.com/sdk/gcloud/reference/auth/application-default) command line tool. Make sure the user that's logged in has access to the Project.
   - Note that the `GCP_AUTH_KIND` variable also needs to be set to `application` for this authentication method.
 
-Alternatively, instead of setting `GCP_AUTH_KIND`, you can add `auth_kind` to your [Environment config file](#environment-config-varsyml) (`vars.yml`) file to specify which authentication method you'd like to use.
+Alternatively, instead of setting `GCP_AUTH_KIND`, you can add `auth_kind` to your Inventory config file to specify which authentication method you'd like to use.
 
 #### Amazon Web Services (AWS)
 
