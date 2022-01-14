@@ -1,11 +1,12 @@
 include:
   - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
 
 stages:
   - test
 
 #################################
-##     Dependency Scanning     ##
+##            SAST             ##
 #################################
 
 .on_merge_request_and_merged_events:
@@ -26,6 +27,9 @@ bundler-audit-dependency_scanning:
   rules:
     - !reference [.on_merge_request_and_merged_events, rules]
 
+secret_detection:
+  rules:
+    - !reference [.on_merge_request_and_merged_events, rules]
 
 #########################
 ##     Lint Checks     ##
