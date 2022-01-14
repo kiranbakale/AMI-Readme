@@ -562,6 +562,7 @@ In addition to the above the following _optional_ settings change how the networ
 - `vpc_cidr_block` - The [CIDR block](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for your VPC. This shouldn't need to be changed in most scenarios unless you want to use a specific CIDR block. Default is `172.31.0.0/16`.
 - `subpub_pub_cidr_block`- A list of [CIDR blocks](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for each subnet created. This shouldn't need to be changed in most scenarios unless you want to use a specific CIDR blocks. Default is `["172.31.0.0/20","172.31.16.0/20","172.31.32.0/20"]`
   - As a convenience the module has up to 3 subnet CIDR blocks it will use. If you have set `subnet_pub_count` higher than 3 then this variable will need to be adjusted to match the number of Subnets to be created.
+- `zones_exclude` - In rare cases you may need to avoid specific Availability Zones [as they don't have the available resource to deploy the infrastructure in](https://aws.amazon.com/premiumsupport/knowledge-center/eks-cluster-creation-errors/). When this is the case you can specify a list of Zones by name via this setting that will then be avoided by the Toolkit, e.g. `["us-east-1e"]`. Default is `null`.
 
 **Existing**
 
