@@ -19,7 +19,9 @@ data "aws_subnet_ids" "defaults" {
   }
 }
 
-data "aws_availability_zones" "defaults" {}
+data "aws_availability_zones" "defaults" {
+  exclude_names = var.zones_exclude
+}
 
 # Create new network stack
 resource "aws_vpc" "gitlab_vpc" {
