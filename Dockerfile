@@ -1,8 +1,8 @@
-FROM python:3-alpine
+FROM google/cloud-sdk:alpine
 
 RUN apk add -u --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community git-crypt
-RUN apk add --virtual .asdf-deps --no-cache jq bash openssh curl git grep alpine-sdk openssl-dev libffi-dev
-SHELL ["/bin/bash", "-l", "-c"]
+RUN apk add --virtual .asdf-deps --no-cache jq bash openssh curl git grep alpine-sdk openssl-dev libffi-dev py3-pip py3-wheel python3-dev
+SHELL ["/bin/bash", "-c"]
 
 RUN mkdir -p /gitlab-environment-toolkit/keys && \
     mkdir /environments
@@ -28,9 +28,13 @@ RUN git clone --depth 1 https://github.com/asdf-vm/asdf.git $HOME/.asdf && \
 RUN asdf plugin add terraform && \
     asdf install terraform
 
-# Install Python & Dependencies
-RUN pip install wheel --user && \
-    pip install --no-cache-dir -r /gitlab-environment-toolkit/ansible/requirements/requirements.txt --user
+# Install Python Packages
+RUN pip install --no-cache-dir -r /gitlab-environment-toolkit/ansible/requirements/requirements.txt --user
+
+# Install remaining cloud tools
+RUN pip install --no-cache-dir awscli --user
+RUN gcloud components install kubectl -q
+RUN curl -s https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sh
 
 # Install Ansible & Dependencies
 RUN /root/.local/bin/ansible-galaxy install -r /gitlab-environment-toolkit/ansible/requirements/ansible-galaxy-requirements.yml
