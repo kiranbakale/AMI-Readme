@@ -36,13 +36,11 @@ Authentication is fully dependent on the provider and are detailed fully in each
 
 ### Terraform State
 
-If using Terraform, one important caveat is preparing its [State](https://www.terraform.io/docs/state/index.html) file. Terraform's State is integral to how it works. For every action it will store and update the state with the full environment status each time. It then refers to this for subsequent actions to ensure the environment is always exactly as configured.
+When using Terraform, one important caveat is preparing its [State](https://www.terraform.io/docs/state/index.html) file. Terraform's State is integral to how it works. For every action it will store and update the state with the full environment status each time. It then refers to this for subsequent actions to ensure the environment is always exactly as configured.
 
-To ensure the state is correct for everyone using the toolkit we store it on the environment cloud platform in a specific bucket. This needs to be configured manually for each environment once.
+[Terraform has numerous possible backends](https://www.terraform.io/language/settings/backends) where the state can be stored. As a general guidance we recommend a remote backend that can be shared between applicable users such as the targeted Cloud Provider's Object Storage or [GitLab's own managed Terraform State backend](https://docs.gitlab.com/ee/user/infrastructure/iac/terraform_state.html). Whatever backend is chosen the configuration is set in the same location - the environment's `main.tf` file.
 
-Each project's State bucket is a standard one and will typically follow a simple naming convention, e.g. `<env_short_name>-terraform-state`. The name can be anything as desired though as long as it's configured subsequently in the environment's `main.tf` file.
-
-:information_source:&nbsp; Note that GitLab itself provides a feature where it can store Terraform state, which will be created with the name `<prefix>-terraform-state`. The Terraform state bucket then for the environment itself must avoid this name as a result.
+:information_source:&nbsp; These docs assume the target Cloud Provider's Object Storage is being used.
 
 ### Static External IP
 
@@ -68,7 +66,7 @@ A Service Account is created as follows if you're an admin:
 
 - Head to the [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) page. Be sure to check that the correct project is selected in the dropdown at the top of the page.
 - Proceed to create an account with a descriptive name like `gitlab-qa` and give it the [IAM roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access#granting-console) of `Compute Admin`, `Kubernetes Engine Admin`, `Storage Admin` and `Service Account User`.
-- Once the account is created, proceed to create a key using the Manage keys item from the actions dropdown next to the service account you just created. Select to do so with the `JSON` format. It will be downlaoded automatically. Give it a reasonable name such as `serviceaccount-<project-name>.json`, e.g. `serviceaccount-10k.json`, as in GCP the key will have a default name that's unclear. This key will passed to both Terraform and Ansible later.
+- Once the account is created, proceed to create a key using the Manage keys item from the actions dropdown next to the service account you just created. Select to do so with the `JSON` format. It will be downloaded automatically. Give it a reasonable name such as `serviceaccount-<project-name>.json`, e.g. `serviceaccount-10k.json`, as in GCP the key will have a default name that's unclear. This key will passed to both Terraform and Ansible later.
   - The [`keys`](../keys) directory in this project is provided as a central place to store all of your keys. It's automatically configured in `.gitignore` to not have its contents included with any Git Pushes if you desired to have your own copy of this repo.
 - Finish creating the user
 
@@ -114,12 +112,14 @@ That's all that's required for now. Later on in this guide we'll configure the T
 ### 5. Setup Terraform State Storage Bucket - GCP Cloud Storage
 
 Create a standard [GCP storage bucket](https://cloud.google.com/storage/docs/creating-buckets) on the intended environment's project
-for its Terraform State. Give this a meaningful name such as `<env_short_name>-terraform-state`:
+for its Terraform State. Give this a meaningful name such as `<env_short_name>-get-terraform-state`:
 
 ```terminal
 # List of locations: https://cloud.google.com/storage/docs/locations
-gsutil mb -l BUCKET_LOCATION gs://<env_shortname>-terraform-state
+gsutil mb -l BUCKET_LOCATION gs://<env_shortname>-get-terraform-state
 ```
+
+:information_source:&nbsp; The bucket may be named as desired. However please note that the Toolkit will create a bucket later with the naming format `<prefix>-terraform-state` for the [Terraform Module Registry](https://docs.gitlab.com/ee/user/packages/terraform_module_registry/) feature in GitLab by default (which can also be changed if required). Each bucket requires a unique name to avoid clashes.
 
 After the Bucket is created this is all that's required for now. We'll configure Terraform to use it later in these docs.
 
@@ -160,7 +160,9 @@ That's all that's required for now. Later on in this guide we'll configure the T
 
 ### 3. Setup Terraform State Storage - AWS S3
 
-Create a standard [AWS storage bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html) on the intended environment's project for its Terraform State. Give this a meaningful name such named as `<env_short_name>-terraform-state`.
+Create a standard [AWS storage bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html) on the intended environment's project for its Terraform State. Give this a meaningful name such named as `<env_short_name>-get-terraform-state`.
+
+:information_source:&nbsp; The bucket may be named as desired. However please note that the Toolkit will create a bucket later with the naming format `<prefix>-terraform-state` for the [Terraform Module Registry](https://docs.gitlab.com/ee/user/packages/terraform_module_registry/) feature in GitLab by default (which can also be changed if required). Each bucket requires a unique name to avoid clashes.
 
 After the Bucket is created this is all that's required for now. We'll configure Terraform to use it later in these docs.
 
@@ -209,7 +211,9 @@ That's all that's required for now. Later on in this guide we'll configure the T
 
 Create a [storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create) that will contain all of your Azure Storage data objects. Take a note of its name and [access key](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage) for later.
 
-Then create a standard [Azure blob container](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal) on the intended environment's storage account for its Terraform State. Give this a meaningful name such as `<env_short_name>-terraform-state`.
+Then create a standard [Azure blob container](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal) on the intended environment's storage account for its Terraform State. Give this a meaningful name such as `<env_short_name>-get-terraform-state`.
+
+:information_source:&nbsp; The bucket may be named as desired. However please note that the Toolkit will create a bucket later with the naming format `<prefix>-terraform-state` for the [Terraform Module Registry](https://docs.gitlab.com/ee/user/packages/terraform_module_registry/) feature in GitLab by default (which can also be changed if required). Each bucket requires a unique name to avoid clashes.
 
 After the container is created this is all that's required for now. We'll configure Terraform to use it later in these docs.
 
