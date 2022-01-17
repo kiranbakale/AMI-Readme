@@ -48,7 +48,6 @@
           PRIVATE-TOKEN: '{{ access_token_key }}'
         body:
           elasticsearch_url: ""
-          elasticsearch_shards: "5"
           elasticsearch_indexing: false
           elasticsearch_search: false
         follow_redirects: all
@@ -91,8 +90,6 @@
       PRIVATE-TOKEN: '{{ access_token_key }}'
     body:
       elasticsearch_url: "{{ elasticsearch_urls | join(',') }}"
-      elasticsearch_shards: "{{ elasticsearch_shards }}"
-      elasticsearch_replicas: "{{ elasticsearch_replicas }}"
     follow_redirects: all
     validate_certs: false
     status_code: 200, 201

@@ -219,8 +219,6 @@ elasticsearch_clean_install: "{{ lookup('env','ELASTICSEARCH_CLEAN_INSTALL') | d
 elastic_primary_int_ip: "{{ (groups['elastic_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'elastic_primary' in groups else '' }}"
 elastic_int_ips: "{{ (groups['elastic'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'elastic' in groups else [] }}"
 elasticsearch_urls: "{{ (elastic_int_ips | map('regex_replace', '^(.*)$', 'http://\\1:9200') | list) if elastic_int_ips | length > 0 else [] }}"
-elasticsearch_replicas: "{{ 1 if (groups['elastic'] | length > 1 ) else 0 }}"
-elasticsearch_shards: "{{ (((groups['elastic'] | sort | map('extract', hostvars, ['ansible_processor_vcpus']) | list | sum) / (elasticsearch_replicas | int + 1)) | round | int) if 'elastic' in groups else 0 }}"
 
 # Jaeger Distributed Tracing
 jaeger_int_ip: "{{ (groups['jaeger'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'jaeger' in groups else '' }}"
