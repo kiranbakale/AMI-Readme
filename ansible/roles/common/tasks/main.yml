@@ -60,11 +60,11 @@
     # Prevents apt from switching to the release channel (when an official release is younger than nightly)
     - name: Ensure only GitLab Nightly apt repo is installed unless specified otherwise
       file:
-        path: /etc/apt/sources.list.d/gitlab_gitlab-ee.list
+        path: '/etc/apt/sources.list.d/gitlab_{{ gitlab_edition }}.list'
         state: absent
       when:
         - omnibus_node
-        - gitlab_repo_script_url != "https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh"
+        - gitlab_repo_script_url == "https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh"
         - ansible_facts['os_family'] == "Debian"
 
     # Allows GET to run on a node after running gitlab-ctl cleanse. The current behavior of cleanse is to
@@ -106,22 +106,30 @@
         url: "{{ gitlab_repo_script_url }}"
         dest: "{{ gitlab_repo_script_path }}"
         force: true
-      register: repo_file
+      register: repo_file_download
       retries: 20
       delay: 30
       when: omnibus_node
 
+    - name: Check if repo list file exists
+      stat:
+        path: "{{ gitlab_repo_list_path }}"
+      register: repo_file
+      when:
+        - omnibus_node
+        - ansible_facts['os_family'] == "Debian"
+
     - name: Install GitLab repository
-      command: bash /tmp/gitlab_install_repository.sh
+      command: "bash {{ gitlab_repo_script_path }}"
       retries: 2
       delay: 10
       until: result is success
       when:
         - omnibus_node
-        - repo_file.changed
+        - repo_file_download.changed or (not repo_file.stat.exists)
 
     - name: Unlock GitLab package installs
-      command: apt-mark install gitlab-ee
+      command: "apt-mark install {{ gitlab_edition }}"
       register: result
       retries: 2
       delay: 3
@@ -179,7 +187,7 @@
         - ansible_facts['os_family'] == "Debian"
 
     - name: Lock GitLab package updates
-      command: apt-mark hold gitlab-ee
+      command: "apt-mark hold {{ gitlab_edition }}"
       register: result
       retries: 2
       delay: 10
