@@ -238,7 +238,7 @@ kubectl edit -n kube-system configmap/aws-auth
 
 Authenticating with Kubernetes is different compared to other services, and can be [considered a challenge](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/using_gke_with_terraform#interacting-with-kubernetes) in terms of automation.
 
-In a nutshell authentication must be setup for the `kubectl` command on the machine running the Toolkit. Got the command to be authenticated it requires an entry to be added and selected in its `~/.kubeconfig` file.
+In a nutshell authentication must be setup for the `kubectl` command on the machine running the Toolkit. The Toolkit requires the command to be authenticated and the intended cluster selected as the current context in its `~/.kubeconfig` file.
 
 The easiest way to do this is via the selected cloud providers tooling after the cluster has been provisioned:
 
