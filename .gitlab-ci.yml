@@ -4,6 +4,7 @@ include:
 
 stages:
   - test
+  - upload
 
 #################################
 ##            SAST             ##
@@ -122,3 +123,17 @@ check_requirements:
       changes:
         - ansible/requirements/requirements.txt
         - ansible/requirements/ansible-galaxy-requirements.yml
+
+########################
+##      Packages      ##
+########################
+
+upload-terraform-module:
+  stage: upload
+  image: curlimages/curl:latest
+  script:
+    - cd terraform
+    - tar -czf gitlab_environment_toolkit.tgz modules
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file gitlab_environment_toolkit.tgz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/terraform/modules/gitlab-environment-toolkit/gitlab/${CI_COMMIT_TAG}/file"'
+  only:
+    - tags
