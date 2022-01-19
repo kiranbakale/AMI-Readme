@@ -47,7 +47,62 @@ Installing Terraform with `asdf` is done as follows:
 
 With the above completed Terraform should now be available on your command line. You can check this by running `terraform version`.
 
-## 2. Setup the Environment's config
+## 2. Select Module Source
+
+Before you start setting up the config you should select a Terraform Module source to use.
+
+Terraform can retrieve Modules from various [sources](https://www.terraform.io/language/modules/sources). The Toolkit's Modules are available from Local paths, Git URL or this Project's Terraform Module Registry.
+
+:information_source:&nbsp; These docs assume the Local method is being used but any of these sources can be used as desired.
+
+Below we detail each source and how to configure them:
+
+### Local Path
+
+In this setup you have the Modules saved locally on disk, typically through a Git clone of this repo, and Terraform is configured to source them via an absolute or relative local path.
+
+For example, to configure the `gitlab_ref_arch_gcp` module using a relative path that follows this repo's structure you would configure it follows:
+
+```hcl
+module "gitlab_ref_arch_gcp" {
+  source = "../../modules/gitlab_ref_arch_gcp"
+
+  [...]
+}
+```
+
+### Git URL
+
+Terraform can also pull the Modules directly from this repo via a [Git URL](https://www.terraform.io/language/modules/sources#generic-git-repository).
+
+For example, to configure the `gitlab_ref_arch_gcp` module to pull from the repo you would configure it follows:
+
+```hcl
+module "gitlab_ref_arch_gcp" {
+  source = "git::https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit.git//modules/gitlab_ref_arch_gcp"
+
+  [...]
+}
+```
+
+### Terraform Module Registry (Coming Soon)
+
+The Toolkit's Modules are also made available via this Project's Terraform Module Registry.
+
+For example, to configure the `gitlab_ref_arch_gcp` module to pull from the registry you would configure it follows:
+
+```hcl
+module "gitlab_ref_arch_gcp" {
+  source = "gitlab.com/gitlab-org/gitlab-environment-toolkit/gitlab//modules/gitlab_ref_arch_gcp"
+  version = ">= 2.0.0"
+
+  [...]
+}
+```
+
+Note the `version` setting here [can be changed as desired to any constraint](https://www.terraform.io/language/expressions/version-constraints#version-constraint-syntax) that's `2.0.0` or greater.
+
+## 3. Setup the Environment's config
 
 As mentioned the Toolkit provides several [Terraform Modules](../terraform/modules) that can be used to provision the environment as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/). While there are several modules provided with the Toolkit most of these are under the hood. For most users only one easy to use `ref_arch` module will need to be configured.
 
@@ -887,7 +942,7 @@ module "gitlab_ref_arch_aws" {
 
 Any Terraform Data Source can be used in a similar way. Refer to the specific Data Source docs for more info.
 
-## 3. Run the GitLab Environment Toolkit's Docker container (optional)
+## 4. Run the GitLab Environment Toolkit's Docker container (optional)
 
 Before running the Docker container you will need to setup your environment config files by following [# 2. Setup the Environment's config](#2-setup-the-environments-config). The container can be started once the Terraform config has been setup. When starting the container it is important to pass in your config files and keys, as well as set any authentication based environment variables.
 
@@ -924,7 +979,7 @@ docker run -it \
 
 > :information_source:&nbsp; The Docker image is currently not available from the Toolkit's project, this will be blocked until [the project is moved](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/319). Until this is completed you can build and run the image locally with `docker build -t gitlab/gitlab-environment-toolkit:latest .`, you can then run the above commands for running the image.
 
-## 4. Provision
+## 5. Provision
 
 After the config has been setup you're now ready to provision the environment. This is done as follows:
 
