@@ -344,3 +344,13 @@ variable "sidekiq_disk_size" {
   default = null
 }
 
+#Networking
+
+variable "vnet_address_space" {
+  type    = list(string)
+  default = ["172.16.0.0/12"]
+}
+variable "subnet_address_ranges" {
+  type    = list(string)
+  default = ["172.17.0.0/16"]
+}
