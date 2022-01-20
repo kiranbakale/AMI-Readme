@@ -492,14 +492,7 @@ ansible-playbook -i environments/10k/inventory uninstall.yml
 
 ### Running with ansible-deployer (optional)
 
-An alternative way to run the playbooks is with the `ansible-deployer` script. This script will run multiple playbooks in parallel where possible while maintaining the required run order. The script can either run all the playbooks by default or a custom list as passed via the `-p` flag. It should be noted that due to the script running tasks in parallel, if any issues arise during setup then the playbooks would be better run sequentially via the standard `ansible-playbook` command to help debug the problem(s).
-
-The script can be run as follows:
-
-1. `cd` to the `ansible/` directory if not already there.
-1. Run `ansible-deployer` with the intended environment's just the same as `ansible-playbook` - `./bin/ansible-deployer -i environments/10k/inventory all.yml`
-
-Due to running multiple commands in parallel the stdout of the ansible runner can get very messy, to alleviate this issue the stdout is suppressed and each playbook will create its own log file in `logs`.
+An alternative way to run the playbooks is with the [`ansible-deployer`](https://gitlab.com/gitlab-org/quality/get-ansible-deployer) script. This script will run multiple playbooks in parallel where possible while maintaining the required run order.
 
 ## Next Steps
 
