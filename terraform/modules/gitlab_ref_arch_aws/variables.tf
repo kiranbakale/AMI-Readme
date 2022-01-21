@@ -902,6 +902,37 @@ variable "elasticache_redis_persistent_snapshot_window" {
 }
 
 # Networking
+## Default network
+variable "default_allowed_egress_cidr_blocks" {
+  type    = list(string)
+  default = ["0.0.0.0/0"]
+}
+
+variable "default_allowed_ingress_cidr_blocks" {
+  type    = list(string)
+  default = ["0.0.0.0/0"]
+}
+
+variable "http_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
+variable "ssh_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
+variable "external_ssh_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
+variable "monitor_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
 ## Create new network
 variable "create_network" {
   type    = bool

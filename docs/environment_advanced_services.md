@@ -5,6 +5,7 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - Network Setup](environment_advanced_network.md)
 - [**GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)**](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more](environment_advanced.md)
@@ -17,7 +18,7 @@ The Toolkit supports using alternative sources for select components, such as cl
 - Cloud Services - The Toolkit supports both _provisioning_ and _configuration_ for environments to use.
 - Custom Servers - For servers, provided by users, the Toolkit supports the _configuration_ for environments to use.
 
-On this page we'll detail how to setup the Toolkit to provision and/or configure these alternatives. **It's also worth noting this guide is supplementary to the rest of the docs and it will assume this throughout.** 
+On this page we'll detail how to setup the Toolkit to provision and/or configure these alternatives. **It's also worth noting this guide is supplementary to the rest of the docs and it will assume this throughout.**
 
 [[_TOC_]]
 
