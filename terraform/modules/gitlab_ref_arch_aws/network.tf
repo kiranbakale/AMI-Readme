@@ -1,16 +1,18 @@
 locals {
-  create_network = var.create_network && var.vpc_id == null && var.subnet_ids == null
+  existing_network = var.vpc_id != null && var.subnet_ids != null
+  create_network   = var.create_network && !local.existing_network
+  default_network  = !local.create_network && !local.existing_network
 }
 
 resource "aws_default_vpc" "default" {
-  count = local.create_network ? 0 : 1
+  count = local.default_network ? 1 : 0
   tags = {
     Name = "Default VPC"
   }
 }
 
 data "aws_subnet_ids" "defaults" {
-  count  = local.create_network ? 0 : 1
+  count  = local.default_network ? 1 : 0
   vpc_id = aws_default_vpc.default[0].id
 
   filter {
@@ -75,6 +77,6 @@ resource "aws_default_route_table" "gitlab_vpc_rt" {
 locals {
   vpc_id             = local.create_network ? aws_vpc.gitlab_vpc[0].id : var.vpc_id
   subnet_ids         = local.create_network ? aws_subnet.gitlab_vpc_sn_pub[*].id : var.subnet_ids
-  default_vpc_id     = local.create_network ? null : aws_default_vpc.default[0].id
-  default_subnet_ids = local.create_network ? null : data.aws_subnet_ids.defaults[0].ids
+  default_vpc_id     = local.default_network ? aws_default_vpc.default[0].id : null
+  default_subnet_ids = local.default_network ? data.aws_subnet_ids.defaults[0].ids : null
 }
