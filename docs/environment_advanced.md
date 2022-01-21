@@ -366,7 +366,7 @@ Configuring the environment config `vars.yml` file is [much the same as it would
 
 ### Facts Cache (Optional)
 
-When running select playbooks, e.g. running a playbook only for `haproxy` - `ansible-playbook -i <inventory> haproxy.yml`, some additional preparation is required when using a Static Inventory.
+When running select playbooks, e.g. running a playbook only for `haproxy` - `ansible-playbook -i <inventory> playbooks/haproxy.yml`, some additional preparation is required when using a Static Inventory.
 
 Unlike Dynamic Inventories, in this scenario only facts for the HAProxy hosts and no others are collected. This will cause the play to fail as the Toolkit expects to be able to access facts for all hosts throughout.
 

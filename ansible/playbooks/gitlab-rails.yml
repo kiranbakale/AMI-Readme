@@ -3,5 +3,5 @@
     - gitlab_rails_primary
     - gitlab_rails_secondary
   roles:
-    - gitlab-rails
+    - gitlab_rails
   become: true

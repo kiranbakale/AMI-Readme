@@ -1,5 +1,5 @@
 ---
 - hosts: praefect_postgres
   roles:
-    - praefect-postgres
+    - praefect_postgres
   become: true
