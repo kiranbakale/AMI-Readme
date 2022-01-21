@@ -6,9 +6,9 @@
 secrets.auto.tfvars
 .terraform/
 logs/
-ansible/test.yml
-ansible/error-search.yml
-ansible/tmp/
+test.yml
+error-search.yml
+tmp/
 terraform/environments/*
 !terraform/environments/README.md
 ansible/environments/*

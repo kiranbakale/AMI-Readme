@@ -1,0 +1,4 @@
+---
+- hosts: localhost
+  roles:
+    - { role: gitlab_charts, when: "cloud_native_hybrid_environment" }

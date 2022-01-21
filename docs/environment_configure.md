@@ -391,7 +391,7 @@ There are several plugins available for well known Secret Managers such as [AWS 
 
 These sorts of plugins will typically need authentication configured, which is usually done via environment variables (refer to each plugin's docs for more info).
 
-As an example - AWS Secret Manager can be favorable here for AWS environments as the same authentication is used as the one for the Dynamic Inventory, so no further authentication is required. If we had a secret configured in AWS Secret Manager for GitLab Rails Password called `gitlab_rails_password` this can be configured as follows:
+As an example - AWS Secret Manager can be favourable here for AWS environments as the same authentication is used as the one for the Dynamic Inventory, so no further authentication is required. If we had a secret configured in AWS Secret Manager for GitLab Rails Password called `gitlab_rails_password` this can be configured as follows:
 
 ```yaml
 gitlab_rails_password: "{{ lookup('amazon.aws.aws_secret', 'gitlab_rails_password', region=aws_region) }}"
@@ -439,7 +439,7 @@ docker run -it \
   gitlab/gitlab-environment-toolkit:latest
 ```
 
-You can also use a simplified command if you store your Inventory outside of the toolkit. Using the folder structure below you're able to store multiple environments alongside each other and when using the Toolkits container you can simply pass in a single folder and still have access to all your different environments.
+You can also use a simplified command if you store your Inventory outside of the toolkit. Using the folder structure below you're able to store multiple environments alongside each other and when using the Toolkit's container you can simply pass in a single folder and still have access to all your different environments.
 
 ```sh
 get_environments
@@ -477,7 +477,7 @@ After the config has been setup you're now ready to configure the environment. T
 1. Run `ansible-playbook` with the intended environment's inventory against the `all.yml` playbook
 
     ```shell
-    ansible-playbook -i environments/10k/inventory all.yml
+    ansible-playbook -i environments/10k/inventory playbooks/all.yml
     ```
 
     - Note that we pass the whole inventory folder - `environments/10k/inventory`. This ensures Ansible reads all the files in the directory.
@@ -488,7 +488,27 @@ The same commands are used when you wish to update an existing environment.
 :information_source:&nbsp; If you ever want to uninstall GitLab, you can do so by running:
 
 ```shell
-ansible-playbook -i environments/10k/inventory uninstall.yml
+ansible-playbook -i environments/10k/inventory playbooks/uninstall.yml
+```
+
+### Running with Ansible Collection (optional)
+
+The Toolkit's Ansible Playbooks and Roles can be installed and run as a [Collection](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html). Through this method you don't need the source code available locally to run, only your own Inventory and Variables.
+
+To use this method all that's required is to install the Collection from this repo and then run it as normal.
+
+First, installing the Collection is done as standard via the `ansible-galaxy` command from this repo:
+
+```shell
+ansible-galaxy collection install git+https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit.git#/ansible/
+```
+
+:information_source:&nbsp; The Collection can only be installed from this repo as shown above and isn't available from Ansible Galaxy due to license compliance.
+
+Once installed you can then run the Collection in [several possible ways](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#using-collections-in-a-playbook). As an example you can run the `all` playbook directly via the collection name as follows:
+
+```shell
+ansible-playbook -i environments/50k/inventory gitlab.gitlab_environment_toolkit.all
 ```
 
 ### Running with ansible-deployer (optional)

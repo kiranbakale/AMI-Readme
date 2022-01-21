@@ -1,4 +1,4 @@
 ---
 - hosts: localhost
   roles:
-    - post-configure
+    - post_configure
