@@ -10,7 +10,8 @@ resource "google_compute_firewall" "gitlab_http_https" {
     ports    = ["80", "443"]
   }
 
-  target_tags = ["${var.prefix}-web"]
+  source_ranges = coalescelist(var.http_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
+  target_tags   = ["${var.prefix}-web"]
 }
 
 resource "google_compute_firewall" "gitlab_ssh" {
@@ -25,7 +26,8 @@ resource "google_compute_firewall" "gitlab_ssh" {
     ports    = ["2222"]
   }
 
-  target_tags = ["${var.prefix}-ssh"]
+  source_ranges = coalescelist(var.ssh_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
+  target_tags   = ["${var.prefix}-ssh"]
 }
 
 resource "google_compute_firewall" "monitor" {
@@ -40,7 +42,8 @@ resource "google_compute_firewall" "monitor" {
     ports    = ["9122"]
   }
 
-  target_tags = ["${var.prefix}-monitor"]
+  source_ranges = coalescelist(var.monitor_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
+  target_tags   = ["${var.prefix}-monitor"]
 }
 
 # Created or Existing network rules
@@ -56,7 +59,8 @@ resource "google_compute_firewall" "ssh" {
     ports    = ["22"]
   }
 
-  priority = 65534
+  priority      = 65534
+  source_ranges = coalescelist(var.external_ssh_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
 }
 
 resource "google_compute_firewall" "internal" {
@@ -76,7 +80,8 @@ resource "google_compute_firewall" "internal" {
     ports    = ["0-65535"]
   }
 
-  priority = 65534
+  priority      = 65534
+  source_ranges = var.default_allowed_egress_cidr_blocks
 }
 
 resource "google_compute_firewall" "icmp" {
@@ -90,5 +95,6 @@ resource "google_compute_firewall" "icmp" {
     protocol = "icmp"
   }
 
-  priority = 65534
+  priority      = 65534
+  source_ranges = coalescelist(var.icmp_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
 }

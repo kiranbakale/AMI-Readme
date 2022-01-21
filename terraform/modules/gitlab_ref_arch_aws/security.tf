@@ -24,7 +24,7 @@ resource "aws_security_group" "gitlab_internal_networking" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.default_allowed_egress_cidr_blocks
   }
 
   tags = {
@@ -39,7 +39,7 @@ resource "aws_security_group" "gitlab_external_ssh" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = coalescelist(var.external_ssh_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
   }
 
   tags = {
@@ -55,7 +55,7 @@ resource "aws_security_group" "gitlab_external_git_ssh" {
     from_port   = 2222
     to_port     = 2222
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = coalescelist(var.ssh_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
   }
 
   tags = {
@@ -71,14 +71,14 @@ resource "aws_security_group" "gitlab_external_http_https" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = coalescelist(var.http_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
   }
 
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = coalescelist(var.http_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
   }
 
   tags = {
@@ -96,7 +96,7 @@ resource "aws_security_group" "gitlab_external_haproxy_stats" {
     from_port   = 1936
     to_port     = 1936
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = coalescelist(var.monitor_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
   }
 
   tags = {
@@ -112,7 +112,7 @@ resource "aws_security_group" "gitlab_external_monitor" {
     from_port   = 9122
     to_port     = 9122
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = coalescelist(var.monitor_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
   }
 
   tags = {

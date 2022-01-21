@@ -354,3 +354,34 @@ variable "subnet_address_ranges" {
   type    = list(string)
   default = ["172.17.0.0/16"]
 }
+
+## Default network
+variable "default_allowed_ingress_cidr_blocks" {
+  type    = list(string)
+  default = ["0.0.0.0/0"]
+}
+
+variable "http_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
+variable "ssh_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
+variable "external_ssh_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
+variable "monitor_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
+variable "icmp_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}

@@ -5,6 +5,7 @@
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - Network Setup](environment_advanced_network.md)
 - [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more](environment_advanced.md)
@@ -293,86 +294,9 @@ Secure boot can only be enabled for OS Images that support the `Shielded VM` fea
 
 ##### Configure network setup (GCP)
 
-The module for GCP can configure the [network stack](https://cloud.google.com/vpc/docs/vpc) (VPC, Subnets, etc...) for your environment in several different ways:
+By default the toolkit sets up the infrastructure on the default network stack as provided by GCP. However, it can also support other advanced setups such as creating a new network or using an existing one. To learn more refer to [Configure network setup (GCP)](environment_advanced_network.md#configure-network-setup-gcp).
 
-- **Default** - Sets up the infrastructure on the default network stack as provided by GCP. This is the default for the module.
-- **Created** - Creates the required network stack for the infrastructure.
-- **Existing** - Will use a provided network stack passed in by the user.
-
-In this section you will find the config required to set up each depending on your requirements.
-
-:warning:&nbsp; **{- Changing network setup on an existing environment must be treated with the utmost caution-}**. **Doing so can be considered a significant change in GCP and may trigger the recreation of the entire environment leading to data loss**.
-
-**Default**
-
-This is the default setup for the module and is the recommended setup for most standard (Omnibus) environments where GCP will handle the networking by default.
-
-No additional configuration is needed to use this setup.
-
-**Created**
-
-When configured the module will create a network stack to run the environment in. The network stack created is as follows:
-
-- 1 VPC
-- 1 Subnet
-- Firewall rules to allow for required network connections
-
-The environment's machines will be created in the created subnet.
-
-This setup is recommended for users who want a specific network stack for their GitLab environment.
-
-To configure this setup the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf):
-
-- `create_network` - This variable should be set to `true` when you are wanting the module to create a new network stack.
-
-An example of your environment config file then would look like:
-
-```tf
-module "gitlab_ref_arch_gcp" {
-  source = "../../modules/gitlab_ref_arch_gcp"
-
-  prefix = var.prefix
-  project = var.project
-
-  create_network = true
-
-  [...]
-```
-
-In addition to the above the following _optional_ settings change how the network is configured:
-
-- `subnet_cidr`- A [CIDR block](https://cloud.google.com/vpc/docs/vpc#manually_created_subnet_ip_ranges) that will be used for the created subnet. This shouldn't need to be changed in most scenarios unless you want to use a specific CIDR blocks. Default is `"10.86.0.0/16"`
-
-**Existing**
-
-In this setup you have an existing network stack that you want the environment to use.
-
-This is an advanced setup and you must ensure the network stack is configured correctly. This guide doesn't detail the specifics on how to do this but generally a stack should include the same elements as listed in the **Created** for the environment to work properly. Please refer to the GCP docs for more info.
-
-Note that when this is configured the module will configure some GCP Firewall rules in your VPC to enable network access for the environment.
-
-With an existing stack configure the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf):
-
-- `vpc_name` - The name of your existing VPC.
-- `subnet_name` - The name of your existing Subnet. The subnet should be located in the same existing VPC.
-
-An example of your environment config file then would look like:
-
-```tf
-module "gitlab_ref_arch_gcp" {
-  source = "../../modules/gitlab_ref_arch_gcp"
-
-  prefix = var.prefix
-  project = var.project
-
-  vpc_name = "<vpc-name>"
-  subnet_name = "<subnet-name>"
-
-  [...]
-}
-```
-
-###### Zones
+##### Zones
 
 With GCP you can spread optionally spread resources across multiple [Availability Zones](https://cloud.google.com/compute/docs/regions-zones) in the selected region, overriding the default Zone configured in `variables.tf`. By doing this it adds additional resilience for the environment in the case a Zone ever went down.
 
@@ -564,88 +488,7 @@ Next in the file are the various machine settings, separated the same as the Ref
 
 ##### Configure network setup (AWS)
 
-The module for AWS can configure the [network stack](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html) (VPC, Subnets, etc...) for your environment in several different ways:
-
-- **Default** - Sets up the infrastructure on the default network stack as provided by AWS. This is the default for the module.
-- **Created** - Creates the required network stack for the infrastructure
-- **Existing** - Will use a provided network stack passed in by the user
-
-In this section you will find the config required to set up each depending on your requirements.
-
-:warning:&nbsp; **{- Changing network setup on an existing environment must be avoided-}**. **Doing so is considered a significant change in AWS and will essentially trigger the recreation of the entire environment leading to data loss**.
-
-**Default**
-
-This is the default setup for the module where AWS will handle the networking by default.
-
-**Created**
-
-When configured the module will create a network stack to run the environment in. The network stack created is as follows:
-
-- 1 VPC
-- 2 Subnets
-  - Subnets are created in the created VPC and are additionally spread across the available Availability Zones in the selected region.
-  - The number of Subnets is configurable.
-- 1 Internet Gateway
-- 1 Route Table
-
-The environment's machines will be spread across the created subnets and their Availability Zones evenly.
-
-This setup is recommended for users who want a specific network stack for their GitLab environment. It's also recommended for Cloud Native Hybrid environments running on AWS.
-
-To configure this setup the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf-1):
-
-- `create_network` - This variable should be set to `true` when you are wanting the module to create a new network stack.
-
-An example of your environment config file then would look like:
-
-```tf
-module "gitlab_ref_arch_aws" {
-  source = "../../modules/gitlab_ref_arch_aws"
-
-  prefix = var.prefix
-  ssh_public_key_file = file(var.ssh_public_key_file)
-
-  create_network = true
-
-  [...]
-```
-
-In addition to the above the following _optional_ settings change how the network is configured:
-
-- `subnet_pub_count` - The number of subnets to create in the VPC. This should only be changed if you want increased subnet count for availability reasons. Default is `2`.
-- `vpc_cidr_block` - The [CIDR block](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for your VPC. This shouldn't need to be changed in most scenarios unless you want to use a specific CIDR block. Default is `172.31.0.0/16`.
-- `subpub_pub_cidr_block`- A list of [CIDR blocks](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for each subnet created. This shouldn't need to be changed in most scenarios unless you want to use a specific CIDR blocks. Default is `["172.31.0.0/20","172.31.16.0/20","172.31.32.0/20"]`
-  - As a convenience the module has up to 3 subnet CIDR blocks it will use. If you have set `subnet_pub_count` higher than 3 then this variable will need to be adjusted to match the number of Subnets to be created.
-- `zones_exclude` - In rare cases you may need to avoid specific Availability Zones [as they don't have the available resource to deploy the infrastructure in](https://aws.amazon.com/premiumsupport/knowledge-center/eks-cluster-creation-errors/). When this is the case you can specify a list of Zones by name via this setting that will then be avoided by the Toolkit, e.g. `["us-east-1e"]`. Default is `null`.
-
-**Existing**
-
-In this setup you have an existing network stack that you want the environment to use.
-
-This is an advanced setup and you must ensure the network stack is configured correctly. This guide doesn't detail the specifics on how to do this but generally a stack should include the same elements as listed in the **Created** for the environment to work properly. Please refer to the AWS docs for more info.
-
-Note that when this is configured the module will configure some AWS Security Groups in your VPC to enable network access for the environment.
-
-With an existing stack configure the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf-1):
-
-- `vpc_id` - The ID of your existing VPC
-- `subnet_ids` - A list of Subnet IDs the environment's machines should be spread across. The subnets should be located in the same existing VPC.
-
-An example of your environment config file then would look like:
-
-```tf
-module "gitlab_ref_arch_aws" {
-  source = "../../modules/gitlab_ref_arch_aws"
-
-  prefix = var.prefix
-  ssh_public_key_file = file(var.ssh_public_key_file)
-
-  vpc_id = "<vpc-id>"
-  subnet_ids = ["<subnet-1-id>", "<subnet-2-id>"]
-
-  [...]
-```
+By default the toolkit sets up the infrastructure on the default network stack as provided by AWS. However, it can also support other advanced setups such as creating a new network or using an existing one. To learn more refer to [Configure network setup (AWS)](environment_advanced_network.md#configure-network-setup-aws).
 
 ##### Storage Encryption (AWS)
 
@@ -891,6 +734,10 @@ Next in the file are the various machine settings, separated the same as the Ref
 - `haproxy_external_external_ip_names` - Set the external HAProxy load balancer to assume the external IP name set in `variables.tf`. Note that this is an array setting as the advanced underlying functionality needs to account for the specific setting of IPs for potentially multiple machines. In this case though it should always only be one IP name.
 
 :information_source:&nbsp; Redis prefixes depend on the target Reference Architecture - set `redis_*` for combined Redis, `redis_cache_*` and `redis_persistent_*` for separated Redis setup.
+
+##### Configure network setup (Azure)
+
+The module for Azure will handle the networking by default by setting up the infrastructure on the default network stack as provided by Azure. It's possible to adjust network rules if needed. To learn more refer to [Restricting External Network Access](environment_advanced_network.md#restricting-external-network-access).
 
 #### Configure Authentication (Azure)
 
