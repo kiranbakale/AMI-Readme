@@ -1,5 +1,12 @@
 terraform {
   required_version = ">= 0.14"
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 2"
+    }
+  }
 }
 
 data "azurerm_public_ip" "gitlab_external_ips" {
