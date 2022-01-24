@@ -67,6 +67,8 @@ The Toolkit requires Ansible to be installed. We recommend [Ansible `5.0` or hig
 
 Whatever version you chose will have a corresponding Python version requirement. For example with Ansible `5.x`, [Python `3.8` or higher is required](https://github.com/ansible-community/ansible-build-data/blob/main/5/CHANGELOG-v5.rst#major-changes-1). Refer to the corresponding release notes for Ansible to verify the required Python version.
 
+When choosing an [Ansible control node](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#control-node-requirements), we recommend that it's in the same or near location as the environment being built to avoid network slowdown. Additionally, if you plan to use a cloud machine as a control node it is _not_ recommended to use [burstable instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html) as they can lead to inconsistent behaviour.
+
 You can either use a Python virtual environment or install Ansible globally. Additionally you can avoid installing anything by using the Toolkit's Docker image. We recommend using the method you're most familiar with.
 
 ### Using Ansible inside a Docker container
