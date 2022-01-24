@@ -43,8 +43,8 @@
   tags: reconfigure
   register: monitor_custom_config_file_path
 
-- name: Copy custom GitLab config file
-  copy:
+- name: Setup custom GitLab config file
+  template:
     src: "{{ monitor_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.monitor.custom.rb"
     mode: 0644

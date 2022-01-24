@@ -269,20 +269,20 @@ post_configure_api_tasks_file: "{{ inventory_dir | default(ansible_inventory_sou
 ## GitLab Component Custom Settings
 ################################################################################
 
-consul_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/consul.rb"
-postgres_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/postgres.rb"
-pgbouncer_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/pgbouncer.rb"
-redis_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/redis.rb"
-redis_cache_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/redis_cache.rb"
-redis_persistent_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/redis_persistent.rb"
-praefect_postgres_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/praefect_postgres.rb"
-praefect_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/praefect.rb"
-gitaly_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/gitaly.rb"
-gitlab_rails_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/gitlab_rails.rb"
-sidekiq_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/sidekiq.rb"
-monitor_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/monitor.rb"
+consul_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/consul.rb.j2"
+postgres_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/postgres.rb.j2"
+pgbouncer_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/pgbouncer.rb.j2"
+redis_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/redis.rb.j2"
+redis_cache_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/redis_cache.rb.j2"
+redis_persistent_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/redis_persistent.rb.j2"
+praefect_postgres_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/praefect_postgres.rb.j2"
+praefect_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/praefect.rb.j2"
+gitaly_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/gitaly.rb.j2"
+gitlab_rails_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/gitlab_rails.rb.j2"
+sidekiq_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/sidekiq.rb.j2"
+monitor_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/monitor.rb.j2"
+gitlab_charts_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/gitlab_charts.yml.j2"
 
-gitlab_charts_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/gitlab_charts.yml"
 gitlab_charts_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/charts_tasks.yml"
 
 ################################################################################

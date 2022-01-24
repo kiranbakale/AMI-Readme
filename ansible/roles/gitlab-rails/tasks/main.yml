@@ -135,8 +135,8 @@
         - reconfigure
         - db_migrate
 
-    - name: Copy custom GitLab config file
-      copy:
+    - name: Setup custom GitLab config file
+      template:
         src: "{{ gitlab_rails_custom_config_file }}"
         dest: "/etc/gitlab/gitlab.gitlab_rails.custom.rb"
         mode: 0644
@@ -164,8 +164,8 @@
   until: result is success
   tags: reconfigure
 
-- name: Copy custom GitLab config file
-  copy:
+- name: Setup custom GitLab config file
+  template:
     src: "{{ gitlab_rails_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.gitlab_rails.custom.rb"
     mode: 0644
