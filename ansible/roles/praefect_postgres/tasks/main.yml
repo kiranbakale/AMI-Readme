@@ -13,8 +13,8 @@
   tags: reconfigure
   register: praefect_postgres_custom_config_file_path
 
-- name: Copy custom GitLab config file
-  copy:
+- name: Setup custom GitLab config file
+  template:
     src: "{{ praefect_postgres_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.praefect_postgres.custom.rb"
     mode: 0644

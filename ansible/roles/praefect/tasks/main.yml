@@ -70,8 +70,8 @@
       vars:
         db_migrate: true
 
-    - name: Copy custom GitLab config file
-      copy:
+    - name: Setup custom GitLab config file
+      template:
         src: "{{ praefect_custom_config_file }}"
         dest: "/etc/gitlab/gitlab.praefect.custom.rb"
         mode: 0644
@@ -99,8 +99,8 @@
   until: result is success
   tags: reconfigure
 
-- name: Copy custom GitLab config file
-  copy:
+- name: Setup custom GitLab config file
+  template:
     src: "{{ praefect_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.praefect.custom.rb"
     mode: 0644

@@ -22,8 +22,8 @@
   tags: reconfigure
   register: consul_custom_config_file_path
 
-- name: Copy custom GitLab config file
-  copy:
+- name: Setup custom GitLab config file
+  template:
     src: "{{ consul_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.consul.custom.rb"
     mode: 0644

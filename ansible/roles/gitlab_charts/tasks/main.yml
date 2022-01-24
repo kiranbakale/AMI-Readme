@@ -151,7 +151,7 @@
 
 - name: Merge in custom GitLab Chart values if provided
   set_fact:
-    gitlab_charts_values: "{{ gitlab_charts_values | combine(lookup('file', gitlab_charts_custom_config_file) | from_yaml, recursive=True) }}"
+    gitlab_charts_values: "{{ gitlab_charts_values | combine(lookup('template', gitlab_charts_custom_config_file) | from_yaml, recursive=True) }}"
   when: custom_config_file.stat.exists
   tags:
     - reconfigure

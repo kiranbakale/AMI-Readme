@@ -13,8 +13,8 @@
   tags: reconfigure
   register: redis_custom_config_file_path
 
-- name: Copy custom GitLab config file
-  copy:
+- name: Setup custom GitLab config file
+  template:
     src: "{{ lookup('vars', redis_group_name + '_custom_config_file') }}"
     dest: "/etc/gitlab/gitlab.{{ redis_group_name }}.custom.rb"
     mode: 0644
