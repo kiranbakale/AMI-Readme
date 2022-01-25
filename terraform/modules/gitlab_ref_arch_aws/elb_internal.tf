@@ -143,7 +143,6 @@ resource "aws_lb_target_group" "gitlab_internal_postgres_primary" {
 
     protocol = "TCP"
     port     = 8008
-    matcher  = "200"
 
     interval            = 10
     healthy_threshold   = 2
