@@ -121,6 +121,10 @@ output "gitlab_ref_arch_gcp" {
 }
 ```
 
+In addition to the above there are some optional settings that can configure the GKE setup as follows:
+
+- `cluster_enable_workload_identity` - Enable [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/concepts/workload-identity) in the GKE cluster to allow Kubernetes service accounts to act as a user-managed [Google IAM Service Account](https://cloud.google.com/iam/docs/service-accounts#user-managed_service_accounts).
+
 #### Networking (GCP)
 
 As detailed in the earlier [Configuring network setup (GCP)](environment_provision.md#configure-network-setup-gcp) section the same networking options apply for Hybrid environments on GCP.

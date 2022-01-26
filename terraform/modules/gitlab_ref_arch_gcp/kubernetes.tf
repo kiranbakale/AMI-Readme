@@ -1,6 +1,8 @@
 locals {
   total_node_pool_count = sum([var.webservice_node_pool_count, var.sidekiq_node_pool_count, var.supporting_node_pool_count])
   node_pool_zones       = var.kubernetes_zones != null ? var.kubernetes_zones : var.zones
+  # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/NodeConfig#mode
+  workload_identity_metadata_mode = var.cluster_enable_workload_identity ? "GKE_METADATA" : "MODE_UNSPECIFIED"
 }
 
 resource "google_container_cluster" "gitlab_cluster" {
@@ -37,6 +39,13 @@ resource "google_container_cluster" "gitlab_cluster" {
     }
   }
 
+  dynamic "workload_identity_config" {
+    for_each = range(var.cluster_enable_workload_identity ? 1 : 0)
+
+    content {
+      workload_pool = "${var.project}.svc.id.goog"
+    }
+  }
 }
 
 resource "google_container_node_pool" "gitlab_webservice_pool" {
@@ -53,6 +62,10 @@ resource "google_container_node_pool" "gitlab_webservice_pool" {
 
     shielded_instance_config {
       enable_secure_boot = var.machine_secure_boot
+    }
+
+    workload_metadata_config {
+      mode = local.workload_identity_metadata_mode
     }
 
     labels = {
@@ -77,6 +90,10 @@ resource "google_container_node_pool" "gitlab_sidekiq_pool" {
       enable_secure_boot = var.machine_secure_boot
     }
 
+    workload_metadata_config {
+      mode = local.workload_identity_metadata_mode
+    }
+
     labels = {
       workload = "sidekiq"
     }
@@ -94,8 +111,13 @@ resource "google_container_node_pool" "gitlab_supporting_pool" {
     machine_type = var.supporting_node_pool_machine_type
     disk_type    = coalesce(var.supporting_node_pool_disk_type, var.default_disk_type)
     disk_size_gb = coalesce(var.supporting_node_pool_disk_size, var.default_disk_size)
+
     shielded_instance_config {
       enable_secure_boot = var.machine_secure_boot
+    }
+
+    workload_metadata_config {
+      mode = local.workload_identity_metadata_mode
     }
 
     labels = {
