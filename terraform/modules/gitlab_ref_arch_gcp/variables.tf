@@ -431,6 +431,11 @@ variable "supporting_node_pool_disk_size" {
   default = null
 }
 
+variable "cluster_enable_workload_identity" {
+  type    = bool
+  default = false
+}
+
 # Networking
 ## Create new network
 variable "create_network" {
