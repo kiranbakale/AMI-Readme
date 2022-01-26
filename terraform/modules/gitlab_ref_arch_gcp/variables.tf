@@ -431,6 +431,10 @@ variable "supporting_node_pool_disk_size" {
   default = null
 }
 
+variable "cluster_release_channel" {
+  type    = string
+  default = "STABLE"
+}
 variable "cluster_enable_workload_identity" {
   type    = bool
   default = false

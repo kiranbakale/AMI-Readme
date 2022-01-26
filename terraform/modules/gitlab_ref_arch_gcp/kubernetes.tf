@@ -25,7 +25,7 @@ resource "google_container_cluster" "gitlab_cluster" {
   ip_allocation_policy {}
 
   release_channel {
-    channel = "STABLE"
+    channel = var.cluster_release_channel
   }
 
   resource_labels = {
