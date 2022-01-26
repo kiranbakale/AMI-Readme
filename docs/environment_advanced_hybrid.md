@@ -123,6 +123,7 @@ output "gitlab_ref_arch_gcp" {
 
 In addition to the above there are some optional settings that can configure the GKE setup as follows:
 
+- `cluster_release_channel` - Set the [GKE release channel](https://cloud.google.com/kubernetes-engine/docs/concepts/release-channels), how fast the cluster will be updated to new Kubernetes releases, `STABLE` by default.
 - `cluster_enable_workload_identity` - Enable [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/concepts/workload-identity) in the GKE cluster to allow Kubernetes service accounts to act as a user-managed [Google IAM Service Account](https://cloud.google.com/iam/docs/service-accounts#user-managed_service_accounts).
 
 #### Networking (GCP)
