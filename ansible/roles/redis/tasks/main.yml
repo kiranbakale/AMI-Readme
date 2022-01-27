@@ -26,7 +26,7 @@
   tags: secrets
 
 - name: Reconfigure Redis
-  shell: gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
   register: result
   retries: 2
   until: result is success

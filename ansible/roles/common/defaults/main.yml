@@ -1,25 +1,39 @@
 ---
-# GCP gives an ID that can be used as an alias to the device name
-# AWS gives no ID and requires the block device path
+# Packages
+system_packages_deb: [aptitude, curl, openssh-server, ca-certificates, glances, nano, tzdata, ack-grep, tree, python3-pip, nfs-common, postfix, jq, libpq-dev, nvme-cli]
+
+system_packages_rhel:
+  all: [curl, openssh-server, ca-certificates, glances, nano, tzdata, ack, tree, python3-pip, python3-devel, nfs-utils, postfix, jq, nvme-cli, gcc, yum-plugin-versionlock]
+  8: [libpq-devel]
+
+system_packages_upgrade: "{{ lookup('env','SYSTEM_PACKAGES_UPGRADE') | default(false, true) }}"
+system_packages_autoremove: "{{ lookup('env','SYSTEM_PACKAGES_AUTOREMOVE') | default(false, true) }}"
+system_packages_auto_security_upgrade: "{{ lookup('env','SYSTEM_PACKAGES_AUTO_SECURITY_UPGRADE') | default(true, true) }}"
+
+python_packages: [requests==2.26.0, google-auth==2.3.3, netaddr==0.8.0, openshift==0.12.1, PyYAML==6.0, docker==5.0.3, pexpect==4.8.0, psycopg2==2.9.2]
+
+# Data Disks
+## GCP gives an ID that can be used as an alias to the device name
+## AWS gives no ID and requires the block device path
 disk_device_prefix:
   gcp: "/dev/disk/by-id/google-"
   aws: "/dev/"
 mkfs_opts: "-m 0 -F -E lazy_itable_init=0,lazy_journal_init=0,discard"
 mount_opts: "discard,defaults"
 
-# Legacy setting for data_disks. Still supported at this time but will apply to all nodes.
-# data_disks setting with individual group names (below) should be used instead
-# Example:
-#   - { device_name: 'log', mount_dir: '/var/log/gitlab' }
-#   - { device_name: 'data', mount_dir: '/var/opt/gitlab' }
+## Legacy setting for data_disks. Still supported at this time but will apply to all nodes.
+## data_disks setting with individual group names (below) should be used instead
+## Example:
+##   - { device_name: 'log', mount_dir: '/var/log/gitlab' }
+##   - { device_name: 'data', mount_dir: '/var/opt/gitlab' }
 disk_mounts: []
 
-# Each entry should be an array of hashes in the below format specifying the
-# disk device name and mount dir for the target group
-# Example:
-# gitaly_data_disks:
-#  - { device_name: 'data', mount_dir: '/var/opt/gitlab' }
-#  - { device_name: 'log', mount_dir: '/var/log/gitlab' }
+## Each entry should be an array of hashes in the below format specifying the
+## disk device name and mount dir for the target group
+## Example:
+## gitaly_data_disks:
+##  - { device_name: 'data', mount_dir: '/var/opt/gitlab' }
+##  - { device_name: 'log', mount_dir: '/var/log/gitlab' }
 
 consul_data_disks: "{{ disk_mounts }}"
 postgres_data_disks: "{{ disk_mounts }}"
@@ -37,6 +51,3 @@ haproxy_external_disks: "{{ disk_mounts }}"
 haproxy_internal_disks: "{{ disk_mounts }}"
 elastic_disks: "{{ disk_mounts }}"
 gitlab_nfs_disks: "{{ disk_mounts }}"
-
-# Unattended Upgrades
-unattended_upgrades: true

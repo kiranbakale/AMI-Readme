@@ -265,6 +265,7 @@ output "gitlab_ref_arch_gcp" {
   - `source` - The relative path to the `gitlab_ref_arch_gcp` module. We assume you're creating config in the `terraform/environments/` folder here but if you're in a different location this setting must be updated to the correct path.
   - `prefix` - The name prefix of the project. Set in `variables.tf`.
   - `project` - The [ID](https://support.google.com/googleapi/answer/7014113?hl=en) of the GCP project to connect to. Set in `variables.tf`.
+  - `machine_image` - The [GCP machine image name] to use for the VMs. Ubuntu 18.04+ and RHEL 8 images are supported at this time. Defaults to `ubuntu-1804-lts`
   - `allow_stopping_for_update` - Controls whether Terraform can restart VMs when making changes (required in some cases). Should only be disabled for additional resilience. Refer to [Allow Stopping for Updates (GCP)](#allow-stopping-for-updates-gcp) for more info. Defaults to `true`.
   - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
 
@@ -277,6 +278,14 @@ Next in the file are the various machine settings, separated the same as the Ref
 :information_source:&nbsp; Redis prefixes depend on the target Reference Architecture - set `redis_*` for combined Redis, `redis_cache_*` and `redis_persistent_*` for separated Redis setup.
 
 :information_source:&nbsp; The Toolkit currently **requires** a NFS node to distribute select config.
+
+##### Configure Machine OS Image (GCP)
+
+By default the Toolkit will configure machines using Ubuntu 18.04.
+
+However this can be changed via the `machine_image` in the [module's environment config file](#configure-module-settings-environmenttf) to the [machine image name as given by GCP](https://cloud.google.com/compute/docs/images/os-details), e.g. `ubuntu-1804-lts` or `rhel-8`.
+
+:information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+ and RHEL 8 images at this time.
 
 ##### Allow Stopping for Updates (GCP)
 
@@ -485,6 +494,14 @@ Next in the file are the various machine settings, separated the same as the Ref
 - `haproxy_external_elastic_ip_allocation_ids` - Set the external HAProxy load balancer to assume the external IP allocation ID set in `variables.tf`. Note that this is an array setting as the advanced underlying functionality needs to account for the specific setting of IPs for potentially multiple machines. In this case though it should always only be one IP allocation ID.
 
 :information_source:&nbsp; Redis prefixes depend on the target Reference Architecture - set `redis_*` for combined Redis, `redis_cache_*` and `redis_persistent_*` for separated Redis setup.
+
+##### Configure Machine OS Image (AWS)
+
+By default the Toolkit will configure machines using the latest Ubuntu 18.04 AMI.
+
+However this can be changed via the `ami_id` setting in the [module's environment config file](#configure-module-settings-environmenttf). [Refer to the AWS docs on how to find the specific AMI ID you require](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html).
+
+:information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+ and RHEL 8 images at this time.
 
 ##### Configure network setup (AWS)
 
@@ -734,6 +751,31 @@ Next in the file are the various machine settings, separated the same as the Ref
 - `haproxy_external_external_ip_names` - Set the external HAProxy load balancer to assume the external IP name set in `variables.tf`. Note that this is an array setting as the advanced underlying functionality needs to account for the specific setting of IPs for potentially multiple machines. In this case though it should always only be one IP name.
 
 :information_source:&nbsp; Redis prefixes depend on the target Reference Architecture - set `redis_*` for combined Redis, `redis_cache_*` and `redis_persistent_*` for separated Redis setup.
+
+##### Configure Machine OS Image (Azure)
+
+By default the Toolkit will configure machines using the latest Ubuntu 18.04 AMI.
+
+However this can be changed via the `source_image_reference` dictionary setting in the [module's environment config file](#configure-module-settings-environmenttf). [Refer to the Azure docs on how to find the specific source image details you require](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage).
+
+When the image has been selected the setting will need the `publisher`, `offer`, `sku` and `version` fields set. For example:
+
+```hcl
+module "gitlab_ref_arch_azure" {
+  source = "../../modules/gitlab_ref_arch_azure"
+  
+  source_image_reference = {
+    "publisher" = "Canonical"
+    "offer"     = "UbuntuServer"
+    "sku"       = "18.04-LTS"
+    "version"   = "latest"
+  }
+
+  [...]
+}
+```
+
+:information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+ and RHEL 8 images at this time.
 
 ##### Configure network setup (Azure)
 

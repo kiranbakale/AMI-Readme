@@ -37,7 +37,7 @@
 
 - name: Reload SSH service
   service:
-    name: ssh
+    name: "{{ 'sshd' if ansible_facts['os_family'] == 'RedHat' else 'ssh' }}"
     state: reloaded
   tags: ssh
 
@@ -146,7 +146,7 @@
       when: gitlab_rails_custom_config_file_path.stat.exists
 
     - name: Reconfigure GitLab deploy node
-      shell: gitlab-ctl reconfigure
+      command: gitlab-ctl reconfigure
       register: result
       retries: 3
       until: result is success
@@ -173,7 +173,7 @@
   when: gitlab_rails_custom_config_file_path.stat.exists
 
 - name: Reconfigure all GitLab Rails
-  shell: gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
   register: result
   retries: 3
   until: result is success

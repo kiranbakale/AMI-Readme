@@ -1,18 +1,22 @@
-- name: Upgrade apt packages to their latest version if configured
-  apt:
+- name: Upgrade packages to their latest version if configured
+  package:
     name: "*"
     state: latest
-  when:
-    - system_packages_upgrade | bool
-    - ansible_facts['os_family'] == "Debian"
+  when: system_packages_upgrade | bool
 
-- name: Remove apt packages that are no longer required if configured
-  apt:
+- name: Remove packages that are no longer required if configured
+  package:
     autoremove: true
+  when: system_packages_autoremove | bool
+
+- name: Run Automatic Security Upgrades directly (Ubuntu)
+  command: unattended-upgrade
   when:
-    - system_packages_autoremove | bool
+    - system_packages_auto_security_upgrade
     - ansible_facts['os_family'] == "Debian"
 
-- name: Run Unattended Upgrades directly
-  command: unattended-upgrade
-  when: unattended_upgrades
+- name: Run Automatic Security Upgrades directly (RHEL)
+  command: dnf-automatic
+  when:
+    - system_packages_auto_security_upgrade
+    - ansible_facts['os_family'] == "RedHat"

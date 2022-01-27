@@ -81,7 +81,7 @@
       when: praefect_custom_config_file_path.stat.exists
 
     - name: Reconfigure Praefect deploy node
-      shell: gitlab-ctl reconfigure
+      command: gitlab-ctl reconfigure
       register: result
       retries: 3
       until: result is success
@@ -108,7 +108,7 @@
   when: praefect_custom_config_file_path.stat.exists
 
 - name: Reconfigure all Praefects
-  shell: gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
   register: result
   retries: 2
   until: result is success

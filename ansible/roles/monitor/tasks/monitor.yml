@@ -52,7 +52,7 @@
   when: monitor_custom_config_file_path.stat.exists
 
 - name: Reconfigure GitLab
-  shell: gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
   tags: reconfigure
 
 - name: Restart Monitor

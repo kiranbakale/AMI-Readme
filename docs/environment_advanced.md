@@ -415,21 +415,22 @@ In addition to this it will configure automated security upgrades and can option
 
 ### Automatic Security Upgrades
 
-The Toolkit will install the [Unattended Upgrades](https://help.ubuntu.com/community/AutomaticSecurityUpdates) package on all boxes by default via the [`jnv.unattended-upgrades` Galaxy role](https://galaxy.ansible.com/jnv/unattended-upgrades) to automatically install any security updates for the OS.
+The Toolkit will setup automatic security upgrades as a convenience on the target OS via Ansible Galaxy roles as follows:
 
-The default settings are used in this install which will configure the following:
+- Ubuntu - [Unattended Upgrades](https://help.ubuntu.com/community/AutomaticSecurityUpdates) setup via the [`jnv.unattended-upgrades` Galaxy role](https://galaxy.ansible.com/jnv/unattended-upgrades).
+- RHEL 8 - [DNF Automatic](https://dnf.readthedocs.io/en/latest/automatic.html) setup via the [`exploide.dnf-automatic` Galaxy role](https://galaxy.ansible.com/exploide/dnf-automatic)
+
+The role(s) configure the following:
 
 - Security updates will be installed at least once per day
 - The Toolkit will also run the same updates directly whenever it's run
 - Automatic reboots are disabled to ensure runtime
 
-The package can be configured further as required by simply adding its config into your Ansible environment config file (`vars.yml`). Refer to the [role's docs](https://galaxy.ansible.com/jnv/unattended-upgrades) for more.
-
-While not recommended, if this behaviour is not desired you can disable this completely by setting the `unattended_upgrades` variable to `false`. Note if setting this after it was previously configured the `unattended-upgrades` package will still need to be purged manually on affected boxes (the Toolkit can't handle this directly as it may interfere with other manual installs of this system package).
+If this behaviour is not desired you can disable this by setting the `system_packages_auto_security_upgrade` variable to `false` (can also be set via environment variable `SYSTEM_PACKAGES_AUTO_SECURITY_UPGRADE`). Note if setting this after it was previously configured the `unattended-upgrades` or `dnf-automatic` package will still need to be purged manually on affected boxes.
 
 ### Optional Package Maintenance
 
 The Toolkit can also optionally upgrade all packages and clean up unneeded packages on your nodes on each run. The following settings control this behaviour and can be set in your Ansible environment config file (`vars.yml`) if desired:
 
-- `system_package_upgrades`: Configures the Toolkit to upgrade all packages on nodes. Default is `false`. Can also be set as via the environment variable `SYSTEM_PACKAGE_UPGRADES`.
-- `system_package_autoremove`: Configures the Toolkit to autoremove any old or unneeded packages on nodes. Default is `false`. Can also be set as via the environment variable `SYSTEM_PACKAGE_AUTOREMOVE`.
+- `system_packages_upgrade`: Configures the Toolkit to upgrade all packages on nodes. Default is `false`. Can also be set as via the environment variable `SYSTEM_PACKAGES_UPGRADE`.
+- `system_packages_autoremove`: Configures the Toolkit to autoremove any old or unneeded packages on nodes. Default is `false`. Can also be set as via the environment variable `SYSTEM_PACKAGES_AUTOREMOVE`.

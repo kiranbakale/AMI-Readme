@@ -47,9 +47,11 @@
     - reconfigure
 
 - name: Reconfigure Consul
-  shell: gitlab-ctl reconfigure
-  tags:
-    - reconfigure
+  command: gitlab-ctl reconfigure
+  register: result
+  retries: 3
+  until: result is success
+  tags: reconfigure
 
 - name: Restart Consul
   command: gitlab-ctl restart

@@ -38,7 +38,7 @@
   tags: secrets
 
 - name: Reconfigure Gitaly
-  shell: gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
   tags: reconfigure
 
 - name: Create Default Gitaly Sharded directory

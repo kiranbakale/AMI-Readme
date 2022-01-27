@@ -22,7 +22,7 @@
   when: praefect_postgres_custom_config_file_path.stat.exists
 
 - name: Reconfigure Praefect PostgreSQL
-  shell: gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
   tags: reconfigure
 
 - name: Restart Praefect PostgreSQL
