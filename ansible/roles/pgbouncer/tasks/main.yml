@@ -43,7 +43,7 @@
   tags: secrets
 
 - name: Reconfigure PgBouncer
-  shell: gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
   register: result
   retries: 1
   until: result is success

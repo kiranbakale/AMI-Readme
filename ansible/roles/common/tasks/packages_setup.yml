@@ -1,20 +1,62 @@
 ---
-- name: Install system packages
+# Debian
+- name: Install system packages (Ubuntu)
   apt:
-    name: "{{ system_packages }}"
+    name: "{{ system_packages_deb }}"
     update_cache: true
   register: result
   retries: 20
   delay: 5
   until: result is success
-  when:
-    - ansible_facts['os_family'] == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
 
+# RHEL
+- name: Setup EPEL Repo (RHEL)
+  block:
+    - name: Setup EPEL GPG key (RHEL)
+      rpm_key:
+        key: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
+        state: present
+      register: result
+      retries: 5
+      delay: 5
+      until: result is success
+
+    - name: Setup EPEL Repo (RHEL)
+      yum:
+        name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+      register: result
+      retries: 5
+      delay: 5
+      until: result is success
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Install system packages (RHEL)
+  yum:
+    name: "{{ system_packages_rhel['all'] + system_packages_rhel[ansible_distribution_major_version | int] }}"
+    update_cache: true
+  register: result
+  retries: 20
+  delay: 5
+  until: result is success
+  when: ansible_facts['os_family'] == "RedHat"
+
+# Python
 - name: Install python packages
   pip:
     name: "{{ python_packages }}"
 
-- name: Configure Unattended Upgrades
+# Automated Security Upgrades
+- name: Configure Automatic Security Upgrades (Ubuntu)
   include_role:
     name: jnv.unattended-upgrades
-  when: unattended_upgrades
+  when:
+    - system_packages_auto_security_upgrade
+    - ansible_facts['os_family'] == "Debian"
+
+- name: Configure Automatic Security Upgrades (RHEL)
+  include_role:
+    name: exploide.dnf-automatic
+  when:
+    - system_packages_auto_security_upgrade
+    - ansible_facts['os_family'] == "RedHat"

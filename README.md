@@ -59,8 +59,8 @@ At a high level the Toolkit is designed to be as straightforward as possible. A 
 Note that the Toolkit currently has the following requirements (with related issues to increase support further):
 
 - GitLab version: `13.2.0` and upwards. ([GitLab version support issue](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/35)).
-- OS: Ubuntu 18.04 ([OS support issue](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/43))
-  - Note that additionally at this time GET supports clean Ubuntu installs and may work with existing ones but this is not guaranteed at this time.
+- OS: Ubuntu 18.04+, RHEL 8
+  - At this time the Toolkit only supports clean OS installations. It may work with existing installations but this is not currently being tested.
   - Admin access to the OS is also required by GET to install various dependencies
 - Types of environment: The Toolkit is designed to deploy the official GitLab [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) (Standard or Cloud Native Hybrid) as environments.
   - The Toolkit currently requires a NFS node to distribute select config.

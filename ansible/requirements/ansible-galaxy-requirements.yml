@@ -3,6 +3,7 @@ roles:
   - geerlingguy.docker
   - geerlingguy.swap
   - jnv.unattended-upgrades
+  - exploide.dnf-automatic
 
 collections:
   - google.cloud

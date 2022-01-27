@@ -1,20 +1,32 @@
 ---
-- name: Uninstall GitLab package
-  command: "{{ item }}"
-  args:
-    warn: false
-  with_items:
-    - apt-mark install gitlab-ee
-    - apt-get remove gitlab-ee -y
+- name: Unlock GitLab package installs
+  command: "{{ 'yum versionlock delete' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark install' }} {{ gitlab_edition }}"
+  register: result
+  retries: 2
+  delay: 3
+  until: result is success
 
-- name: Uninstall any GitLab repositories
-  command: "{{ item }}"
-  args:
-    warn: false
-  with_items:
-    - apt-add-repository -r https://packages.gitlab.com/gitlab/nightly-builds/ubuntu/
-    - apt-add-repository -r https://packages.gitlab.com/gitlab/gitlab-ee/ubuntu/
-    - apt-add-repository -r https://packages.gitlab.com/gitlab/gitlab-ce/ubuntu/
+- name: Uninstall GitLab repo package
+  package:
+    name: "{{ gitlab_repo_package }}"
+    state: absent
+  register: result
+  retries: 2
+  delay: 3
+
+- name: Remove GitLab repository (Ubuntu)
+  command: "apt-add-repository -r https://packages.gitlab.com/gitlab/{{ gitlab_edition }}/ubuntu/"
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Remove GitLab repository (RHEL)
+  yum_repository:
+    name: "{{ item }}"
+    file: "gitlab_{{ gitlab_edition }}"
+    state: absent
+  loop:
+    - "gitlab_{{ gitlab_edition }}"
+    - "gitlab_{{ gitlab_edition }}-source"
+  when: ansible_facts['os_family'] == "RedHat"
 
 - name: Remove the repository script file
   file:

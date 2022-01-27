@@ -1,9 +1,8 @@
 ---
 - name: Install certbot
-  apt:
+  package:
     name: certbot
-  when:
-    - ansible_facts['os_family'] == "Debian"
+    update_cache: true
 
 - name: Run certbot to generate certs
   command:

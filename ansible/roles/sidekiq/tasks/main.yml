@@ -46,7 +46,7 @@
     - cloud_provider == 'gcp'
 
 - name: Reconfigure Sidekiq
-  shell: gitlab-ctl reconfigure
+  command: gitlab-ctl reconfigure
   tags:
     - reconfigure
 
