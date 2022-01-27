@@ -83,7 +83,7 @@ In the future we might consider breaking select code down into more modules for 
 
 #### Version Support
 
-We support Terraform versions from `0.14.*` onwards. From time to time we may bump up this minimum supported version as required with adequate notice to users.
+We support Terraform versions from `1.*` onwards. From time to time we may bump up this minimum supported version as required with adequate notice to users.
 
 #### Styling
 
