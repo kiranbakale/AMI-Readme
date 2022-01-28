@@ -5,8 +5,8 @@ readme: "../README.md"
 description: |
   The GitLab Environment Toolkit (GET) is a collection of tools to deploy and operate production
   GitLab instances based on our Reference Architectures, including automation of common day 2 tasks.
-documentation: "https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit#documentation"
-issues: "https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues"
+documentation: "https://gitlab.com/gitlab-org/gitlab-environment-toolkit#documentation"
+issues: "https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues"
 authors:
     - "GitLab Quality Enablement Team"
 dependencies:
@@ -18,4 +18,4 @@ license_file: '../LICENSE'
 tags:
     - gitlab
     - gitlab_environment_toolkit
-repository: "https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit"
+repository: "https://gitlab.com/gitlab-org/gitlab-environment-toolkit"

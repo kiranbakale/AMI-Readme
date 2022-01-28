@@ -464,7 +464,7 @@ docker run -it \
   gitlab/gitlab-environment-toolkit:latest
 ```
 
-> :information_source:&nbsp; The Docker image is currently not available from the Toolkit's project, this will be blocked until [the project is moved](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/319). Until this is completed you can build and run the image locally with `docker build -t gitlab/gitlab-environment-toolkit:latest .`, you can then run the above commands for running the image.
+> :information_source:&nbsp; The Docker image is currently not available from the Toolkit's project, this will be blocked until [the project is moved](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/319). Until this is completed you can build and run the image locally with `docker build -t gitlab/gitlab-environment-toolkit:latest .`, you can then run the above commands for running the image.
 
 ## 4. Configure
 
@@ -503,7 +503,7 @@ To use this method all that's required is to install the Collection from this re
 First, installing the Collection is done as standard via the `ansible-galaxy` command from this repo:
 
 ```shell
-ansible-galaxy collection install git+https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit.git#/ansible/
+ansible-galaxy collection install git+https://gitlab.com/gitlab-org/gitlab-environment-toolkit.git#/ansible/
 ```
 
 :information_source:&nbsp; The Collection can only be installed from this repo as shown above and isn't available from Ansible Galaxy due to license compliance.

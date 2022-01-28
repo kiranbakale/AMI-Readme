@@ -16,7 +16,7 @@
 
 - name: GitLab Root Password check
   fail:
-    msg: "GitLab Root Password is empty. Post Configure steps will be skipped. Refer to docs for more info - https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/blob/main/docs/prep_toolkit.md#gitlab-initial-root-password "
+    msg: "GitLab Root Password is empty. Post Configure steps will be skipped. Refer to docs for more info - https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/docs/prep_toolkit.md#gitlab-initial-root-password "
   ignore_errors: true
   when: gitlab_root_password == ''
   tags: config-check

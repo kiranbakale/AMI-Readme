@@ -58,7 +58,7 @@ At a high level the Toolkit is designed to be as straightforward as possible. A 
 
 Note that the Toolkit currently has the following requirements (with related issues to increase support further):
 
-- GitLab version: `13.2.0` and upwards. ([GitLab version support issue](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/35)).
+- GitLab version: `13.2.0` and upwards. ([GitLab version support issue](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/35)).
 - OS: Ubuntu 18.04+, RHEL 8
   - At this time the Toolkit only supports clean OS installations. It may work with existing installations but this is not currently being tested.
   - Admin access to the OS is also required by GET to install various dependencies
@@ -85,20 +85,20 @@ Note that the Toolkit currently has the following requirements (with related iss
 
 There are a few key features which are not supported yet, which are important to keep in mind.
 
-- [Certain Cloud-provider services](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/74) such as PostgreSQL or Redis. Currently supported services can be seen on the [relevant docs page](docs/environment_advanced_services.md).
-- [GitLab Registry support](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/212)
-- [Promotion](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/133) of a Geo secondary
+- [Certain Cloud-provider services](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/74) such as PostgreSQL or Redis. Currently supported services can be seen on the [relevant docs page](docs/environment_advanced_services.md).
+- [GitLab Registry support](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/212)
+- [Promotion](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/133) of a Geo secondary
 
-Our upcoming work, sorted by tentative milestone, can be viewed on [our development board](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/boards). Please note that the issues slated for any upcoming release or milestone are subject to change and may not meet the planned timeframes.
+Our upcoming work, sorted by tentative milestone, can be viewed on [our development board](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/boards). Please note that the issues slated for any upcoming release or milestone are subject to change and may not meet the planned timeframes.
 
 ## Issues or Feature Requests
 
-Everyone is welcome to open new Issues or Feature Requests (or to upvote existing ones) over on [our tracker](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues).
+Everyone is welcome to open new Issues or Feature Requests (or to upvote existing ones) over on [our tracker](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues).
 
 Further information:
 
 <!-- markdownlint-disable proper-names -->
-- Work in progress can also be seen on our [board](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/boards).
+- Work in progress can also be seen on our [board](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/boards).
 - Issues relating directly to the [Reference Architectures can be found in their own project](https://gitlab.com/gitlab-org/quality/reference-architectures).
 - Issues relating to the previous incarnation of Performance Environment Builder can be found on [the old generic performance issue tracker](https://gitlab.com/gitlab-org/quality/performance/-/issues?scope=all&utf8=%E2%9C%93&state=closed).
 - To contact the team you can also reach out on Slack [#gitlab-environment-toolkit](https://gitlab.slack.com/archives/C01DE8TA545) channel.
