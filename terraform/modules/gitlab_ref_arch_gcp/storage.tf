@@ -1,6 +1,8 @@
 resource "google_storage_bucket" "gitlab_object_storage_buckets" {
-  for_each      = toset(var.object_storage_buckets)
+  for_each = toset(var.object_storage_buckets)
+
   name          = "${var.prefix}-${each.value}"
+  location      = var.object_storage_location
   force_destroy = var.object_storage_force_destroy
   labels        = var.object_storage_labels
 }

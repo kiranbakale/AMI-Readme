@@ -265,15 +265,20 @@ output "gitlab_ref_arch_gcp" {
   - `source` - The relative path to the `gitlab_ref_arch_gcp` module. We assume you're creating config in the `terraform/environments/` folder here but if you're in a different location this setting must be updated to the correct path.
   - `prefix` - The name prefix of the project. Set in `variables.tf`.
   - `project` - The [ID](https://support.google.com/googleapi/answer/7014113?hl=en) of the GCP project to connect to. Set in `variables.tf`.
-  - `machine_image` - The [GCP machine image name] to use for the VMs. Ubuntu 18.04+ and RHEL 8 images are supported at this time. Defaults to `ubuntu-1804-lts`
-  - `allow_stopping_for_update` - Controls whether Terraform can restart VMs when making changes (required in some cases). Should only be disabled for additional resilience. Refer to [Allow Stopping for Updates (GCP)](#allow-stopping-for-updates-gcp) for more info. Defaults to `true`.
-  - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
 
 - `*_node_count` - The number of machines to set up for that component
 - `*_machine_type` - The [GCP Machine Type](https://cloud.google.com/compute/docs/machine-types) (size) for that component
 - `haproxy_external_external_ips` - Set the external HAProxy load balancer to assume the external IP set in `variables.tf`. Note that this is an array setting as the advanced underlying functionality needs to account for the specific setting of IPs for potentially multiple machines. In this case though it should always only be one IP.
+
+In addition to the above, the following optional settings are also available:
+
+- `machine_image` - The [GCP machine image name] to use for the VMs. Ubuntu 18.04+ and RHEL 8 images are supported at this time. Defaults to `ubuntu-1804-lts`
+- `object_storage_location` - The [GCS Location](https://cloud.google.com/storage/docs/locations) buckets are created in. Refer to the [Object Storage Location (GCP)](#object-storage-location) below for more info.
+- `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
+- `object_storage_labels` - Labels to apply to object storage buckets.
+- `allow_stopping_for_update` - Controls whether Terraform can restart VMs when making changes (required in some cases). Should only be disabled for additional resilience. Refer to [Allow Stopping for Updates (GCP)](#allow-stopping-for-updates-gcp) for more info. Defaults to `true`.
 
 :information_source:&nbsp; Redis prefixes depend on the target Reference Architecture - set `redis_*` for combined Redis, `redis_cache_*` and `redis_persistent_*` for separated Redis setup.
 
@@ -286,6 +291,16 @@ By default the Toolkit will configure machines using Ubuntu 18.04.
 However this can be changed via the `machine_image` in the [module's environment config file](#configure-module-settings-environmenttf) to the [machine image name as given by GCP](https://cloud.google.com/compute/docs/images/os-details), e.g. `ubuntu-1804-lts` or `rhel-8`.
 
 :information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+ and RHEL 8 images at this time.
+
+##### Object Storage Location (GCP)
+
+The [Terraform Google provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs) doesn't automatically create buckets in the same region it's configured with. [This is due to the various location permutations available in GCP that don't directly map to regions](https://cloud.google.com/storage/docs/locations).
+
+Depending on the provider's version it will typically create buckets in the `US` multi-region by default. The Toolkit follows this design.
+
+To ensure good performance you should select a [location](https://cloud.google.com/storage/docs/locations) that is close to the region you've selected for the environment. We recommend either picking a [Multi-Region](https://cloud.google.com/storage/docs/locations#location-mr) if it's available for built in HA or [Region](https://cloud.google.com/storage/docs/locations#location-r) if the former isn't available. However any location can be chosen as desired based on your requirements.
+
+:warning:&nbsp; **{- Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss-}**+
 
 ##### Allow Stopping for Updates (GCP)
 
