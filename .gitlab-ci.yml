@@ -147,6 +147,7 @@ upload-terraform-module:
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: tcp://docker:2375
   before_script:
+    - apk add -u --no-cache docker
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   tags:
     - docker 
