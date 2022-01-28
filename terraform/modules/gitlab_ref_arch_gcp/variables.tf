@@ -32,9 +32,24 @@ variable "project" {
   default = null
 }
 
+# Object Storage
 variable "object_storage_buckets" {
   type    = list(string)
   default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"]
+}
+variable "object_storage_location" {
+  type    = string
+  default = "US"
+}
+variable "object_storage_force_destroy" {
+  description = "Toggle to enable force-destruction of object storage buckets. Consider setting this value to false for production systems"
+  type        = bool
+  default     = true
+}
+variable "object_storage_labels" {
+  description = "Labels to apply to object storage buckets"
+  type        = map(string)
+  default     = {}
 }
 
 # Machines
@@ -519,23 +534,11 @@ variable "additional_labels" {
   default = {}
 }
 
+# Additional
 variable "allow_stopping_for_update" {
   type    = bool
   default = true
 }
-
-variable "object_storage_force_destroy" {
-  description = "Toggle to enable force-destruction of object storage buckets. Consider setting this value to false for production systems"
-  type        = bool
-  default     = true
-}
-
-variable "object_storage_labels" {
-  description = "Labels to apply to object storage buckets"
-  type        = map(any)
-  default     = {}
-}
-
 variable "machine_secure_boot" {
   type    = bool
   default = false
