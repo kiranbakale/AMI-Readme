@@ -114,6 +114,8 @@ The module for AWS can configure the [network stack](https://docs.aws.amazon.com
 - **Created** - Creates the required network stack for the infrastructure
 - **Existing** - Will use a provided network stack passed in by the user
 
+Additionally for the Created and Existing network types above you can configure the subnets used to be private or public.
+
 In this section you will find the config required to set up each depending on your requirements.
 
 :warning:&nbsp; **{- Changing network setup on an existing environment must be avoided-}**. **Doing so is considered a significant change in AWS and will essentially trigger the recreation of the entire environment leading to data loss**.
@@ -159,11 +161,30 @@ module "gitlab_ref_arch_aws" {
 
 In addition to the above the following _optional_ settings change how the network is configured:
 
-- `subnet_pub_count` - The number of subnets to create in the VPC. This should only be changed if you want increased subnet count for availability reasons. Default is `2`.
 - `vpc_cidr_block` - The [CIDR block](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for your VPC. This shouldn't need to be changed in most scenarios unless you want to use a specific CIDR block. Default is `172.31.0.0/16`.
-- `subpub_pub_cidr_block`- A list of [CIDR blocks](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for each subnet created. This shouldn't need to be changed in most scenarios unless you want to use a specific CIDR blocks. Default is `["172.31.0.0/20","172.31.16.0/20","172.31.32.0/20"]`
-  - As a convenience the module has up to 3 subnet CIDR blocks it will use. If you have set `subnet_pub_count` higher than 3 then this variable will need to be adjusted to match the number of Subnets to be created.
+- `subnet_pub_count` - The number of subnets to create in the VPC. This should only be changed if you want an increased subnet count for availability reasons. Refer to the below [Created Subnet Types (Public / Private)](#created-subnet-types-public-private) section for more info. Default is `2`.
+- `subnet_pub_cidr_block`- A list of [CIDR blocks](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for each public subnet created. This should be changed if you want to use specific CIDR blocks. Default is `["172.31.0.0/20","172.31.16.0/20","172.31.32.0/20"]`
+  - The module has up to 3 subnet CIDR blocks it will use. If you have set `subnet_pub_count` higher than 3 then this variable will need to be adjusted to match the number of subnets to be created. The CIDR blocks will need to fit in the main block defined for the VPC via `vpc_cidr_block`.
+- `subnet_priv_count` - The number of private subnets to create in the VPC. This should be changed if you want more resources to be created with private subnets. Refer to the below [Created Subnet Types (Public / Private)](#created-subnet-types-public-private) section for more info. Default is `0`.
+- `subnet_priv_cidr_block`- A list of [CIDR blocks](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for each private subnet created. This should be changed if you want to use specific CIDR blocks. Default is `["172.31.128.0/20", "172.31.144.0/20", "172.31.160.0/20"]`
+  - The module has up to 3 subnet CIDR blocks it will use. If you have set `subnet_priv_count` higher than 3 then this variable will need to be adjusted to match the number of subnets to be created. The CIDR blocks will need to fit in the main block defined for the VPC via `vpc_cidr_block`.
 - `zones_exclude` - In rare cases you may need to avoid specific Availability Zones [as they don't have the available resource to deploy the infrastructure in](https://aws.amazon.com/premiumsupport/knowledge-center/eks-cluster-creation-errors/). When this is the case you can specify a list of Zones by name via this setting that will then be avoided by the Toolkit, e.g. `["us-east-1e"]`. Default is `null`.
+
+#### Created Subnet Types (Public / Private)
+
+When creating a network the Toolkit supports creating both Public and Private subnets.
+
+There are several possible combinations supported. The Toolkit will dynamically configure each based on what's been configured via the  `subnet_pub_count` and `subnet_priv_count` settings as follows:
+
+- Public Subnets - The default. All resources are placed in public subnets and have public IPs.
+  - When `subnet_pub_count` is higher than `0` and `subnet_priv_count` is `0`.
+- Public + Private Subnets - All resources are placed in Private subnets by default except for those externally facing (HAProxy External, EKS Cluster + EKS Supporting Node that runs NGinx).
+  - When `subnet_pub_count` is higher than `0` and `subnet_priv_count` is higher than `0`.
+  - :information_source:&nbsp; **In this setup the number of Public and Private subnets must be the same**. This is to ensure [NAT Gateways](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) can be configured for each private subnet on the corresponding public subnet to allow Internet access.
+- Private Subnets - A fully airgapped environment. All resources are placed in private subnets, additional setup will be required for GitLab to install such as private OS package repos, etc... along with resources such as private links to access.
+  - When `subnet_pub_count` is `0` and `subnet_priv_count` is higher than `0`.
+
+:information_source:&nbsp; When Private subnets are being used most VMs won't have a public IP address. As such, when running Ansible it should be run from within the network [with its Dynamic Inventory configured to connect via private IPs](environment_configure.md#amazon-web-services-aws) (`compose.ansible_host` set to `private_ip_address`).
 
 ### Existing (AWS)
 
@@ -176,9 +197,10 @@ Note that when this is configured the module will configure some AWS Security Gr
 With an existing stack configure the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf-1):
 
 - `vpc_id` - The ID of your existing VPC
-- `subnet_ids` - A list of Subnet IDs the environment's machines should be spread across. The subnets should be located in the same existing VPC.
+- `subnet_pub_ids` - A list of public subnet IDs the environment's machines should be spread across. The subnets should be located in the same existing VPC. Refer to the below [Existing Subnet Types (Public / Private)](#existing-subnet-types-public-private) section for more info.
+- `subnet_priv_ids` - A list of private subnet IDs the environment's machines should be spread across. The subnets should be located in the same existing VPC and have any desired dependent infrastructure, e.g. NAT Gateway for internet access. Refer to the below [Existing Subnet Types (Public / Private)](#existing-subnet-types-public-private) section for more info.
 
-An example of your environment config file then would look like:
+An example of your environment config file with public subnets would look like:
 
 ```tf
 module "gitlab_ref_arch_aws" {
@@ -188,10 +210,26 @@ module "gitlab_ref_arch_aws" {
   ssh_public_key_file = file(var.ssh_public_key_file)
 
   vpc_id = "<vpc-id>"
-  subnet_ids = ["<subnet-1-id>", "<subnet-2-id>"]
+  subnet_pub_ids = ["<public-subnet-1-id>", "<public-subnet-2-id>"]
 
   [...]
 ```
+
+#### Existing Subnet Types (Public / Private)
+
+When providing an existing network to the Toolkit it also supports the passthrough of public / private subnets.
+
+There are several possible combinations supported. The Toolkit will dynamically configure each based on what's been configured via the  `subnet_pub_ids` and `subnet_priv_ids` settings as follows:
+
+- Public Subnets - The default. All resources are placed in public subnets and have public IPs.
+  - When `subnet_pub_ids` is higher than `0` and `subnet_priv_ids` is `0`.
+- Public + Private Subnets - All resources are placed in Private subnets by default except for those externally facing (HAProxy External, EKS Cluster + EKS Supporting Node that runs NGinx).
+  - When `subnet_pub_ids` is higher than `0` and `subnet_priv_ids` is higher than `0`.
+  - :information_source:&nbsp; In this setup resources running on Private Subnets require Internet access via a [NAT Gateways](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) to be configured.
+- Private Subnets - A fully airgapped environment. All resources are placed in private subnets, additional setup will be required for GitLab to install such as private OS package repos, etc... along with resources such as private links to access.
+  - When `subnet_pub_ids` is `0` and `subnet_priv_ids` is higher than `0`.
+
+:information_source:&nbsp; When Private subnets are being used most VMs won't have a public IP address. As such, when running Ansible it should be run from within the network [with its Dynamic Inventory configured to connect via private IPs](environment_configure.md#amazon-web-services-aws) (`compose.ansible_host` set to `private_ip_address`).
 
 ## Restricting External Network Access
 

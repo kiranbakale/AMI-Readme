@@ -1,5 +1,5 @@
 locals {
-  elasticache_redis_subnet_ids = local.subnet_ids != null ? local.subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.elasticache_redis_default_subnet_count)
+  elasticache_redis_subnet_ids = local.backend_subnet_ids != null ? local.backend_subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.elasticache_redis_default_subnet_count)
 }
 
 resource "aws_elasticache_subnet_group" "gitlab" {

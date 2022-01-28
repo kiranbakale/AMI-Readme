@@ -13,7 +13,7 @@ module "redis" {
   disk_encrypt     = coalesce(var.redis_disk_encrypt, var.default_disk_encrypt)
   disk_kms_key_arn = var.redis_disk_kms_key_arn != null ? var.redis_disk_kms_key_arn : var.default_kms_key_arn
   data_disks       = var.redis_data_disks
-  subnet_ids       = local.subnet_ids
+  subnet_ids       = local.backend_subnet_ids
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
   security_group_ids = [
@@ -48,7 +48,7 @@ module "redis_cache" {
   disk_encrypt     = coalesce(var.redis_cache_disk_encrypt, var.default_disk_encrypt)
   disk_kms_key_arn = var.redis_cache_disk_kms_key_arn != null ? var.redis_cache_disk_kms_key_arn : var.default_kms_key_arn
   data_disks       = var.redis_cache_data_disks
-  subnet_ids       = local.subnet_ids
+  subnet_ids       = local.backend_subnet_ids
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
   security_group_ids = [
@@ -81,7 +81,7 @@ module "redis_persistent" {
   disk_encrypt     = coalesce(var.redis_persistent_disk_encrypt, var.default_disk_encrypt)
   disk_kms_key_arn = var.redis_persistent_disk_kms_key_arn != null ? var.redis_persistent_disk_kms_key_arn : var.default_kms_key_arn
   data_disks       = var.redis_persistent_data_disks
-  subnet_ids       = local.subnet_ids
+  subnet_ids       = local.backend_subnet_ids
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
   security_group_ids = [

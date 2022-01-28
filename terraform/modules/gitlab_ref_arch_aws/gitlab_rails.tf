@@ -13,7 +13,7 @@ module "gitlab_rails" {
   disk_encrypt         = coalesce(var.gitlab_rails_disk_encrypt, var.default_disk_encrypt)
   disk_kms_key_arn     = var.gitlab_rails_disk_kms_key_arn != null ? var.gitlab_rails_disk_kms_key_arn : var.default_kms_key_arn
   data_disks           = var.gitlab_rails_data_disks
-  subnet_ids           = local.subnet_ids
+  subnet_ids           = local.backend_subnet_ids
   iam_instance_profile = try(aws_iam_instance_profile.gitlab_s3_profile[0].name, null)
 
   ssh_key_name = aws_key_pair.ssh_key.key_name

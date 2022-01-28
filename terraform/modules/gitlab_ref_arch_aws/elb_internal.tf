@@ -4,7 +4,7 @@ resource "aws_lb" "gitlab_internal" {
   name               = "${format("%.28s", var.prefix)}-int"
   load_balancer_type = "network"
   internal           = true
-  subnets            = coalesce(local.subnet_ids, local.default_subnet_ids)
+  subnets            = coalesce(local.backend_subnet_ids, local.default_subnet_ids)
 
   enable_cross_zone_load_balancing = true
 }
