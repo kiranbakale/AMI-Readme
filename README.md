@@ -4,7 +4,7 @@
 Requires [GitLab Premium](https://about.gitlab.com/pricing/) or above.
 Released under the [GitLab EE license](LICENSE).
 
-GET’s journey is only just beginning. Currently it can configure a base GitLab environment based on the Reference Architectures that can be built upon accordingly.
+GET configures a base GitLab environment based on the Reference Architectures that can be built upon accordingly.
 
 Customers are very welcome to trial and evaluate GET today, however be aware of [key limitations](#missing-features-to-be-aware-of) of the current iteration. For production environments further manual setup will be required based on your specific requirements.
 >>>
@@ -26,33 +26,9 @@ Created and maintained by the GitLab Quality Engineering Enablement team, the To
 - Built in Load Balancing and Monitoring (Prometheus, Grafana) setup
 - External SSL termination
 - Alternative sources (Cloud Services, Custom Servers) for select components (Load Balancers, PostgreSQL, Redis)
+- On Prem Support (Ansible)
 
 By design the Toolkit is meant to be **_one for all_** and aims to deploy a production GitLab environment that will be a good base that can be customized further depending on your requirements.
-
-## Direction
-
-The GitLab Environment Toolkit will be the best and easiest way to deploy multi-node production instances of GitLab, and operate them with very high service levels. It will come pre-packaged with best practices in areas such as secrets and least-privileged access. It will be what GitLab internally uses to deploy their own production instances of GitLab, and shared in a [source-available](https://en.wikipedia.org/wiki/Source-available_software#GitLab_Enterprise_Edition_License_(EE_License)) way for collaboration with other large deployments of GitLab.
-
-GET will support both VM (Omnibus), hybrid, and cloud native (GitLab Helm chart and Operator) deployments of GitLab as per the Reference Architectures. How certain operations are carried out will differ, as we will choose the best implementation method for each type. For example, the Operator will likely handle most of the day 2 operations for cloud native deployments, while terraform and ansible will likely handle these for VM-based deployments. Today only VM and hybrid are supported.
-
-### What we plan to include
-
-We include everything necessary for the deployment and operation of GitLab on major cloud providers. This includes all required dependencies such as Postgres, as well as optional ones like Elasticsearch. We will provide flexibility in selecting cloud managed services when available, and the Omnibus-based deployments, for services like Postgres. GET is intended to be opinionated, but still flexible enough for most use cases.
-
-### What we do not plan to include
-
-Currently, we do not plan to include:
-
-- Cloud accounts management
-- Observability stack beyond Prometheus and Grafana
-- Direct Omniauth and Email support (see [Custom Config](docs/environment_advanced.md#custom-config))
-
-## How It Works
-
-At a high level the Toolkit is designed to be as straightforward as possible. A high level overview of how it works is as follows:
-
-- Machines are _provisioned_ as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) with Terraform. Part of this provisioning includes adding specific labels / tags to each machine for Ansible to then use to identify.
-- Machines are _configured_ with Ansible. Through identifying each machine by its Labels, Ansible will intelligently go through them in the correct install order. On each it will install and configure Omnibus to setup the intended component as required. The Ansible scripts have been designed to handle certain dynamic setups depending on what machines have been provisioned (e.g. an environment without Elasticsearch, or a 2k environment with a smaller amount of nodes). Additional tasks are also performed as required such as setting GitLab config through API or Load Balancer and Monitoring setup.
 
 ## Requirements
 
@@ -81,13 +57,46 @@ Note that the Toolkit currently has the following requirements (with related iss
 - [GitLab Environment Toolkit - Legacy Setups](docs/environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](docs/environment_post_considerations.md)
 
+## How To Use
+
+The Toolkit's Terraform and Ansible modules can be used in various ways depending on your requirements:
+
+- Terraform - Source (git checkout), [Docker](docs/environment_provision.md#4-run-the-gitlab-environment-toolkits-docker-container-optional), [Module Registry](docs/environment_provision.md#terraform-module-registry)
+- Ansible - Source (git checkout), [Docker](docs/environment_configure.md#3-run-the-gitlab-environment-toolkits-docker-container-optional), [Collection](docs/environment_configure.md#running-with-ansible-collection-optional)
+
+Refer to the docs above for full instructions on each.
+
+## Direction
+
+The GitLab Environment Toolkit will be the best and easiest way to deploy multi-node production instances of GitLab, and operate them with very high service levels. It will come pre-packaged with best practices in areas such as secrets and least-privileged access. It will be what GitLab internally uses to deploy their own production instances of GitLab, and shared in a [source-available](https://en.wikipedia.org/wiki/Source-available_software#GitLab_Enterprise_Edition_License_(EE_License)) way for collaboration with other large deployments of GitLab.
+
+GET will support both VM (Omnibus), hybrid, and cloud native (GitLab Helm chart and Operator) deployments of GitLab as per the Reference Architectures. How certain operations are carried out will differ, as we will choose the best implementation method for each type. For example, the Operator will likely handle most of the day 2 operations for cloud native deployments, while terraform and ansible will likely handle these for VM-based deployments. Today only VM and hybrid are supported.
+
+### What we plan to include
+
+We include everything necessary for the deployment and operation of GitLab on major cloud providers. This includes all required dependencies such as Postgres, as well as optional ones like Elasticsearch. We will provide flexibility in selecting cloud managed services when available, and the Omnibus-based deployments, for services like Postgres. GET is intended to be opinionated, but still flexible enough for most use cases.
+
+### What we do not plan to include
+
+Currently, we do not plan to include:
+
+- Cloud accounts management
+- Observability stack beyond Prometheus and Grafana
+- Direct Omniauth and Email support (see [Custom Config](docs/environment_advanced.md#custom-config))
+
+## How It Works
+
+At a high level the Toolkit is designed to be as straightforward as possible. A high level overview of how it works is as follows:
+
+- Machines are _provisioned_ as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) with Terraform. Part of this provisioning includes adding specific labels / tags to each machine for Ansible to then use to identify.
+- Machines are _configured_ with Ansible. Through identifying each machine by its Labels, Ansible will intelligently go through them in the correct install order. On each it will install and configure Omnibus to setup the intended component as required. The Ansible scripts have been designed to handle certain dynamic setups depending on what machines have been provisioned (e.g. an environment without Elasticsearch, or a 2k environment with a smaller amount of nodes). Additional tasks are also performed as required such as setting GitLab config through API or Load Balancer and Monitoring setup.
+
 ## Missing features to be aware of
 
 There are a few key features which are not supported yet, which are important to keep in mind.
 
 - [Certain Cloud-provider services](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/74) such as PostgreSQL or Redis. Currently supported services can be seen on the [relevant docs page](docs/environment_advanced_services.md).
 - [GitLab Registry support](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/212)
-- [Promotion](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/133) of a Geo secondary
 
 Our upcoming work, sorted by tentative milestone, can be viewed on [our development board](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/boards). Please note that the issues slated for any upcoming release or milestone are subject to change and may not meet the planned timeframes.
 

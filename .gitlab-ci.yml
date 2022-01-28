@@ -139,15 +139,29 @@ upload-terraform-module:
   only:
     - tags
 
-upload-docker-image:
+.upload-docker-image-base:
   stage: upload
   services:
     - docker:stable-dind
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: tcp://docker:2375
-  script:
+  before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  tags:
+    - docker 
+
+upload-docker-image-dev:
+  extends: .upload-docker-image-base
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:dev .
+    - docker push $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:dev
+  only:
+    - main
+
+upload-docker-image-release:
+  extends: .upload-docker-image-base
+  script:
     - docker build -t $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:$CI_COMMIT_TAG .
     - docker push $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:$CI_COMMIT_TAG
     - |
@@ -155,7 +169,5 @@ upload-docker-image:
         docker tag $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:$CI_COMMIT_TAG $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:latest
         docker push $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:latest
       fi
-  tags:
-    - docker 
   only:
     - tags
