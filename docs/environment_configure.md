@@ -73,7 +73,7 @@ You can either use a Python virtual environment or install Ansible globally. Add
 
 ### Using Ansible inside a Docker container
 
-With Docker the only prerequisite is installation, the Toolkit's image contains everything else you'll need. The official [Docker installation instructions](https://docs.docker.com/engine/install/) should be followed to correctly install and run Docker.
+With Docker the only prerequisite is installation, the [Toolkit's image](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/container_registry/2697240) contains everything else you'll need. The official [Docker installation instructions](https://docs.docker.com/engine/install/) should be followed to correctly install and run Docker.
 
 ### Installing Ansible with a Virtual Environment
 
@@ -430,7 +430,7 @@ As mentioned earlier, we may also refer to additional variables in detail later 
 
 ## 3. Run the GitLab Environment Toolkit's Docker container (optional)
 
-Before running the Docker container you will need to setup your Inventory files by following [2. Setup the Environment's Inventory and Config](#2-setup-the-environments-inventory-and-config). The container can be started once the Inventory has been configured. When starting the container it is important to pass in your inventory files and keys, as well as set any authentication based environment variables.
+Before running the [Docker container](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/container_registry/2697240) you will need to setup your Inventory files by following [2. Setup the Environment's Inventory and Config](#2-setup-the-environments-inventory-and-config). The container can be started once the Inventory has been configured. When starting the container it is important to pass in your inventory files and keys, as well as set any authentication based environment variables.
 
 Below is an example of how to run the container when using a GCP service account:
 
@@ -439,7 +439,7 @@ docker run -it \
   -e GOOGLE_APPLICATION_CREDENTIALS="/gitlab-environment-toolkit/keys/<service account file>" \
   -v <path to keys directory>:/gitlab-environment-toolkit/keys \
   -v <path to Ansible inventory>:/gitlab-environment-toolkit/ansible/environments/<environment name> \
-  gitlab/gitlab-environment-toolkit:latest
+  registry.gitlab.com/gitlab-org/gitlab-environment-toolkit:latest
 ```
 
 You can also use a simplified command if you store your Inventory outside of the toolkit. Using the folder structure below you're able to store multiple environments alongside each other and when using the Toolkit's container you can simply pass in a single folder and still have access to all your different environments.
@@ -461,10 +461,8 @@ get_environments
 docker run -it \
   -e GOOGLE_APPLICATION_CREDENTIALS="/gitlab-environment-toolkit/keys/<service account file>" \
   -v <path to `get_environments` directory>:/environments \
-  gitlab/gitlab-environment-toolkit:latest
+  registry.gitlab.com/gitlab-org/gitlab-environment-toolkit:latest
 ```
-
-> :information_source:&nbsp; The Docker image is currently not available from the Toolkit's project, this will be blocked until [the project is moved](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/319). Until this is completed you can build and run the image locally with `docker build -t gitlab/gitlab-environment-toolkit:latest .`, you can then run the above commands for running the image.
 
 ## 4. Configure
 

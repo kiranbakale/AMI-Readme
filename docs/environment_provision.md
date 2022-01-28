@@ -27,7 +27,7 @@ Terraform generally works best when all users for an environment are using the s
 
 ### Using Terraform inside a Docker container
 
-With Docker the only prerequisite is installation, the Toolkit's image contains everything else you'll need. The official [Docker installation instructions](https://docs.docker.com/engine/install/) should be followed to correctly install and run Docker.
+With Docker the only prerequisite is installation, the [Toolkit's image](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/container_registry/2697240) contains everything else you'll need. The official [Docker installation instructions](https://docs.docker.com/engine/install/) should be followed to correctly install and run Docker.
 
 ### Install Terraform using asdf
 
@@ -86,9 +86,9 @@ module "gitlab_ref_arch_gcp" {
 }
 ```
 
-### Terraform Module Registry (Coming Soon)
+### Terraform Module Registry
 
-The Toolkit's Modules are also made available via this Project's Terraform Module Registry.
+The Toolkit's Modules are also made available via this Project's [Terraform Module Registry](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/infrastructure_registry).
 
 For example, to configure the `gitlab_ref_arch_gcp` module to pull from the registry you would configure it follows:
 
@@ -848,7 +848,7 @@ Any Terraform Data Source can be used in a similar way. Refer to the specific Da
 
 ## 4. Run the GitLab Environment Toolkit's Docker container (optional)
 
-Before running the Docker container you will need to setup your environment config files by following [# 2. Setup the Environment's config](#2-setup-the-environments-config). The container can be started once the Terraform config has been setup. When starting the container it is important to pass in your config files and keys, as well as set any authentication based environment variables.
+Before running the [Docker container](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/container_registry/2697240) you will need to setup your environment config files by following [# 2. Setup the Environment's config](#2-setup-the-environments-config). The container can be started once the Terraform config has been setup. When starting the container it is important to pass in your config files and keys, as well as set any authentication based environment variables.
 
 Below is an example of how to run the container when using a GCP service account:
 
@@ -857,7 +857,7 @@ docker run -it \
   -e GOOGLE_APPLICATION_CREDENTIALS="/gitlab-environment-toolkit/keys/<service account file>" \
   -v <path to keys directory>:/gitlab-environment-toolkit/keys \
   -v <path to Terraform config>:/gitlab-environment-toolkit/terraform/environments/<environment name> \
-  gitlab/gitlab-environment-toolkit:latest
+  registry.gitlab.com/gitlab-org/gitlab-environment-toolkit:latest
 ```
 
 You can also use a simplified command if you store your config outside of the toolkit. Using the folder structure below you're able to store multiple environments alongside each other and when using the Toolkits container you can simply pass in a single folder and still have access to all your different environments.
@@ -878,10 +878,8 @@ get_environments
 docker run -it \
   -e GOOGLE_APPLICATION_CREDENTIALS="/gitlab-environment-toolkit/keys/<service account file>" \
   -v <path to `get_environments` directory>:/environments \
-  gitlab/gitlab-environment-toolkit:latest
+  registry.gitlab.com/gitlab-org/gitlab-environment-toolkit:latest
 ```
-
-> :information_source:&nbsp; The Docker image is currently not available from the Toolkit's project, this will be blocked until [the project is moved](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/319). Until this is completed you can build and run the image locally with `docker build -t gitlab/gitlab-environment-toolkit:latest .`, you can then run the above commands for running the image.
 
 ## 5. Provision
 

@@ -1,7 +1,7 @@
 FROM google/cloud-sdk:alpine
 
-RUN apk add -u --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community git-crypt
-RUN apk add --virtual .asdf-deps --no-cache jq bash openssh curl git grep alpine-sdk openssl-dev libffi-dev py3-pip py3-wheel python3-dev
+RUN apk add -u --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community git-crypt && \
+    apk add --virtual .asdf-deps --no-cache jq bash openssh curl git grep alpine-sdk openssl-dev libffi-dev py3-pip py3-wheel python3-dev
 SHELL ["/bin/bash", "-c"]
 
 RUN mkdir -p /gitlab-environment-toolkit/keys && \
@@ -33,7 +33,7 @@ RUN pip install --no-cache-dir -r /gitlab-environment-toolkit/ansible/requiremen
 
 # Install remaining cloud tools
 RUN pip install --no-cache-dir awscli --user
-RUN gcloud components install kubectl -q
+RUN gcloud components install kubectl -q && rm -rf /google-cloud-sdk/.install/.backup/
 RUN curl -s https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sh
 
 # Install Ansible & Dependencies
@@ -43,4 +43,4 @@ RUN /root/.local/bin/ansible-galaxy install -r /gitlab-environment-toolkit/ansib
 RUN echo -e '\n. /gitlab-environment-toolkit/scripts/setup-get-symlinks.sh' >> ~/.bashrc && \
     echo -e '\n export PATH="/root/.local/bin:$PATH"' >> ~/.bashrc
 
-CMD 'bash'
+CMD ["bash"]
