@@ -141,6 +141,7 @@ upload-terraform-module:
 
 .upload-docker-image-base:
   stage: upload
+  image: alpine
   services:
     - docker:stable-dind
   variables:
@@ -155,20 +156,20 @@ upload-terraform-module:
 upload-docker-image-dev:
   extends: .upload-docker-image-base
   script:
-    - docker build -t $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:dev .
-    - docker push $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:dev
+    - docker build -t $CI_REGISTRY_IMAGE:dev .
+    - docker push $CI_REGISTRY_IMAGE:dev
   only:
     - main
 
 upload-docker-image-release:
   extends: .upload-docker-image-base
   script:
-    - docker build -t $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:$CI_COMMIT_TAG .
-    - docker push $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:$CI_COMMIT_TAG
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
     - |
       if echo $CI_COMMIT_TAG | grep -qv ".*beta.*"; then
-        docker tag $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:$CI_COMMIT_TAG $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:latest
-        docker push $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:latest
+        docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG $CI_REGISTRY_IMAGE:latest
+        docker push $CI_REGISTRY_IMAGE:latest
       fi
   only:
     - tags
