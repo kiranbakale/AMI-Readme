@@ -138,3 +138,24 @@ upload-terraform-module:
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file gitlab_environment_toolkit.tgz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/terraform/modules/gitlab-environment-toolkit/gitlab/${CI_COMMIT_TAG}/file"'
   only:
     - tags
+
+upload-docker-image:
+  stage: upload
+  services:
+    - docker:stable-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://docker:2375
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:$CI_COMMIT_TAG .
+    - docker push $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:$CI_COMMIT_TAG
+    - |
+      if echo $CI_COMMIT_TAG | grep -qv ".*beta.*"; then
+        docker tag $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:$CI_COMMIT_TAG $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:latest
+        docker push $CI_REGISTRY_IMAGE/gitlab-environment-toolkit:latest
+      fi
+  tags:
+    - docker 
+  only:
+    - tags
