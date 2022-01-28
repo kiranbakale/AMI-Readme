@@ -1,6 +1,6 @@
 # GitLab Environment Toolkit - Technical Design
 
-This document serves as the Technical Design and Vision for the [GitLab Environment Toolkit](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit). It aims to be a single source of truth covering areas such as design principles, technical implementations, reasonings and more.
+This document serves as the Technical Design and Vision for the [GitLab Environment Toolkit](https://gitlab.com/gitlab-org/gitlab-environment-toolkit). It aims to be a single source of truth covering areas such as design principles, technical implementations, reasonings and more.
 
 Unless specified otherwise all additions, changes, etc... to the Toolkit should resonate with this document.
 
@@ -143,15 +143,15 @@ We support Ansible versions from `2.9.*` onwards. From time to time we may bump 
 
 Currently the Toolkit is designed to be run as source, i.e. to run with the direct Terraform and Ansible commands.
 
-This allows for certain flexibility with the Tools that would be lost if we published them as "modules" to their respective registries, such as setting Ansible config. A [Docker image is currently planned to be released that maintains these needs](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/56).
+This allows for certain flexibility with the Tools that would be lost if we published them as "modules" to their respective registries, such as setting Ansible config. A [Docker image is currently planned to be released that maintains these needs](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/56).
 
-This design is under review however and we'll look to reevaluate if its possible to publish both our Terraform and Ansible code into the respective registries ([Terraform](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/205), [Ansible](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/206)).
+This design is under review however and we'll look to reevaluate if its possible to publish both our Terraform and Ansible code into the respective registries ([Terraform](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/205), [Ansible](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/206)).
 
 #### Releases and Supported GitLab Versions
 
 The following rules apply for Toolkit releases and support between them:
 
-- The Toolkit follows [Semantic Versions](https://semver.org/) where we release Major, Minor and Patch versions via [project releases](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/releases).
+- The Toolkit follows [Semantic Versions](https://semver.org/) where we release Major, Minor and Patch versions via [project releases](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/releases).
 - Releases are not tied directly to GitLab versions, we currently support GitLab versions from `13.2` onwards.
 - Breaking changes such as minimum supported GitLab version may be changed in Major releases with adequate notice and an upgrade path given to users.
 - We aim to support Backwards Compatibility between minor releases. Although some small breaking changes may be added with adequate notice if the need is justified.

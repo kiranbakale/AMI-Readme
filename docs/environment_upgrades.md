@@ -31,7 +31,7 @@ Before running any upgrades for your environment we recommend using the latest v
 
 ### Check for any Toolkit breaking or config changes
 
-In addition to the above, when updating the Toolkit, we recommend checking the [Toolkit's release notes](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/releases) for any called out breaking or config changes to ensure no issues occur on upgrade.
+In addition to the above, when updating the Toolkit, we recommend checking the [Toolkit's release notes](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/releases) for any called out breaking or config changes to ensure no issues occur on upgrade.
 
 ### Perform Terraform Dry Runs for new Toolkit versions
 
@@ -39,7 +39,7 @@ Where possible we **strongly** recommend that you do Terraform dry runs whenever
 
 This is done simply by running `terraform plan`.
 
-Once completed the output will show what actions are to be performed. If any actions are listed to be performed, especially destroy actions, we recommend checking these against the [release notes](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/releases) where these should be called out to ensure they are intended. If any of the actions look suspect please reach out to us via the [issue tracker](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues) or via the standard [support channels](https://about.gitlab.com/support/).
+Once completed the output will show what actions are to be performed. If any actions are listed to be performed, especially destroy actions, we recommend checking these against the [release notes](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/releases) where these should be called out to ensure they are intended. If any of the actions look suspect please reach out to us via the [issue tracker](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues) or via the standard [support channels](https://about.gitlab.com/support/).
 
 This is recommended as certain infrastructure changes can trigger large destroy actions that in turn can lead to the loss of the environment and data. While this is behavior from the cloud providers, every effort is made with the Toolkit to ensure this is avoided but since the consequences can be significant it's always best to do the dry run as described above out an abundance of caution.
 

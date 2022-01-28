@@ -80,7 +80,7 @@ For example, to configure the `gitlab_ref_arch_gcp` module to pull from the repo
 
 ```hcl
 module "gitlab_ref_arch_gcp" {
-  source = "git::https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit.git//modules/gitlab_ref_arch_gcp"
+  source = "git::https://gitlab.com/gitlab-org/gitlab-environment-toolkit.git//modules/gitlab_ref_arch_gcp"
 
   [...]
 }
@@ -119,7 +119,7 @@ In this step there are sections for each supported host provider on how to confi
 
 ### Google Cloud Platform (GCP)
 
-The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on GCP is **[`gitlab_ref_arch_gcp`](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/main/terraform/modules/gitlab_ref_arch_gcp)**.
+The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on GCP is **[`gitlab_ref_arch_gcp`](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/tree/main/terraform/modules/gitlab_ref_arch_gcp)**.
 
 In this section we detail all that's needed to configure it.
 
@@ -360,7 +360,7 @@ All of the methods given involve the Service Account file you generated previous
 
 ### Amazon Web Services (AWS)
 
-The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on AWS is **[`gitlab_ref_arch_aws`](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/main/terraform/modules/gitlab_ref_arch_aws)**.
+The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on AWS is **[`gitlab_ref_arch_aws`](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/tree/main/terraform/modules/gitlab_ref_arch_aws)**.
 
 In this section we detail all that's needed to configure it.
 
@@ -590,7 +590,7 @@ Once the two variables are either set locally or in your CI pipeline Terraform w
 
 ### Azure
 
-The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on Azure is **[`gitlab_ref_arch_azure`](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/tree/main/terraform/modules/gitlab_ref_arch_azure)**.
+The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on Azure is **[`gitlab_ref_arch_azure`](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/tree/main/terraform/modules/gitlab_ref_arch_azure)**.
 
 In this section we detail all that's needed to configure it.
 
@@ -881,7 +881,7 @@ docker run -it \
   gitlab/gitlab-environment-toolkit:latest
 ```
 
-> :information_source:&nbsp; The Docker image is currently not available from the Toolkit's project, this will be blocked until [the project is moved](https://gitlab.com/gitlab-org/quality/gitlab-environment-toolkit/-/issues/319). Until this is completed you can build and run the image locally with `docker build -t gitlab/gitlab-environment-toolkit:latest .`, you can then run the above commands for running the image.
+> :information_source:&nbsp; The Docker image is currently not available from the Toolkit's project, this will be blocked until [the project is moved](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/319). Until this is completed you can build and run the image locally with `docker build -t gitlab/gitlab-environment-toolkit:latest .`, you can then run the above commands for running the image.
 
 ## 5. Provision
 
