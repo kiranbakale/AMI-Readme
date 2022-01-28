@@ -1,7 +1,7 @@
 locals {
   rds_geo_tracking_postgres_create = var.rds_geo_tracking_postgres_instance_type != ""
 
-  rds_geo_tracking_postgres_subnet_ids = local.subnet_ids != null ? local.subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_geo_tracking_default_subnet_count)
+  rds_geo_tracking_postgres_subnet_ids = local.backend_subnet_ids != null ? local.backend_subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_geo_tracking_default_subnet_count)
 }
 
 resource "aws_db_subnet_group" "gitlab_geo" {

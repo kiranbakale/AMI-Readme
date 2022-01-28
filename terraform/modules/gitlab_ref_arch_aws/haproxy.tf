@@ -6,14 +6,16 @@ module "haproxy_external" {
   node_count      = var.haproxy_external_node_count
   additional_tags = var.additional_tags
 
-  instance_type             = var.haproxy_external_instance_type
-  ami_id                    = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
-  disk_size                 = coalesce(var.haproxy_external_disk_size, var.default_disk_size)
-  disk_type                 = coalesce(var.haproxy_external_disk_type, var.default_disk_type)
-  disk_encrypt              = coalesce(var.haproxy_external_disk_encrypt, var.default_disk_encrypt)
-  disk_kms_key_arn          = var.haproxy_external_disk_kms_key_arn != null ? var.haproxy_external_disk_kms_key_arn : var.default_kms_key_arn
-  data_disks                = var.haproxy_external_data_disks
-  subnet_ids                = local.subnet_ids
+  instance_type    = var.haproxy_external_instance_type
+  ami_id           = coalesce(var.ami_id, data.aws_ami.ubuntu_18_04.id)
+  disk_size        = coalesce(var.haproxy_external_disk_size, var.default_disk_size)
+  disk_type        = coalesce(var.haproxy_external_disk_type, var.default_disk_type)
+  disk_encrypt     = coalesce(var.haproxy_external_disk_encrypt, var.default_disk_encrypt)
+  disk_kms_key_arn = var.haproxy_external_disk_kms_key_arn != null ? var.haproxy_external_disk_kms_key_arn : var.default_kms_key_arn
+  data_disks       = var.haproxy_external_data_disks
+
+  # Select Public subnets if configured first as this node is external
+  subnet_ids                = local.frontend_subnet_ids
   elastic_ip_allocation_ids = var.haproxy_external_elastic_ip_allocation_ids
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
@@ -47,7 +49,7 @@ module "haproxy_internal" {
   disk_encrypt     = coalesce(var.haproxy_internal_disk_encrypt, var.default_disk_encrypt)
   disk_kms_key_arn = var.haproxy_internal_disk_kms_key_arn != null ? var.haproxy_internal_disk_kms_key_arn : var.default_kms_key_arn
   data_disks       = var.haproxy_internal_data_disks
-  subnet_ids       = local.subnet_ids
+  subnet_ids       = local.backend_subnet_ids
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
   security_group_ids = [

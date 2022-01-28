@@ -13,7 +13,7 @@ module "gitlab_nfs" {
   disk_encrypt     = coalesce(var.gitlab_nfs_disk_encrypt, var.default_disk_encrypt)
   disk_kms_key_arn = var.gitlab_nfs_disk_kms_key_arn != null ? var.gitlab_nfs_disk_kms_key_arn : var.default_kms_key_arn
   data_disks       = var.gitlab_nfs_data_disks
-  subnet_ids       = local.subnet_ids
+  subnet_ids       = local.backend_subnet_ids
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
   security_group_ids = [

@@ -209,7 +209,8 @@ hostnames:
   # List host by name instead of the default public ip
   - tag:Name
 compose:
-  # Use the public IP address to connect to the host
+  # Set to public_ip_address to connect from outwith the network
+  # Set to private_ip_address to connect from within the network
   # (note: this does not modify inventory_hostname, which is set via I(hostnames))
   ansible_host: public_ip_address
 ```
@@ -219,7 +220,7 @@ compose:
 - `filters` - A label filter for Ansible to use. This ensures it only configures the machines we want on the project and not any others based on the machine tab `gitlab_node_prefix` that set automatically in Terraform. Should be set the same `prefix` value set in Terraform.
 - `keyed_groups` - Configures Ansible to look for the tags automatically set by Terraform and to set up its host groups based on them. This config block shouldn't be changed from what's shown.
 - `hostnames` - Config block for how Ansible should show the hosts in its output. This block configures the use of hostnames rather than IPs for better readability. This config block should not be changed.
-- `compose`: As shown in the comment this set what IPs Ansible should use. This config block shouldn't be changed unless private IPs are desired as mentioned in the comment.
+- `compose`: This sets what IP addresses Ansible should use. This config block should be changed when using private IP addresses.
 
 ##### Configure Authentication (AWS)
 

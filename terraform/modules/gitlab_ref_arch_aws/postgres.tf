@@ -13,7 +13,7 @@ module "postgres" {
   disk_encrypt     = coalesce(var.postgres_disk_encrypt, var.default_disk_encrypt)
   disk_kms_key_arn = var.postgres_disk_kms_key_arn != null ? var.postgres_disk_kms_key_arn : var.default_kms_key_arn
   data_disks       = var.postgres_data_disks
-  subnet_ids       = local.subnet_ids
+  subnet_ids       = local.backend_subnet_ids
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
   security_group_ids = [
