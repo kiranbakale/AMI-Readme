@@ -93,7 +93,7 @@ consul['configuration'] = {
 consul['monitoring_service_discovery'] = true
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
-gitlab_rails['monitoring_whitelist'] = "{{ gitlab_rails_monitoring_cidr }}"
+gitlab_rails['monitoring_whitelist'] = {{ gitlab_rails_monitoring_cidr_blocks }}
 gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
 
 # Components Config
@@ -223,7 +223,7 @@ gitlab_rails['db_load_balancing'] = { 'hosts' => {{ postgres_int_ips }} }
 ## Postgres Omnibus - Local
 
 postgresql['enable'] = true
-postgresql['trust_auth_cidr_addresses'] = "{{ postgres_trust_auth_cidr_addresses }}"
+postgresql['trust_auth_cidr_addresses'] = {{ postgres_trust_auth_cidr_addresses }}
 postgres_exporter['listen_address'] = '0.0.0.0:9187'
 {% if postgres_version is defined %}
 postgresql['version'] = {{ postgres_version }}
