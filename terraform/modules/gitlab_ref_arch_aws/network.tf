@@ -66,7 +66,7 @@ resource "aws_route_table" "gitlab_vpc_rt_pub" {
   vpc_id = aws_vpc.gitlab_vpc[0].id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = "0.0.0.0/0" # Internet Access
     gateway_id = aws_internet_gateway.gitlab_vpc_gw[0].id
   }
 
@@ -119,7 +119,7 @@ resource "aws_route_table" "gitlab_vpc_rt_priv" {
   vpc_id = aws_vpc.gitlab_vpc[0].id
 
   route {
-    cidr_block     = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0" # Internet Access
     nat_gateway_id = aws_nat_gateway.gitlab_vpc_sn_priv_ng[count.index].id
   }
 

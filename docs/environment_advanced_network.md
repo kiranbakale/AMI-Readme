@@ -231,9 +231,17 @@ There are several possible combinations supported. The Toolkit will dynamically 
 
 :information_source:&nbsp; When Private subnets are being used most VMs won't have a public IP address. As such, when running Ansible it should be run from within the network [with its Dynamic Inventory configured to connect via private IPs](environment_configure.md#amazon-web-services-aws) (`compose.ansible_host` set to `private_ip_address`).
 
-## Restricting External Network Access
+## Configuring Network CIDR Access
 
-To lock down external network access to particular CIDR blocks these _optional_ settings can be used:
+The Toolkit has multiple CIDR block settings to allow configuring network access to the environment for both external and internal connections. Through these settings you can restrict network access as required.
+
+By default the Toolkit will have these settings open to all connections. This is to allow you to get the environment up and running and then to configure the settings as desired, much like a standard build.
+
+Refer to the below sections for more detail.
+
+### External (Terraform)
+
+To lock down external network access to particular CIDR blocks these _optional_ settings can be used in Terraform:
 
 - `default_allowed_ingress_cidr_blocks`- A list of CIDR blocks that configures the IP ranges that will be able to access the network externally. This will apply to all external firewall rules that the Toolkit configures. Default is `["0.0.0.0/0"]`. More granular control over rules are also available via these settings:
   - `http_allowed_ingress_cidr_blocks`- A list of CIDR blocks that configures the IP ranges that will be able to access GitLab over HTTP/HTTPs.
@@ -243,3 +251,14 @@ To lock down external network access to particular CIDR blocks these _optional_ 
   - `external_ssh_allowed_ingress_cidr_blocks`- **AWS and Azure only** - A list of CIDR blocks that configures the IP ranges that will be able to access the network over SSH.
 
 :warning:&nbsp; **{- Changing network setup on an existing environment must be treated with the utmost caution-}**. **Doing so can be considered a significant change in GCP and may trigger the recreation of the entire environment leading to data loss**.
+
+### Internal (Ansible)
+
+To lock down internal network access to particular CIDR blocks these _optional_ settings can be used in Ansible:
+
+- `gitlab_rails_monitoring_cidr_blocks` - A list of CIDR blocks allowed to access [GitLab's Health Check endpoints](https://docs.gitlab.com/ee/user/admin_area/monitoring/health_check.html). Required for Load Balancers to perform Health Checks. Note that if changing this setting it should include any Load Balancers performing health checks, including any Toolkit provided HAProxy Load Balancers. Default is `['0.0.0.0/0']`.
+- `postgres_trust_auth_cidr_blocks` - A list of CIDR blocks allowed to access [Postgres (Omnibus)](https://docs.gitlab.com/omnibus/settings/database.html#configure-postgresql-block). Default is `['0.0.0.0/0']`.
+- `postgres_md5_auth_cidr_blocks` - A list of CIDR blocks allowed to access [Postgres (Omnibus)](https://docs.gitlab.com/omnibus/settings/database.html#configure-postgresql-block) with authentication. Default is `['0.0.0.0/0']`.
+  - :information_source:&nbsp; Changes to this setting currently has some known issues in certain setups - [gitlab-org/omnibus-gitlab#6594](https://gitlab.com/gitlab-org/omnibus-gitlab/-/issues/6594) and [gitlab-org/omnibus-gitlab#6590](https://gitlab.com/gitlab-org/omnibus-gitlab/-/issues/6590).
+  - :information_source:&nbsp; [There are additional considerations for this setting when using Geo](https://docs.gitlab.com/ee/administration/geo/setup/database.html#postgresql-replication).
+- `geo_tracking_postgres_md5_auth_cidr_blocks` - A list of CIDR blocks allowed to access [Geo Tracking Postgres (Omnibus)](https://docs.gitlab.com/ee/administration/geo/replication/multiple_servers.html#step-3-configure-the-geo-tracking-database-on-the-geo-secondary-site). Default is `['0.0.0.0/0']`.

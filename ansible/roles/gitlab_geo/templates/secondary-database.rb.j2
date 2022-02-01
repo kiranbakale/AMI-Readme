@@ -6,8 +6,6 @@ gitlab_rails['db_password'] = "{{ postgres_password }}"
 postgresql['sql_user_password'] = "{{ (postgres_password + 'gitlab') | md5 }}"
 postgresql['listen_address'] = "0.0.0.0"
 
-postgresql['md5_auth_cidr_addresses'] = ['0.0.0.0/0']
-
 {% if 'gitlab_rails' in group_names %}
 postgresql['max_connections'] = 330
 {% endif %}

@@ -7,7 +7,6 @@ postgresql['sql_user_password'] = "{{ (postgres_password + 'gitlab') | md5 }}"
 postgresql['listen_address'] = "{{ geo_primary_site_postgres_int_ip }}"
 postgresql['max_replication_slots'] = 1
 {% endif %}
-postgresql['md5_auth_cidr_addresses'] = ['0.0.0.0/0']
 
 {% if postgres_replication_manager == 'patroni' %}
 patroni['replication_slots'] = {
