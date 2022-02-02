@@ -11,9 +11,9 @@ frontend http-in
 {% if 'monitor' in groups %}
     acl grafana path_beg -i /-/grafana
     use_backend grafana if grafana
+{% endif %}
 
     default_backend gitlab-rails
-{% endif %}
 
 frontend gitlab-ssh-in
     bind *:2222

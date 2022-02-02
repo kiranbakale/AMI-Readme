@@ -7,6 +7,7 @@
     src: "{{ gitlab_nfs_int_ip }}:{{ gitlab_nfs_path }}"
     path: "{{ gitlab_nfs_path }}"
   tags: nfs
+  when: ('gitlab_nfs' in groups)
 
 - name: Configure SSH Fast Lookup
   blockinfile:
