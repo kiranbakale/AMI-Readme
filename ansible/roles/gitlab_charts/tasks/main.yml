@@ -47,54 +47,48 @@
     - reconfigure
     - charts
 
-- name: Gather facts for Node Pools
+- name: Calculate Pod Counts based on Environment size
   block:
-    - name: Gather all Node Pool Info
-      kubernetes.core.k8s_info:
-        kind: Node
-      register: node_info
+    - name: Gather Gitaly group facts
+      setup:
+        filter: ansible_processor_vcpus
+      register: result
+      retries: 3
+      delay: 2
+      until: result is success
+      delegate_to: "{{ item }}"
+      delegate_facts: true
+      with_items: "{{ groups['gitaly'] }}"
 
-    - name: Set Node Pool capacity facts
+    - name: Get Gitaly CPU count
       set_fact:
-        webservice_cpus: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'webservice') | map(attribute='status.capacity.cpu') | map('int') | sum }}"
-        webservice_memory: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'webservice') | map(attribute='status.capacity.memory') | map('regex_replace', '[a-zA-Z]') | map('int') | sum }}"
-        sidekiq_cpus: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'sidekiq') | map(attribute='status.capacity.cpu') | map('int') | sum }}"
-        sidekiq_memory: "{{ node_info.resources | selectattr('metadata.labels.workload', 'equalto', 'sidekiq') | map(attribute='status.capacity.memory') | map('regex_replace', '[a-zA-Z]') | map('int') | sum }}"
+        gitaly_cpus: "{{ groups['gitaly'] | sort | map('extract', hostvars, ['ansible_processor_vcpus']) | list | sum }}"
 
     - name: Set Webservice CPU and memory resources
       set_fact:
         # Configure larger amount of workers for hybrid environments bigger than 2k based on available CPUs
-        webservice_requests_cpu: "{{ gitlab_charts_webservice_requests_cpu if (webservice_cpus | int) > 25 else 2 }}"
-        webservice_requests_memory_gb: "{{ gitlab_charts_webservice_requests_memory_gb if (webservice_cpus | int) > 25 else 2.5 }}"
-        webservice_limits_memory_gb: "{{ gitlab_charts_webservice_limits_memory_gb if (webservice_cpus | int) > 25 else 2.6 }}"
+        webservice_requests_cpu: "{{ gitlab_charts_webservice_requests_cpu if gitaly_cpus | int >= 48 else 2 }}"
+        webservice_requests_memory_gb: "{{ gitlab_charts_webservice_requests_memory_gb if gitaly_cpus | int >= 48 else 2.5 }}"
+        webservice_limits_memory_gb: "{{ gitlab_charts_webservice_limits_memory_gb if gitaly_cpus | int >= 48 else 2.6 }}"
 
     - name: Set Pod Counts
       set_fact:
-        # Calculate maximum pod count by either the max that can fit in 93.5% of available CPUs or Memory
-        # Memory: K8s reports memory in KiB which needs to be converted to GB
-        # CPU: Can be fractional, e.g. 0.5, so converted to whole numbers by multiplying by a 100 to allow correct division
-        webservice_pods: "{{ [((webservice_memory | int) * 1.024 / 1024 / 1024 / (webservice_limits_memory_gb | float) * 0.935), ((webservice_cpus | int * 100) / (webservice_requests_cpu | float  * 100) * 0.935)] | map('int') | min }}"
-        sidekiq_pods: "{{ [((sidekiq_memory | int) * 1.024 / 1024 / 1024 / gitlab_charts_sidekiq_limits_memory_gb * 0.935), ((sidekiq_cpus | int * 100) / (gitlab_charts_sidekiq_requests_cpu * 100) * 0.935)] | map('int') | min }}"
+        # Calculate maximum pod count by scaling to Gitaly CPU count
+        webservice_pods: "{{ (gitaly_cpus | int / 2.4) | round | int }}"
+        sidekiq_pods: "{{ (gitaly_cpus | int / 3.4) | round | int }}"
 
     - name: Show calculated numbers for charts
       debug:
         msg: |
-          webservice_cpus: {{ webservice_cpus }}
-          webservice_memory: {{ webservice_memory }}
-          sidekiq_cpus: {{ sidekiq_cpus }}
-          sidekiq_memory: {{ sidekiq_memory }}
+          gitaly_cpus: {{ gitaly_cpus }}
 
           webservice_requests_cpu: {{ webservice_requests_cpu }}
           webservice_requests_memory_gb: {{ webservice_requests_memory_gb }}
           webservice_limits_memory_gb: {{ webservice_limits_memory_gb }}
-          webservice_pods_by_memory: {{ (webservice_memory | int) * 1.024 / 1024 / 1024 / (webservice_limits_memory_gb | float) * 0.935 }}
-          webservice_pods_by_cpu: {{ (webservice_cpus | int * 100) / (webservice_requests_cpu | float  * 100) * 0.935 }}
 
           sidekiq_requests_cpu: {{ gitlab_charts_sidekiq_requests_cpu }}
           sidekiq_requests_memory_gb: {{ gitlab_charts_sidekiq_requests_memory_gb }}
           sidekiq_limits_memory_gb: {{ gitlab_charts_sidekiq_limits_memory_gb }}
-          sidekiq_pods_by_memory: {{ (sidekiq_memory | int) * 1.024 / 1024 / 1024 / gitlab_charts_sidekiq_limits_memory_gb * 0.935 }}
-          sidekiq_pods_by_cpu: {{ (sidekiq_cpus | int * 100) / (gitlab_charts_sidekiq_requests_cpu * 100) * 0.935 }}
 
           webservice_pods: {{ webservice_pods }}
           sidekiq_pods: {{ sidekiq_pods }}
