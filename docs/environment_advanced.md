@@ -112,8 +112,8 @@ gitaly_disks = [
 
 - `*_disks` - The main setting for each node group.
   - `device_name` - The name _and_ block device identifier for each disk attached. Must be unique per machine. **Required**.
-  - `size` - The size of the disk in GB. __Optional__, default is `100`.
-  - `type` - The [type](https://cloud.google.com/compute/docs/disks) of the disk. __Optional__, default is `pd-standard`.
+  - `size` - The size of the disk in GB. Optional, default is `100`.
+  - `type` - The [type](https://cloud.google.com/compute/docs/disks) of the disk. Optional, default is `pd-standard`.
 
 **AWS**
 
@@ -127,9 +127,9 @@ gitaly_data_disks = [
 - `*_data_disks` - The main setting for each node group.
   - `name` - The name for each disk attached. Must be unique per machine. **Required**.
   - `device_name` = The block device name for each disk attached. For AWS, due to limitations, this must be in the format `/dev/sd[f-p]` and unique for each disk (more info [here](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html)). Additionally each block device name must be available on all machines in the target group (e.g. `gitaly-1`, `gitaly-2`, etc...). **Required**.
-  - `size` - The size of the disk in GB. __Optional__, default is `100`.
-  - `type` - The [type](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html) of the disk. __Optional__, default is `gp3`.
-  - `iops` - The amount of IOPS to provision for the disk. Only valid for types of `io1`, `io2` or `gp3`. __Optional__, default is `null`.
+  - `size` - The size of the disk in GB. Optional, default is `100`.
+  - `type` - The [type](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html) of the disk. Optional, default is `gp3`.
+  - `iops` - The amount of IOPS to provision for the disk. Only valid for types of `io1`, `io2` or `gp3`. Optional, default is `null`.
 
 ### Configuring with Ansible
 
@@ -374,7 +374,7 @@ When running select playbooks, e.g. running a playbook only for `haproxy` - `ans
 
 Unlike Dynamic Inventories, in this scenario only facts for the HAProxy hosts and no others are collected. This will cause the play to fail as the Toolkit expects to be able to access facts for all hosts throughout.
 
-:information_source:&nbsp; This *doesn't* affect playbooks that run on all hosts, such as `all.yml`, as these will gather facts at runtime.
+:information_source:&nbsp; This _doesn't_ affect playbooks that run on all hosts, such as `all.yml`, as these will gather facts at runtime.
 
 To workaround this limitation a persistent [Fact Cache](https://docs.ansible.com/ansible/latest/plugins/cache.html#cache-plugins) is recommended where all host facts are saved and made available on subsequent runs.
 
