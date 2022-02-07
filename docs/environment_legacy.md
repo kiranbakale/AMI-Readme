@@ -40,5 +40,5 @@ Configuring either Postgres 11 or Repmgr can be done as follows:
 
 Like Gitaly Cluster, this guidance is only for new installs. You must note the following for existing installs:
 
-- Attempting to switch replication manage is only supported *once* from Repmgr to Patroni. Attempting to switch from Patroni to Repmgr will **break the environment irrevocably**.
+- Attempting to switch replication manage is only supported _once_ from Repmgr to Patroni. Attempting to switch from Patroni to Repmgr will **break the environment irrevocably**.
 - [Switching from Postgres 11 to 12 is supported when Patroni is the replication manager](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#upgrading-postgresql-major-version-in-a-patroni-cluster) but this is a manual process that must be done directly unless on a single 1k installation. Once the upgrade process is done you must remove the `postgres_version` variable from your inventory variables.

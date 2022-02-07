@@ -97,7 +97,7 @@ for the account to enable SSH access to the created VMs on GCP, which is require
    gcloud compute os-login ssh-keys add --key-file=<SSH key>.pub
    ```
 
-1. Note down the service account SSH username printed in the output of the above comamnd.
+1. Note down the service account SSH username printed in the output of the above command.
    This is in the format of `sa_<ID>`. It will be used with Ansible later in these docs.
 1. Switch back your logged in account in `gcloud` to your regular account using your email address.
 
@@ -223,7 +223,7 @@ After the container is created this is all that's required for now. We'll config
 A static IP can be generated in Azure as follows:
 
 - Reserve a static external IP address in your resource group [as detailed in the Azure docs](https://docs.microsoft.com/en-us/azure/virtual-network/create-public-ip-portal?tabs=option-create-public-ip-standard-zones)
-- Make sure to select the *[Standard SKU](https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses#standard)* to ensure that the allocation is static
+- Make sure to select the _[Standard SKU](https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses#standard)_ to ensure that the allocation is static
 
 Once the IP is available take note of its name for later.
 
