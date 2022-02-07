@@ -32,6 +32,25 @@ resource "aws_iam_policy" "gitlab_s3_policy" {
         Effect   = "Allow"
         Resource = concat([for bucket in aws_s3_bucket.gitlab_object_storage_buckets : bucket.arn], [for bucket in aws_s3_bucket.gitlab_object_storage_buckets : "${bucket.arn}/*"])
       },
+      # Docker Registry S3 bucket requires specific permissions
+      # https://docs.docker.com/registry/storage-drivers/s3/#s3-permission-scopes
+      {
+        Action = [
+          "s3:ListMultipartUploadParts",
+          "s3:AbortMultipartUpload",
+        ]
+        Effect   = "Allow"
+        Resource = "${aws_s3_bucket.gitlab_object_storage_buckets["registry"].arn}/*"
+      },
+      {
+        Action = [
+          "s3:ListBucket",
+          "s3:GetBucketLocation",
+          "s3:ListBucketMultipartUploads",
+        ]
+        Effect   = "Allow"
+        Resource = aws_s3_bucket.gitlab_object_storage_buckets["registry"].arn
+      },
     ]
   })
 }
