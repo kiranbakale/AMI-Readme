@@ -39,7 +39,7 @@ In this section we detail how to set up custom config for Omnibus and Helm chart
 
 Providing custom config for components run as part of an Omnibus environment is done as follows:
 
-1. Create a [gitlab.rb](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template) template file in the correct format with the specific custom settings you wish to apply. 
+1. Create a [gitlab.rb](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template) template file in the correct format with the specific custom settings you wish to apply.
 1. By default the Toolkit looks for [Jinja2 template files](https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html) in the [environments](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/<component>.rb.j2`. Save your file in this location with the same name.
     - Files should be saved in Ansible template format - `.j2`.
     - If you wish to store your file in a different location or use a different name the full path that Ansible should use can be set via a variable for each different component e.g. `<component>_custom_config_file`.
@@ -112,8 +112,8 @@ gitaly_disks = [
 
 - `*_disks` - The main setting for each node group.
   - `device_name` - The name _and_ block device identifier for each disk attached. Must be unique per machine. **Required**.
-  - `size` - The size of the disk in GB. Optional, default is `100`.
-  - `type` - The [type](https://cloud.google.com/compute/docs/disks) of the disk. Optional, default is `pd-standard`.
+  - `size` - The size of the disk in GB. **Optional**, default is `100`.
+  - `type` - The [type](https://cloud.google.com/compute/docs/disks) of the disk. **Optional**, default is `pd-standard`.
 
 **AWS**
 
@@ -127,9 +127,9 @@ gitaly_data_disks = [
 - `*_data_disks` - The main setting for each node group.
   - `name` - The name for each disk attached. Must be unique per machine. **Required**.
   - `device_name` = The block device name for each disk attached. For AWS, due to limitations, this must be in the format `/dev/sd[f-p]` and unique for each disk (more info [here](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html)). Additionally each block device name must be available on all machines in the target group (e.g. `gitaly-1`, `gitaly-2`, etc...). **Required**.
-  - `size` - The size of the disk in GB. Optional, default is `100`.
-  - `type` - The [type](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html) of the disk. Optional, default is `gp3`.
-  - `iops` - The amount of IOPS to provision for the disk. Only valid for types of `io1`, `io2` or `gp3`. Optional, default is `null`.
+  - `size` - The size of the disk in GB. **Optional**, default is `100`.
+  - `type` - The [type](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html) of the disk. **Optional**, default is `gp3`.
+  - `iops` - The amount of IOPS to provision for the disk. Only valid for types of `io1`, `io2` or `gp3`. **Optional**, default is `null`.
 
 ### Configuring with Ansible
 

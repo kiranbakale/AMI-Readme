@@ -236,15 +236,20 @@ prometheus['enable'] = false
 grafana['enable'] = false
 {% endif %}
 
-{%- if 'jaeger' in groups %}
-## Jaeger
 gitlab_rails['env'] = {
-  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
-}
-gitlab_workhorse['env'] = {
-  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
-}
+{%- if 'jaeger' in groups %}
+  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1",
 {% endif %}
+}
+
+gitlab_workhorse['env'] = {
+{%- if geo_disable_secondary_proxying %}
+  "GEO_SECONDARY_PROXY" => "0",
+{% endif %}
+{%- if 'jaeger' in groups %}
+"GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1",
+{% endif %}
+}
 
 {% if 'praefect' in groups %}
 ## Gitaly Cluster - Separate Node(s)

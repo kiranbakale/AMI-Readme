@@ -296,6 +296,24 @@ Once done we can then run the command `ansible-playbook -i environments/my-geo-d
 
 Once complete the 2 sites will now be part of the same Geo deployment.
 
+## Geo Proxying for Secondary Sites
+
+> The Geo Proxying for Secondary Sites is only available for deployments using GitLab versions 14.6 or above.
+
+Before using [Geo Proxying for Secondary Sites](https://docs.gitlab.com/ee/administration/geo/secondary_proxy/index.html) it is recommended to read the current documentation on this feature within GitLab and to understand the scope and limitations of this feature.
+
+To use a single unified URL to access the primary and secondary sites with the Toolkit you will first need to change a few settings within your inventories to enable this feature.
+
+```yaml
+# Must be set within the all inventory.
+external_url: "<Unified URL>"
+secondary_external_url: "<Unified URL>"
+geo_primary_internal_url: "<Unique URL for the primary site>"
+geo_secondary_internal_url: "<Unique URL for the secondary site>"
+```
+
+Although not required, if you want to disable the Geo proxying feature you can set `geo_disable_secondary_proxying: true` in both your primary and secondary inventories. This doesn't need to be disabled if you're not planning on using secondary proxying, this only needs to be set if you want to disable the feature entirely.
+
 ## Failover and Recovery
 
 ### Failover
