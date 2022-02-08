@@ -1,4 +1,6 @@
 data "aws_ami" "ubuntu_18_04" {
+  count = var.ami_id == null ? 1 : 0
+
   most_recent = true
 
   filter {
