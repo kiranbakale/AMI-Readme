@@ -310,6 +310,8 @@ geo_secondary_site_postgres_int_ip: "{{ (groups[geo_secondary_site_postgres_grou
 geo_secondary_postgres_host: ""
 geo_secondary_praefect_postgres_host: ""
 
+geo_disable_secondary_proxying: false
+
 # Geo Tracking Postgres
 geo_tracking_postgres_host: "{% if geo_secondary_praefect_postgres_host != '' and postgres_external %}{{ geo_secondary_praefect_postgres_host }}{% elif cloud_native_hybrid_geo and postgres_external %}{{ praefect_postgres_host }}{% else %}{{ geo_secondary_site_postgres_int_ip }}{% endif %}"
 geo_tracking_postgres_user: "gitlab_geo"

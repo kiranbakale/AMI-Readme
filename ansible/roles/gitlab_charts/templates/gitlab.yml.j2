@@ -1,5 +1,9 @@
 gitlab:
   webservice:
+{% if geo_disable_secondary_proxying %}
+    extraEnv:
+      GEO_SECONDARY_PROXY: "0"
+{% endif %}
     maxReplicas: "{{ gitlab_charts_webservice_max_replicas if gitlab_charts_webservice_max_replicas != '' else webservice_pods }}"
     minReplicas: "{{ gitlab_charts_webservice_min_replicas if gitlab_charts_webservice_min_replicas != '' else (webservice_pods | int * gitlab_charts_webservice_min_replicas_scaler) | int }}"
     hpa:
