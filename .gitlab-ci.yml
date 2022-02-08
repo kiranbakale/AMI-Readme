@@ -15,6 +15,10 @@ stages:
   rules:
     - if: '$CI_BUILD_REF_NAME == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"'
 
+.on_merge_request_to_main_and_merged_events:
+  rules:
+    - if: '$CI_BUILD_REF_NAME == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH'
+
 gemnasium-dependency_scanning:
   rules:
     - !reference [.on_merge_request_and_merged_events, rules]
@@ -37,7 +41,7 @@ container_scanning:
   variables:
     DOCKER_IMAGE: $CI_REGISTRY_IMAGE:dev
   rules:
-    - !reference [.on_merge_request_and_merged_events, rules]
+    - !reference [.on_merge_request_to_main_and_merged_events, rules]
 
 container_scanning_release:
   extends: container_scanning
