@@ -8,5 +8,5 @@
   tasks:
     - name: Run GitLab Geo Recovery
       include_role:
-        name: gitlab-geo
+        name: gitlab_geo
         tasks_from: recovery

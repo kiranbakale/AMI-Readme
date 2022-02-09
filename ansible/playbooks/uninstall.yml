@@ -1,5 +1,5 @@
 ---
-- hosts: all:!ungrouped
+- hosts: all:!gitlab_cluster:!ungrouped
   become: true
 
   roles:
@@ -20,6 +20,6 @@
   tasks:
     - name: Uninstall GitLab Charts
       include_role:
-        name: gitlab-charts
+        name: gitlab_charts
         tasks_from: uninstall
       when: cloud_native_hybrid_environment

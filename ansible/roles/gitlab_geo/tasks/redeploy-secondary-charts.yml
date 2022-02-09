@@ -13,7 +13,7 @@
   vars:
     kubeconfig_setup: false
   include_role:
-    name: gitlab-charts
+    name: gitlab_charts
     tasks_from: secrets
     apply:
       become: false
