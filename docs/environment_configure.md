@@ -430,7 +430,7 @@ As mentioned earlier, we may also refer to additional variables in detail later 
 
 ## 3. Run the GitLab Environment Toolkit's Docker container (optional)
 
-Before running the [Docker container](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/container_registry/2697240) you will need to setup your Inventory files by following [2. Setup the Environment's Inventory and Config](#2-setup-the-environments-inventory-and-config). The container can be started once the Inventory has been configured. When starting the container it is important to pass in your inventory files and keys, as well as set any authentication based environment variables.
+Before running the [Docker container](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/container_registry/2697240) you will need to setup your environment files by following [2. Setup the Environment's Inventory and Config](#2-setup-the-environments-inventory-and-config). The container can be started once the files have been configured. When starting the container it is important to pass in your environment files and keys, as well as set any authentication based environment variables.
 
 Below is an example of how to run the container when using a GCP service account:
 
@@ -438,11 +438,11 @@ Below is an example of how to run the container when using a GCP service account
 docker run -it \
   -e GOOGLE_APPLICATION_CREDENTIALS="/gitlab-environment-toolkit/keys/<service account file>" \
   -v <path to keys directory>:/gitlab-environment-toolkit/keys \
-  -v <path to Ansible inventory>:/gitlab-environment-toolkit/ansible/environments/<environment name> \
+  -v <path to Ansible environment>:/gitlab-environment-toolkit/ansible/environments/<environment name> \
   registry.gitlab.com/gitlab-org/gitlab-environment-toolkit:latest
 ```
 
-You can also use a simplified command if you store your Inventory outside of the toolkit. Using the folder structure below you're able to store multiple environments alongside each other and when using the Toolkit's container you can simply pass in a single folder and still have access to all your different environments.
+You can also use a simplified command if you store your environment outside of the toolkit. Using the folder structure below you're able to store multiple environments alongside each other and when using the Toolkit's container you can simply pass in a single folder and still have access to all your different environments.
 
 ```sh
 get_environments
@@ -450,8 +450,9 @@ get_environments
 └──<environment name>
 |  └──ansible
 |     └── inventory
-|         ├── <environment name>.gcp.yml
-|         └── vars.yml
+|     |   ├── <environment name>.gcp.yml
+|     |   └── vars.yml
+|     └── files
 └──<environment name>
    └──ansible
       └── inventory
