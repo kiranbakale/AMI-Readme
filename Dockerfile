@@ -1,46 +1,71 @@
-FROM google/cloud-sdk:alpine
-
-RUN apk add -u --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community git-crypt && \
-    apk add --virtual .asdf-deps --no-cache jq bash openssh curl git grep alpine-sdk openssl-dev libffi-dev py3-pip py3-wheel python3-dev
-SHELL ["/bin/bash", "-c"]
-
-RUN mkdir -p /gitlab-environment-toolkit/keys && \
-    mkdir /environments
-
-ENV PATH="/root/.asdf/shims:/root/.asdf/bin:/root/.local/bin:$PATH"
-ENV GCP_AUTH_KIND="application"
+FROM python:slim as python-build
 
 COPY ansible /gitlab-environment-toolkit/ansible
 COPY terraform /gitlab-environment-toolkit/terraform
 COPY .tool-versions /gitlab-environment-toolkit/.tool-versions
-COPY ./bin/docker/setup-get-symlinks.sh /gitlab-environment-toolkit/scripts/setup-get-symlinks.sh
+COPY ./bin/docker/setup-get-symlinks.sh /gitlab-environment-toolkit/bin/setup-get-symlinks.sh
 
 USER root
 WORKDIR /gitlab-environment-toolkit
+SHELL ["/bin/bash", "-c"]
+
+ENV PATH="/root/.asdf/shims:/root/.asdf/bin:/root/.local/bin:$PATH"
+
+RUN apt-get update -y && apt-get install -y --no-install-recommends build-essential git curl unzip && rm -rf /var/lib/apt/lists/*
 
 # Install ASDF
-RUN git clone --depth 1 https://github.com/asdf-vm/asdf.git $HOME/.asdf && \
-    echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc && \
-    echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.profile && \
+RUN git clone --depth 1 https://github.com/asdf-vm/asdf.git /root/.asdf && \
+    echo -e '\n. /root/.asdf/asdf.sh' >> ~/.bashrc && \
+    echo -e '\n. /root/.asdf/asdf.sh' >> ~/.profile && \
     source ~/.bashrc
 
 # Install Terraform
 RUN asdf plugin add terraform && \
     asdf install terraform
 
-# Install Python Packages
-RUN pip install --no-cache-dir -r /gitlab-environment-toolkit/ansible/requirements/requirements.txt --user
+# Install Ansible
+## Install Python Packages (Including Ansible)
+RUN pip3 install --no-cache-dir --user -r ansible/requirements/requirements.txt
+## Install Ansible Dependencies
+RUN /root/.local/bin/ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
 
-# Install remaining cloud tools
-RUN pip install --no-cache-dir awscli --user
-RUN gcloud components install kubectl -q && rm -rf /google-cloud-sdk/.install/.backup/
-RUN curl -s https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sh
+#####
 
-# Install Ansible & Dependencies
-RUN /root/.local/bin/ansible-galaxy install -r /gitlab-environment-toolkit/ansible/requirements/ansible-galaxy-requirements.yml
+FROM python:slim
+
+COPY --from=python-build /root/ /root/
+COPY --from=python-build /gitlab-environment-toolkit /gitlab-environment-toolkit
+
+USER root
+WORKDIR /gitlab-environment-toolkit
+SHELL ["/bin/bash", "-c"]
+
+ENV PATH="/root/.asdf/shims:/root/.asdf/bin:/root/.local/bin:$PATH"
+ENV GCP_AUTH_KIND="application"
+
+RUN source ~/.bashrc && apt-get update -y && apt-get install --no-install-recommends -y curl unzip git-crypt gnupg && rm -rf /var/lib/apt/lists/*
+
+# Install cloud tools
+## gcloud cli
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
+    apt-get update && apt-get install -y --no-install-recommends google-cloud-sdk && rm -rf /var/lib/apt/lists/*
+# aws cli
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip" && \
+    unzip /tmp/awscliv2.zip -d /tmp && \
+    /tmp/aws/install && \
+    rm -rf /tmp/aws
+### azure cli
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+### kubectl / helm
+RUN apt-get install -y --no-install-recommends kubectl && rm -rf /var/lib/apt/lists/*
+RUN curl -s https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
 # Copy Environments on login
-RUN echo -e '\n. /gitlab-environment-toolkit/scripts/setup-get-symlinks.sh' >> ~/.bashrc && \
+RUN echo -e '\n. /gitlab-environment-toolkit/bin/setup-get-symlinks.sh' >> ~/.bashrc && \
     echo -e '\n export PATH="/root/.local/bin:$PATH"' >> ~/.bashrc
+
+RUN mkdir -p /gitlab-environment-toolkit/keys && \
+    mkdir /environments
 
 CMD ["bash"]
