@@ -30,6 +30,8 @@ resource "aws_db_instance" "gitlab_praefect" {
   username = var.rds_praefect_postgres_username
   password = var.rds_praefect_postgres_password
 
+  iam_database_authentication_enabled = true
+
   db_subnet_group_name = aws_db_subnet_group.gitlab_praefect[0].name
   vpc_security_group_ids = [
     aws_security_group.gitlab_internal_networking.id
@@ -44,7 +46,6 @@ resource "aws_db_instance" "gitlab_praefect" {
   backup_retention_period = var.rds_praefect_postgres_backup_retention_period
 
   allow_major_version_upgrade = true
-  auto_minor_version_upgrade  = false
 
   skip_final_snapshot = true
 }

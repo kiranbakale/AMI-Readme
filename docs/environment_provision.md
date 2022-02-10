@@ -554,10 +554,9 @@ Encryption for all storage and services with your own KMS keys is supported by t
 Note that these keys must be [available in AWS KMS](https://docs.aws.amazon.com/kms/latest/developerguide/create-keys.html) beforehand. Once available, you can configure them to be used with the following variables be configured with the following variables. Note that for individual storages or services the same variable suffix is used throughout, for readability this is defined once only:
 
 - `default_kms_key_arn` - The AWS KMS key ARN to use for all storages and services unless configured otherwise. Defaults to `null`.
-  - This setting is also used for any [cloud services](environment_advanced_services.md).
+  - This setting is also used for [Cloud Native Hybrid EKS clusters](environment_advanced_hybrid.md) and / or any [cloud services](environment_advanced_services.md) and Cloud Native Hybrid EKS clusters.
 - `*_kms_key_arn` - The AWS KMS key ARN to be used for a specific storage. For example `gitaly_kms_key_arn` will configure a specific key for all its disk(s) and `object_storage_kms_key_arn` configures a key for all buckets.
   - Note that the key used for `object_storage_kms_key_arn` should have the default policy applied to allow for IAM authentication by GitLab.
-  - For cloud services specific variables [refer to their specific docs](environment_advanced_services.md).
 
 #### Configure Authentication (AWS)
 
