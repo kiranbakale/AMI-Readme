@@ -10,7 +10,7 @@ system_packages_upgrade: "{{ lookup('env','SYSTEM_PACKAGES_UPGRADE') | default(f
 system_packages_autoremove: "{{ lookup('env','SYSTEM_PACKAGES_AUTOREMOVE') | default(false, true) }}"
 system_packages_auto_security_upgrade: "{{ lookup('env','SYSTEM_PACKAGES_AUTO_SECURITY_UPGRADE') | default(true, true) }}"
 
-python_packages: [requests==2.26.0, google-auth==2.3.3, netaddr==0.8.0, openshift==0.12.1, PyYAML==6.0, docker==5.0.3, pexpect==4.8.0, psycopg2==2.9.2]
+python_packages: [requests==2.26.0, google-auth==2.6.0, netaddr==0.8.0, openshift==0.13.1, PyYAML==6.0, docker==5.0.3, pexpect==4.8.0, psycopg2==2.9.3]
 
 # Data Disks
 ## GCP gives an ID that can be used as an alias to the device name
