@@ -26,11 +26,6 @@ resource "google_container_cluster" "gitlab_cluster" {
     channel = var.cluster_release_channel
   }
 
-  private_cluster_config {
-    enable_private_nodes    = var.setup_external_ips ? true : false
-    enable_private_endpoint = var.setup_external_ips ? true : false
-  }
-
   network_policy {
     enabled = true
   }
