@@ -37,7 +37,7 @@ variable "default_disk_type" {
 }
 variable "default_disk_encrypt" {
   type    = bool
-  default = false
+  default = true
 }
 
 variable "default_kms_key_arn" {
