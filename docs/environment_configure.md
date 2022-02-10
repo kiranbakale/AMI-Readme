@@ -52,9 +52,9 @@ The Toolkit uses these extensively to dynamically configure each GitLab machine 
 
 As mentioned there are various ways variables can be configured. The Toolkit uses the following locations for variables (in order of precedence):
 
-- Role Defaults (`role/default/main.yml`) - Contains default variables specific to the Role, e.g. Postgres specific settings. These can be overridden.
 - Inventory File vars - Contains variables specific to the environment. Can contain overrides for Role Defaults.
-- Group Vars - Variables that are shared between Roles. Most variables can be found here such as IP lists, etc...
+- Role Defaults (`<role>/default/main.yml`) - Contains default variables specific to the Role, e.g. Postgres specific settings. These can be overridden.
+- Common Vars (`role/common_vars/default/main.yml`) - Variables that are shared between Roles, which are configured themselves in a Role and imported. Most variables can be found here such as IP lists, etc...
 - Environment Variables - The Playbooks have been configured to use certain env vars if available.
 
 It's worth noting the Toolkit tweaks the default group variable precedence to better allow for different configurations per environment's inventory. Inventory group variables take a higher precedence here than playbook ones.

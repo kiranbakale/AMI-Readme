@@ -19,6 +19,10 @@ gitlab:
       proxyBodySize: 0  # Bigger file uploads, e.g. imports
     nodeSelector:
       workload: webservice
+    workhorse:
+      monitoring:
+        exporter:
+          enabled: true
 # Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
 {% if not (cloud_provider == 'aws' and external_url_ssl and external_ssl_source != '') %}
     registry:
