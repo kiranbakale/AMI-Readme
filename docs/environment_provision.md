@@ -526,12 +526,12 @@ By default the toolkit sets up the infrastructure on the default network stack a
 
 By default AWS doesn't encrypt storages such as disks or object storage buckets.
 
-The Toolkit will aim to encrypt these by default where possible utilizing the built in AWS [default KMS keys](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#kms_keys). It also allows for you to pass in your own KMS key(s) as desired in a flexible manner.
+The Toolkit will aim to encrypt these by default where possible utilizing the built in AWS [default KMS keys](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#kms_keys) or creating ones where that isn't possible. It also allows for you to pass in your own KMS key(s) as desired in a flexible manner.
 
 An overview of how the Toolkit handles this encryption is as follows:
 
 - By default it will aim to encrypt all storages and services with AWS managed KMS keys.
-  - Note that for Root Block Devices this is currently disabled by default to ensure backwards compatibility as changing this will cause disks to be deleted and data loss to occur.
+  - If an AWS managed KMS key isn't available for that particular service the Toolkit will create one.
 - A custom KMS key ARN (one that's available in AWS KMS) can be configured for use instead for all storages and services.
 - Additionally it's possible to pass custom KMS key(s) for individual storages and services as desired.
 
@@ -543,25 +543,9 @@ There are several variables available to configure in the [module's environment 
 
 ###### Default Encryption
 
-Encryption is enabled by default for all storages and services except for Root Block Devices (RBS - the main disks on VMS).
+Encryption is enabled by default for all storages and services using either AWS managed or created KMS keys.
 
-To configure encryption for RBS all that's required is to set the `default_disk_encrypt` variable to `true` in the [module's environment config file](#configure-module-settings-environmenttf) as follows:
-
-```tf
-module "gitlab_ref_arch_aws" {
-  source = "../../modules/gitlab_ref_arch_aws"
-
-  prefix = var.prefix
-  ssh_public_key_file = file(var.ssh_public_key_file)
-
-  default_disk_encrypt = true
-
-  [...]
-```
-
-It's also possible to specify this setting for each component, e.g. `gitaly_disk_encrypt`, for more control as desired.
-
-:warning:&nbsp; **{- Changing this setting on an existing environment will trigger the recreation of all nodes and will lead to data loss-}**. Snapshots should be taken before doing this and then restores onto the new encrypted disks, refer to the [AWS docs for more info](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#encrypt-unencrypted).
+:information_source:&nbsp; For backwards compatibility, encryption of Root Block Device disks can be controlled via the `default_disk_encrypt` setting. It's also possible to specify this setting for each component, e.g. `gitaly_disk_encrypt`. **{- Changing these settings on an existing environment will trigger the recreation of all nodes and will lead to data loss-}**. Snapshots should be taken before doing this and then restored onto the new encrypted disks, refer to the [AWS docs for more info](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#encrypt-unencrypted).
 
 ###### Encryption with user provided KMS keys
 
