@@ -147,7 +147,7 @@ postgres_load_balancing_hosts: []
 postgres_external: "{{ 'postgres' not in groups and postgres_host != '' }}"
 
 ## Postgres Omnibus
-postgres_replication_manager: "{{ 'patroni' if ((groups['postgres'] is defined) and (groups['postgres'] | length > 1)) else 'none' }}"
+postgres_replication_manager: "{{ 'patroni' if ((groups['postgres'] is defined) and (groups['postgres'] | length > 0)) else 'none' }}"
 postgres_trust_auth_cidr_blocks: ['0.0.0.0/0']
 postgres_md5_auth_cidr_blocks: ['0.0.0.0/0']
 
