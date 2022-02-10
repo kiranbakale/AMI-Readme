@@ -544,6 +544,10 @@ variable "eks_default_subnet_count" {
   type    = number
   default = 2
 }
+variable "eks_kms_key_arn" {
+  type    = string
+  default = null
+}
 
 ## Webservice
 variable "webservice_node_pool_count" {
@@ -903,11 +907,6 @@ variable "elasticache_redis_persistent_snapshot_window" {
 
 # Networking
 ## Default network
-variable "default_allowed_egress_cidr_blocks" {
-  type    = list(string)
-  default = ["0.0.0.0/0"]
-}
-
 variable "default_allowed_ingress_cidr_blocks" {
   type    = list(string)
   default = ["0.0.0.0/0"]

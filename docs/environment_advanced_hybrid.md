@@ -207,6 +207,10 @@ output "gitlab_ref_arch_aws" {
 }
 ```
 
+In addition to the above there are some optional settings that can configure the EKS setup as follows:
+
+- `eks_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt Kubernetes secrets. If not provided either `default_kms_key_arm` or a Toolkit created key will be used in that order. Default is `null`.
+
 #### Networking (AWS)
 
 As detailed in the earlier [Configuring network setup (AWS)](environment_provision.md#configure-network-setup-aws) section the same networking options apply for Hybrid environments on AWS.

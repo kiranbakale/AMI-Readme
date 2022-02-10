@@ -9,6 +9,13 @@ locals {
 }
 
 # Cluster
+## Default KMS Key not available for EKS so we create one if none provided
+resource "aws_kms_key" "gitlab_cluster_key" {
+  count = local.total_node_pool_count > 0 && var.eks_kms_key_arn == null && var.default_kms_key_arn == null ? 1 : 0
+
+  description         = "${var.prefix}-cluster-key"
+  enable_key_rotation = true
+}
 
 resource "aws_eks_cluster" "gitlab_cluster" {
   count = min(local.total_node_pool_count, 1)
@@ -17,13 +24,19 @@ resource "aws_eks_cluster" "gitlab_cluster" {
   role_arn = aws_iam_role.gitlab_eks_role[0].arn
 
   vpc_config {
-    subnet_ids = local.eks_cluster_subnet_ids
+    endpoint_private_access = true
+    subnet_ids              = local.eks_cluster_subnet_ids
 
     security_group_ids = [
       aws_security_group.gitlab_internal_networking.id,
     ]
+  }
 
-    endpoint_private_access = true
+  encryption_config {
+    provider {
+      key_arn = coalesce(var.eks_kms_key_arn, var.default_kms_key_arn, aws_kms_key.gitlab_cluster_key[0].arn)
+    }
+    resources = ["secrets"]
   }
 
   tags = merge({

@@ -26,6 +26,21 @@ resource "google_container_cluster" "gitlab_cluster" {
     channel = var.cluster_release_channel
   }
 
+  private_cluster_config {
+    enable_private_nodes    = var.setup_external_ips ? true : false
+    enable_private_endpoint = var.setup_external_ips ? true : false
+  }
+
+  network_policy {
+    enabled = true
+  }
+
+  addons_config {
+    network_policy_config {
+      disabled = false
+    }
+  }
+
   resource_labels = {
     gitlab_node_prefix = var.prefix
     gitlab_node_type   = "gitlab-cluster"
@@ -52,6 +67,11 @@ resource "google_container_node_pool" "gitlab_webservice_pool" {
   cluster        = google_container_cluster.gitlab_cluster[0].name
   node_count     = local.node_pool_zones != null ? ceil(var.webservice_node_pool_count / length(local.node_pool_zones)) : var.webservice_node_pool_count
   node_locations = local.node_pool_zones
+
+  management {
+    auto_repair  = true
+    auto_upgrade = true
+  }
 
   node_config {
     machine_type = var.webservice_node_pool_machine_type
@@ -83,6 +103,11 @@ resource "google_container_node_pool" "gitlab_sidekiq_pool" {
   node_count     = local.node_pool_zones != null ? ceil(var.sidekiq_node_pool_count / length(local.node_pool_zones)) : var.sidekiq_node_pool_count
   node_locations = local.node_pool_zones
 
+  management {
+    auto_repair  = true
+    auto_upgrade = true
+  }
+
   node_config {
     machine_type = var.sidekiq_node_pool_machine_type
     disk_type    = coalesce(var.sidekiq_node_pool_disk_type, var.default_disk_type)
@@ -112,6 +137,11 @@ resource "google_container_node_pool" "gitlab_supporting_pool" {
   cluster        = google_container_cluster.gitlab_cluster[0].name
   node_count     = local.node_pool_zones != null ? ceil(var.supporting_node_pool_count / length(local.node_pool_zones)) : var.supporting_node_pool_count
   node_locations = local.node_pool_zones
+
+  management {
+    auto_repair  = true
+    auto_upgrade = true
+  }
 
   node_config {
     machine_type = var.supporting_node_pool_machine_type

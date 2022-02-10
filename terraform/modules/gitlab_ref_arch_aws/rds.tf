@@ -33,10 +33,13 @@ resource "aws_db_instance" "gitlab" {
   iops           = var.rds_postgres_iops
   storage_type   = var.rds_postgres_storage_type
 
-  name                 = var.rds_postgres_database_name
-  port                 = var.rds_postgres_port
-  username             = var.rds_postgres_username
-  password             = var.rds_postgres_password
+  name     = var.rds_postgres_database_name
+  port     = var.rds_postgres_port
+  username = var.rds_postgres_username
+  password = var.rds_postgres_password
+
+  iam_database_authentication_enabled = true
+
   db_subnet_group_name = aws_db_subnet_group.gitlab[0].name
   vpc_security_group_ids = [
     aws_security_group.gitlab_internal_networking.id
@@ -54,7 +57,6 @@ resource "aws_db_instance" "gitlab" {
   backup_retention_period = var.rds_postgres_backup_retention_period
 
   allow_major_version_upgrade = true
-  auto_minor_version_upgrade  = false
 
   skip_final_snapshot = true
 }
