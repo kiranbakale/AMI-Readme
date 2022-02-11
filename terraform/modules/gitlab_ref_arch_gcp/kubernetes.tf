@@ -26,16 +26,6 @@ resource "google_container_cluster" "gitlab_cluster" {
     channel = var.cluster_release_channel
   }
 
-  network_policy {
-    enabled = true
-  }
-
-  addons_config {
-    network_policy_config {
-      disabled = false
-    }
-  }
-
   resource_labels = {
     gitlab_node_prefix = var.prefix
     gitlab_node_type   = "gitlab-cluster"

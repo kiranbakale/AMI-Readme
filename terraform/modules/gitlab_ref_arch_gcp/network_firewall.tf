@@ -51,6 +51,8 @@ data "google_compute_subnetwork" "selected" {
   count = local.vpc_name != "default" ? 1 : 0
 
   name = local.subnet_name
+
+  depends_on = [google_compute_subnetwork.gitlab_vpc_subnet[0]]
 }
 
 resource "google_compute_firewall" "internal" {
