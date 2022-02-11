@@ -1,0 +1,99 @@
+- name: Configure variables from loop
+  set_fact:
+    secondary_external_url: "{{ secondary_site.external_url }}"
+    geo_secondary_internal_url: "{{ secondary_site.internal_url }}"
+    geo_secondary_site_group_name: "{{ secondary_site.group_name }}"
+    geo_secondary_site_name: "{{ secondary_site.site_name }}"
+    geo_secondary_postgres_host: "{{ secondary_site.postgres_host| default('') }}"
+    geo_secondary_praefect_postgres_host: "{{ secondary_site.praefect_postgres_host | default('') }}"
+    geo_secondary_site_prefix: "{{ secondary_site.prefix | default('') }}"
+    geo_secondary_site_gcp_project: "{{ (secondary_site.gcp_project | default('')) if cloud_provider == 'gcp' }}"
+    geo_secondary_site_gcp_zone: "{{ (secondary_site.gcp_zone | default('')) if cloud_provider == 'gcp' else '' }}"
+    geo_secondary_site_aws_region: "{{ (secondary_site.aws_region | default('')) if cloud_provider == 'aws' else '' }}"
+  tags:
+    - copy-secrets
+    - secondary-database
+    - read-only-replica
+    - tracking-database
+    - secondary-frontend-app-servers
+    - add-site-name
+    - secondary-backend-app-servers
+    - redeploy-secondary-charts
+    - secondary
+
+- name: Copy gitlab-secrets from primary site to secondary
+  import_tasks: copy-secrets.yml
+  tags:
+    - copy-secrets
+    - secondary
+  when:
+    - (geo_secondary_site_group_name in group_names)
+
+- name: Configure the database for the secondary site
+  import_tasks: secondary-database.yml
+  tags:
+    - secondary-database
+    - secondary
+  when:
+    - (geo_secondary_site_group_name in group_names)
+    - ('postgres' in group_names) or
+      ('gitlab_rails' in group_names and geo_secondary_site_group_name + '_postgres_primary' not in groups and not postgres_external)
+
+- name: Configure the main read-only replica PostgreSQL database on the secondary site
+  import_tasks: read-only-replica.yml
+  tags:
+    - read-only-replica
+    - secondary
+  when:
+    - (geo_secondary_site_group_name in group_names)
+    - ('postgres_primary' in group_names) or ('gitlab_rails' in group_names and postgres_external)
+
+- name: Configure the tracking database for the secondary site
+  include_tasks: tracking-database.yml
+  tags:
+    - tracking-database
+    - secondary
+  when:
+    - (geo_secondary_site_group_name in group_names)
+
+- name: Configure the frontend app servers on the secondary site
+  import_tasks: secondary-frontend-app-servers.yml
+  tags:
+    - secondary-frontend-app-servers
+    - secondary
+  when:
+    - (geo_secondary_site_group_name in group_names)
+    - ('gitlab_rails' in group_names)
+    - (geo_secondary_site_group_name + '_sidekiq_primary' in groups)
+
+- name: Add secondary Geo site to tracking database
+  import_tasks: add-site-name.yml
+  tags:
+    - add-site-name
+    - secondary
+  when:
+    - (geo_primary_site_group_name in group_names)
+
+- name: Configure backend app servers
+  import_tasks: secondary-backend-app-servers.yml
+  tags:
+    - secondary-backend-app-servers
+    - secondary
+  when:
+    - ('sidekiq' in group_names)
+    - (geo_secondary_site_group_name in group_names)
+
+- name: Enable object storage replication on all secondary sites
+  import_tasks: enable-object-storage-replication.yml
+  tags:
+    - post-configure
+    - secondary
+  when:
+    - (geo_primary_site_group_name in group_names)
+
+- name: Redeploy GitLab Charts for Cloud Native Hybrid environments
+  import_tasks: redeploy-secondary-charts.yml
+  tags:
+    - redeploy-secondary-charts
+    - secondary
+  when: cloud_native_hybrid_geo

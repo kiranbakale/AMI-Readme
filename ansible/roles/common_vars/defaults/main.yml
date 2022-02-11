@@ -296,19 +296,32 @@ gitlab_charts_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_s
 ################################################################################
 
 geo_primary_site_group_name: "geo_primary_site"
+geo_primary_site_name: "Primary Site"
+
 geo_secondary_site_group_name: "geo_secondary_site"
 
-geo_primary_site_name: "Primary Site"
-geo_secondary_site_name: "Secondary Site"
+geo_replication_slot_modifier: "{{ ((geo_secondary_sites | length) + 1) if geo_secondary_sites[0].external_url != '' else 1 }}"
 
-geo_replication_slot_modifier: "{{ 2 if 'geo_primary_site' in group_names else 1 }}"
 geo_primary_site_postgres_group_name: "{% if geo_primary_site_group_name + '_postgres_primary' in groups %}{{ geo_primary_site_group_name }}_postgres_primary{% elif geo_primary_site_group_name + '_gitlab_rails_primary' in groups %}{{ geo_primary_site_group_name }}_gitlab_rails_primary{% elif 'postgres_primary' in groups%}postgres_primary{% else %}gitlab_rails_primary{% endif %}"
 geo_primary_site_postgres_int_ip: "{{ (groups[geo_primary_site_postgres_group_name] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) }}"
+
 geo_secondary_site_postgres_group_name: "{% if geo_secondary_site_group_name + '_postgres_primary' in groups %}{{ geo_secondary_site_group_name }}_postgres_primary{% elif geo_secondary_site_group_name + '_gitlab_rails_primary' in groups %}{{ geo_secondary_site_group_name }}_gitlab_rails_primary{% else %}{% endif %}"
 geo_secondary_site_postgres_int_ip: "{{ (groups[geo_secondary_site_postgres_group_name] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if geo_secondary_site_postgres_group_name != '' else '' }}"
 
-geo_secondary_postgres_host: ""
-geo_secondary_praefect_postgres_host: ""
+geo_secondary_sites: [
+  {
+    external_url: "{{ secondary_external_url | default('') }}",
+    internal_url: "{{ secondary_external_url | default('') }}",
+    prefix: "{{ geo_secondary_site_prefix | default('') }}",
+    group_name: "{{ geo_secondary_site_group_name | default('geo_secondary_site') }}",
+    site_name: "{{ geo_secondary_site_name | default('Secondary Site') }}",
+    postgres_host: "{{ geo_secondary_postgres_host | default('') }}",
+    praefect_postgres_host: "{{ geo_secondary_praefect_postgres_host | default('') }}",
+    aws_region: "{{ geo_secondary_aws_region | default('') }}",
+    gcp_project: "{{ geo_secondary_site_gcp_project | default('') }}",
+    gcp_zone: "{{ geo_secondary_site_gcp_zone | default('') }}"
+  }
+]
 
 geo_disable_secondary_proxying: false
 

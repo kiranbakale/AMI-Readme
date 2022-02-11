@@ -1,6 +1,7 @@
 - name: End run if running against Geo secondary site
   meta: end_play
   when:
+    - (geo_secondary_site_group_name is defined)
     - (geo_secondary_site_group_name in groups)
 
 - name: Wait for GitLab to be available
