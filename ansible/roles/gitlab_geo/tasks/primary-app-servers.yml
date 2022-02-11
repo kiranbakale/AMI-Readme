@@ -40,6 +40,10 @@
         pod: "{{ task_runner_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: gitlab-rake geo:set_primary_node
+      register: result
+      failed_when:
+        - result.rc != 0
+        - ("GitLab Geo primary node already present" not in result.stderr)
 
     - name: Primary App Servers Hybrid - Update internal URL for primary site
       become: false

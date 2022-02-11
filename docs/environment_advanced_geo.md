@@ -314,6 +314,68 @@ geo_secondary_internal_url: "<Unique URL for the secondary site>"
 
 Although not required, if you want to disable the Geo proxying feature you can set `geo_disable_secondary_proxying: true` in both your primary and secondary inventories. This doesn't need to be disabled if you're not planning on using secondary proxying, this only needs to be set if you want to disable the feature entirely.
 
+## Setting up Multiple Geo Secondaries
+
+ With the Toolkit it is possible to setup a Geo Deployment with multiple secondary sites. To do this we need to move some of the current vars used for a Secondary Site into an Array to allow for multiple versions. An example of this can be seen below:
+
+ ```yaml
+# Variables used for a Single Geo Site
+## Required Settings
+secondary_external_url: ""
+geo_secondary_site_group_name: ""
+geo_secondary_site_name: ""
+
+## Geo Proxying
+geo_secondary_internal_url: "",
+
+## External Postgres Database Only
+geo_secondary_postgres_host: ""
+
+## External Praefect Postgres Database Only
+geo_secondary_praefect_postgres_host: ""
+
+## AWS Hybrid Only
+geo_secondary_site_aws_region: ""
+geo_secondary_site_prefix: ""
+
+## GCP Hybrid Only
+geo_secondary_site_gcp_project: ""
+geo_secondary_site_gcp_zone: ""
+geo_secondary_site_prefix: ""
+
+# Variables used for Multiple Geo Secondaries
+geo_secondary_sites: [
+  {
+    ## Required Settings
+    external_url: "",
+    group_name: "",
+    site_name: "",
+
+    ## Geo Proxying
+    internal_url: "",
+
+    ## External Postgres Database Only
+    postgres_host: "",
+
+    ## External Praefect Postgres Database Only
+    praefect_postgres_host: "",
+
+    ## Hybrid Only
+    prefix: "",
+
+    ### AWS Hybrid Only
+    aws_region: "",
+
+    ### GCP Hybrid Only
+    gcp_project: "",
+    gcp_zone: ""
+  },
+  {
+    # Repeat as above for each secondary site
+  }
+]
+ ```
+
 ## Failover and Recovery
 
 ### Failover

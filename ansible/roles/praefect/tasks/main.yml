@@ -54,7 +54,6 @@
       loop: ['pg_trgm', 'btree_gist', 'plpgsql']
   when:
     - praefect_postgres_external
-    - (geo_secondary_site_group_name not in groups)
   tags:
     - reconfigure
     - db_migrate

@@ -17,10 +17,7 @@
       file:
         path: /etc/gitlab/gitlab-cluster.json
         state: absent
-  when: omnibus_node
 
-- name: Enable and start Secondary Site Omnibus nodes
-  block:
     - name: Enable and start GitLab service
       service:
         name: gitlab-runsvdir
@@ -29,9 +26,7 @@
 
     - name: Start GitLab
       command: gitlab-ctl start
-  when:
-    - omnibus_node
-    - (geo_secondary_site_group_name in group_names)
+  when: omnibus_node
 
 - name: Run GitLab Geo Recovery
   vars:
