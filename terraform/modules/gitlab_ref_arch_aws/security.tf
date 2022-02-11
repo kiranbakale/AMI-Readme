@@ -9,9 +9,8 @@ data "aws_vpc" "selected" {
 
 resource "aws_security_group" "gitlab_internal_networking" {
   # Allows for machine internal connections as well as outgoing internet access
-  name        = "${var.prefix}-internal-networking"
-  description = "Allow internal network access between GitLab VMs"
-  vpc_id      = local.vpc_id
+  name   = "${var.prefix}-internal-networking"
+  vpc_id = local.vpc_id
 
   ingress {
     description = "Open internal networking for VMs"
@@ -36,9 +35,8 @@ resource "aws_security_group" "gitlab_internal_networking" {
 }
 
 resource "aws_security_group" "gitlab_external_ssh" {
-  name        = "${var.prefix}-external-ssh"
-  description = "Allow access for SSH"
-  vpc_id      = local.vpc_id
+  name   = "${var.prefix}-external-ssh"
+  vpc_id = local.vpc_id
 
   # kics: Terraform AWS - Security groups allow ingress from 0.0.0.0:0, Sensitive Port Is Exposed To Entire Network - False positive, source CIDR is configurable
   # kics-scan ignore-block
@@ -58,9 +56,8 @@ resource "aws_security_group" "gitlab_external_ssh" {
 resource "aws_security_group" "gitlab_external_git_ssh" {
   count = min(var.haproxy_external_node_count, 1)
 
-  name        = "${var.prefix}-external-git-ssh"
-  description = "Allow access to GitLab SSH"
-  vpc_id      = local.vpc_id
+  name   = "${var.prefix}-external-git-ssh"
+  vpc_id = local.vpc_id
 
   # kics: Terraform AWS - Security groups allow ingress from 0.0.0.0:0 - False positive, source CIDR is configurable
   # kics-scan ignore-block
@@ -83,9 +80,8 @@ resource "aws_security_group" "gitlab_external_git_ssh" {
 resource "aws_security_group" "gitlab_external_http_https" {
   count = min(var.haproxy_external_node_count + var.monitor_node_count, 1)
 
-  name        = "${var.prefix}-external-http-https"
-  description = "Allow main HTTP / HTTPS access to GitLab"
-  vpc_id      = local.vpc_id
+  name   = "${var.prefix}-external-http-https"
+  vpc_id = local.vpc_id
 
   ingress {
     description = "Enable HTTP access for select VMs"
@@ -111,9 +107,8 @@ resource "aws_security_group" "gitlab_external_http_https" {
 resource "aws_security_group" "gitlab_external_monitor" {
   count = min(var.monitor_node_count, 1)
 
-  name        = "${var.prefix}-external-monitor"
-  description = "Allow InfluxDB access"
-  vpc_id      = local.vpc_id
+  name   = "${var.prefix}-external-monitor"
+  vpc_id = local.vpc_id
 
   # kics: Terraform AWS - Security groups allow ingress from 0.0.0.0:0 - False positive, source CIDR is configurable
   # kics-scan ignore-block
