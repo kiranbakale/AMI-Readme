@@ -45,10 +45,6 @@
         replicas: 0
   when: cloud_native_hybrid_geo
 
-- name: Set geo_secondary_site_group_name
-  set_fact:
-    geo_secondary_site_group_name: "{{ geo_secondary_sites[0].group_name }}"
-
 - name: Promote Secondary Site Postgres, Sidekiq, and Gitaly Omnibus nodes
   command: gitlab-ctl geo promote -f
   when:
