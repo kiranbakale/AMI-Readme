@@ -3,6 +3,7 @@
     gitlab-rails runner "GeoNode.find_or_create_by(name: '{{ geo_secondary_site_name }}', url: '{{ secondary_external_url }}', internal_url: '{{ geo_secondary_internal_url }}')"
   when:
     - ('gitlab_rails_primary' in group_names)
+    - ( geo_primary_site_group_name in group_names)
 
 - name: Add Site Name for Cloud Native Hybrid environments
   block:

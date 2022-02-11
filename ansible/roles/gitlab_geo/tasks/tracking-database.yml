@@ -10,19 +10,14 @@
 
     - name: Tracking Database - Run gitlab-ctl restart for updates to take effect
       command: gitlab-ctl restart
-  tags:
-    - tracking-database
-    - secondary
   when:
     - ('postgres_primary' in group_names)
+    - (geo_secondary_site_group_name in group_names)
 
 - name: Get random host to use as deploy node
   run_once: true
   set_fact:
     deploy_host: "{{ groups[geo_secondary_site_group_name] | random }}"
-  tags:
-    - tracking-database
-    - secondary
   when:
     - postgres_external
     - geo_secondary_praefect_postgres_host == geo_tracking_postgres_host
@@ -59,9 +54,6 @@
         name: "{{ item }}"
         db: "{{ geo_tracking_postgres_database }}"
       loop: ['pg_trgm', 'btree_gist', 'plpgsql']
-  tags:
-    - tracking-database
-    - secondary
   when:
     - deploy_host is defined
     - inventory_hostname == deploy_host

@@ -10,9 +10,7 @@ postgresql['max_replication_slots'] = 1
 
 {% if postgres_replication_manager == 'patroni' %}
 patroni['replication_slots'] = {
-{% for secondary_site in geo_secondary_sites %}
-    '{{ secondary_site.group_name }}' => { 'type' => 'physical' },
-{% endfor %}
+    'geo_secondary' => { 'type' => 'physical' }
 }
 postgresql['sql_replication_password'] = '{{ (postgres_password + 'gitlab_replicator') | md5 }}'
 patroni['replication_password'] = '{{ postgres_password }}'
