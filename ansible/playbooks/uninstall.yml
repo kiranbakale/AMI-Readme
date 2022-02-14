@@ -12,6 +12,20 @@
         tasks_from: uninstall
       when: omnibus_node
 
+    - name: Perform Custom Uninstall Tasks
+      block:
+        - name: Check if Custom Uninstall tasks file exists
+          stat:
+            path: "{{ uninstall_custom_tasks_file }}"
+          register: uninstall_custom_tasks_file_path
+          delegate_to: localhost
+          become: false
+
+        - name: Run Custom Uninstall tasks
+          include_tasks: "{{ uninstall_custom_tasks_file }}"
+          when: uninstall_custom_tasks_file_path.stat.exists
+      when: omnibus_node
+
 - hosts: localhost
 
   roles:

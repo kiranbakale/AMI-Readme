@@ -253,6 +253,20 @@
       import_tasks: packages_upgrade.yml
       tags: packages
 
+    - name: Run Custom Tasks
+      block:
+        - name: Check if Custom Tasks file exists
+          stat:
+            path: "{{ common_custom_tasks_file }}"
+          register: common_custom_tasks_file_path
+          delegate_to: localhost
+          become: false
+
+        - name: Run Custom Tasks
+          include_tasks: "{{ common_custom_tasks_file }}"
+          when: common_custom_tasks_file_path.stat.exists
+      tags: reconfigure
+
     - name: Mark common has run
       set_fact:
         common_performed: true

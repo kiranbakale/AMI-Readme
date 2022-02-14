@@ -1,4 +1,4 @@
-# Advanced - Custom Config, Data Disks, Advanced Search and more
+# Advanced - Custom Config / Tasks, Data Disks, Advanced Search and more
 
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
@@ -8,7 +8,7 @@
 - [GitLab Environment Toolkit - Advanced - Network Setup](environment_advanced_network.md)
 - [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
-- [**GitLab Environment Toolkit - Advanced - Custom Config, Data Disks, Advanced Search and more**](environment_advanced.md)
+- [**GitLab Environment Toolkit - Advanced - Custom Config / Tasks, Data Disks, Advanced Search and more**](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
@@ -23,7 +23,7 @@ On this page we'll detail all of the supported advanced setups you can do with t
 
 The Toolkit allows for you to provide custom GitLab config that will be used when setting up components via Omnibus or Helm charts.
 
-**However, this feature must be used with the utmost caution**. Any custom config passed will always take precedence and may lead to various unintended consequences or broken environments if not used carefully.
+:warning:&nbsp; **This feature must be used with caution**. Any custom config passed will always take precedence and may lead to various unintended consequences or broken environments if not used carefully.
 
 Custom config should only be used in advanced scenarios where you are fully aware of the intended effects or for areas that the Toolkit doesn't support natively due to potential permutations such as:
 
@@ -37,10 +37,10 @@ In this section we detail how to set up custom config for Omnibus and Helm chart
 
 ### Omnibus
 
-Providing custom config for components run as part of an Omnibus environment is done as follows:
+Providing custom config for components deployed via Omnibus is done as follows:
 
 1. Create a [gitlab.rb](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template) template file in the correct format with the specific custom settings you wish to apply.
-1. By default the Toolkit looks for [Jinja2 template files](https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html) in the [environments](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/<component>.rb.j2`. Save your file in this location with the same name.
+1. By default the Toolkit looks for [Jinja2 template files](https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html) in the [environment's](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/<component>.rb.j2`. Save your file in this location with the same name.
     - Files should be saved in Ansible template format - `.j2`.
     - If you wish to store your file in a different location or use a different name the full path that Ansible should use can be set via a variable for each different component e.g. `<component>_custom_config_file`.
     - Available component options: `consul`, `postgres`, `pgbouncer`, `redis`, `redis_cache`, `redis_persistent`, `praefect_postgres`, `praefect`, `gitaly`, `gitlab_rails`, `sidekiq` and `monitor`.
@@ -49,28 +49,46 @@ With the above done the file will be picked up by the Toolkit and used when conf
 
 ### Helm
 
-Providing custom config for components run via Helm charts in Cloud Native Hybrid environments is done as follows:
+Providing custom config for components deployed via Helm charts in Cloud Native Hybrid environments is done as follows:
 
 1. Create a [GitLab Charts](https://docs.gitlab.com/charts/) yaml template file in the correct format with the specific custom settings you wish to apply
-1. By default the Toolkit looks for a [Jinja2 template file](https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html) named `gitlab_charts.yml.j2` in the [environments](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/gitlab_charts.yml.j2`. Save your file in this location with the same name.
+1. By default the Toolkit looks for a [Jinja2 template file](https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html) named `gitlab_charts.yml.j2` in the [environment's](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/gitlab_charts.yml.j2`. Save your file in this location with the same name.
     - Files should be saved in Ansible template format - `.j2`.
     - If you wish to store your file in a different location or use a different name the full path that Ansible should use can be set via the `gitlab_charts_custom_config_file` inventory variable.
 
 With the above done the file will be picked up by the Toolkit and used when configuring the Helm charts.
 
-Additionally, the Toolkit provides an ability to pass a custom Chart task list that will run against the cluster before installing the [GitLab Charts](https://docs.gitlab.com/charts/). This feature could be used if you need some further customizations, for example creating custom secrets. When creating the file follow these requirements:
+## Custom Tasks
 
-- The file should be a standard Ansible Tasks yaml file that will be used with [`include_tasks`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_tasks_module.html).
-- By default, the Toolkit will look for a Chart Ansible Task file alongside your Ansible inventory in `environments/<inventory name>/files/gitlab_configs/charts_tasks.yml`.
-  - If you want to store your custom task at another path then you can set the variable `gitlab_charts_custom_tasks_file` to point to your custom location.
+The Toolkit allows you to provide custom Ansible tasks that can be run at several different points in the setup. This allows you to run tasks as required in addition to the main GitLab setup such as installing monitoring tools, performing API calls, etc...
 
-### API
+The Toolkit has hooks to allow tasks to be run at the following points during the setup:
 
-Some config in GitLab can only be changed via API. As such, the Toolkit supports passing a custom API Ansible Task list that will be executed during the [Post Configure](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/tree/main/ansible/roles/post-configure/tasks) role from [localhost](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/ansible/post-configure.yml). This feature could be used when you want to do further configuration changes to your environment after it's deployed. For example, modifying GitLab [application settings using API](https://docs.gitlab.com/ee/api/settings.html).
+- Common - Tasks to run on every VM **before** the component has deployed such as installing general monitoring tools.
+- Omnibus - Tasks to run on specific Omnibus VMs **after** the component has been setup via Omnibus such as installing any specific tools for the component.
+- Helm - Tasks to run for the Kubernetes Cluster **after** the Charts have been deployed such as deploying additional components into the Cluster.
+- Post Configure - Tasks to run against the environment **after** setup from the Ansible runner such as [configuring API settings](https://docs.gitlab.com/ee/api/settings.html).
+- Uninstall - Tasks to run as part of the uninstall process such as uninstalling any additional tools.
 
-Note that this file should be a standard Ansible Tasks yaml file that will be used with [`include_tasks`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_tasks_module.html).
+:warning:&nbsp; **This is an advanced feature and it must be used with caution**. Running custom tasks may lead to various unintended consequences or broken environments if not used carefully.
 
-By default, the Toolkit will look for an API Ansible Task file alongside your Ansible inventory in `environments/<inventory name>/files/gitlab_configs/api_tasks.yml`. If you want to store your custom task at another path then you can set the variable `post_configure_api_tasks_file` to point to your custom location.
+Setting up common tasks is done in the same manner for each hook as follows:
+
+1. Create a standard Ansible Tasks yaml file with the tasks you wish to run.
+    - The file must be in a format that can be run in Ansible's [`include_tasks`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_tasks_module.html) module.
+1. By default the Toolkit looks for each hook's Custom Tasks file(s) in the [environment inventory's](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_tasks` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_tasks/<custom_tasks_file>.yml`. This is controlled by the following settings for each:
+    - `common_custom_tasks_file` - Full path for the Common tasks file. Defaults to `<inventory_dir>/files/gitlab_tasks/common.yml`.
+    - `<component>_custom_tasks_file` - Full path for Omnibus custom tasks files. Where `<component>` should be replaced with the one intended (options below). Defaults to `<inventory_dir>/files/gitlab_tasks/<component>.yml`.
+      - Available component options: `consul`, `postgres`, `pgbouncer`, `redis`, `redis_cache`, `redis_persistent`, `praefect_postgres`, `praefect`, `gitaly`, `gitlab_rails`, `sidekiq` and `monitor`.
+    - `gitlab_charts_custom_tasks_file` - Full path for the Helm custom tasks file. Defaults to `<inventory_dir>/files/gitlab_tasks/gitlab_charts.yml`.
+    - `post_configure_custom_tasks_file` - Full path for the Post Configure custom tasks file. Defaults to `<inventory_dir>/files/gitlab_tasks/post_configure.yml`.
+    - `uninstall_custom_tasks_file` - Full path for the Uninstall custom tasks file. Defaults to `<inventory_dir>/files/gitlab_tasks/uninstall.yml`.
+
+Any task within the [Ansible library](https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html) can be used for custom tasks, although it's worth noting the following general guidance when writing tasks:
+
+- Any Ansible tasks that aren't core, i.e. available within a standard Ansible install, will need their requirements installed manually before running.
+- If there's a requirement to only run Common tasks across all Omnibus VMs only you can do this by setting a `when` condition on the tasks to the Toolkit provided variable `omnibus_node`.
+- With the exception of Common, tasks will run after component setup.
 
 ## Custom Grafana Dashboards
 

@@ -54,3 +54,17 @@
     path: /etc/gitlab/skip-auto-reconfigure
     state: touch
     mode: u=rw,g=r,o=r
+
+- name: Run Custom Tasks
+  block:
+    - name: Check if Custom Tasks file exists
+      stat:
+        path: "{{ praefect_postgres_custom_tasks_file }}"
+      register: praefect_postgres_custom_tasks_file_path
+      delegate_to: localhost
+      become: false
+
+    - name: Run Custom Tasks
+      include_tasks: "{{ praefect_postgres_custom_tasks_file }}"
+      when: praefect_postgres_custom_tasks_file_path.stat.exists
+  tags: reconfigure
