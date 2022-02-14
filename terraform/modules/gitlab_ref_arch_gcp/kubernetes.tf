@@ -1,6 +1,12 @@
 locals {
-  total_node_pool_count = sum([var.webservice_node_pool_count, var.sidekiq_node_pool_count, var.supporting_node_pool_count])
+  total_node_pool_count = var.webservice_node_pool_count + var.sidekiq_node_pool_count + var.supporting_node_pool_count + var.webservice_node_pool_max_count + var.sidekiq_node_pool_max_count + var.supporting_node_pool_max_count
+
+  webservice_node_pool_autoscaling = var.webservice_node_pool_max_count > 0
+  sidekiq_node_pool_autoscaling    = var.sidekiq_node_pool_max_count > 0
+  supporting_node_pool_autoscaling = var.supporting_node_pool_max_count > 0
+
   node_pool_zones       = var.kubernetes_zones != null ? var.kubernetes_zones : var.zones
+  node_pool_zones_count = local.node_pool_zones != null ? length(local.node_pool_zones) : 1
 }
 
 resource "google_container_cluster" "gitlab_cluster" {
@@ -31,12 +37,6 @@ resource "google_container_cluster" "gitlab_cluster" {
     gitlab_node_type   = "gitlab-cluster"
   }
 
-  node_config {
-    shielded_instance_config {
-      enable_secure_boot = var.machine_secure_boot
-    }
-  }
-
   dynamic "workload_identity_config" {
     for_each = range(var.cluster_enable_workload_identity ? 1 : 0)
 
@@ -47,15 +47,34 @@ resource "google_container_cluster" "gitlab_cluster" {
 }
 
 resource "google_container_node_pool" "gitlab_webservice_pool" {
-  count          = min(var.webservice_node_pool_count, 1)
-  name           = "${var.prefix}-webservice"
+  count = min(var.webservice_node_pool_count + var.webservice_node_pool_max_count, 1)
+
+  # Max 14 chars, unique_id adds 26 chars, total max 40.
+  name_prefix    = "gl-webservice-"
   cluster        = google_container_cluster.gitlab_cluster[0].name
-  node_count     = local.node_pool_zones != null ? ceil(var.webservice_node_pool_count / length(local.node_pool_zones)) : var.webservice_node_pool_count
   node_locations = local.node_pool_zones
+
+  node_count = local.webservice_node_pool_autoscaling ? null : ceil(var.webservice_node_pool_count / local.node_pool_zones_count)
+
+  # Cluster Autoscaling (Optional)
+  initial_node_count = local.webservice_node_pool_autoscaling ? ceil(var.webservice_node_pool_min_count / local.node_pool_zones_count) : null
+  dynamic "autoscaling" {
+    for_each = range(local.webservice_node_pool_autoscaling ? 1 : 0)
+
+    content {
+      max_node_count = ceil(var.webservice_node_pool_max_count / local.node_pool_zones_count)
+      min_node_count = ceil(var.webservice_node_pool_min_count / local.node_pool_zones_count)
+    }
+  }
 
   management {
     auto_repair  = true
     auto_upgrade = true
+  }
+
+  upgrade_settings {
+    max_surge       = 2
+    max_unavailable = 0
   }
 
   node_config {
@@ -75,22 +94,54 @@ resource "google_container_node_pool" "gitlab_webservice_pool" {
       }
     }
 
+    # Added by GCP, if not added here TF will recreate each time
+    # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#metadata
+    metadata = {
+      disable-legacy-endpoints = true
+    }
+
     labels = {
       workload = "webservice"
     }
   }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      initial_node_count,
+    ]
+  }
 }
 
 resource "google_container_node_pool" "gitlab_sidekiq_pool" {
-  count          = min(var.sidekiq_node_pool_count, 1)
-  name           = "${var.prefix}-sidekiq"
+  count = min(var.sidekiq_node_pool_count + var.sidekiq_node_pool_max_count, 1)
+
+  # Max 14 chars, unique_id adds 26 chars, total max 40.
+  name_prefix    = "gl-sidekiq-"
   cluster        = google_container_cluster.gitlab_cluster[0].name
-  node_count     = local.node_pool_zones != null ? ceil(var.sidekiq_node_pool_count / length(local.node_pool_zones)) : var.sidekiq_node_pool_count
   node_locations = local.node_pool_zones
+
+  node_count = local.sidekiq_node_pool_autoscaling ? null : ceil(var.sidekiq_node_pool_count / local.node_pool_zones_count)
+
+  # Cluster Autoscaling (Optional)
+  initial_node_count = local.sidekiq_node_pool_autoscaling ? ceil(var.sidekiq_node_pool_min_count / local.node_pool_zones_count) : null
+  dynamic "autoscaling" {
+    for_each = range(local.sidekiq_node_pool_autoscaling ? 1 : 0)
+
+    content {
+      max_node_count = ceil(var.sidekiq_node_pool_max_count / local.node_pool_zones_count)
+      min_node_count = ceil(var.sidekiq_node_pool_min_count / local.node_pool_zones_count)
+    }
+  }
 
   management {
     auto_repair  = true
     auto_upgrade = true
+  }
+
+  upgrade_settings {
+    max_surge       = 2
+    max_unavailable = 0
   }
 
   node_config {
@@ -110,22 +161,54 @@ resource "google_container_node_pool" "gitlab_sidekiq_pool" {
       }
     }
 
+    # Added by GCP, if not added here TF will recreate each time
+    # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#metadata
+    metadata = {
+      disable-legacy-endpoints = true
+    }
+
     labels = {
       workload = "sidekiq"
     }
   }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      initial_node_count,
+    ]
+  }
 }
 
 resource "google_container_node_pool" "gitlab_supporting_pool" {
-  count          = min(var.supporting_node_pool_count, 1)
-  name           = "${var.prefix}-supporting"
+  count = min(var.supporting_node_pool_count + var.supporting_node_pool_max_count, 1)
+
+  # Max 14 chars, unique_id adds 26 chars, total max 40.
+  name_prefix    = "gl-supporting-"
   cluster        = google_container_cluster.gitlab_cluster[0].name
-  node_count     = local.node_pool_zones != null ? ceil(var.supporting_node_pool_count / length(local.node_pool_zones)) : var.supporting_node_pool_count
   node_locations = local.node_pool_zones
+
+  node_count = local.supporting_node_pool_autoscaling ? null : ceil(var.supporting_node_pool_count / local.node_pool_zones_count)
+
+  # Cluster Autoscaling (Optional)
+  initial_node_count = local.supporting_node_pool_autoscaling ? ceil(var.supporting_node_pool_min_count / local.node_pool_zones_count) : null
+  dynamic "autoscaling" {
+    for_each = range(local.supporting_node_pool_autoscaling ? 1 : 0)
+
+    content {
+      max_node_count = ceil(var.supporting_node_pool_max_count / local.node_pool_zones_count)
+      min_node_count = ceil(var.supporting_node_pool_min_count / local.node_pool_zones_count)
+    }
+  }
 
   management {
     auto_repair  = true
     auto_upgrade = true
+  }
+
+  upgrade_settings {
+    max_surge       = 2
+    max_unavailable = 0
   }
 
   node_config {
@@ -145,9 +228,22 @@ resource "google_container_node_pool" "gitlab_supporting_pool" {
       }
     }
 
+    # Added by GCP, if not added here TF will recreate each time
+    # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#metadata
+    metadata = {
+      disable-legacy-endpoints = true
+    }
+
     labels = {
       workload = "support"
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      initial_node_count,
+    ]
   }
 }
 

@@ -411,6 +411,15 @@ variable "webservice_node_pool_disk_size" {
   type    = string
   default = null
 }
+## Cluster Autoscaling (Optional)
+variable "webservice_node_pool_max_count" {
+  type    = number
+  default = 0
+}
+variable "webservice_node_pool_min_count" {
+  type    = number
+  default = 0
+}
 
 variable "sidekiq_node_pool_count" {
   type    = number
@@ -428,6 +437,15 @@ variable "sidekiq_node_pool_disk_size" {
   type    = string
   default = null
 }
+## Cluster Autoscaling (Optional)
+variable "sidekiq_node_pool_max_count" {
+  type    = number
+  default = 0
+}
+variable "sidekiq_node_pool_min_count" {
+  type    = number
+  default = 0
+}
 
 variable "supporting_node_pool_count" {
   type    = number
@@ -444,6 +462,15 @@ variable "supporting_node_pool_disk_type" {
 variable "supporting_node_pool_disk_size" {
   type    = string
   default = null
+}
+## Cluster Autoscaling (Optional)
+variable "supporting_node_pool_max_count" {
+  type    = number
+  default = 0
+}
+variable "supporting_node_pool_min_count" {
+  type    = number
+  default = 0
 }
 
 variable "cluster_release_channel" {

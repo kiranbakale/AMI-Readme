@@ -64,7 +64,7 @@ In this setup you have the Modules saved locally on disk, typically through a Gi
 
 For example, to configure the `gitlab_ref_arch_gcp` module using a relative path that follows this repo's structure you would configure it follows:
 
-```hcl
+```tf
 module "gitlab_ref_arch_gcp" {
   source = "../../modules/gitlab_ref_arch_gcp"
 
@@ -78,7 +78,7 @@ Terraform can also pull the Modules directly from this repo via a [Git URL](http
 
 For example, to configure the `gitlab_ref_arch_gcp` module to pull from the repo you would configure it follows:
 
-```hcl
+```tf
 module "gitlab_ref_arch_gcp" {
   source = "git::https://gitlab.com/gitlab-org/gitlab-environment-toolkit.git//modules/gitlab_ref_arch_gcp"
 
@@ -92,7 +92,7 @@ The Toolkit's Modules are also made available via this Project's [Terraform Modu
 
 For example, to configure the `gitlab_ref_arch_gcp` module to pull from the registry you would configure it follows:
 
-```hcl
+```tf
 module "gitlab_ref_arch_gcp" {
   source = "gitlab.com/gitlab-org/gitlab-environment-toolkit/gitlab//modules/gitlab_ref_arch_gcp"
   version = ">= 2.0.0"
@@ -745,7 +745,7 @@ However this can be changed via the `source_image_reference` dictionary setting 
 
 When the image has been selected the setting will need the `publisher`, `offer`, `sku` and `version` fields set. For example:
 
-```hcl
+```tf
 module "gitlab_ref_arch_azure" {
   source = "../../modules/gitlab_ref_arch_azure"
   
