@@ -180,6 +180,7 @@ praefect_postgres_external: "{{ 'praefect_postgres' not in groups and praefect_p
 monitor_int_ip: "{{ (groups['monitor'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'monitor' in groups else '' }}"
 monitor_custom_dashboards: []
 monitor_custom_dashboards_path: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/grafana"
+monitor_custom_prometheus_scrape_config: ''
 
 # GitLab Redis
 ## Combined

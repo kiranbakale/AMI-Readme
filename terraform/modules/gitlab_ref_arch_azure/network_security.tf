@@ -73,22 +73,6 @@ resource "azurerm_network_security_rule" "external_ssh_rule" {
   network_security_group_name = azurerm_network_security_group.haproxy[0].name
 }
 
-resource "azurerm_network_security_rule" "monitor_rule" {
-  count                       = min(var.haproxy_external_node_count, 1)
-  name                        = "monitor_rule"
-  description                 = "Allow Monitor traffic for InfluxDB exporter access"
-  priority                    = 1007
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_ranges     = ["9122"]
-  source_address_prefixes     = coalescelist(var.monitor_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
-  destination_address_prefix  = "*"
-  resource_group_name         = var.resource_group_name
-  network_security_group_name = azurerm_network_security_group.haproxy[0].name
-}
-
 resource "azurerm_network_security_group" "ssh" {
   name                = "${var.prefix}-ssh-default-network-security-group"
   location            = var.location

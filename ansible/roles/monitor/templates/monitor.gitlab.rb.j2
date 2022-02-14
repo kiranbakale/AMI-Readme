@@ -65,12 +65,7 @@ prometheus['scrape_configs'] = [
     ],
   },
 {% endif %}
-  {
-    'job_name': 'influxdb',
-    'static_configs' => [
-      'targets' => ["{{ monitor_int_ip }}:9122"],
-     ],
-  },
+  {{ monitor_custom_prometheus_scrape_config }}
 ]
 
 # Grafana

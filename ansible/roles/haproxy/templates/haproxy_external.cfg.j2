@@ -28,11 +28,6 @@ frontend prometheus
     bind *:9090
 
     default_backend prometheus
-
-frontend influxdb_exporter
-    bind *:9122
-
-    default_backend influxdb_exporter
 {% endif %}
 
 {% if 'elastic' in groups %}
@@ -69,11 +64,6 @@ backend prometheus
     option httpchk GET /-/healthy
 
     server prometheus {{ monitor_int_ip }}:9090 check
-
-backend influxdb_exporter
-    option httpchk GET /ping
-
-    server influxdb_exporter {{ monitor_int_ip }}:9122 check
 {% endif %}
 
 {% if 'elastic' in groups %}

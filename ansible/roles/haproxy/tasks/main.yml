@@ -59,7 +59,7 @@
     recreate: true
     restart_policy: unless-stopped
     state: started
-    ports: ['80:80', '443:443', '1936:1936', '2222:2222', '9090:9090', '9122:9122', '5601:5601']
+    ports: ['80:80', '443:443', '1936:1936', '2222:2222', '9090:9090', '5601:5601']
     volumes:
       - /opt/haproxy:/usr/local/etc/haproxy:ro
     sysctls:
