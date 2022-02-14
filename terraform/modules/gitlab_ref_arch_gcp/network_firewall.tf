@@ -30,22 +30,6 @@ resource "google_compute_firewall" "gitlab_ssh" {
   target_tags   = ["${var.prefix}-ssh"]
 }
 
-resource "google_compute_firewall" "monitor" {
-  count   = min(var.monitor_node_count, 1)
-  name    = "${var.prefix}-monitor"
-  network = local.vpc_name
-
-  description = "Allow InfluxDB exporter access on the ${local.vpc_name} network"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["9122"]
-  }
-
-  source_ranges = coalescelist(var.monitor_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
-  target_tags   = ["${var.prefix}-monitor"]
-}
-
 # Created or Existing network rules
 data "google_compute_subnetwork" "selected" {
   count = local.vpc_name != "default" ? 1 : 0

@@ -376,11 +376,6 @@ variable "external_ssh_allowed_ingress_cidr_blocks" {
   default = []
 }
 
-variable "monitor_allowed_ingress_cidr_blocks" {
-  type    = list(any)
-  default = []
-}
-
 variable "icmp_allowed_ingress_cidr_blocks" {
   type    = list(any)
   default = []

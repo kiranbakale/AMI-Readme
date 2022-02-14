@@ -103,24 +103,3 @@ resource "aws_security_group" "gitlab_external_http_https" {
     Name = "${var.prefix}-external-http-https"
   }
 }
-
-resource "aws_security_group" "gitlab_external_monitor" {
-  count = min(var.monitor_node_count, 1)
-
-  name   = "${var.prefix}-external-monitor"
-  vpc_id = local.vpc_id
-
-  # kics: Terraform AWS - Security groups allow ingress from 0.0.0.0:0 - False positive, source CIDR is configurable
-  # kics-scan ignore-block
-  ingress {
-    description = "Enable access to InfluxDB exporter"
-    from_port   = 9122
-    to_port     = 9122
-    protocol    = "tcp"
-    cidr_blocks = coalescelist(var.monitor_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
-  }
-
-  tags = {
-    Name = "${var.prefix}-external-monitor"
-  }
-}

@@ -954,11 +954,6 @@ variable "external_ssh_allowed_ingress_cidr_blocks" {
   default = []
 }
 
-variable "monitor_allowed_ingress_cidr_blocks" {
-  type    = list(any)
-  default = []
-}
-
 ## Create new network
 variable "create_network" {
   type    = bool

@@ -1,3 +1,2 @@
 ---
 - import_tasks: monitor.yml
-- import_tasks: influxdb-exporter.yml

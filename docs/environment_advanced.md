@@ -105,6 +105,8 @@ monitor_custom_dashboards: [{ display_name: 'Sidekiq Dashboards', folder: "my_si
 - `display_name`: This is how the collection will appear in the Grafana UI and the name of the folder the dashboards will be stored in on the Grafana server.
 - `folder`: This is the name of the folder in `monitor_custom_dashboards_path` that holds your collection of dashboards.
 
+To configure custom [Prometheus scape configs](https://docs.gitlab.com/ee/administration/monitoring/prometheus/#adding-custom-scrape-configurations) provide your configuration using `monitor_custom_prometheus_scrape_config` variable.
+
 ## Data Disks (GCP, AWS)
 
 The Toolkit supports provisioning and configuring extra disks, AKA data disks, for each group of machines (i.e. for all Gitaly nodes). With this set up you can have additional disk volumes mounted for storing data for added resilience and flexibility.
