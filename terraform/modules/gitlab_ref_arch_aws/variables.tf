@@ -562,6 +562,15 @@ variable "webservice_node_pool_disk_size" {
   type    = string
   default = "100"
 }
+## Cluster Autoscaling (Optional)
+variable "webservice_node_pool_max_count" {
+  type    = number
+  default = 0
+}
+variable "webservice_node_pool_min_count" {
+  type    = number
+  default = 0
+}
 
 ## Sidekiq
 variable "sidekiq_node_pool_count" {
@@ -576,6 +585,15 @@ variable "sidekiq_node_pool_disk_size" {
   type    = string
   default = "100"
 }
+## Cluster Autoscaling (Optional)
+variable "sidekiq_node_pool_max_count" {
+  type    = number
+  default = 0
+}
+variable "sidekiq_node_pool_min_count" {
+  type    = number
+  default = 0
+}
 
 ## Supporting
 variable "supporting_node_pool_count" {
@@ -589,6 +607,15 @@ variable "supporting_node_pool_instance_type" {
 variable "supporting_node_pool_disk_size" {
   type    = string
   default = null
+}
+## Cluster Autoscaling (Optional)
+variable "supporting_node_pool_max_count" {
+  type    = number
+  default = 0
+}
+variable "supporting_node_pool_min_count" {
+  type    = number
+  default = 0
 }
 
 # PaaS Services

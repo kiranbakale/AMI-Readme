@@ -35,7 +35,7 @@ For the Toolkit to be able to provision and configure Kubernetes clusters and He
 - `kubectl` - [Install guide](https://kubernetes.io/docs/tasks/tools/#kubectl)
 - `helm` - [Install guide](https://helm.sh/docs/intro/install/)
 - `gcloud` - [Install guide](https://cloud.google.com/sdk/install). (GCP only)
-- `aws cli` - [Install guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)(AWS only)
+- `aws cli` - [Install guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) (AWS only)
 
 Latest info on version requirements for both tools can be found in the [GitLab Charts docs](https://docs.gitlab.com/charts/installation/tools.html). Also note that both of the above tools will need to be found on the PATH for them to be used by the Toolkit.
 
@@ -55,6 +55,7 @@ By design, the `environment.tf` file is similar to the one used in a [standard e
 Each node pool setting configures the following. To avoid repetition we'll describe each setting once:
 
 - `*_node_pool_count` - The number of machines to set up for that component's node pool
+  - `*_node_pool_max_count` and `*_node_pool_max_count` are available as alternatives for [Cluster Autoscaling](#cluster-autoscaling).
 - `*_node_pool_machine_type` - **GCP only** The [GCP Machine Type](https://cloud.google.com/compute/docs/machine-types) (size) for each machine in the node pool
 - `*_node_pool_instance_type` - **AWS only** The [AWS Instance Type](https://aws.amazon.com/ec2/instance-types/) (size) for each machine in the node pool
 
@@ -70,49 +71,49 @@ module "gitlab_ref_arch_gcp" {
   project = var.project
 
   # 10k Hybrid - k8s Node Pools
-  webservice_node_pool_count = 4
+  webservice_node_pool_count        = 4
   webservice_node_pool_machine_type = "n1-highcpu-32"
 
-  sidekiq_node_pool_count = 4
+  sidekiq_node_pool_max_count    = 4
   sidekiq_node_pool_machine_type = "n1-standard-4"
 
-  supporting_node_pool_count = 2
+  supporting_node_pool_count    = 2
   supporting_node_pool_machine_type = "n1-standard-4"
 
   # 10k Hybrid - Compute VMs
-  consul_node_count = 3
+  consul_node_count   = 3
   consul_machine_type = "n1-highcpu-2"
 
-  elastic_node_count = 3
+  elastic_node_count   = 3
   elastic_machine_type = "n1-highcpu-16"
 
-  gitaly_node_count = 3
+  gitaly_node_count   = 3
   gitaly_machine_type = "n1-standard-16"
 
-  praefect_node_count = 3
+  praefect_node_count   = 3
   praefect_machine_type = "n1-highcpu-2"
 
-  praefect_postgres_node_count = 1
+  praefect_postgres_node_count   = 1
   praefect_postgres_machine_type = "n1-highcpu-2"
 
-  gitlab_nfs_node_count = 1
+  gitlab_nfs_node_count   = 1
   gitlab_nfs_machine_type = "n1-highcpu-4"
 
-  haproxy_internal_node_count = 1
+  haproxy_internal_node_count   = 1
   haproxy_internal_machine_type = "n1-highcpu-2"
 
-  monitor_node_count = 1
+  monitor_node_count   = 1
   monitor_machine_type = "n1-highcpu-4"
 
-  pgbouncer_node_count = 3
+  pgbouncer_node_count   = 3
   pgbouncer_machine_type = "n1-highcpu-2"
 
-  postgres_node_count = 3
+  postgres_node_count   = 3
   postgres_machine_type = "n1-standard-8"
 
-  redis_cache_node_count = 3
-  redis_cache_machine_type = "n1-standard-4"
-  redis_persistent_node_count = 3
+  redis_cache_node_count        = 3
+  redis_cache_machine_type      = "n1-standard-4"
+  redis_persistent_node_count   = 3
   redis_persistent_machine_type = "n1-standard-4"
 }
 
@@ -156,49 +157,52 @@ module "gitlab_ref_arch_aws" {
   create_network = true
 
   # 10k Hybrid - k8s Node Pools
-  webservice_node_pool_count = 4
+  webservice_node_pool_min_count     = 2
+  webservice_node_pool_max_count     = 6
   webservice_node_pool_instance_type = "c5.9xlarge"
 
-  sidekiq_node_pool_count = 4
+  sidekiq_node_pool_min_count     = 2
+  sidekiq_node_pool_max_count     = 6
   sidekiq_node_pool_instance_type = "m5.xlarge"
 
-  supporting_node_pool_count = 3
+  supporting_node_pool_min_count     = 2
+  supporting_node_pool_max_count     = 4
   supporting_node_pool_instance_type = "m5.xlarge"
 
   # 10k Hybrid - Compute VMs
-  consul_node_count = 3
+  consul_node_count    = 3
   consul_instance_type = "c5.large"
 
-  elastic_node_count = 3
+  elastic_node_count    = 3
   elastic_instance_type = "c5.4xlarge"
 
-  gitaly_node_count = 3
+  gitaly_node_count    = 3
   gitaly_instance_type = "m5.4xlarge"
 
-  praefect_node_count = 3
+  praefect_node_count    = 3
   praefect_instance_type = "c5.large"
 
-  praefect_postgres_node_count = 1
+  praefect_postgres_node_count    = 1
   praefect_postgres_instance_type = "c5.large"
 
-  gitlab_nfs_node_count = 1
+  gitlab_nfs_node_count    = 1
   gitlab_nfs_instance_type = "c5.xlarge"
 
-  haproxy_internal_node_count = 1
+  haproxy_internal_node_count    = 1
   haproxy_internal_instance_type = "c5.large"
 
-  monitor_node_count = 1
+  monitor_node_count    = 1
   monitor_instance_type = "c5.xlarge"
 
-  pgbouncer_node_count = 3
+  pgbouncer_node_count    = 3
   pgbouncer_instance_type = "c5.large"
 
-  postgres_node_count = 3
+  postgres_node_count    = 3
   postgres_instance_type = "m5.2xlarge"
 
-  redis_cache_node_count = 3
-  redis_cache_instance_type = "m5.xlarge"
-  redis_persistent_node_count = 3
+  redis_cache_node_count         = 3
+  redis_cache_instance_type      = "m5.xlarge"
+  redis_persistent_node_count    = 3
   redis_persistent_instance_type = "m5.xlarge"
 }
 
@@ -243,6 +247,23 @@ aws eks --region <AWS REGION NAME> update-kubeconfig --name <CLUSTER NAME>`. Whe
 # Update the configmap/aws-auth config map with additional users
 kubectl edit -n kube-system configmap/aws-auth
 ```
+
+### Cluster Autoscaling
+
+An additional and alternative configuration - Cluster Autoscaling - is available to be provisioned also on both supported Cloud Providers.
+
+[Cluster Autoscaling](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-autoscaler) is where the node pool VMs are scaled dynamically based on requested pod count.
+
+:information_source:&nbsp; Note this is an advanced setup due to its dynamic nature as it can lead to varying performance and costs.
+
+Enabling this feature on either cloud provider is done via the following settings. To avoid repetition we'll describe each setting once:
+
+- `*_node_pool_max_count` - The maximum number of machines for the component's node pool
+- `*_node_pool_min_count` - The minimum number of machines for the component's node pool
+
+The counts to use should be based around the target Reference Architecture but the actual values should be set based on your expected requirements. As a general guidance we recommend the Reference Architecture's node count as the maximum and at least `2` as the minimum to ensure HA.
+
+:information_source:&nbsp; [Cluster Autoscaler isn't deployed by default in AWS EKS](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html). This either needs to be done manually or can be done with the Toolkit via an additional setting in Ansible - `cloud_native_hybrid_cluster_autoscaler_setup`. Refer to the [Additional Config Settings](#additional-config-settings) for more detail.
 
 ## 3. Setting up authentication for the provisioned Kubernetes Cluster
 
@@ -370,6 +391,7 @@ The Toolkit provides several other settings that can customize a Cloud Native Hy
 - `gitlab_charts_sidekiq_min_replicas_scaler`: Sets the scalar value (`0.0` - `1.0`) to scale minimum pod replicas against the automatically calculated maximum value. Setting this value may affect the performance of the environment and should only be done so for specific reasons. If pod count is overridden directly by `gitlab_charts_sidekiq_min_replicas` this value will have no effect. Set to `0.75` by default.
 - `gitlab_charts_sidekiq_max_replicas`: Override for the number of max Sidekiq replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
 - `gitlab_charts_sidekiq_min_replicas`: Override for the number of min Sidekiq replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
+- `cloud_native_hybrid_cluster_autoscaler_setup` (AWS only) - When `true` will deploy the [Cluster Autoscaler](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html) onto the AWS EKS Kubernetes cluster to enable node autoscaling. Set to `false` by default.
 
 Once your config file is in place as desired you can proceed to [configure as normal](environment_configure.md#3-configure-update).
 

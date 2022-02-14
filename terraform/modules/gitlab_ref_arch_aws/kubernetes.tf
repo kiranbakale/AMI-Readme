@@ -1,5 +1,9 @@
 locals {
-  total_node_pool_count = max(sum([var.webservice_node_pool_count, var.sidekiq_node_pool_count, var.supporting_node_pool_count]), 0)
+  total_node_pool_count = var.webservice_node_pool_count + var.sidekiq_node_pool_count + var.supporting_node_pool_count + var.webservice_node_pool_max_count + var.sidekiq_node_pool_max_count + var.supporting_node_pool_max_count
+
+  webservice_node_pool_autoscaling = var.webservice_node_pool_max_count > 0
+  sidekiq_node_pool_autoscaling    = var.sidekiq_node_pool_max_count > 0
+  supporting_node_pool_autoscaling = var.supporting_node_pool_max_count > 0
 
   # Subnet selection
   eks_default_subnet_ids       = local.default_network ? slice(tolist(local.default_subnet_ids), 0, var.eks_default_subnet_count) : []
@@ -53,19 +57,21 @@ resource "aws_eks_cluster" "gitlab_cluster" {
 # Node Pools
 
 resource "aws_eks_node_group" "gitlab_webservice_pool" {
-  count = min(var.webservice_node_pool_count, 1)
+  count = min(var.webservice_node_pool_count + var.webservice_node_pool_max_count, 1)
 
-  cluster_name    = aws_eks_cluster.gitlab_cluster[count.index].name
-  node_group_name = "gitlab_webservice_pool"
-  node_role_arn   = aws_iam_role.gitlab_eks_node_role[0].arn
-  subnet_ids      = local.eks_backend_node_subnet_ids
-  instance_types  = [var.webservice_node_pool_instance_type]
-  disk_size       = var.webservice_node_pool_disk_size
+  cluster_name = aws_eks_cluster.gitlab_cluster[0].name
+
+  # Create a unique name to allow nodepool replacements
+  node_group_name_prefix = "gitlab_webservice_pool_"
+  node_role_arn          = aws_iam_role.gitlab_eks_node_role[0].arn
+  subnet_ids             = local.eks_backend_node_subnet_ids
+  instance_types         = [var.webservice_node_pool_instance_type]
+  disk_size              = var.webservice_node_pool_disk_size
 
   scaling_config {
-    desired_size = var.webservice_node_pool_count
-    max_size     = var.webservice_node_pool_count
-    min_size     = var.webservice_node_pool_count
+    desired_size = local.webservice_node_pool_autoscaling ? var.webservice_node_pool_min_count : var.webservice_node_pool_count
+    min_size     = local.webservice_node_pool_autoscaling ? var.webservice_node_pool_min_count : var.webservice_node_pool_count
+    max_size     = local.webservice_node_pool_autoscaling ? var.webservice_node_pool_max_count : var.webservice_node_pool_count
   }
 
   labels = {
@@ -75,6 +81,9 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
   tags = merge({
     gitlab_node_prefix = var.prefix
     gitlab_node_type   = "webservice-pool"
+
+    "k8s.io/cluster-autoscaler/${aws_eks_cluster.gitlab_cluster[0].name}" = "owned"
+    "k8s.io/cluster-autoscaler/enabled"                                   = "TRUE"
   }, var.additional_tags)
 
   depends_on = [
@@ -85,22 +94,31 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
     aws_eks_addon.kube_proxy,
     aws_eks_addon.vpc_cni,
   ]
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      scaling_config[0].desired_size,
+    ]
+  }
 }
 
 resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
-  count = min(var.sidekiq_node_pool_count, 1)
+  count = min(var.sidekiq_node_pool_count + var.sidekiq_node_pool_max_count, 1)
 
-  cluster_name    = aws_eks_cluster.gitlab_cluster[count.index].name
-  node_group_name = "gitlab_sidekiq_pool"
-  node_role_arn   = aws_iam_role.gitlab_eks_node_role[0].arn
-  subnet_ids      = local.eks_backend_node_subnet_ids
-  instance_types  = [var.sidekiq_node_pool_instance_type]
-  disk_size       = var.sidekiq_node_pool_disk_size
+  cluster_name = aws_eks_cluster.gitlab_cluster[0].name
+
+  # Create a unique name to allow nodepool replacements
+  node_group_name_prefix = "gitlab_sidekiq_pool_"
+  node_role_arn          = aws_iam_role.gitlab_eks_node_role[0].arn
+  subnet_ids             = local.eks_backend_node_subnet_ids
+  instance_types         = [var.sidekiq_node_pool_instance_type]
+  disk_size              = var.sidekiq_node_pool_disk_size
 
   scaling_config {
-    desired_size = var.sidekiq_node_pool_count
-    max_size     = var.sidekiq_node_pool_count
-    min_size     = var.sidekiq_node_pool_count
+    desired_size = local.sidekiq_node_pool_autoscaling ? var.sidekiq_node_pool_min_count : var.sidekiq_node_pool_count
+    min_size     = local.sidekiq_node_pool_autoscaling ? var.sidekiq_node_pool_min_count : var.sidekiq_node_pool_count
+    max_size     = local.sidekiq_node_pool_autoscaling ? var.sidekiq_node_pool_max_count : var.sidekiq_node_pool_count
   }
 
   labels = {
@@ -110,6 +128,9 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
   tags = merge({
     gitlab_node_prefix = var.prefix
     gitlab_node_type   = "sidekiq-pool"
+
+    "k8s.io/cluster-autoscaler/${aws_eks_cluster.gitlab_cluster[0].name}" = "owned"
+    "k8s.io/cluster-autoscaler/enabled"                                   = "TRUE"
   }, var.additional_tags)
 
   depends_on = [
@@ -120,23 +141,31 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
     aws_eks_addon.kube_proxy,
     aws_eks_addon.vpc_cni,
   ]
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      scaling_config[0].desired_size,
+    ]
+  }
 }
 
 resource "aws_eks_node_group" "gitlab_supporting_pool" {
-  count = min(var.supporting_node_pool_count, 1)
+  count = min(var.supporting_node_pool_count + var.supporting_node_pool_max_count, 1)
 
-  cluster_name    = aws_eks_cluster.gitlab_cluster[count.index].name
-  node_group_name = "gitlab_supporting_pool"
-  node_role_arn   = aws_iam_role.gitlab_eks_node_role[0].arn
-  # Select Public subnets if configured first as this pool hosts NGinx
-  subnet_ids     = local.eks_frontend_node_subnet_ids
-  instance_types = [var.supporting_node_pool_instance_type]
-  disk_size      = var.supporting_node_pool_disk_size
+  cluster_name = aws_eks_cluster.gitlab_cluster[0].name
+
+  # Create a unique name to allow nodepool replacements
+  node_group_name_prefix = "gitlab_supporting_pool_"
+  node_role_arn          = aws_iam_role.gitlab_eks_node_role[0].arn
+  subnet_ids             = local.eks_frontend_node_subnet_ids # Select Public subnets if configured first as this pool hosts NGinx
+  instance_types         = [var.supporting_node_pool_instance_type]
+  disk_size              = var.supporting_node_pool_disk_size
 
   scaling_config {
-    desired_size = var.supporting_node_pool_count
-    max_size     = var.supporting_node_pool_count
-    min_size     = var.supporting_node_pool_count
+    desired_size = local.supporting_node_pool_autoscaling ? var.supporting_node_pool_min_count : var.supporting_node_pool_count
+    min_size     = local.supporting_node_pool_autoscaling ? var.supporting_node_pool_min_count : var.supporting_node_pool_count
+    max_size     = local.supporting_node_pool_autoscaling ? var.supporting_node_pool_max_count : var.supporting_node_pool_count
   }
 
   labels = {
@@ -146,6 +175,9 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
   tags = merge({
     gitlab_node_prefix = var.prefix
     gitlab_node_type   = "supporting-pool"
+
+    "k8s.io/cluster-autoscaler/${aws_eks_cluster.gitlab_cluster[0].name}" = "owned"
+    "k8s.io/cluster-autoscaler/enabled"                                   = "TRUE"
   }, var.additional_tags)
 
   depends_on = [
@@ -156,6 +188,13 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
     aws_eks_addon.kube_proxy,
     aws_eks_addon.vpc_cni,
   ]
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes = [
+      scaling_config[0].desired_size,
+    ]
+  }
 }
 
 # Roles
@@ -222,19 +261,53 @@ resource "aws_iam_role_policy_attachment" "amazon_ec2_container_registry_read_on
   role       = aws_iam_role.gitlab_eks_node_role[0].name
 }
 
+## Cluster Autoscaler policy (Optional)
+resource "aws_iam_policy" "amazon_eks_node_autoscaler_policy" {
+  count = min(var.webservice_node_pool_max_count + var.sidekiq_node_pool_max_count + var.supporting_node_pool_max_count, 1)
+
+  name        = "${var.prefix}-eks-node-cluster-autoscaler"
+  description = "Policy for ${var.prefix} Cluster Autoscaler"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "autoscaling:DescribeAutoScalingGroups",
+          "autoscaling:DescribeAutoScalingInstances",
+          "autoscaling:DescribeLaunchConfigurations",
+          "autoscaling:DescribeTags",
+          "autoscaling:SetDesiredCapacity",
+          "autoscaling:TerminateInstanceInAutoScalingGroup",
+          "ec2:DescribeLaunchTemplateVersions"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "amazon_eks_node_autoscaler_policy" {
+  count = min(var.webservice_node_pool_max_count + var.sidekiq_node_pool_max_count + var.supporting_node_pool_max_count, 1)
+
+  role       = aws_iam_role.gitlab_eks_node_role[0].name
+  policy_arn = aws_iam_policy.amazon_eks_node_autoscaler_policy[0].arn
+}
+
 # Addons
 
 resource "aws_eks_addon" "kube_proxy" {
   count = min(local.total_node_pool_count, 1)
 
-  cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
+  cluster_name = aws_eks_cluster.gitlab_cluster[0].name
   addon_name   = "kube-proxy"
 }
 
 resource "aws_eks_addon" "coredns" {
   count = min(local.total_node_pool_count, 1)
 
-  cluster_name = aws_eks_cluster.gitlab_cluster[count.index].name
+  cluster_name = aws_eks_cluster.gitlab_cluster[0].name
   addon_name   = "coredns"
 
   # coredns needs nodes to run on, so don't create it until
@@ -250,7 +323,7 @@ resource "aws_eks_addon" "coredns" {
 resource "aws_eks_addon" "vpc_cni" {
   count = min(local.total_node_pool_count, 1)
 
-  cluster_name             = aws_eks_cluster.gitlab_cluster[count.index].name
+  cluster_name             = aws_eks_cluster.gitlab_cluster[0].name
   addon_name               = "vpc-cni"
   service_account_role_arn = aws_iam_role.gitlab_addon_vpc_cni_role[count.index].arn
   resolve_conflicts        = "OVERWRITE"
@@ -265,7 +338,7 @@ resource "aws_eks_addon" "vpc_cni" {
 data "tls_certificate" "gitlab_cluster_oidc" {
   count = min(local.total_node_pool_count, 1)
 
-  url = aws_eks_cluster.gitlab_cluster[count.index].identity[0].oidc[0].issuer
+  url = aws_eks_cluster.gitlab_cluster[0].identity[0].oidc[0].issuer
 }
 
 resource "aws_iam_openid_connect_provider" "gitlab_cluster_openid" {
@@ -273,7 +346,7 @@ resource "aws_iam_openid_connect_provider" "gitlab_cluster_openid" {
 
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = [data.tls_certificate.gitlab_cluster_oidc[count.index].certificates[0].sha1_fingerprint]
-  url             = aws_eks_cluster.gitlab_cluster[count.index].identity[0].oidc[0].issuer
+  url             = aws_eks_cluster.gitlab_cluster[0].identity[0].oidc[0].issuer
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
