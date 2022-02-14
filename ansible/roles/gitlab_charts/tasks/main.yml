@@ -13,16 +13,16 @@
     - reconfigure
     - charts
 
-- name: Run custom chart tasks
+- name: Run secrets chart tasks
   block:
-    - name: Check if Custom Chart tasks file exists
+    - name: Check if Secrets Chart tasks file exists
       stat:
-        path: "{{ gitlab_charts_custom_tasks_file }}"
-      register: gitlab_charts_custom_tasks_file_path
+        path: "{{ gitlab_charts_secrets_tasks_file }}"
+      register: gitlab_charts_secrets_tasks_file_path
 
-    - name: Run Custom Chart tasks
-      include_tasks: "{{ gitlab_charts_custom_tasks_file }}"
-      when: gitlab_charts_custom_tasks_file_path.stat.exists
+    - name: Run Secrets Chart tasks
+      include_tasks: "{{ gitlab_charts_secrets_tasks_file }}"
+      when: gitlab_charts_secrets_tasks_file_path.stat.exists
   tags:
     - reconfigure
     - charts
@@ -223,3 +223,19 @@
     - reconfigure
     - charts
     - cluster-autoscaler
+
+- name: Run Custom Tasks
+  block:
+    - name: Check if Custom Tasks file exists
+      stat:
+        path: "{{ gitlab_charts_custom_tasks_file }}"
+      register: gitlab_charts_custom_tasks_file_path
+      delegate_to: localhost
+      become: false
+
+    - name: Run Custom Tasks
+      include_tasks: "{{ gitlab_charts_custom_tasks_file }}"
+      when: gitlab_charts_custom_tasks_file_path.stat.exists
+  tags:
+    - reconfigure
+    - charts

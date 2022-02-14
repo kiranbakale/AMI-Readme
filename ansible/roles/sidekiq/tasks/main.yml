@@ -69,3 +69,17 @@
     path: /etc/gitlab/skip-auto-reconfigure
     state: touch
     mode: u=rw,g=r,o=r
+
+- name: Run Custom Tasks
+  block:
+    - name: Check if Custom Tasks file exists
+      stat:
+        path: "{{ sidekiq_custom_tasks_file }}"
+      register: sidekiq_custom_tasks_file_path
+      delegate_to: localhost
+      become: false
+
+    - name: Run Custom Tasks
+      include_tasks: "{{ sidekiq_custom_tasks_file }}"
+      when: sidekiq_custom_tasks_file_path.stat.exists
+  tags: reconfigure
