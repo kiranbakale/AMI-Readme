@@ -50,7 +50,7 @@ Note that the Toolkit currently has the following requirements (with related iss
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](docs/environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - External SSL](docs/environment_advanced_ssl.md)
 - [GitLab Environment Toolkit - Advanced - Network Setup](docs/environment_advanced_network.md)
-- [GitLab Environment Toolkit - Advanced - Component Cloud Services \ Custom (Load Balancers, PostgreSQL, Redis)](docs/environment_advanced_services.md)
+- [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](docs/environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](docs/environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Custom Config / Tasks, Data Disks, Advanced Search and more](docs/environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](docs/environment_upgrades.md)
