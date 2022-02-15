@@ -19,7 +19,6 @@ module "monitor" {
   security_group_ids = [
     aws_security_group.gitlab_internal_networking.id,
     aws_security_group.gitlab_external_ssh.id,
-    try(aws_security_group.gitlab_external_monitor[0].id, null),
     try(aws_security_group.gitlab_external_http_https[0].id, null)
   ]
 
