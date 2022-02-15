@@ -119,6 +119,20 @@
       tags: elasticsearch
   when: gitlab_root_password != ''
 
+- name: Run Custom Tasks
+  block:
+    - name: Check if Custom Tasks file exists
+      stat:
+        path: "{{ post_configure_custom_tasks_file }}"
+      register: post_configure_custom_tasks_file_path
+      delegate_to: localhost
+      become: false
+
+    - name: Run Custom Tasks
+      include_tasks: "{{ post_configure_custom_tasks_file }}"
+      when: post_configure_custom_tasks_file_path.stat.exists
+  tags: reconfigure
+
 - name: Remove Access Token
   block:
     - name: Remove Access Token via GitLab Rails
@@ -149,17 +163,3 @@
     - license
     - reconfigure
     - elasticsearch
-
-- name: Run Custom Tasks
-  block:
-    - name: Check if Custom Tasks file exists
-      stat:
-        path: "{{ post_configure_custom_tasks_file }}"
-      register: post_configure_custom_tasks_file_path
-      delegate_to: localhost
-      become: false
-
-    - name: Run Custom Tasks
-      include_tasks: "{{ post_configure_custom_tasks_file }}"
-      when: post_configure_custom_tasks_file_path.stat.exists
-  tags: reconfigure
