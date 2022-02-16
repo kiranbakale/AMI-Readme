@@ -9,8 +9,9 @@ data "aws_vpc" "selected" {
 
 resource "aws_security_group" "gitlab_internal_networking" {
   # Allows for machine internal connections as well as outgoing internet access
-  name_prefix = "${var.prefix}-internal-networking-"
-  vpc_id      = local.vpc_id
+  # Avoid changes that cause replacement due to EKS Cluster issue
+  name   = "${var.prefix}-internal-networking"
+  vpc_id = local.vpc_id
 
   ingress {
     description = "Open internal networking for VMs"
@@ -31,10 +32,6 @@ resource "aws_security_group" "gitlab_internal_networking" {
 
   tags = {
     Name = "${var.prefix}-internal-networking"
-  }
-
-  lifecycle {
-    create_before_destroy = true
   }
 }
 

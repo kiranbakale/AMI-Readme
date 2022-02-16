@@ -106,7 +106,6 @@ resource "google_container_node_pool" "gitlab_webservice_pool" {
   }
 
   lifecycle {
-    create_before_destroy = true
     ignore_changes = [
       initial_node_count,
     ]
@@ -173,7 +172,6 @@ resource "google_container_node_pool" "gitlab_sidekiq_pool" {
   }
 
   lifecycle {
-    create_before_destroy = true
     ignore_changes = [
       initial_node_count,
     ]
@@ -240,7 +238,6 @@ resource "google_container_node_pool" "gitlab_supporting_pool" {
   }
 
   lifecycle {
-    create_before_destroy = true
     ignore_changes = [
       initial_node_count,
     ]
