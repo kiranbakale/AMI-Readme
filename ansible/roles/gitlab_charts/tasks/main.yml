@@ -204,6 +204,11 @@
       register: cluster_info
       tags: info
 
+    - name: Add Autoscaler repo
+      kubernetes.core.helm_repository:
+        name: autoscaler
+        repo_url: "https://kubernetes.github.io/autoscaler"
+
     - name: Setup Cluster Autoscaler (AWS)
       kubernetes.core.helm:
         name: gitlab-cluster-autoscaler

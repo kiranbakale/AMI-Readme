@@ -96,7 +96,6 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
   ]
 
   lifecycle {
-    create_before_destroy = true
     ignore_changes = [
       scaling_config[0].desired_size,
     ]
@@ -143,7 +142,6 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
   ]
 
   lifecycle {
-    create_before_destroy = true
     ignore_changes = [
       scaling_config[0].desired_size,
     ]
@@ -190,7 +188,6 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
   ]
 
   lifecycle {
-    create_before_destroy = true
     ignore_changes = [
       scaling_config[0].desired_size,
     ]
