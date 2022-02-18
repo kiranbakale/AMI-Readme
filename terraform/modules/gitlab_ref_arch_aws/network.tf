@@ -149,3 +149,11 @@ locals {
   frontend_subnet_ids = !local.default_network ? coalescelist(local.subnet_pub_ids, local.subnet_priv_ids) : null
   all_subnet_ids      = !local.default_network ? concat(local.subnet_pub_ids != null ? local.subnet_pub_ids : [], local.subnet_priv_ids != null ? local.subnet_priv_ids : []) : null
 }
+
+output "vpc_id" {
+  value = local.default_network ? local.default_vpc_id : local.vpc_id
+}
+
+output "vpc_cidr_block" {
+  value = var.vpc_cidr_block
+}
