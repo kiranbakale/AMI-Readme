@@ -157,3 +157,11 @@ output "vpc_id" {
 output "vpc_cidr_block" {
   value = var.vpc_cidr_block
 }
+
+output "vpc_subnet_pub_ids" {
+  value = local.subnet_pub_ids
+}
+
+output "vpc_subnet_priv_ids" {
+  value = local.subnet_priv_ids
+}
