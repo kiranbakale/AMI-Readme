@@ -2,7 +2,6 @@
 
 <!-- Briefly describe what this MR is about. -->
 
-
 <!-- Set the appropriate milestone -->
 /milestone %
 
@@ -20,6 +19,7 @@ When ready for review, the Author applies the ~"workflow::ready for review" labe
   - [ ] Merge Request Title and Description are up to date, accurate, and descriptive
   - [ ] MR targeting the appropriate branch
   - [ ] MR has a green pipeline
+  - [ ] MR has no new security alerts in the widget from the `Secret Detection` and `IaC Scan (SAST)` jobs.
 - Code:
   - [ ] Check the area changed works as expected. Consider testing it in different environment sizes (1k,3k,10k,etc.).
   - [ ] Documentation created/updated in the same MR.
@@ -27,4 +27,4 @@ When ready for review, the Author applies the ~"workflow::ready for review" labe
   - [ ] For Terraform changes: setup a previous version environment, then run a `terraform plan` with your new changes and ensure nothing will be destroyed. If anything will be destroyed and this can't be avoided please add a comment to the current MR.
 - [ ] Create any follow-up issue(s) to support the new feature across other supported cloud providers or advanced configurations. Create 1 issue for each provider/configuration. Contact the [Quality Enablement](https://about.gitlab.com/handbook/engineering/quality/sec-enablement-qe-team/) team if unsure.
 
-/label ~"Quality" ~"section::enablement" ~"workflow::in dev"
+/label ~"section::enablement" ~"workflow::in dev"
