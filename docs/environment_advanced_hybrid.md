@@ -243,7 +243,7 @@ In order to grant access to the EKS cluster for other IAM user or roles, consult
 
 ```shell
 # Configure kubeconfig access to the EKS cluster
-aws eks --region <AWS REGION NAME> update-kubeconfig --name <CLUSTER NAME>`. Where `<CLUSTER NAME>
+aws eks --region <AWS REGION NAME> update-kubeconfig --name `<CLUSTER NAME>`
 # Update the configmap/aws-auth config map with additional users
 kubectl edit -n kube-system configmap/aws-auth
 ```
