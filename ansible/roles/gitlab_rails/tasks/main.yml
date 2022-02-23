@@ -81,6 +81,7 @@
   when:
     - "'postgres' in groups and groups['postgres'] | length > 1"
     - postgres_replication_manager == 'patroni'
+    - not postgres_external
   tags:
     - reconfigure
     - db_migrate
