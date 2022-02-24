@@ -211,10 +211,6 @@ output "gitlab_ref_arch_aws" {
 }
 ```
 
-In addition to the above there are some optional settings that can configure the EKS setup as follows:
-
-- `eks_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt Kubernetes secrets. If not provided either `default_kms_key_arm` or a Toolkit created key will be used in that order. Default is `null`.
-
 #### Networking (AWS)
 
 As detailed in the earlier [Configuring network setup (AWS)](environment_provision.md#configure-network-setup-aws) section the same networking options apply for Hybrid environments on AWS.
@@ -247,6 +243,18 @@ aws eks --region <AWS REGION NAME> update-kubeconfig --name `<CLUSTER NAME>`
 # Update the configmap/aws-auth config map with additional users
 kubectl edit -n kube-system configmap/aws-auth
 ```
+
+#### EKS Secrets Envelope Encryption
+
+As an additional security layer for Kubernetes secrets, which are already encrypted on disk automatically, you can optionally enable [envelope encryption of Kubernetes secrets in EKS](https://aws.amazon.com/blogs/containers/using-eks-encryption-provider-support-for-defense-in-depth/) with your own KMS key.
+
+Note however there are several limitations to this feature, such as manually having to encrypt any existing secrets, and it's recommended you review the [documentation](https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html#enable-kms) in full.
+
+:warning:&nbsp; Enabling this feature is irreversible. Any changes to the key or attempting to disable the feature will require a full rebuild of the cluster.
+
+Enabling the feature is controlled via the following variable:
+
+- `eks_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt Kubernetes secrets. Note that the key should have the correct policy to allow access for the cluster's IAM role, [refer to the AWS docs for more info](https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html#enable-kms).
 
 ### Cluster Autoscaling
 
