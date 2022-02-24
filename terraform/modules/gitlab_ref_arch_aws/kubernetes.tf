@@ -387,3 +387,15 @@ resource "aws_iam_role_policy_attachment" "gitlab_s3_eks_role_policy_attachment"
   policy_arn = aws_iam_policy.gitlab_s3_policy[0].arn
   role       = aws_iam_role.gitlab_eks_node_role[0].name
 }
+
+resource "aws_iam_role_policy_attachment" "gitlab_s3_eks_role_registry_policy_attachment" {
+  count      = contains(var.object_storage_buckets, "registry") ? min(local.total_node_pool_count, 1) : 0
+  policy_arn = aws_iam_policy.gitlab_s3_registry_policy[0].arn
+  role       = aws_iam_role.gitlab_eks_node_role[0].name
+}
+
+resource "aws_iam_role_policy_attachment" "gitlab_s3_eks_role_kms_policy_attachment" {
+  count      = var.object_storage_kms_key_arn != null || var.default_kms_key_arn != null ? min(local.total_node_pool_count, length(var.object_storage_buckets), 1) : 0
+  policy_arn = aws_iam_policy.gitlab_s3_kms_policy[0].arn
+  role       = aws_iam_role.gitlab_eks_node_role[0].name
+}

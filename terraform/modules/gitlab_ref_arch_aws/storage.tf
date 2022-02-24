@@ -16,6 +16,26 @@ resource "aws_s3_bucket" "gitlab_object_storage_buckets" {
   tags = var.object_storage_tags
 }
 
+# IAM role and policies
+resource "aws_iam_role" "gitlab_s3_role" {
+  count = min(length(var.object_storage_buckets), 1)
+  name  = "${var.prefix}-s3-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
 resource "aws_iam_policy" "gitlab_s3_policy" {
   count = min(length(var.object_storage_buckets), 1)
   name  = "${var.prefix}-s3-policy"
@@ -31,7 +51,24 @@ resource "aws_iam_policy" "gitlab_s3_policy" {
         ]
         Effect   = "Allow"
         Resource = concat([for bucket in aws_s3_bucket.gitlab_object_storage_buckets : bucket.arn], [for bucket in aws_s3_bucket.gitlab_object_storage_buckets : "${bucket.arn}/*"])
-      },
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "gitlab_s3_role_policy_attachment" {
+  count      = min(length(var.object_storage_buckets), 1)
+  policy_arn = aws_iam_policy.gitlab_s3_policy[0].arn
+  role       = aws_iam_role.gitlab_s3_role[0].name
+}
+
+resource "aws_iam_policy" "gitlab_s3_registry_policy" {
+  count = contains(var.object_storage_buckets, "registry") ? 1 : 0
+  name  = "${var.prefix}-s3-registry-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
       # Docker Registry S3 bucket requires specific permissions
       # https://docs.docker.com/registry/storage-drivers/s3/#s3-permission-scopes
       {
@@ -55,28 +92,34 @@ resource "aws_iam_policy" "gitlab_s3_policy" {
   })
 }
 
-resource "aws_iam_role" "gitlab_s3_role" {
-  count = min(length(var.object_storage_buckets), 1)
-  name  = "${var.prefix}-s3-role"
+resource "aws_iam_role_policy_attachment" "gitlab_s3_role_registry_policy_attachment" {
+  count      = contains(var.object_storage_buckets, "registry") ? 1 : 0
+  policy_arn = aws_iam_policy.gitlab_s3_registry_policy[0].arn
+  role       = aws_iam_role.gitlab_s3_role[0].name
+}
 
-  assume_role_policy = jsonencode({
+resource "aws_iam_policy" "gitlab_s3_kms_policy" {
+  count = var.object_storage_kms_key_arn != null || var.default_kms_key_arn != null ? min(length(var.object_storage_buckets), 1) : 0
+  name  = "${var.prefix}-s3-kms-policy"
+
+  policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Sid    = ""
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-      },
+        Action = [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ]
+        Effect   = "Allow"
+        Resource = var.object_storage_kms_key_arn != null ? var.object_storage_kms_key_arn : var.default_kms_key_arn
+      }
     ]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "gitlab_s3_role_policy_attachment" {
-  count      = min(length(var.object_storage_buckets), 1)
-  policy_arn = aws_iam_policy.gitlab_s3_policy[0].arn
+resource "aws_iam_role_policy_attachment" "gitlab_s3_role_kms_policy_attachment" {
+  count      = var.object_storage_kms_key_arn != null || var.default_kms_key_arn != null ? min(length(var.object_storage_buckets), 1) : 0
+  policy_arn = aws_iam_policy.gitlab_s3_kms_policy[0].arn
   role       = aws_iam_role.gitlab_s3_role[0].name
 }
 
