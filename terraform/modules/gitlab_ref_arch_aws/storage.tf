@@ -128,3 +128,7 @@ resource "aws_iam_instance_profile" "gitlab_s3_profile" {
   name  = "${var.prefix}-s3-profile"
   role  = aws_iam_role.gitlab_s3_role[0].name
 }
+
+output "gitlab_s3_role" {
+  value = try(aws_iam_role.gitlab_s3_role[0].name, null)
+}

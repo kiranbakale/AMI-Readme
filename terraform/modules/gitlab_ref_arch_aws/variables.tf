@@ -99,6 +99,11 @@ variable "consul_data_disks" {
   default = []
 }
 
+variable "consul_iam_instance_profile" {
+  type    = string
+  default = null
+}
+
 variable "elastic_node_count" {
   type    = number
   default = 0
@@ -126,6 +131,11 @@ variable "elastic_disk_kms_key_arn" {
 variable "elastic_data_disks" {
   type    = list(any)
   default = []
+}
+
+variable "elastic_iam_instance_profile" {
+  type    = string
+  default = null
 }
 
 variable "gitaly_node_count" {
@@ -157,6 +167,11 @@ variable "gitaly_data_disks" {
   default = []
 }
 
+variable "gitaly_iam_instance_profile" {
+  type    = string
+  default = null
+}
+
 variable "gitlab_nfs_node_count" {
   type    = number
   default = 0
@@ -186,6 +201,11 @@ variable "gitlab_nfs_data_disks" {
   default = []
 }
 
+variable "gitlab_nfs_iam_instance_profile" {
+  type    = string
+  default = null
+}
+
 variable "gitlab_rails_node_count" {
   type    = number
   default = 0
@@ -213,6 +233,11 @@ variable "gitlab_rails_disk_kms_key_arn" {
 variable "gitlab_rails_data_disks" {
   type    = list(any)
   default = []
+}
+
+variable "gitlab_rails_iam_instance_profile" {
+  type    = string
+  default = null
 }
 
 variable "haproxy_external_node_count" {
@@ -248,6 +273,11 @@ variable "haproxy_external_elastic_ip_allocation_ids" {
   default = []
 }
 
+variable "haproxy_external_iam_instance_profile" {
+  type    = string
+  default = null
+}
+
 variable "haproxy_internal_node_count" {
   type    = number
   default = 0
@@ -275,6 +305,11 @@ variable "haproxy_internal_disk_kms_key_arn" {
 variable "haproxy_internal_data_disks" {
   type    = list(any)
   default = []
+}
+
+variable "haproxy_internal_iam_instance_profile" {
+  type    = string
+  default = null
 }
 
 variable "monitor_node_count" {
@@ -306,6 +341,11 @@ variable "monitor_data_disks" {
   default = []
 }
 
+variable "monitor_iam_instance_profile" {
+  type    = string
+  default = null
+}
+
 variable "pgbouncer_node_count" {
   type    = number
   default = 0
@@ -333,6 +373,11 @@ variable "pgbouncer_disk_kms_key_arn" {
 variable "pgbouncer_data_disks" {
   type    = list(any)
   default = []
+}
+
+variable "pgbouncer_iam_instance_profile" {
+  type    = string
+  default = null
 }
 
 variable "postgres_node_count" {
@@ -364,6 +409,11 @@ variable "postgres_data_disks" {
   default = []
 }
 
+variable "postgres_iam_instance_profile" {
+  type    = string
+  default = null
+}
+
 variable "praefect_node_count" {
   type    = number
   default = 0
@@ -391,6 +441,11 @@ variable "praefect_disk_kms_key_arn" {
 variable "praefect_data_disks" {
   type    = list(any)
   default = []
+}
+
+variable "praefect_iam_instance_profile" {
+  type    = string
+  default = null
 }
 
 variable "praefect_postgres_node_count" {
@@ -422,6 +477,11 @@ variable "praefect_postgres_data_disks" {
   default = []
 }
 
+variable "praefect_postgres_iam_instance_profile" {
+  type    = string
+  default = null
+}
+
 variable "redis_node_count" {
   type    = number
   default = 0
@@ -449,6 +509,11 @@ variable "redis_disk_kms_key_arn" {
 variable "redis_data_disks" {
   type    = list(any)
   default = []
+}
+
+variable "redis_iam_instance_profile" {
+  type    = string
+  default = null
 }
 
 variable "redis_cache_node_count" {
@@ -480,6 +545,11 @@ variable "redis_cache_data_disks" {
   default = []
 }
 
+variable "redis_cache_iam_instance_profile" {
+  type    = string
+  default = null
+}
+
 variable "redis_persistent_node_count" {
   type    = number
   default = 0
@@ -509,6 +579,11 @@ variable "redis_persistent_data_disks" {
   default = []
 }
 
+variable "redis_persistent_iam_instance_profile" {
+  type    = string
+  default = null
+}
+
 variable "sidekiq_node_count" {
   type    = number
   default = 0
@@ -536,6 +611,11 @@ variable "sidekiq_disk_kms_key_arn" {
 variable "sidekiq_data_disks" {
   type    = list(any)
   default = []
+}
+
+variable "sidekiq_iam_instance_profile" {
+  type    = string
+  default = null
 }
 
 # EKS - Kubernetes \ Helm
@@ -1008,4 +1088,9 @@ variable "elb_internal_create" {
 variable "additional_tags" {
   type    = map(any)
   default = {}
+}
+
+variable "default_iam_instance_profile" {
+  type    = string
+  default = null
 }

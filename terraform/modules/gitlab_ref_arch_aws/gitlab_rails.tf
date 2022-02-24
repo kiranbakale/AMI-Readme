@@ -14,7 +14,7 @@ module "gitlab_rails" {
   disk_kms_key_arn     = var.gitlab_rails_disk_kms_key_arn != null ? var.gitlab_rails_disk_kms_key_arn : var.default_kms_key_arn
   data_disks           = var.gitlab_rails_data_disks
   subnet_ids           = local.backend_subnet_ids
-  iam_instance_profile = try(aws_iam_instance_profile.gitlab_s3_profile[0].name, null)
+  iam_instance_profile = try(coalesce(var.gitlab_rails_iam_instance_profile, var.default_iam_instance_profile, aws_iam_instance_profile.gitlab_s3_profile[0].name), null)
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
   security_group_ids = [
