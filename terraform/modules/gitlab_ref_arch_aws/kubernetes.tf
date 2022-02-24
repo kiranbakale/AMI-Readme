@@ -399,3 +399,19 @@ resource "aws_iam_role_policy_attachment" "gitlab_s3_eks_role_kms_policy_attachm
   policy_arn = aws_iam_policy.gitlab_s3_kms_policy[0].arn
   role       = aws_iam_role.gitlab_eks_node_role[0].name
 }
+
+output "kubernetes" {
+  value = {
+    "kubernetes_cluster_name" = try(aws_eks_cluster.gitlab_cluster[0].name, "")
+
+    # Expose All Roles created for EKS
+    "kubernetes_eks_role"           = try(aws_iam_role.gitlab_eks_role[0].name, "")
+    "kubernetes_eks_node_role"      = try(aws_iam_role.gitlab_eks_node_role[0].name, "")
+    "kubernetes_addon_vpc_cni_role" = try(aws_iam_role.gitlab_addon_vpc_cni_role[0].name, "")
+
+    # Provide the OIDC information to be used outside of this module (e.g. IAM role for other K8s components)
+    "kubernetes_cluster_oidc_issuer_url" = try(aws_eks_cluster.gitlab_cluster[0].identity[0].oidc[0].issuer, "")
+    "kubernetes_oidc_provider"           = try(replace(aws_eks_cluster.gitlab_cluster[0].identity[0].oidc[0].issuer, "https://", ""), "")
+    "kubernetes_oidc_provider_arn"       = try(aws_iam_openid_connect_provider.gitlab_cluster_openid[0].arn, "")
+  }
+}
