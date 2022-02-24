@@ -13,14 +13,6 @@ locals {
 }
 
 # Cluster
-## Default KMS Key not available for EKS so we create one if none provided
-resource "aws_kms_key" "gitlab_cluster_key" {
-  count = local.total_node_pool_count > 0 && var.eks_kms_key_arn == null && var.default_kms_key_arn == null ? 1 : 0
-
-  description         = "${var.prefix}-cluster-key"
-  enable_key_rotation = true
-}
-
 resource "aws_eks_cluster" "gitlab_cluster" {
   count = min(local.total_node_pool_count, 1)
 
@@ -36,11 +28,15 @@ resource "aws_eks_cluster" "gitlab_cluster" {
     ]
   }
 
-  encryption_config {
-    provider {
-      key_arn = var.eks_kms_key_arn != null ? var.eks_kms_key_arn : coalesce(var.default_kms_key_arn, aws_kms_key.gitlab_cluster_key[0].arn)
+  dynamic "encryption_config" {
+    for_each = range(var.eks_kms_key_arn != null ? 1 : 0)
+
+    content {
+      provider {
+        key_arn = var.eks_kms_key_arn
+      }
+      resources = ["secrets"]
     }
-    resources = ["secrets"]
   }
 
   tags = merge({
