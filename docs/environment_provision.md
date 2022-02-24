@@ -543,7 +543,8 @@ Note that these keys must be [available in AWS KMS](https://docs.aws.amazon.com/
 - `default_kms_key_arn` - The AWS KMS key ARN to use for all storages and services unless configured otherwise. Defaults to `null`.
   - This setting is also used for [Cloud Native Hybrid EKS clusters](environment_advanced_hybrid.md) and / or any [cloud services](environment_advanced_services.md) and Cloud Native Hybrid EKS clusters.
 - `*_kms_key_arn` - The AWS KMS key ARN to be used for a specific storage. For example `gitaly_kms_key_arn` will configure a specific key for all its disk(s) and `object_storage_kms_key_arn` configures a key for all buckets.
-  - Note that the key used for `object_storage_kms_key_arn` should have the default policy applied to allow for IAM authentication by GitLab.
+
+:information_source:&nbsp; Note that the key used for `object_storage_kms_key_arn` needs to have the [correct policy document applied](https://aws.amazon.com/premiumsupport/knowledge-center/s3-bucket-access-default-encryption/) to allow for IAM authentication by GitLab. The policy document should allow access to the IAM role created by the Toolkit for S3 access.
 
 #### Configure Authentication (AWS)
 
