@@ -624,10 +624,6 @@ variable "eks_default_subnet_count" {
   type    = number
   default = 2
 }
-variable "eks_kms_key_arn" {
-  type    = string
-  default = null
-}
 
 ## Webservice
 variable "webservice_node_pool_count" {
@@ -688,6 +684,7 @@ variable "supporting_node_pool_disk_size" {
   type    = string
   default = null
 }
+
 ## Cluster Autoscaling (Optional)
 variable "supporting_node_pool_max_count" {
   type    = number
@@ -696,6 +693,16 @@ variable "supporting_node_pool_max_count" {
 variable "supporting_node_pool_min_count" {
   type    = number
   default = 0
+}
+
+# Secrets Envelope Encryption (Optional)
+variable "eks_envelope_encryption" {
+  type    = bool
+  default = false
+}
+variable "eks_envelope_kms_key_arn" {
+  type    = string
+  default = null
 }
 
 # PaaS Services
