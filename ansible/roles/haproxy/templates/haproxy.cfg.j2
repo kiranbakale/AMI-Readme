@@ -15,9 +15,9 @@ defaults
     option httplog
     option dontlognull
     retries 3
-    timeout connect 10m
-    timeout client 30m
-    timeout server 30m
+    timeout connect 30s
+    timeout client 305s
+    timeout server 305s
  
 {% if 'haproxy_external' in hostvars[inventory_hostname].group_names %}
 {% include 'haproxy_external.cfg.j2' %}
