@@ -29,11 +29,11 @@ resource "aws_eks_cluster" "gitlab_cluster" {
   }
 
   dynamic "encryption_config" {
-    for_each = range(var.eks_kms_key_arn != null ? 1 : 0)
+    for_each = range(var.eks_envelope_encryption ? 1 : 0)
 
     content {
       provider {
-        key_arn = var.eks_kms_key_arn
+        key_arn = var.eks_envelope_kms_key_arn != null ? var.eks_envelope_kms_key_arn : coalesce(var.default_kms_key_arn, aws_kms_key.gitlab_cluster_key[0].arn)
       }
       resources = ["secrets"]
     }
@@ -48,6 +48,22 @@ resource "aws_eks_cluster" "gitlab_cluster" {
     aws_iam_role_policy_attachment.amazon_eks_cluster_policy,
     aws_iam_role_policy_attachment.amazon_eks_vpc_resource_controller,
   ]
+}
+
+## Optional KMS Key for EKS Envelope Encryption if enabled and none provided
+resource "aws_kms_key" "gitlab_cluster_key" {
+  count = var.eks_envelope_encryption && local.total_node_pool_count > 0 && var.eks_envelope_kms_key_arn == null && var.default_kms_key_arn == null ? 1 : 0
+
+  description         = "${var.prefix}-cluster-key"
+  enable_key_rotation = true
+}
+
+## Optional KMS Key for EKS Envelope Encryption if enabled and none provided
+resource "aws_kms_alias" "gitlab_cluster_key" {
+  count = var.eks_envelope_encryption && local.total_node_pool_count > 0 && var.eks_envelope_kms_key_arn == null && var.default_kms_key_arn == null ? 1 : 0
+
+  name          = "alias/${var.prefix}-cluster-key"
+  target_key_id = aws_kms_key.gitlab_cluster_key[0].arn
 }
 
 # Node Pools
