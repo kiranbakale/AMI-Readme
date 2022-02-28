@@ -70,5 +70,5 @@ backend prometheus
 backend kibana
     option httpchk GET /api/status
 
-    server kibana {{ elastic_primary_int_ip }}:5601 check
+    server kibana {{ elastic_primary_int_ip }}:5601 check inter 10s fall 1
 {% endif %}
