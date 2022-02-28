@@ -1,17 +1,22 @@
 - name: Run Zero Downtime Updates
   import_tasks: zero-downtime-update.yml
+  tags: primary
   when:
     - omnibus_node
     - (geo_primary_site_group_name not in groups or geo_primary_site_group_name in group_names)
 
 - name: Run Zero Downtime Updates on Geo Secondary Site if present
   import_tasks: zero-downtime-update.yml
+  tags: secondary
   when:
     - omnibus_node
     - (geo_secondary_site_group_name in group_names)
 
 - name: Run post-deployment migrations
   import_tasks: post-deployment-migrations.yml
+  tags:
+    - primary
+    - secondary
   when: ('sidekiq_primary' in group_names)
 
 - name: Remove zero downtime config from all nodes
@@ -24,4 +29,7 @@
     - name: Run gitlab-ctl reconfigure
       command: gitlab-ctl reconfigure
       throttle: 1
+  tags:
+    - primary
+    - secondary
   when: omnibus_node
