@@ -131,6 +131,9 @@
       become: false
 
     - name: Run Custom Tasks
-      include_tasks: "{{ postgres_custom_tasks_file }}"
+      include_tasks:
+        file: "{{ postgres_custom_tasks_file }}"
+        apply:
+          tags: custom_tasks
       when: postgres_custom_tasks_file_path.stat.exists
-  tags: reconfigure
+  tags: custom_tasks

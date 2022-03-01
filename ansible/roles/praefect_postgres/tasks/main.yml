@@ -65,6 +65,9 @@
       become: false
 
     - name: Run Custom Tasks
-      include_tasks: "{{ praefect_postgres_custom_tasks_file }}"
+      include_tasks:
+        file: "{{ praefect_postgres_custom_tasks_file }}"
+        apply:
+          tags: custom_tasks
       when: praefect_postgres_custom_tasks_file_path.stat.exists
-  tags: reconfigure
+  tags: custom_tasks

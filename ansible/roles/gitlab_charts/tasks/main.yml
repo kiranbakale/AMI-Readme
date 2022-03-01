@@ -240,8 +240,9 @@
       become: false
 
     - name: Run Custom Tasks
-      include_tasks: "{{ gitlab_charts_custom_tasks_file }}"
+      include_tasks:
+        file: "{{ gitlab_charts_custom_tasks_file }}"
+        apply:
+          tags: custom_tasks
       when: gitlab_charts_custom_tasks_file_path.stat.exists
-  tags:
-    - reconfigure
-    - charts
+  tags: custom_tasks

@@ -211,6 +211,9 @@
       become: false
 
     - name: Run Custom Tasks
-      include_tasks: "{{ gitlab_rails_custom_tasks_file }}"
+      include_tasks:
+        file: "{{ gitlab_rails_custom_tasks_file }}"
+        apply:
+          tags: custom_tasks
       when: gitlab_rails_custom_tasks_file_path.stat.exists
-  tags: reconfigure
+  tags: custom_tasks
