@@ -129,9 +129,12 @@
       become: false
 
     - name: Run Custom Tasks
-      include_tasks: "{{ post_configure_custom_tasks_file }}"
+      include_tasks:
+        file: "{{ post_configure_custom_tasks_file }}"
+        apply:
+          tags: custom_tasks
       when: post_configure_custom_tasks_file_path.stat.exists
-  tags: reconfigure
+  tags: custom_tasks
 
 - name: Remove Access Token
   block:

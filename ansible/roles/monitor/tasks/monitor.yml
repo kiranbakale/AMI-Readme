@@ -89,6 +89,9 @@
       become: false
 
     - name: Run Custom Tasks
-      include_tasks: "{{ monitor_custom_tasks_file }}"
+      include_tasks:
+        file: "{{ monitor_custom_tasks_file }}"
+        apply:
+          tags: custom_tasks
       when: monitor_custom_tasks_file_path.stat.exists
-  tags: reconfigure
+  tags: custom_tasks

@@ -76,6 +76,7 @@ Setting up common tasks is done in the same manner for each hook as follows:
 
 1. Create a standard Ansible Tasks yaml file with the tasks you wish to run.
     - The file must be in a format that can be run in Ansible's [`include_tasks`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_tasks_module.html) module.
+    - You can add the tag `custom_tasks` to your tasks if you wish to run the tasks in isolation.
 1. By default the Toolkit looks for each hook's Custom Tasks file(s) in the [environment inventory's](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_tasks` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_tasks/<custom_tasks_file>.yml`. This is controlled by the following settings for each:
     - `common_custom_tasks_file` - Full path for the Common tasks file. Defaults to `<inventory_dir>/files/gitlab_tasks/common.yml`.
     - `<component>_custom_tasks_file` - Full path for Omnibus custom tasks files. Where `<component>` should be replaced with the one intended (options below). Defaults to `<inventory_dir>/files/gitlab_tasks/<component>.yml`.
