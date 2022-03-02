@@ -2,6 +2,10 @@ locals {
   existing_network = var.vpc_id != null && (var.subnet_pub_ids != null || var.subnet_priv_ids != null)
   create_network   = var.create_network && !local.existing_network
   default_network  = !local.create_network && !local.existing_network
+
+  create_peering     = local.create_network && var.peer_vpc_id != null
+  enable_peering     = var.peer_connection_id != null && var.peer_vpc_cidr != null
+  peer_connection_id = var.peer_connection_id != null ? var.peer_connection_id : try(aws_vpc_peering_connection.gitlab_vpc_peering_requester[0].id, "")
 }
 
 resource "aws_default_vpc" "default" {
@@ -70,6 +74,15 @@ resource "aws_route_table" "gitlab_vpc_rt_pub" {
     gateway_id = aws_internet_gateway.gitlab_vpc_gw[0].id
   }
 
+  dynamic "route" {
+    for_each = range(local.create_peering || local.enable_peering ? 1 : 0)
+
+    content {
+      cidr_block                = var.peer_vpc_cidr
+      vpc_peering_connection_id = local.peer_connection_id
+    }
+  }
+
   tags = {
     Name = "${var.prefix}-pub-rt"
   }
@@ -135,7 +148,23 @@ resource "aws_route_table_association" "gitlab_vpc_rt_priv_rta" {
   route_table_id = aws_route_table.gitlab_vpc_rt_priv[count.index].id
 }
 
-# Set various params for possible network configs
+# Setup network peering for Geo
+resource "aws_vpc_peering_connection" "gitlab_vpc_peering_requester" {
+  count = local.create_peering ? 1 : 0
+
+  peer_region = var.peer_region
+  peer_vpc_id = var.peer_vpc_id
+  vpc_id      = aws_vpc.gitlab_vpc[count.index].id
+  auto_accept = false
+}
+
+resource "aws_vpc_peering_connection_accepter" "gitlab_vpc_peering_accepter" {
+  count = local.enable_peering ? 1 : 0
+
+  vpc_peering_connection_id = local.peer_connection_id
+  auto_accept               = true
+}
+
 locals {
   default_vpc_id     = local.default_network ? aws_default_vpc.default[0].id : null
   default_subnet_ids = local.default_network ? data.aws_subnet_ids.defaults[0].ids : null
@@ -148,6 +177,20 @@ locals {
   backend_subnet_ids  = !local.default_network ? coalescelist(local.subnet_priv_ids, local.subnet_pub_ids) : null
   frontend_subnet_ids = !local.default_network ? coalescelist(local.subnet_pub_ids, local.subnet_priv_ids) : null
   all_subnet_ids      = !local.default_network ? concat(local.subnet_pub_ids != null ? local.subnet_pub_ids : [], local.subnet_priv_ids != null ? local.subnet_priv_ids : []) : null
+}
+
+output "vpc_connection_peering_variables_secondary" {
+  value = {
+    "peer_vpc_id"   = try(aws_vpc.gitlab_vpc[0].id, "")
+    "peer_vpc_cidr" = try(aws_vpc.gitlab_vpc[0].cidr_block, "")
+  }
+}
+
+output "vpc_connection_peering_variables_primary" {
+  value = {
+    "peer_vpc_cidr"      = try(aws_vpc.gitlab_vpc[0].cidr_block, "")
+    "peer_connection_id" = try(aws_vpc_peering_connection.gitlab_vpc_peering_requester[0].id, "")
+  }
 }
 
 output "vpc_id" {

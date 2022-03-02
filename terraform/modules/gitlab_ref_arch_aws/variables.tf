@@ -1085,8 +1085,30 @@ variable "subnet_priv_ids" {
   default = null
 }
 
-## AWS Load Balancers
-### Internal
+## Peering
+variable "peer_region" {
+  description = "AWS region for the VPC network to create a peering connection with"
+  type        = string
+  default     = null
+}
+variable "peer_connection_id" {
+  description = "ID for the peering connection made between each VPC"
+  type        = string
+  default     = null
+}
+variable "peer_vpc_id" {
+  description = "VPC ID for the VPC network to create a peering connection with"
+  type        = string
+  default     = null
+}
+variable "peer_vpc_cidr" {
+  description = "CIDR for the VPC network to create a peering connection with"
+  type        = string
+  default     = null
+}
+
+# AWS Load Balancers
+## Internal
 variable "elb_internal_create" {
   type    = bool
   default = false

@@ -22,6 +22,18 @@ resource "aws_security_group" "gitlab_internal_networking" {
     cidr_blocks = [data.aws_vpc.selected.cidr_block]
   }
 
+  dynamic "ingress" {
+    for_each = range(var.peer_vpc_cidr != null ? 1 : 0)
+
+    content {
+      description = "Open internal peer networking for VMs"
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = [var.peer_vpc_cidr]
+    }
+  }
+
   egress {
     description = "Open internet access for VMs"
     from_port   = 0
