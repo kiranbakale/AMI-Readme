@@ -96,6 +96,37 @@ module "gitlab_ref_arch_*" {
 
 Once each site is configured we can run the `terraform apply` command against each project. You can run this command against the primary and secondary sites at the same time.
 
+#### VPC Peering (AWS)
+
+Enabling [AWS VPC Peering](https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html) will allow traffic to flow in both directions from a primary and secondary site just like normal internal connections. This is required if the sites are located in different regions.
+
+AWS VPC peering requires a handshake, I.E. A VPC must first request the Peering and the other has to then accept it. As such, this requires Terraform to be run a couple of times to go through this process. To do this first provision the primary site with `terraform apply`, this will output some values that are required by the secondary site to setup peering.
+
+```json
+  "network" = {
+    "peer_connection_id" = "<peer_connection_id>"
+    "vpc_cidr_block" = "<vpc_cidr_block>"
+    "vpc_id" = "<vpc_id>"
+    "vpc_subnet_priv_ids" =["vpc_subnet_priv_id1", "vpc_subnet_priv_id2"]
+    "vpc_subnet_pub_ids" = ["vpc_subnet_pub_id1", "vpc_subnet_pub_id2"]
+  }
+```
+
+Using this output, add the below values to the secondaries `environment.tf` file. These values are used so that the secondary is able to setup a peering connection with the primary's VPC.
+
+- `peer_region` - The AWS region used for the primary site. This won't be in the output for Terraform but is something that is defined as part of the environment config.
+- `peer_vpc_id` - The VPC ID of the primary site.
+- `peer_vpc_cidr` - The CIDR used for the internal network as part of the VPC.
+
+:information_source:&nbsp; When setting up VPC peering, the CIDR used for each VPC must be different and cannot overlap.
+
+Now run `terraform apply` for the secondary site and once this completes the `vpc_connection_details` will be output similar to the primary, this time take the `peering_id` and `vpc_cidr_block` and add them into the primary sites `environment.tf`
+
+- `peer_connection_id` - The ID of the peer connection created as part of the secondaries `terraform apply`
+- `peer_vpc_cidr` - The CIDR used for the internal network as part of the VPC on the secondary site.
+
+Once added you will need to rerun `terraform apply` for the primary site. This will accept the peering request created by the secondary as well as create routing and firewall rules to allow traffic from the secondary VPC. After this, peering will now be configured and allow your sites to communicate internally.
+
 ### Ansible
 
 We will need to start by creating new inventories for a Geo deployment. For Geo we will require 3 inventories: 1 for each site and 1 for all sites. It is recommended to store these in one parent folder to keep all the config together.

@@ -24,7 +24,7 @@ module "haproxy_external" {
     aws_security_group.gitlab_internal_networking.id,
     aws_security_group.gitlab_external_ssh.id,
     try(aws_security_group.gitlab_external_git_ssh[0].id, null),
-    try(aws_security_group.gitlab_external_http_https[0].id, null),
+    try(aws_security_group.gitlab_external_http_https[0].id, null)
   ]
 
   geo_site       = var.geo_site
