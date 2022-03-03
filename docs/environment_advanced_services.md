@@ -139,7 +139,7 @@ The variables for this service start with the prefix `rds_postgres_*` and should
 - `rds_postgres_username` - The username for the instance. Optional, default is `gitlab`.
 - `rds_postgres_database_name` - The name of the main database in the instance for use by GitLab. Optional, default is `gitlabhq_production`.
 - `rds_postgres_port` - The password for the instance. Should only be changed if desired. Optional, default is `5432`.
-- `rds_postgres_version` - The version of the PostgreSQL instance. Should only be changed to versions that are supported by GitLab. Optional, default is `12.6`.
+- `rds_postgres_version` - The version of the PostgreSQL instance. Should only be changed to versions that are supported by GitLab. Optional, default is `12`.
 - `rds_postgres_allocated_storage` - The initial disk size for the instance. Optional, default is `100`.
 - `rds_postgres_max_allocated_storage` - The max disk size for the instance. Optional, default is `1000`.
 - `rds_postgres_multi_az` - Specifies if the RDS instance is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`.
