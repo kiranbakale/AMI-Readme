@@ -95,7 +95,8 @@ resource "google_compute_instance" "gitlab" {
 
   lifecycle {
     ignore_changes = [
-      min_cpu_platform
+      min_cpu_platform,
+      boot_disk
     ]
   }
 
