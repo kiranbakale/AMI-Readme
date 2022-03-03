@@ -33,7 +33,7 @@ resource "aws_eks_cluster" "gitlab_cluster" {
 
     content {
       provider {
-        key_arn = var.eks_envelope_kms_key_arn != null ? var.eks_envelope_kms_key_arn : coalesce(var.default_kms_key_arn, aws_kms_key.gitlab_cluster_key[0].arn)
+        key_arn = var.eks_envelope_kms_key_arn != null ? var.eks_envelope_kms_key_arn : coalesce(var.default_kms_key_arn, try(aws_kms_key.gitlab_cluster_key[0].arn, null))
       }
       resources = ["secrets"]
     }

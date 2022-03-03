@@ -40,7 +40,7 @@ resource "aws_db_instance" "gitlab_praefect" {
   allocated_storage     = var.rds_praefect_postgres_allocated_storage
   max_allocated_storage = var.rds_praefect_postgres_max_allocated_storage
   storage_encrypted     = true
-  kms_key_id            = coalesce(var.rds_praefect_postgres_kms_key_arn, var.default_kms_key_arn, data.aws_kms_key.aws_rds[0].arn)
+  kms_key_id            = coalesce(var.rds_praefect_postgres_kms_key_arn, var.default_kms_key_arn, try(data.aws_kms_key.aws_rds[0].arn, null))
 
   backup_window           = var.rds_praefect_postgres_backup_window
   backup_retention_period = var.rds_praefect_postgres_backup_retention_period
