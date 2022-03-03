@@ -12,6 +12,32 @@
         - ansible_hostname != inventory_hostname
       tags: hostname
 
+    - name: Add GitLab repository GPG key (Ubuntu)
+      apt_key:
+        url: https://packages.gitlab.com/gpg.key
+        state: present
+      register: result
+      retries: 2
+      delay: 3
+      until: result is success
+      when:
+        - omnibus_node
+        - ansible_facts['os_family'] == "Debian"
+      tags: gpg
+
+    - name: Add GitLab repository GPG key (RHEL)
+      rpm_key:
+        key: https://packages.gitlab.com/gpg.key
+        state: present
+      register: result
+      retries: 2
+      delay: 3
+      until: result is success
+      when:
+        - omnibus_node
+        - ansible_facts['os_family'] == "RedHat"
+      tags: gpg
+
     - name: Setup Packages
       import_tasks: packages_setup.yml
       tags: packages
@@ -42,32 +68,6 @@
           when: group_data_disks | length > 0
       when: cloud_provider != 'none'
       tags: data_disks
-
-    - name: Add GitLab repository GPG key (Ubuntu)
-      apt_key:
-        url: https://packages.gitlab.com/gpg.key
-        state: present
-      register: result
-      retries: 2
-      delay: 3
-      until: result is success
-      when:
-        - omnibus_node
-        - ansible_facts['os_family'] == "Debian"
-      tags: gpg
-
-    - name: Add GitLab repository GPG key (RHEL)
-      rpm_key:
-        key: https://packages.gitlab.com/gpg.key
-        state: present
-      register: result
-      retries: 2
-      delay: 3
-      until: result is success
-      when:
-        - omnibus_node
-        - ansible_facts['os_family'] == "RedHat"
-      tags: gpg
 
     # Removes the official release repo if it's present as we typically want to stick with Nightly
     # Prevents apt from switching to the release channel (when an official release is younger than nightly)
