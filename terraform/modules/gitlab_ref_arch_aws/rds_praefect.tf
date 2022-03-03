@@ -58,5 +58,6 @@ output "rds_praefect_postgres_connection" {
     "rds_praefect_database_username" = try(aws_db_instance.gitlab_praefect[0].username, "")
     "rds_praefect_database_arn"      = try(aws_db_instance.gitlab_praefect[0].arn, "")
     "rds_praefect_kms_key_arn"       = try(aws_db_instance.gitlab_praefect[0].kms_key_id, "")
+    "rds_praefect_version"           = try(aws_db_instance.gitlab[0].engine_version_actual, "")
   }
 }
