@@ -69,5 +69,6 @@ output "rds_postgres_connection" {
     "rds_database_username" = try(aws_db_instance.gitlab[0].username, "")
     "rds_database_arn"      = try(aws_db_instance.gitlab[0].arn, "")
     "rds_kms_key_arn"       = try(aws_db_instance.gitlab[0].kms_key_id, "")
+    "rds_version"           = try(aws_db_instance.gitlab[0].engine_version_actual, "")
   }
 }
