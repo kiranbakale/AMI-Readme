@@ -219,6 +219,7 @@
         - name: Install GitLab rpm package
           yum:
             name: "{{ gitlab_rpm_target_path }}"
+            disable_gpg_check: true
           when:
             - omnibus_node
             - (gitlab_rpm_host_path != '') or (gitlab_rpm_download_url != '')
