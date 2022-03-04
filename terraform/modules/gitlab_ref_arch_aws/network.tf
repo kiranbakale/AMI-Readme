@@ -193,18 +193,12 @@ output "vpc_connection_peering_variables_primary" {
   }
 }
 
-output "vpc_id" {
-  value = local.default_network ? local.default_vpc_id : local.vpc_id
-}
-
-output "vpc_cidr_block" {
-  value = var.vpc_cidr_block
-}
-
-output "vpc_subnet_pub_ids" {
-  value = local.subnet_pub_ids
-}
-
-output "vpc_subnet_priv_ids" {
-  value = local.subnet_priv_ids
+output "network" {
+  value = {
+    "vpc_id"              = local.default_network ? local.default_vpc_id : local.vpc_id
+    "vpc_subnet_pub_ids"  = local.subnet_pub_ids
+    "vpc_subnet_priv_ids" = local.subnet_priv_ids
+    "vpc_cidr_block"      = var.vpc_cidr_block
+    "peer_connection_id"  = try(aws_vpc_peering_connection.gitlab_vpc_peering_requester[0].id, "")
+  }
 }
