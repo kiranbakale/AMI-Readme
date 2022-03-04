@@ -403,31 +403,6 @@ An example would be the [`jsonfile`](https://docs.ansible.com/ansible/latest/col
 
 Refer to the [Ansible docs](https://docs.ansible.com/ansible/latest/plugins/cache.html#cache-plugins) for more info.
 
-## Container Registry (AWS Hybrid)
-
-Container Registry is enabled by default if you're deploying [Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/#available-reference-architectures) configured with external SSL via GET using AWS cloud provider. Container Registry in that case will run in k8s and use an s3 bucket for storage.
-
-## Disable External IPs (GCP)
-
-Optionally, you may want to disable External IPs on your provisioned nodes. This is done in Terraform with the `setup_external_ips` variable being set to false in your `environment.tf` file:
-
-```tf
-module "gitlab_ref_arch_gcp" {
-  source = "../../modules/gitlab_ref_arch_gcp"
-[...]
-
-  setup_external_ips = false
-}
-```
-
-Once set no external IPs will be created or added to your nodes.
-
-In this setup however some tweaks will need to be made to ansible:
-
-- It will need to be run from a box that can access the boxes via internal IPs
-- When using the Dynamic Inventory it will need to be adjusted to return internal IPs. This can be done by changing the `compose.ansible_host` setting to `private_ip_address`
-- The `external_url` setting should be set to the URL that the instance will be reachable internally
-
 ## System Packages
 
 The Toolkit will install system packages on every node it requires for setting up GitLab.
@@ -455,3 +430,41 @@ The Toolkit can also optionally upgrade all packages and clean up unneeded packa
 
 - `system_packages_upgrade`: Configures the Toolkit to upgrade all packages on nodes. Default is `false`. Can also be set as via the environment variable `SYSTEM_PACKAGES_UPGRADE`.
 - `system_packages_autoremove`: Configures the Toolkit to autoremove any old or unneeded packages on nodes. Default is `false`. Can also be set as via the environment variable `SYSTEM_PACKAGES_AUTOREMOVE`.
+
+## Custom IAM Instance Policies (AWS)
+
+[In AWS you can attach IAM Instance Profiles / Roles to EC2 Instances](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html). These Roles can then contain [Policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html) (AKA permissions) that are attached to the instance to allow it to perform actions against AWS APIs, e.g. accessing Object Storage.
+
+The Toolkit uses this functionality in several places to ensure the needed permissions for GitLab are set on the right instances.
+
+As a convenience, you can also pass in additional Policies to either all instances or specific component instances as required (AWS Managed or custom). The Toolkit will manage the Role and attach these policies for you.
+
+Passing in your policies is done in Terraform via the following variables in your `environment.tf` file. Note that for individual component instances the same variable suffix is used throughout, for readability this is defined once only:
+
+- `default_iam_instance_policy_arns` - List of IAM Policy [ARNs](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) to attach on all Instances, for example `["arn:aws:iam::aws:policy/AmazonS3FullAccess"]`. Defaults to `[]`.
+- `*_iam_instance_policy_arns` -  List of IAM Policy [ARNs](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) to attach on all Instances. For example if `gitaly_iam_instance_policy_arns` was set to `["arn:aws:iam::aws:policy/AmazonS3FullAccess"]` then this Policy would be applied to all Gitaly instances via a new Role. Defaults to `[]`.
+
+## Container Registry (AWS Hybrid)
+
+Container Registry is enabled by default if you're deploying [Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/#available-reference-architectures) configured with external SSL via GET using AWS cloud provider. Container Registry in that case will run in k8s and use an s3 bucket for storage.
+
+## Disable External IPs (GCP)
+
+Optionally, you may want to disable External IPs on your provisioned nodes. This is done in Terraform with the `setup_external_ips` variable being set to false in your `environment.tf` file:
+
+```tf
+module "gitlab_ref_arch_gcp" {
+  source = "../../modules/gitlab_ref_arch_gcp"
+[...]
+
+  setup_external_ips = false
+}
+```
+
+Once set no external IPs will be created or added to your nodes.
+
+In this setup however some tweaks will need to be made to ansible:
+
+- It will need to be run from a box that can access the boxes via internal IPs
+- When using the Dynamic Inventory it will need to be adjusted to return internal IPs. This can be done by changing the `compose.ansible_host` setting to `private_ip_address`
+- The `external_url` setting should be set to the URL that the instance will be reachable internally

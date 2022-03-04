@@ -15,7 +15,7 @@ resource "aws_instance" "gitlab" {
   ami                    = var.ami_id
   key_name               = var.ssh_key_name
   vpc_security_group_ids = compact(var.security_group_ids)
-  iam_instance_profile   = var.iam_instance_profile
+  iam_instance_profile   = length(var.iam_instance_policy_arns) > 0 ? aws_iam_instance_profile.gitlab[0].name : null
 
   subnet_id = var.subnet_ids != null ? element(tolist(var.subnet_ids), count.index) : null
 
@@ -45,6 +45,7 @@ resource "aws_instance" "gitlab" {
   }
 }
 
+# Data Disks
 locals {
   node_data_disks = flatten([
     for i in range(var.node_count) :
@@ -96,4 +97,37 @@ resource "aws_eip_association" "gitlab" {
 
   instance_id   = aws_instance.gitlab[count.index].id
   allocation_id = var.elastic_ip_allocation_ids[count.index]
+}
+
+# IAM Instance Profile
+resource "aws_iam_instance_profile" "gitlab" {
+  count = var.node_count > 0 && length(var.iam_instance_policy_arns) > 0 ? 1 : 0
+  name  = "${var.prefix}-${var.node_type}-profile"
+  role  = aws_iam_role.gitlab[0].name
+}
+
+resource "aws_iam_role" "gitlab" {
+  count = var.node_count > 0 && length(var.iam_instance_policy_arns) > 0 ? 1 : 0
+  name  = "${var.prefix}-${var.node_type}-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "gitlab" {
+  count = var.node_count > 0 ? length(var.iam_instance_policy_arns) : 0
+
+  role       = aws_iam_role.gitlab[0].name
+  policy_arn = var.iam_instance_policy_arns[count.index]
 }
