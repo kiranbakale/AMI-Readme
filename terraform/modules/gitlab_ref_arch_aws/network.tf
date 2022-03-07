@@ -179,20 +179,6 @@ locals {
   all_subnet_ids      = !local.default_network ? concat(local.subnet_pub_ids != null ? local.subnet_pub_ids : [], local.subnet_priv_ids != null ? local.subnet_priv_ids : []) : null
 }
 
-output "vpc_connection_peering_variables_secondary" {
-  value = {
-    "peer_vpc_id"   = try(aws_vpc.gitlab_vpc[0].id, "")
-    "peer_vpc_cidr" = try(aws_vpc.gitlab_vpc[0].cidr_block, "")
-  }
-}
-
-output "vpc_connection_peering_variables_primary" {
-  value = {
-    "peer_vpc_cidr"      = try(aws_vpc.gitlab_vpc[0].cidr_block, "")
-    "peer_connection_id" = try(aws_vpc_peering_connection.gitlab_vpc_peering_requester[0].id, "")
-  }
-}
-
 output "network" {
   value = {
     "vpc_id"              = local.default_network ? local.default_vpc_id : local.vpc_id
