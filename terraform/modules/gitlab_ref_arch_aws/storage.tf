@@ -13,6 +13,10 @@ resource "aws_s3_bucket" "gitlab_object_storage_buckets" {
     }
   }
 
+  versioning {
+    enabled = var.object_storage_versioning
+  }
+
   tags = var.object_storage_tags
 }
 

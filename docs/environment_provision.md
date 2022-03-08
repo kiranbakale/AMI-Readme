@@ -505,6 +505,10 @@ However this can be changed via the `ami_id` setting in the [module's environmen
 
 :information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+ and RHEL 8 images at this time.
 
+##### Object Storage versioning (AWS)
+
+The Toolkit can enable [versioning in S3 buckets](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html) within AWS by setting the `object_storage_versioning` flag to `true`. This will enable the storing of multiple variants of an object in the same bucket. As this can lead to increased storage costs it is recommended to setup a [storage lifecycle configuration](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html) to remove older versions of stored objects.
+
 ##### Configure network setup (AWS)
 
 By default the toolkit sets up the infrastructure on the default network stack as provided by AWS. However, it can also support other advanced setups such as creating a new network or using an existing one. To learn more refer to [Configure network setup (AWS)](environment_advanced_network.md#configure-network-setup-aws).
@@ -749,7 +753,7 @@ When the image has been selected the setting will need the `publisher`, `offer`,
 ```tf
 module "gitlab_ref_arch_azure" {
   source = "../../modules/gitlab_ref_arch_azure"
-  
+
   source_image_reference = {
     "publisher" = "Canonical"
     "offer"     = "UbuntuServer"

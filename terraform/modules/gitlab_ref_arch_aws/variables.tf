@@ -67,6 +67,11 @@ variable "object_storage_tags" {
   type        = map(any)
   default     = {}
 }
+variable "object_storage_versioning" {
+  description = "Enable S3 bucket versioning"
+  type        = bool
+  default     = false
+}
 variable "object_storage_kms_key_arn" {
   type    = string
   default = null
