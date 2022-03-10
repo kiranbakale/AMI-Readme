@@ -68,11 +68,11 @@ Running the zero downtime update process with GET is done in the same way as bui
 1. `cd` to the `ansible/` directory if not already there.
 1. Run `ansible-playbook` with the intended environment's inventory against the `zero-downtime-update.yml` playbook
 
-    `ansible-playbook -i environments/10k/inventory playbooks/zero-downtime-update.yml`
+    `ansible-playbook -i environments/10k/inventory playbooks/zero_downtime_update.yml`
 
 1. If GET is managing your Praefect Postgres instance you will need to run the following command to update this
 
-    `ansible-playbook -i environments/10k/inventory playbooks/praefect-postgres.yml`
+    `ansible-playbook -i environments/10k/inventory playbooks/praefect_postgres.yml`
 
 :information_source:&nbsp; This will cause downtime due to GET only using a single Praefect Postgres node.
   If you want to have a highly available setup, Praefect requires a third-party PostgreSQL database and will need to be updated manually.

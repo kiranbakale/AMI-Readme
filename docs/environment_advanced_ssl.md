@@ -122,5 +122,5 @@ With the files and config in place all that's left is to update the environment.
 
 As an alternative you can also just reconfigure the specific nodes, depending on the type of environment, that will avoid doing a version update of GitLab as follows:
 
-- Standard - `ansible-playbook -i environments/10k/inventory haproxy.yml playbooks/gitaly.yml playbooks/gitlab-rails.yml -t reconfigure`
-- Cloud Native Hybrid - `ansible-playbook -i environments/10k/inventory playbooks/gitaly.yml playbooks/gitlab-charts.yml -t reconfigure`
+- Standard - `ansible-playbook -i environments/10k/inventory haproxy.yml playbooks/gitaly.yml playbooks/gitlab_rails.yml -t reconfigure`
+- Cloud Native Hybrid - `ansible-playbook -i environments/10k/inventory playbooks/gitaly.yml playbooks/gitlab_charts.yml -t reconfigure`

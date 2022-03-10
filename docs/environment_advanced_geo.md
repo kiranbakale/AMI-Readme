@@ -323,7 +323,7 @@ gitaly_token: '<gitaly_token>'
 grafana_password: '<grafana_password>'
 ```
 
-Once done we can then run the command `ansible-playbook -i environments/my-geo-deployment/inventory/all playbooks/gitlab-geo.yml`.
+Once done we can then run the command `ansible-playbook -i environments/my-geo-deployment/inventory/all playbooks/gitlab_geo.yml`.
 
 Once complete the 2 sites will now be part of the same Geo deployment.
 
@@ -355,7 +355,7 @@ The Toolkit provides the ability to failover from a Geo primary site to a second
 
 Before running the failover process you should ensure you have read and completed any required steps outlined in the [Disaster recovery for planned failover](https://docs.gitlab.com/ee/administration/geo/disaster_recovery/planned_failover.html) documentation.
 
-Once you get to the [Promote the secondary node](https://docs.gitlab.com/ee/administration/geo/disaster_recovery/planned_failover.html#promote-the-secondary-node) step in the documentation you can proceed to perform a failover. To do the failover you can use the existing `all` inventory to disable the primary and promote the secondary in a single command `ansible-playbook -i environments/my-geo-deployment/inventory/all playbooks/gitlab-geo-failover.yml`
+Once you get to the [Promote the secondary node](https://docs.gitlab.com/ee/administration/geo/disaster_recovery/planned_failover.html#promote-the-secondary-node) step in the documentation you can proceed to perform a failover. To do the failover you can use the existing `all` inventory to disable the primary and promote the secondary in a single command `ansible-playbook -i environments/my-geo-deployment/inventory/all playbooks/gitlab_geo_failover.yml`
 
 After failover has occurred it's important to update your inventories to reflect the new roles they now perform and to avoid misconfiguration on subsequent runs. The original primary and secondary inventories need updating. For a cloud native hybrid environment you will need to update the `cloud_native_hybrid_geo_role` variable to reflect the sites new role. For all environment types you will need to update the `geo_primary_site_group_name`/`geo_secondary_site_group_name` also.
 
@@ -377,7 +377,7 @@ Before performing a recovery the `all` inventory must be updated to reflect each
 - `geo_primary_site_group_name`/`geo_secondary_site_group_name`
 - `geo_primary_site_name`/`geo_secondary_site_name`
 
-Once done you can perform the recovery process by running the command `ansible-playbook -i environments/my-geo-deployment/inventory/all playbooks/gitlab-geo-recovery.yml`
+Once done you can perform the recovery process by running the command `ansible-playbook -i environments/my-geo-deployment/inventory/all playbooks/gitlab_geo_recovery.yml`
 
 ### AWS RDS
 
