@@ -67,7 +67,7 @@ variable "disk_kms_key_arn" {
 }
 
 variable "data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 

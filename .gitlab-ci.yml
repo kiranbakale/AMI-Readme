@@ -37,6 +37,7 @@ bundler-audit-dependency_scanning:
 secret_detection:
   rules:
     - !reference [.on_merge_request_and_merged_events, rules]
+  allow_failure: false
 
 container_scanning:
   variables:
@@ -54,6 +55,7 @@ container_scanning_release:
 kics-iac-sast:
   rules:
     - !reference [.on_merge_request_and_merged_events, rules]
+  allow_failure: false
 
 #########################
 ##     Lint Checks     ##
@@ -132,6 +134,7 @@ check:markdown-link-check:
   except:
     - schedules
     - tags
+  retry: 2
 
 # Does the requirements.txt install?
 check_requirements:

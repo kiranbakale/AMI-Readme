@@ -140,7 +140,7 @@ gitaly_disks = [
 
 ```tf
 gitaly_data_disks = [
-  { name = "data", device_name = "/dev/sdf", size = 500, iops = 8000 },
+  { name = "data", device_name = "/dev/sdf", size = 500, iops = 8000, snapshots = { start_time = "01:00", interval = "24", retain_count = "14" } },
   { name = "logs", device_name = "/dev/sdg" }
 ]
 ```
@@ -151,6 +151,10 @@ gitaly_data_disks = [
   - `size` - The size of the disk in GB. **Optional**, default is `100`.
   - `type` - The [type](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html) of the disk. **Optional**, default is `gp3`.
   - `iops` - The amount of IOPS to provision for the disk. Only valid for types of `io1`, `io2` or `gp3`. **Optional**, default is `null`.
+  - `snapshots` - Configuration to schedule backup snapshots of the disk via AWS Data Lifecycle Manager. **Optional**
+    - `start_time` - The time to start the schedule from.
+    - `interval` - The interval in hours between snapshots e.g. `24`. Possible values are `1`, `2`, `3`, `4`, `6`, `8`, `12` or `24`.
+    - `retain_count` - Number of snapshots that should be retained.
 
 ### Configuring with Ansible
 

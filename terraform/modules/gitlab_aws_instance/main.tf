@@ -26,6 +26,10 @@ resource "aws_instance" "gitlab" {
 
     encrypted  = var.disk_encrypt
     kms_key_id = var.disk_kms_key_arn
+
+    tags = {
+      Name = "${var.prefix}-${var.node_type}-${count.index + 1}-root"
+    }
   }
 
   tags = merge({
@@ -45,53 +49,7 @@ resource "aws_instance" "gitlab" {
   }
 }
 
-# Data Disks
-locals {
-  node_data_disks = flatten([
-    for i in range(var.node_count) :
-    [
-      for data_disk in var.data_disks : {
-        name              = data_disk.name
-        num               = index(var.data_disks, data_disk)
-        type              = lookup(data_disk, "type", var.disk_type)
-        size              = lookup(data_disk, "size", var.disk_size)
-        iops              = lookup(data_disk, "iops", null)
-        device_name       = data_disk.device_name
-        availability_zone = aws_instance.gitlab[i].availability_zone
-        instance_id       = aws_instance.gitlab[i].id
-        instance_name     = aws_instance.gitlab[i].tags_all["Name"]
-        instance_num      = i
-        instance_disk_num = index(var.data_disks, data_disk)
-      }
-      if data_disk.name != null
-    ]
-  ])
-}
-
-resource "aws_ebs_volume" "gitlab" {
-  for_each = { for d in local.node_data_disks : "${d.instance_name}-${d.name}" => d }
-
-  type              = each.value.type
-  size              = each.value.size
-  iops              = each.value.iops
-  availability_zone = each.value.availability_zone
-
-  encrypted  = true
-  kms_key_id = var.disk_kms_key_arn
-
-  tags = {
-    Name = each.key
-  }
-}
-
-resource "aws_volume_attachment" "gitlab" {
-  for_each = { for d in local.node_data_disks : "${d.instance_name}-${d.name}" => d }
-
-  device_name = each.value.device_name
-  volume_id   = aws_ebs_volume.gitlab[each.key].id
-  instance_id = each.value.instance_id
-}
-
+# Elastic IP Association
 resource "aws_eip_association" "gitlab" {
   count = length(var.elastic_ip_allocation_ids)
 
