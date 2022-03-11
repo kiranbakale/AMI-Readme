@@ -169,7 +169,7 @@ variable "gitaly_disk_kms_key_arn" {
   default = null
 }
 variable "gitaly_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "gitaly_iam_instance_policy_arns" {
