@@ -12,6 +12,7 @@
 - [**GitLab Environment Toolkit - Upgrade Notes**](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
+- [GitLab Environment Toolkit - Troubleshooting](environment_troubleshooting.md)
 
 The Toolkit fully supports handling GitLab upgrades for your environment - with both standard and [Zero Downtime upgrades](https://docs.gitlab.com/ee/update/zero_downtime.html) supported.
 

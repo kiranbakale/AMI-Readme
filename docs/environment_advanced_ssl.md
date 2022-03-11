@@ -12,6 +12,7 @@
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
+- [GitLab Environment Toolkit - Troubleshooting](environment_troubleshooting.md)
 
 The Toolkit supports automatically configuring your environment with [External SSL termination](https://docs.gitlab.com/ee/administration/load_balancer.html#load-balancers-terminate-ssl-without-backend-ssl).
 

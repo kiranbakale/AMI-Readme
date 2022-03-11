@@ -12,6 +12,7 @@
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
+- [GitLab Environment Toolkit - Troubleshooting](environment_troubleshooting.md)
 
 The Toolkit supports the provisioning and configuration of [GitLab Geo](https://about.gitlab.com/solutions/geo/), where multiple secondary environments can be set up as replicas of the primary for more distributed setups.
 

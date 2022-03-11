@@ -56,6 +56,7 @@ Note that the Toolkit currently has the following requirements (with related iss
 - [GitLab Environment Toolkit - Upgrade Notes](docs/environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](docs/environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](docs/environment_post_considerations.md)
+- [GitLab Environment Toolkit - Troubleshooting](docs/environment_troubleshooting.md)
 
 ## How To Use
 
