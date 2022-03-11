@@ -5,13 +5,14 @@ gitlab_rails['db_password'] = "{{ postgres_password }}"
 
 postgresql['sql_user_password'] = "{{ (postgres_password + 'gitlab') | md5 }}"
 postgresql['listen_address'] = "{{ geo_primary_site_postgres_int_ip }}"
-postgresql['max_replication_slots'] = 1
+postgresql['max_replication_slots'] = {{ geo_max_replication_slots }}
 {% endif %}
 
 {% if postgres_replication_manager == 'patroni' %}
 patroni['replication_slots'] = {
     'geo_secondary' => { 'type' => 'physical' }
 }
+patroni['postgresql']['max_replication_slots'] = {{ geo_max_replication_slots }}
 postgresql['sql_replication_password'] = '{{ (postgres_password + 'gitlab_replicator') | md5 }}'
 patroni['replication_password'] = '{{ postgres_password }}'
 

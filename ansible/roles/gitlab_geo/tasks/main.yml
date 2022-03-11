@@ -16,7 +16,9 @@
 
 - name: Copy gitlab-secrets from primary site to secondary
   import_tasks: copy-secrets.yml
-  tags: copy-secrets
+  tags:
+    - copy-secrets
+    - secondary
 
 - name: Configure the database for the secondary site
   import_tasks: secondary-database.yml
@@ -70,9 +72,13 @@
 
 - name: Enable object storage replication on all secondary sites
   import_tasks: enable-object-storage-replication.yml
-  tags: post-configure
+  tags:
+    - post-configure
+    - secondary
 
 - name: Redeploy GitLab Charts for Cloud Native Hybrid environments
   import_tasks: redeploy-secondary-charts.yml
-  tags: redeploy-secondary-charts
+  tags:
+    - redeploy-secondary-charts
+    - secondary
   when: cloud_native_hybrid_geo
