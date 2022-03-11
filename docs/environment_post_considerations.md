@@ -12,6 +12,7 @@
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [**GitLab Environment Toolkit - Considerations After Deployment - Backups, Security**](environment_post_considerations.md)
+- [GitLab Environment Toolkit - Troubleshooting](environment_troubleshooting.md)
 
 The Toolkit deploys a _base_ GitLab environment based on the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/). This is by design as the Toolkit is _one for all_ and it wouldn't be possible to cover every user's specific requirements with a general toolkit.
 
