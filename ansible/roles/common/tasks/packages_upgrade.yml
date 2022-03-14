@@ -2,6 +2,9 @@
   package:
     name: "*"
     state: latest
+  retries: 5
+  delay: 5
+  until: result is success
   when: system_packages_upgrade | bool
 
 - name: Remove packages that are no longer required if configured
@@ -11,12 +14,18 @@
 
 - name: Run Automatic Security Upgrades directly (Ubuntu)
   command: unattended-upgrade
+  retries: 5
+  delay: 5
+  until: result is success
   when:
     - system_packages_auto_security_upgrade
     - ansible_facts['os_family'] == "Debian"
 
 - name: Run Automatic Security Upgrades directly (RHEL)
   command: dnf-automatic
+  retries: 5
+  delay: 5
+  until: result is success
   when:
     - system_packages_auto_security_upgrade
     - ansible_facts['os_family'] == "RedHat"
