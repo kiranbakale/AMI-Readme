@@ -16,7 +16,7 @@ Created and maintained by the GitLab Quality Engineering Enablement team, the To
 
 The Toolkit is **expressly** not a replacement for [Omnibus](https://docs.gitlab.com/omnibus/) or [Helm](https://docs.gitlab.com/charts/). It's a coordinator of these packages to help deploy GitLab at scale only with select supporting actions.
 
-Outside of supporting the deployment of GitLab at scale (e.g. Load Balancers) the Toolkit shouldn't be automating actions that a user can't do themselves. It also shouldn't be handling tasks that are better suited to be done by Omnibus or Helm.
+Outside of supporting the deployment of GitLab at scale (e.g. Load Balancers) the Toolkit shouldn't be automating actions that a user can't do themselves. It also shouldn't be setting config defaults or handling tasks that are better suited to be done by Omnibus or Helm.
 
 All feature requests and issues should be considered against this principle. Quite often requests are better raised against GitLab itself.
 
