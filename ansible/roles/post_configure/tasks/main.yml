@@ -106,10 +106,6 @@
         - license
         - elasticsearch
 
-    - name: Configure any required settings via API
-      import_tasks: configure.yml
-      tags: reconfigure
-
     - name: Configure Advanced Search with Elasticsearch
       import_tasks: elasticsearch.yml
       when:
