@@ -19,6 +19,9 @@ gitlab:
       proxyBodySize: 0  # Bigger file uploads, e.g. imports
     nodeSelector:
       workload: webservice
+    monitoring:
+      exporter:
+        enabled: true
     workhorse:
       monitoring:
         exporter:
