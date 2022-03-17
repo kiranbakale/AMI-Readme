@@ -50,7 +50,9 @@ resource "aws_eks_cluster" "gitlab_cluster" {
   ]
 }
 
-## Optional KMS Key for EKS Envelope Encryption if enabled and none provided
+## Optional KMS Key for EKS Envelope Encryption if enabled and none provided (deprecated)
+## kics: Terraform AWS - KMS Key With Vulnerable Policy - Key is deprecated and will be removed in future
+## kics-scan ignore-block
 resource "aws_kms_key" "gitlab_cluster_key" {
   count = var.eks_envelope_encryption && local.total_node_pool_count > 0 && var.eks_envelope_kms_key_arn == null && var.default_kms_key_arn == null ? 1 : 0
 
