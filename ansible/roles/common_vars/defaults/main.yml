@@ -329,6 +329,7 @@ geo_secondary_postgres_host: ""
 geo_secondary_praefect_postgres_host: ""
 
 geo_disable_secondary_proxying: false
+geo_enable_object_storage_replication: true
 
 geo_max_replication_slots: 1
 

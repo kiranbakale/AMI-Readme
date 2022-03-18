@@ -75,6 +75,7 @@
   tags:
     - post-configure
     - secondary
+  when: geo_enable_object_storage_replication
 
 - name: Redeploy GitLab Charts for Cloud Native Hybrid environments
   import_tasks: redeploy-secondary-charts.yml
