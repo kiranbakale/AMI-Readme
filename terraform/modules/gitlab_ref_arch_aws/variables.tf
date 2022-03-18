@@ -72,6 +72,16 @@ variable "object_storage_versioning" {
   type        = bool
   default     = false
 }
+variable "object_storage_destination_buckets" {
+  description = "A map of buckets to replicate to, format: name = arn"
+  type        = map(string)
+  default     = null
+}
+variable "object_storage_replica_kms_key_id" {
+  description = "KMS key arn used to encrypt the destination object storage buckets"
+  type        = string
+  default     = null
+}
 variable "object_storage_kms_key_arn" {
   type    = string
   default = null

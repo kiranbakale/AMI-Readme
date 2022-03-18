@@ -132,6 +132,49 @@ Now run `terraform apply` for the secondary sites, once this completes the `vpc_
 
 Once added you will need to rerun `terraform apply` for the primary site. This will accept the peering request created by the secondaries as well as create routing and firewall rules to allow traffic from the secondary VPC. After this, peering will now be configured and allow your sites to communicate internally.
 
+#### Object Storage Replication (AWS)
+
+Enabling [AWS Object Storage Replication](https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication.html) will automatically copy new items from your current primary's S3 storage buckets to your secondaries. To enable this you will first need to run `terraform apply` for both your primary and secondary sites. Once the secondary site is complete you will be able to take the object storage buckets ARNs from the Terraform output.
+
+```json
+  "object_storage_buckets": {
+    "artifacts" = "<artifacts_bucket_arn>"
+    "backups" = "<backups_bucket_arn>"
+    "dependency-proxy" = "<dependency-proxy_bucket_arn>"
+    "lfs" = "<lfs_bucket_arn>"
+    "mr-diffs" = "<mr-diffs_bucket_arn>"
+    "packages" = "<packages_bucket_arn>"
+    "registry" = "<registry_bucket_arn>"
+    "terraform-state" = "<terraform-state_bucket_arn>"
+    "uploads" = "<uploads_bucket_arn>"
+  },
+  "object_storage_kms_key_arn": "<object_storage_kms_key_arn>"
+```
+
+Using this output, add the below values to the primaries `environment.tf` file. These values are used so that the primary can setup replication rules with the secondaries buckets.
+
+- `object_storage_destination_buckets` - A map of each destination buckets name and ARN. For example:
+
+```yml
+object_storage_destination_buckets = tomap({
+    "artifacts"        = "<artifacts_bucket_arn>"
+    "backups"          = "<backups_bucket_arn>"
+    "dependency-proxy" = "<dependency-proxy_bucket_arn>"
+    "lfs"              = "<lfs_bucket_arn>"
+    "mr-diffs"         = "<mr-diffs_bucket_arn>"
+    "packages"         = "<packages_bucket_arn>"
+    "registry"         = "<registry_bucket_arn>"
+    "terraform-state"  = "<terraform-state_bucket_arn>"
+    "uploads"          = "<uploads_bucket_arn>"
+  })
+```
+
+- `object_storage_replica_kms_key_id` - The ARN used to encrypt the secondaries object storage buckets. If not given, will default to AWS provided key. 
+
+Once the settings have been added you will need to rerun `terraform apply` for the primary site. This will create the replication rules from the primaries source buckets to the secondaries. Finally, be sure to add `geo_enable_object_storage_replication: false` into your primary sites ansible inventory. This will prevent Ansible from enabling Geo managed object storage replication.
+
+:information_source:&nbsp; Once replication is enabled AWS will only replicate new objects. AWS recommends using [batch replication](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-batch-replication-batch.html) to copy any existing items.
+
 ### Ansible
 
 We will need to start by creating new inventories for a Geo deployment. For Geo we will require at least 2 inventories, 1 for each site. It is recommended to store these in one parent folder to keep all the config together.
@@ -230,7 +273,7 @@ For Cloud Native Hybrid environments you will need to add some more Geo specific
 
 Once done we can then run the command `ansible-playbook -i environments/my-geo-deployment/<secondary>/inventory -i environments/my-geo-deployment/<primary>/inventory playbooks/gitlab_geo.yml`.
 
-:information_source:&nbsp; It should be noted, when passing in multiple inventories the second inventory's variables will take precedence over the firsts. As such the secondary site should be passed first and then the primary.
+:information_source:&nbsp; It should be noted, when passing in multiple inventories the second inventory's variables will take precedence over the first. As such the secondary site should be passed first and then the primary.
 
 Once complete the 2 sites will now be part of the same Geo deployment.
 

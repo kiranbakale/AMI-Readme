@@ -101,3 +101,130 @@ resource "aws_iam_policy" "gitlab_s3_kms_policy" {
     ]
   })
 }
+
+# Replication (Geo)
+
+locals {
+  enable_object_storage_replication = var.object_storage_destination_buckets != null
+  object_storage_replications_list = var.object_storage_destination_buckets != null ? flatten([
+    for key, values in aws_s3_bucket.gitlab_object_storage_buckets : {
+      "${key}" = {
+        destination = lookup(var.object_storage_destination_buckets, key, null)
+        source      = values.arn
+      }
+    }
+  ]) : null
+
+  object_storage_replications_map = local.object_storage_replications_list != null ? {
+    for item in local.object_storage_replications_list :
+    keys(item)[0] => values(item)[0]
+  } : null
+}
+
+resource "aws_iam_role" "gitlab_s3_replication_role" {
+  count = local.enable_object_storage_replication ? 1 : 0
+  name  = "${var.prefix}-s3-replication-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Principal = {
+          Service = "s3.amazonaws.com"
+        }
+        Effect = "Allow"
+        Sid    = ""
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "gitlab_s3_replication_policy" {
+  count = local.enable_object_storage_replication ? 1 : 0
+  name  = "${var.prefix}-s3-replication-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:GetReplicationConfiguration",
+          "s3:ListBucket"
+        ]
+        Effect = "Allow"
+        Resource = [
+          for key, values in aws_s3_bucket.gitlab_object_storage_buckets : values.arn
+        ]
+      },
+      {
+        Action = [
+          "s3:GetObjectVersionForReplication",
+          "s3:GetObjectVersionAcl",
+          "s3:GetObjectVersionTagging"
+        ],
+        Effect = "Allow",
+        Resource = [
+          for key, values in aws_s3_bucket.gitlab_object_storage_buckets : "${values.arn}/*"
+        ]
+      },
+      {
+        Action = [
+          "s3:ReplicateObject",
+          "s3:ReplicateDelete",
+          "s3:ReplicateTags"
+        ],
+        Effect = "Allow",
+        Resource = [
+          for key, value in var.object_storage_destination_buckets : "${value}/*"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "gitlab_s3_replication_attachment" {
+  count = local.enable_object_storage_replication ? 1 : 0
+
+  role       = aws_iam_role.gitlab_s3_replication_role[0].name
+  policy_arn = aws_iam_policy.gitlab_s3_replication_policy[0].arn
+}
+
+resource "aws_s3_bucket_replication_configuration" "gitlab_s3_replication_configuration" {
+  for_each = local.object_storage_replications_list != null ? local.object_storage_replications_map : tomap({})
+
+  role   = aws_iam_role.gitlab_s3_replication_role[0].arn
+  bucket = split(":::", each.value.source)[1]
+
+  rule {
+    status = "Enabled"
+
+    source_selection_criteria {
+      sse_kms_encrypted_objects {
+        status = "Enabled"
+      }
+    }
+
+    destination {
+      bucket = each.value.destination
+
+      encryption_configuration {
+        replica_kms_key_id = var.object_storage_replica_kms_key_id
+      }
+    }
+  }
+}
+
+data "aws_kms_key" "aws_s3" {
+  key_id = "alias/aws/s3"
+}
+
+output "object_storage_buckets" {
+  value = {
+    for k, v in aws_s3_bucket.gitlab_object_storage_buckets : k => v.arn
+  }
+}
+
+output "object_storage_kms_key_arn" {
+  value = coalesce(var.object_storage_kms_key_arn, var.default_kms_key_arn, try(data.aws_kms_key.aws_s3.arn, null))
+}
