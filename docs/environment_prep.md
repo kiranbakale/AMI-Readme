@@ -64,13 +64,30 @@ Existing projects can also be used but this should be checked with the Project's
 
 Authentication with GCP directly is done with a [Service Account](https://cloud.google.com/iam/docs/understanding-service-accounts), which is required by both Terraform and Ansible.
 
-A Service Account is created as follows if you're an admin:
+To create a Service Account, you need to have `admin` permissions in the GCP project and follow the instructions below:
 
-- Head to the [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) page. Be sure to check that the correct project is selected in the dropdown at the top of the page.
-- Proceed to create an account with a descriptive name like `gitlab-qa` and give it the [IAM roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access#granting-console) of `Compute Admin`, `Kubernetes Engine Admin`, `Storage Admin` and `Service Account User`.
-- Once the account is created, proceed to create a key using the Manage keys item from the actions dropdown next to the service account you just created. Select to do so with the `JSON` format. It will be downloaded automatically. Give it a reasonable name such as `serviceaccount-<project-name>.json`, e.g. `serviceaccount-10k.json`, as in GCP the key will have a default name that's unclear. This key will passed to both Terraform and Ansible later.
-  - The [`keys`](../keys) directory in this project is provided as a central place to store all of your keys. It's automatically configured in `.gitignore` to not have its contents included with any Git Pushes if you desired to have your own copy of this repo.
-- Finish creating the user
+1. Access GCP's [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) page.
+1. Ensure that the correct project is selected in the dropdown at the top of the page.
+1. Create an account with a descriptive name like `gitlab-qa`.
+1. Assign the following [IAM roles](https://cloud.google.com/iam/docs/granting-changing-revoking-access#granting-console):
+   - `Compute Admin`
+   - `Kubernetes Engine Admin`
+   - `Storage Admin` (Compute Storage)
+   - `Service Account User` (Service Accounts)
+
+After the account is created, proceed to create a key file:
+
+1. Access the service accounts details by clicking over it on the accounts listing page.
+1. Go to the `Keys` tab.
+1. Click on `Add Key` > `Create new key`.
+1. Select `JSON` format.
+1. Click `Create` to start downloading.
+1. Rename the file to a more descriptive name such as `serviceaccount-<project-name>.json` (e.g. `serviceaccount-10k.json`).
+1. Move it to the [`keys`](../keys) directory in this project.
+
+This key will used by both Terraform and Ansible later.
+
+The [`keys`](../keys) directory in this project is provided as a central place to store all of your keys. It is configured in `.gitignore` to never be included with any Git commit by default to avoid exposing credentials.
 
 ### 4. Setup SSH Authentication - SSH OS Login for GCP Service Account
 
