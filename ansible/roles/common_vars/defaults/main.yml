@@ -238,6 +238,7 @@ jaeger_int_ip: "{{ (groups['jaeger'] | sort | map('extract', hostvars, internal_
 
 cloud_native_hybrid_environment: false
 cloud_native_hybrid_geo: false
+secondary_cloud_native_hybrid_geo: "{{ cloud_native_hybrid_geo and geo_secondary_site_group_name + '_gitlab_rails_primary' not in groups }}"
 cloud_native_hybrid_geo_role: ""
 ## Node Cluster Autoscaler setup (AWS)
 cloud_native_hybrid_cluster_autoscaler_setup: false
