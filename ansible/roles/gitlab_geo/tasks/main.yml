@@ -82,4 +82,4 @@
   tags:
     - redeploy-secondary-charts
     - secondary
-  when: cloud_native_hybrid_geo
+  when: secondary_cloud_native_hybrid_geo
