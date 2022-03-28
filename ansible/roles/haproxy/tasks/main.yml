@@ -46,6 +46,10 @@
       - /opt/haproxy:/usr/local/etc/haproxy:ro
     sysctls:
       net.ipv4.ip_unprivileged_port_start: 0
+  register: result
+  retries: 2
+  delay: 5
+  until: result is success
   when: "'haproxy_internal' in group_names"
   tags:
     - reconfigure
@@ -64,6 +68,10 @@
       - /opt/haproxy:/usr/local/etc/haproxy:ro
     sysctls:
       net.ipv4.ip_unprivileged_port_start: 0
+  register: result
+  retries: 2
+  delay: 5
+  until: result is success
   when: "'haproxy_external' in group_names"
   tags:
     - reconfigure
