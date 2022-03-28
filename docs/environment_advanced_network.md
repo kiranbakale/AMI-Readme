@@ -40,7 +40,7 @@ This is the default setup for the module and is the recommended setup for most s
 
 No additional configuration is needed to use this setup.
 
-To lock down network access to particular CIDR blocks follow [Restricting External Network Access](#restricting-external-network-access) guidance.
+To lock down network access to particular CIDR blocks follow [Configuring Network CIDR Access](#configuring-network-cidr-access) guidance.
 
 ### Created (GCP)
 
@@ -54,7 +54,7 @@ The environment's machines will be created in the created subnet.
 
 This setup is recommended for users who want a specific network stack for their GitLab environment.
 
-To configure this setup the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf):
+To configure this setup the following config should be added to the [module's environment config file](environment_provision.md#configure-module-settings-environmenttf):
 
 - `create_network` - This variable should be set to `true` when you are wanting the module to create a new network stack.
 
@@ -84,7 +84,7 @@ This is an advanced setup and you must ensure the network stack is configured co
 
 Note that when this is configured the module will configure some GCP Firewall rules in your VPC to enable network access for the environment.
 
-With an existing stack configure the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf):
+With an existing stack configure the following config should be added to the [module's environment config file](environment_provision.md#configure-module-settings-environmenttf):
 
 - `vpc_name` - The name of your existing VPC.
 - `subnet_name` - The name of your existing Subnet. The subnet should be located in the same existing VPC.
@@ -125,7 +125,7 @@ In this section you will find the config required to set up each depending on yo
 
 This is the default setup for the module where AWS will handle the networking by default. No additional configuration is needed to use this setup.
 
-To lock down network access to particular CIDR blocks follow [Restricting External Network Access](#restricting-external-network-access) guidance.
+To lock down network access to particular CIDR blocks follow [Configuring Network CIDR Access](#configuring-network-cidr-access) guidance.
 
 ### Created (AWS)
 
@@ -142,7 +142,7 @@ The environment's machines will be spread across the created subnets and their A
 
 This setup is recommended for users who want a specific network stack for their GitLab environment. It's also recommended for Cloud Native Hybrid environments running on AWS.
 
-To configure this setup the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf-1):
+To configure this setup the following config should be added to the [module's environment config file](environment_provision.md#configure-module-settings-environmenttf):
 
 - `create_network` - This variable should be set to `true` when you are wanting the module to create a new network stack.
 
@@ -163,10 +163,10 @@ module "gitlab_ref_arch_aws" {
 In addition to the above the following _optional_ settings change how the network is configured:
 
 - `vpc_cidr_block` - The [CIDR block](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for your VPC. This shouldn't need to be changed in most scenarios unless you want to use a specific CIDR block. Default is `172.31.0.0/16`.
-- `subnet_pub_count` - The number of subnets to create in the VPC. This should only be changed if you want an increased subnet count for availability reasons. Refer to the below [Created Subnet Types (Public / Private)](#created-subnet-types-public-private) section for more info. Default is `2`.
+- `subnet_pub_count` - The number of subnets to create in the VPC. This should only be changed if you want an increased subnet count for availability reasons. Refer to the below [Created Subnet Types (Public / Private)](#created-subnet-types-public--private) section for more info. Default is `2`.
 - `subnet_pub_cidr_block`- A list of [CIDR blocks](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for each public subnet created. This should be changed if you want to use specific CIDR blocks. Default is `["172.31.0.0/20","172.31.16.0/20","172.31.32.0/20"]`
   - The module has up to 3 subnet CIDR blocks it will use. If you have set `subnet_pub_count` higher than 3 then this variable will need to be adjusted to match the number of subnets to be created. The CIDR blocks will need to fit in the main block defined for the VPC via `vpc_cidr_block`.
-- `subnet_priv_count` - The number of private subnets to create in the VPC. This should be changed if you want more resources to be created with private subnets. Refer to the below [Created Subnet Types (Public / Private)](#created-subnet-types-public-private) section for more info. Default is `0`.
+- `subnet_priv_count` - The number of private subnets to create in the VPC. This should be changed if you want more resources to be created with private subnets. Refer to the below [Created Subnet Types (Public / Private)](#created-subnet-types-public--private) section for more info. Default is `0`.
 - `subnet_priv_cidr_block`- A list of [CIDR blocks](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-sizing-ipv4) that will be used for each private subnet created. This should be changed if you want to use specific CIDR blocks. Default is `["172.31.128.0/20", "172.31.144.0/20", "172.31.160.0/20"]`
   - The module has up to 3 subnet CIDR blocks it will use. If you have set `subnet_priv_count` higher than 3 then this variable will need to be adjusted to match the number of subnets to be created. The CIDR blocks will need to fit in the main block defined for the VPC via `vpc_cidr_block`.
 - `zones_exclude` - In rare cases you may need to avoid specific Availability Zones [as they don't have the available resource to deploy the infrastructure in](https://aws.amazon.com/premiumsupport/knowledge-center/eks-cluster-creation-errors/). When this is the case you can specify a list of Zones by name via this setting that will then be avoided by the Toolkit, e.g. `["us-east-1e"]`. Default is `null`.
@@ -195,11 +195,11 @@ This is an advanced setup and you must ensure the network stack is configured co
 
 Note that when this is configured the module will configure some AWS Security Groups in your VPC to enable network access for the environment.
 
-With an existing stack configure the following config should be added to the [module's environment config file](#configure-module-settings-environmenttf-1):
+With an existing stack configure the following config should be added to the [module's environment config file](environment_provision.md#configure-module-settings-environmenttf):
 
 - `vpc_id` - The ID of your existing VPC
-- `subnet_pub_ids` - A list of public subnet IDs the environment's machines should be spread across. The subnets should be located in the same existing VPC. Refer to the below [Existing Subnet Types (Public / Private)](#existing-subnet-types-public-private) section for more info.
-- `subnet_priv_ids` - A list of private subnet IDs the environment's machines should be spread across. The subnets should be located in the same existing VPC and have any desired dependent infrastructure, e.g. NAT Gateway for internet access. Refer to the below [Existing Subnet Types (Public / Private)](#existing-subnet-types-public-private) section for more info.
+- `subnet_pub_ids` - A list of public subnet IDs the environment's machines should be spread across. The subnets should be located in the same existing VPC. Refer to the below [Existing Subnet Types (Public / Private)](#existing-subnet-types-public--private) section for more info.
+- `subnet_priv_ids` - A list of private subnet IDs the environment's machines should be spread across. The subnets should be located in the same existing VPC and have any desired dependent infrastructure, e.g. NAT Gateway for internet access. Refer to the below [Existing Subnet Types (Public / Private)](#existing-subnet-types-public--private) section for more info.
 
 An example of your environment config file with public subnets would look like:
 
