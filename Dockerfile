@@ -11,7 +11,7 @@ SHELL ["/bin/bash", "-c"]
 
 ENV PATH="/root/.asdf/shims:/root/.asdf/bin:/root/.local/bin:$PATH"
 
-RUN apt-get update -y && apt-get install -y --no-install-recommends build-essential git curl jq unzip && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && apt-get install -y --no-install-recommends build-essential git curl jq unzip openssh-client && rm -rf /var/lib/apt/lists/*
 
 # Install ASDF
 RUN git clone --depth 1 https://github.com/asdf-vm/asdf.git /root/.asdf && \
