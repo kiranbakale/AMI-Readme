@@ -48,16 +48,16 @@ The Toolkit is designed to deploy the supported [Reference Architectures](https:
 
 We also aim to provide supported customization and config hooks that are simple and maintainable.
 
-### AHA - Avoid Hasty Abstractions
+### AHA (Avoid Hasty Abstractions)
 
 Generally we follow the pragmatic principle of [AHA - _Avoid Hasty Abstractions_](https://kentcdodds.com/blog/aha-programming#aha-) over [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
 
 This works well for this type of tooling as by its nature - automation of tasks that are generally designed to be done manually - there may be times where repetition of tasks is required or maybe even desirable over complicated abstractions to achieve the required goal. Readability and Maintainability are more important as the code base we have is both wide and deep.
 
-Some examples: 
+Some examples:
 
 - Select GitLab config is the same in GitLab Rails and Sidekiq. Extracting these would require abstracting outside of their Roles (breaking the point of Roles) and would become pretty hard to follow and maintain if it continued. It's easier to have a single source of truth for each component for readability and maintenance even if that means select config is the same in each.
-- Some generated config files from GitLab need to be shared across component nodes but don't exist until the first node has completed setup. This requires code to be present in each Role to either copy the new file to a shared location or copy an existing one over at the right time to keep everything in sync. 
+- Some generated config files from GitLab need to be shared across component nodes but don't exist until the first node has completed setup. This requires code to be present in each Role to either copy the new file to a shared location or copy an existing one over at the right time to keep everything in sync.
 
 ### Use Industry Leading Tools and Avoid Custom Implementations
 
@@ -75,7 +75,7 @@ There are modules created for each Cloud Provider (due to the numerous differenc
 
 The Toolkit uses two modules per cloud provider:
 
-- `instance` - Contains all of the code required to deploy a VM suitable for GitLab on the selected Cloud Provider. 
+- `instance` - Contains all of the code required to deploy a VM suitable for GitLab on the selected Cloud Provider.
 - `ref_arch` - An encompassing module - it deploys VMs via the `instance` module along with any other supporting infrastructure such as Kubernetes, networking, object storage, etc... Variables are passed through to other modules/resources.
   - This module is designed to be flexible allowing users to only build what they want. Supporting resources should only be built if their dependent is.
 

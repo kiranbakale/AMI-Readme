@@ -124,7 +124,7 @@ The Toolkit's module for seamlessly setting up a full GitLab Reference architect
 
 In this section we detail all that's needed to configure it.
 
-#### Configure Variables - `variables.tf`
+#### Configure Variables (`variables.tf`)
 
 First we configure the variables needed in the `variables.tf` file as these are used in the other files.
 
@@ -158,7 +158,7 @@ variable "external_ip" {
 - `zone` - The default GCP zone of the project, e.g. `us-east1-c`.
 - `external_ip` - The static external IP the environment will be accessible one. Previously created in the [Create Static External IP - GCP](environment_prep.md#6-create-static-external-ip-gcp) step.
 
-#### Configure Terraform settings - `main.tf`
+#### Configure Terraform settings (`main.tf`)
 
 The next file to configure is the main Terraform settings file - `main.tf`. In this file will be the main connection details for Terraform to connect to GCP as well as where to store its state.
 
@@ -196,7 +196,7 @@ provider "google" {
   - `region` - The GCP region of the project. Set in `variables.tf`.
   - `zone` - The default GCP zone of the project. Set in `variables.tf`.
 
-#### Configure Module settings - `environment.tf`
+#### Configure Module settings (`environment.tf`)
 
 Next to configure is `environment.tf`. This file contains all the config for the `gitlab_ref_arch_gcp` module such as machine counts, machine sizes, external IP, etc...
 
@@ -277,7 +277,7 @@ In addition to the above, the following optional settings are also available:
 
 - `machine_image` - The [GCP machine image name](https://cloud.google.com/compute/docs/images/os-details) to use for the VMs. Ubuntu 18.04+ and RHEL 8 images are supported at this time. Defaults to `ubuntu-1804-lts`
 - `machine_secure_boot` - Controls whether [Secure Boot](https://cloud.google.com/security/shielded-cloud/shielded-vm#secure-boot) is enabled on the VMs. Can only be enabled for OS Images that support the `Shielded VM` feature. Defaults to `false`.
-- `object_storage_location` - The [GCS Location](https://cloud.google.com/storage/docs/locations) buckets are created in. Refer to the [Object Storage Location (GCP)](#object-storage-location) below for more info.
+- `object_storage_location` - The [GCS Location](https://cloud.google.com/storage/docs/locations) buckets are created in. Refer to the [Object Storage Location (GCP)](#object-storage-location-gcp) below for more info.
 - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
 - `object_storage_labels` - Labels to apply to object storage buckets.
 - `allow_stopping_for_update` - Controls whether Terraform can restart VMs when making changes if required. Should only be disabled for additional resilience. Defaults to `true`.
@@ -352,7 +352,7 @@ The Toolkit's module for seamlessly setting up a full GitLab Reference architect
 
 In this section we detail all that's needed to configure it.
 
-#### Configure Variables - `variables.tf`
+#### Configure Variables (`variables.tf`)
 
 First we configure the variables needed in the `variables.tf` file as these are used in the other files.
 
@@ -381,7 +381,7 @@ variable "external_ip_allocation" {
 - `ssh_public_key_file` - Path to the public SSH key file. Previously created in the [Setup SSH Authentication - AWS](environment_prep.md#2-setup-ssh-authentication-aws) step.
 - `external_ip_allocation` - The Allocation ID for the static external IP the environment will be accessible on. Previously created in the [Create Static External IP - AWS Elastic IP Allocation](environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) step.
 
-#### Configure Terraform settings - `main.tf`
+#### Configure Terraform settings (`main.tf`)
 
 The next file to configure is the main Terraform settings file - `main.tf`. In this file will be the main connection details for Terraform to connect to AWS as well as where to store its state.
 
@@ -418,7 +418,7 @@ provider "aws" {
 - `provider "aws"` - Config block for the [AWS provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs).
   - `region` - The AWS region of the project. Set in `variables.tf`.
 
-#### Configure Module settings - `environment.tf`
+#### Configure Module settings (`environment.tf`)
 
 Next to configure is `environment.tf`. This file contains all the config for the `gitlab_ref_arch_aws` module such as instance counts, instance sizes, external IP, etc...
 
@@ -570,7 +570,7 @@ The Toolkit's module for seamlessly setting up a full GitLab Reference architect
 
 In this section we detail all that's needed to configure it.
 
-#### Configure Variables - `variables.tf`
+#### Configure Variables (`variables.tf`)
 
 First we configure the variables needed in the `variables.tf` file as these are used in the other files.
 
@@ -615,7 +615,7 @@ variable "external_ip_name" {
 - `storage_account_name` - The name of the storage account previously created in the [Setup Terraform State Storage - Azure Blob Storage](environment_prep.md#4-setup-terraform-state-storage-azure-blob-storage) step.
 - `external_ip_name` - The name of the static external IP the environment will be accessible one. Previously created in the [Create Static External IP - Azure](environment_prep.md#5-create-static-external-ip-azure) step.
 
-#### Configure Terraform settings - `main.tf`
+#### Configure Terraform settings (`main.tf`)
 
 The next file to configure is the main Terraform settings file - `main.tf`. In this file will be the main connection details for Terraform to connect to AWS as well as where to store its state.
 
@@ -654,7 +654,7 @@ provider "azurerm" {
 - `provider "azurerm"` - Config block for the [Azure provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs).
   - `features` - Used to [customize the behavior](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#features) of certain Azure Provider resources.
 
-#### Configure Module settings - `environment.tf`
+#### Configure Module settings (`environment.tf`)
 
 Next to configure is `environment.tf`. This file contains all the config for the `gitlab_ref_arch_azure` module such as instance counts, instance sizes, external IP, etc...
 
@@ -770,7 +770,7 @@ module "gitlab_ref_arch_azure" {
 
 ##### Configure network setup (Azure)
 
-The module for Azure will handle the networking by default by setting up the infrastructure on the default network stack as provided by Azure. It's possible to adjust network rules if needed. To learn more refer to [Restricting External Network Access](environment_advanced_network.md#restricting-external-network-access).
+The module for Azure will handle the networking by default by setting up the infrastructure on the default network stack as provided by Azure. It's possible to adjust network rules if needed. To learn more refer to [Configuring Network CIDR Access](environment_advanced_network.md#configuring-network-cidr-access).
 
 #### Configure Authentication (Azure)
 
@@ -824,7 +824,7 @@ Any Terraform Data Source can be used in a similar way. Refer to the specific Da
 
 ## 4. Run the GitLab Environment Toolkit's Docker container (optional)
 
-Before running the [Docker container](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/container_registry/2697240) you will need to setup your environment config files by following [# 2. Setup the Environment's config](#2-setup-the-environments-config). The container can be started once the Terraform config has been setup. When starting the container it is important to pass in your config files and keys, as well as set any authentication based environment variables.
+Before running the [Docker container](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/container_registry/2697240) you will need to setup your environment config files by following [# 2. Setup the Environment's config](#3-setup-the-environments-config). The container can be started once the Terraform config has been setup. When starting the container it is important to pass in your config files and keys, as well as set any authentication based environment variables.
 
 Below is an example of how to run the container when using a GCP service account:
 
