@@ -3,10 +3,17 @@ include:
   - template: Security/Secret-Detection.gitlab-ci.yml
   - template: Security/Container-Scanning.gitlab-ci.yml
   - template: Security/SAST-IaC.latest.gitlab-ci.yml
+  - project: 'gitlab-org/quality/pipeline-common'
+    file:
+      - '/ci/danger-review.yml'
 
 stages:
   - test
   - upload
+
+danger-review:
+  variables:
+    BUNDLE_GEMFILE: danger/Gemfile
 
 #################################
 ##            SAST             ##
