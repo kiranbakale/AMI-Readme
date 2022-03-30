@@ -334,6 +334,8 @@ geo_enable_object_storage_replication: true
 
 geo_max_replication_slots: 1
 
+geo_migration_task: "{{ 'geo:db:migrate' if ((gitlab_version != '') and (gitlab_version is version('14.6', '<'))) else 'db:migrate:geo' }}"
+
 # Geo Tracking Postgres
 geo_tracking_postgres_host: "{% if geo_secondary_praefect_postgres_host != '' and postgres_external %}{{ geo_secondary_praefect_postgres_host }}{% elif cloud_native_hybrid_geo and postgres_external %}{{ praefect_postgres_host }}{% else %}{{ geo_secondary_site_postgres_int_ip }}{% endif %}"
 geo_tracking_postgres_user: "gitlab_geo"

@@ -71,7 +71,7 @@
   when: ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
 
 - name: Run pre deployment migrations on secondary site when using Geo
-  command: gitlab-rake geo:db:migrate
+  command: gitlab-rake {{ geo_migration_task }}
   environment:
     SKIP_POST_DEPLOYMENT_MIGRATIONS: true
   when:
