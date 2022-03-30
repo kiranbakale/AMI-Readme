@@ -169,7 +169,7 @@ object_storage_destination_buckets = tomap({
   })
 ```
 
-- `object_storage_replica_kms_key_id` - The ARN used to encrypt the secondaries object storage buckets. If not given, will default to AWS provided key. 
+- `object_storage_replica_kms_key_id` - The ARN used to encrypt the secondaries object storage buckets. If not given, will default to AWS provided key.
 
 Once the settings have been added you will need to rerun `terraform apply` for the primary site. This will create the replication rules from the primaries source buckets to the secondaries. Finally, be sure to add `geo_enable_object_storage_replication: false` into your primary sites ansible inventory. This will prevent Ansible from enabling Geo managed object storage replication.
 
@@ -285,13 +285,19 @@ Once complete the 2 sites will now be part of the same Geo deployment.
 
 Before using [Geo Proxying for Secondary Sites](https://docs.gitlab.com/ee/administration/geo/secondary_proxy/index.html) it is recommended to read the current documentation on this feature within GitLab and to understand the scope and limitations of this feature.
 
-To use a single unified URL to access the primary and secondary sites with the Toolkit you will first need to change a few settings within your inventories to enable this feature.
+To use a single unified URL to access the primary and secondary sites with the Toolkit you will first need to ensure you have 3 unique URLs available.
+
+- Unified URL: This is a geo-based URL that will be used to route traffic to either site based on the users location.
+- Primary URL: This is a URL/IP that will always route traffic to the primary site.
+- Secondary URL: This is a URL/IP that will always route traffic to the secondary site.
+
+ With the URLs setup you will now need to change a few settings within your inventories to enable this feature.
 
 ```yaml
 external_url: "<Unified URL>"
 secondary_external_url: "<Unified URL>"
-geo_primary_internal_url: "<Unique URL for the primary site>"
-geo_secondary_internal_url: "<Unique URL for the secondary site>"
+geo_primary_internal_url: "<Primary URL>"
+geo_secondary_internal_url: "<Secondary URL>"
 ```
 
 Although not required, if you want to disable the Geo proxying feature you can set `geo_disable_secondary_proxying: true` in both your primary and secondary inventories. This doesn't need to be disabled if you're not planning on using secondary proxying, this only needs to be set if you want to disable the feature entirely.
