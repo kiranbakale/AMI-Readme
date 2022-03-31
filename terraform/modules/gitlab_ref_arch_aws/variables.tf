@@ -1072,6 +1072,10 @@ variable "zones_exclude" {
   type    = list(string)
   default = null
 }
+variable "availability_zones" {
+  type    = list(string)
+  default = []
+}
 
 ## Existing network
 variable "vpc_id" {

@@ -5,6 +5,7 @@
 *.tfstate.lock.info
 secrets.auto.tfvars
 .terraform/
+.terraform.lock.hcl
 logs/
 test.yml
 error-search.yml
