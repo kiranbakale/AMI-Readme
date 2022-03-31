@@ -6,6 +6,8 @@ locals {
   create_peering     = local.create_network && var.peer_vpc_id != null
   enable_peering     = var.peer_connection_id != null && var.peer_vpc_cidr != null
   peer_connection_id = var.peer_connection_id != null ? var.peer_connection_id : try(aws_vpc_peering_connection.gitlab_vpc_peering_requester[0].id, "")
+
+  zones = length(var.availability_zones) > 0 ? var.availability_zones : data.aws_availability_zones.defaults.names
 }
 
 resource "aws_default_vpc" "default" {
@@ -46,7 +48,7 @@ resource "aws_subnet" "gitlab_vpc_sn_pub" {
   count                   = local.create_network ? var.subnet_pub_count : 0
   vpc_id                  = aws_vpc.gitlab_vpc[0].id
   cidr_block              = var.subnet_pub_cidr_block[count.index]
-  availability_zone       = data.aws_availability_zones.defaults.names[(count.index + length(data.aws_availability_zones.defaults.names)) % length(data.aws_availability_zones.defaults.names)]
+  availability_zone       = element(local.zones, count.index)
   map_public_ip_on_launch = true
 
   tags = {
@@ -100,7 +102,7 @@ resource "aws_subnet" "gitlab_vpc_sn_priv" {
   count             = local.create_network ? var.subnet_priv_count : 0
   vpc_id            = aws_vpc.gitlab_vpc[0].id
   cidr_block        = var.subnet_priv_cidr_block[count.index]
-  availability_zone = data.aws_availability_zones.defaults.names[(count.index + length(data.aws_availability_zones.defaults.names)) % length(data.aws_availability_zones.defaults.names)]
+  availability_zone = element(local.zones, count.index)
 
   tags = {
     Name                              = "${var.prefix}-sub-priv-${count.index + 1}"
