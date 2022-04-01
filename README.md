@@ -58,6 +58,10 @@ Note that the Toolkit currently has the following requirements (with related iss
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](docs/environment_post_considerations.md)
 - [GitLab Environment Toolkit - Troubleshooting](docs/environment_troubleshooting.md)
 
+### Config Examples
+
+[Full config examples are available for select Reference Architectures](examples).
+
 ## How To Use
 
 The Toolkit's Terraform and Ansible modules can be used in various ways depending on your requirements:
