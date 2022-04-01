@@ -137,6 +137,10 @@ ansible
 
 With the above structure in place we can now look at the files to be configured. The rest of this guide will assume this structure is being used.
 
+### Config Examples
+
+[Full config examples are available for select Reference Architectures](../examples). The rest of this section will describe what the config does and how to use it.
+
 ### Configure Dynamic Inventory
 
 One of the first pieces of config you will need to configure is the Inventory. As mentioned we use Dynamic Inventories as it automates the collection of machines and labels.
