@@ -44,6 +44,7 @@ Note that the Toolkit currently has the following requirements (with related iss
 
 ## Documentation
 
+- [GitLab Environment Toolkit - Quick Start Guide](docs/environment_quick_start_guide.md)
 - [GitLab Environment Toolkit - Preparing the environment](docs/environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](docs/environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](docs/environment_configure.md)
@@ -71,6 +72,95 @@ The Toolkit's Terraform and Ansible modules can be used in various ways dependin
 
 Refer to the docs above for full instructions on each.
 
+## How It Works
+
+At a high level the Toolkit is designed to be as straightforward as possible. A high level overview of how it works is as follows:
+
+- Machines and associated infrastructure are _provisioned_ as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) with Terraform. Part of this provisioning includes adding specific labels / tags to each machine for Ansible to then use to identify.
+- Machines are _configured_ with Ansible. Through identifying each machine by its Labels, Ansible will intelligently go through them in the correct install order. On each it will install and configure Omnibus to setup the intended component as required. The Ansible scripts have been designed to handle certain dynamic setups depending on what machines have been provisioned (e.g. an environment without Elasticsearch, or a 2k environment with a smaller amount of nodes). Additional tasks are also performed as required such as setting GitLab config through API or Load Balancer and Monitoring setup.
+
+```plantuml
+@startuml 10k
+skinparam defaultTextAlignment center
+
+card omnibus #ffffff [
+  <img:https://gitlab.com/uploads/-/system/project/avatar/20699/omnibus_logo.png{scale=0.225}>
+
+  Omnibus GitLab
+]
+
+card charts #ffffff [
+  <img:https://gitlab.com/uploads/-/system/project/avatar/3828396/docs-charts.png>
+
+  Charts
+]
+
+card get #ffffff [
+  <img:https://gitlab.com/uploads/-/system/project/avatar/14292404/tanuki-blueprint.png{scale=0.75}>
+
+  GitLab Environment Toolkit
+
+  ---
+  <img:https://iili.io/Md0KYB.png{scale=0.5}>
+]
+
+card aws #ffffff [
+  <img:https://iili.io/MdYo0B.png{scale=0.5}>
+  
+  AWS
+
+  ---
+
+  EC2
+  EKS
+  S3
+  Networking (VPCs, Subnets,
+  Gateways, IPs, etc...)
+  ELBs
+  RDS
+  Elasticache
+]
+
+card gcp #ffffff [
+  <img:https://iili.io/Md7sHX.png{scale=0.15}>
+  
+  GCP
+
+  ---
+
+  Compute Engine
+  Kubernetes Engine
+  Cloud Storage
+  Networking (VPCs, Subnets,
+  Gateways, IPs, etc...)
+  Cloud Load Balancing (Planned)
+  Cloud SQL (Planned)
+  Cloud Memorystore (Planned)
+]
+
+card azure #ffffff [
+  <img:https://iili.io/Md52r7.md.png{scale=0.5}>
+  
+  Azure
+
+  ---
+
+  Compute
+  Blob Storage
+  Networking (VPCs, Subnets,
+  IPs, etc...)
+]
+
+omnibus --> get
+charts --> get
+
+get --> aws
+get --> gcp
+get --> azure
+
+@enduml
+```
+
 ## Direction
 
 The GitLab Environment Toolkit will be the best and easiest way to deploy multi-node production instances of GitLab, and operate them with very high service levels. It will come pre-packaged with best practices in areas such as secrets and least-privileged access. It will be what GitLab internally uses to deploy their own production instances of GitLab, and shared in a [source-available](https://en.wikipedia.org/wiki/Source-available_software#GitLab_Enterprise_Edition_License_(EE_License)) way for collaboration with other large deployments of GitLab.
@@ -88,13 +178,6 @@ Currently, we do not plan to include:
 - Cloud accounts management
 - Observability stack beyond Prometheus and Grafana
 - Direct Omniauth and Email support (see [Custom Config](docs/environment_advanced.md#custom-config))
-
-## How It Works
-
-At a high level the Toolkit is designed to be as straightforward as possible. A high level overview of how it works is as follows:
-
-- Machines are _provisioned_ as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) with Terraform. Part of this provisioning includes adding specific labels / tags to each machine for Ansible to then use to identify.
-- Machines are _configured_ with Ansible. Through identifying each machine by its Labels, Ansible will intelligently go through them in the correct install order. On each it will install and configure Omnibus to setup the intended component as required. The Ansible scripts have been designed to handle certain dynamic setups depending on what machines have been provisioned (e.g. an environment without Elasticsearch, or a 2k environment with a smaller amount of nodes). Additional tasks are also performed as required such as setting GitLab config through API or Load Balancer and Monitoring setup.
 
 ## Missing features to be aware of
 
