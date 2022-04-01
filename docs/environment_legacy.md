@@ -1,5 +1,6 @@
 # Legacy Setups
 
+- [GitLab Environment Toolkit - Quick Start Guide](environment_quick_start_guide.md)
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
