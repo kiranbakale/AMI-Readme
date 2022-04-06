@@ -78,8 +78,8 @@ First we need to install Terraform. To easily switch between Terraform versions 
 
 1. Install asdf as per its documentation
 1. Add the Terraform asdf plugin - `asdf plugin add terraform`
-1. Install the intended Terraform version - `asdf install terraform 1.0.0`
-1. Set that version to be the main on your PATH - `asdf global terraform 1.0.0`
+1. Install the intended Terraform version - `asdf install terraform 1.0.11`
+1. Set that version to be the main on your PATH - `asdf global terraform 1.0.11`
 
 Terraform should now be installed and ready on your `PATH`.
 
