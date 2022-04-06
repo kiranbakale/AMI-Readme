@@ -45,8 +45,8 @@ Installing Terraform with `asdf` is done as follows:
 
 1. Install `asdf` as per its [documentation](https://asdf-vm.com/#/core-manage-asdf?id=install)
 1. Add the Terraform `asdf` plugin - `asdf plugin add terraform`
-1. Install the intended Terraform version - `asdf install terraform 1.0.0`
-1. Set that version to be the main on your PATH - `asdf global terraform 1.0.0`
+1. Install the intended Terraform version - `asdf install terraform 1.0.11`
+1. Set that version to be the main on your PATH - `asdf global terraform 1.0.11`
 
 With the above completed Terraform should now be available on your command line. You can check this by running `terraform version`.
 
