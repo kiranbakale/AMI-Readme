@@ -74,6 +74,9 @@ gitlab:
 {% endif %}
 
 global:
+  # Deploy pods to Supporting node pool by default unless otherwise configured
+  nodeSelector:
+    workload: "support"
   appConfig:
 {% if cloud_provider != 'none' %}
     object_store:
@@ -284,9 +287,6 @@ certmanager:
 gitlab-runner:
   install: false
 
-grafana:
-  nodeSelector:
-    workload: "support"
 nginx-ingress:
   controller:
 {% if aws_allocation_ids != "" %}
@@ -297,31 +297,6 @@ nginx-ingress:
         service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
         service.beta.kubernetes.io/aws-load-balancer-target-node-labels: workload=support
 {% endif %}
-    nodeSelector:
-      workload: "support"
-  defaultBackend:
-    nodeSelector:
-      workload: "support"
-  nodeSelector:
-    workload: "support"
-
-prometheus:
-  alertmanager:
-    nodeSelector:
-      workload: "support"
-  install: true
-  kubeStateMetrics:
-    nodeSelector:
-      workload: "support"
-  nodeExporter:
-    nodeSelector:
-      workload: "support"
-  pushgateway:
-    nodeSelector:
-      workload: "support"
-  server:
-    nodeSelector:
-      workload: "support"
 
 # Run outside of cluster
 redis:
