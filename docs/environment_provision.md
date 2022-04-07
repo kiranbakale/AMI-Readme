@@ -385,6 +385,8 @@ variable "external_ip_allocation" {
 - `ssh_public_key_file` - Path to the public SSH key file. Previously created in the [Setup SSH Authentication - AWS](environment_prep.md#2-setup-ssh-authentication-aws) step.
 - `external_ip_allocation` - The Allocation ID for the static external IP the environment will be accessible on. Previously created in the [Create Static External IP - AWS Elastic IP Allocation](environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) step.
 
+:information_source:&nbsp; The prefix must be unique to this environment and cannot match any other environments stored within your Cloud Provider. When provisioning your environment, if you get errors due to naming conflicts then the most likely cause will be due to other resources having the same prefix as in some cases names are global on Cloud Providers.
+
 #### Configure Terraform settings (`main.tf`)
 
 The next file to configure is the main Terraform settings file - `main.tf`. In this file will be the main connection details for Terraform to connect to AWS as well as where to store its state.
