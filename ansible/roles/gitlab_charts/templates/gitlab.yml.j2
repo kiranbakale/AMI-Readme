@@ -258,7 +258,6 @@ global:
 {% for ip in redis_persistent_int_ips %}
       - host: '{{ ip }}'
 {% endfor %}
-
 {% endif %}
 {% if cloud_native_hybrid_geo %}
   geo:
@@ -272,6 +271,10 @@ global:
         secret: gitlab-geo-tracking-postgres-password
         key: password
 {% endif %}
+
+# Run Prometheus
+prometheus:
+  install: true
 
 {% if external_url_ssl and external_ssl_source == 'letsencrypt' %}
 certmanager:
