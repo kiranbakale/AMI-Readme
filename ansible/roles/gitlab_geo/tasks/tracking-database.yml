@@ -53,7 +53,7 @@
         login_password: "{{ praefect_postgres_admin_password }}"
         name: "{{ item }}"
         db: "{{ geo_tracking_postgres_database }}"
-      loop: ['pg_trgm', 'btree_gist', 'plpgsql']
+      loop: ['pg_trgm', 'btree_gist', 'plpgsql', 'pg_stat_statements']
   when:
     - deploy_host is defined
     - inventory_hostname == deploy_host

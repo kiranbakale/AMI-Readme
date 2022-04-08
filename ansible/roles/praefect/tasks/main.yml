@@ -51,7 +51,7 @@
         login_password: "{{ praefect_postgres_admin_password }}"
         name: "{{ item }}"
         db: "{{ praefect_postgres_database_name }}"
-      loop: ['pg_trgm', 'btree_gist', 'plpgsql']
+      loop: ['pg_trgm', 'btree_gist', 'plpgsql', 'pg_stat_statements']
   when:
     - praefect_postgres_external
     - (geo_secondary_site_group_name not in groups)
