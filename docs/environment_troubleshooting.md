@@ -29,6 +29,27 @@ ERROR: No matching distribution found for ansible==5.0.1
 
 Upgrade your Python version to `3.8` or higher and try installing again to fix.
 
+## Python package install failure - `fatal error: 'openssl/opensslv.h' file not found`
+
+For macOS users, installation of Python packages via `pip3 install` may fail with an error:
+
+```plaintext
+fatal error: 'openssl/opensslv.h' file not found
+```
+
+You may first need to set up compiler flags to point to OpenSSL:
+
+```shell
+brew install openssl@1.1 rust
+export LDFLAGS="-L$(brew --prefix openssl@1.1)/lib"
+export CFLAGS="-I$(brew --prefix openssl@1.1)/include"
+```
+
+For more details, see:
+
+1. [Documentation on installing the cryptography Python package](https://cryptography.io/en/latest/installation/#building-cryptography-on-macos)
+1. [Discussion in GitHub issue](https://github.com/pyca/cryptography/issues/3489#issuecomment-318070912)
+
 ## Postgres Upgrade Error - `PostgreSQL did not respond before service checks were exhausted`
 
 The following error can show when running the Toolkit on PostgreSQL nodes:
