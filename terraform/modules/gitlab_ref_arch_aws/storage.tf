@@ -17,6 +17,12 @@ resource "aws_s3_bucket" "gitlab_object_storage_buckets" {
     enabled = var.object_storage_versioning
   }
 
+  lifecycle {
+    ignore_changes = [
+      replication_configuration
+    ]
+  }
+
   tags = var.object_storage_tags
 }
 
@@ -197,6 +203,9 @@ resource "aws_s3_bucket_replication_configuration" "gitlab_s3_replication_config
   bucket = split(":::", each.value.source)[1]
 
   rule {
+    id       = "${var.prefix}-${each.value.source}-replication"
+    priority = 0
+
     status = "Enabled"
 
     source_selection_criteria {
