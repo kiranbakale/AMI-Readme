@@ -57,6 +57,10 @@ variable "object_storage_buckets" {
   type    = list(string)
   default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads", "registry"]
 }
+variable "object_storage_prefix" {
+  type    = string
+  default = null
+}
 variable "object_storage_force_destroy" {
   description = "Toggle to enable force-destruction of S3 Bucket. Consider setting this value to false for production systems"
   type        = bool

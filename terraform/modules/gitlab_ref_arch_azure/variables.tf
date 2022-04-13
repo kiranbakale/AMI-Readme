@@ -61,6 +61,10 @@ variable "object_storage_buckets" {
   type    = list(string)
   default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"]
 }
+variable "object_storage_prefix" {
+  type    = string
+  default = null
+}
 
 variable "project" {
   type    = string

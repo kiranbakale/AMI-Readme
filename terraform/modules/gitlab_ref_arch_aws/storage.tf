@@ -1,6 +1,6 @@
 resource "aws_s3_bucket" "gitlab_object_storage_buckets" {
   for_each      = toset(var.object_storage_buckets)
-  bucket        = "${var.prefix}-${each.value}"
+  bucket        = "${var.object_storage_prefix != null ? var.object_storage_prefix : var.prefix}-${each.value}"
   force_destroy = var.object_storage_force_destroy
 
   server_side_encryption_configuration {
