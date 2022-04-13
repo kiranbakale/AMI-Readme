@@ -170,7 +170,9 @@ object_storage_destination_buckets = tomap({
   })
 ```
 
-- `object_storage_replica_kms_key_id` - The ARN used to encrypt the secondaries object storage buckets. If not given, will default to AWS provided key.
+- `object_storage_replica_kms_key_id` - The ARN used to encrypt the secondaries object storage buckets.
+
+:warning:&nbsp; You must ensure you have copied over all of the settings listed above in full. Failure to do so will cause Geo Replication to fail.
 
 Once the settings have been added you will need to rerun `terraform apply` for the primary site. This will create the replication rules from the primaries source buckets to the secondaries. Finally, be sure to add `geo_enable_object_storage_replication: false` into your primary sites ansible inventory. This will prevent Ansible from enabling Geo managed object storage replication.
 
