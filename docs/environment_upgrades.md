@@ -55,7 +55,7 @@ This recommendation is especially so with Production instances. If you're using 
 
 ## Follow GitLab Upgrade Paths
 
-The Toolkit by default will always attempt to install the latest GitLab version unless [configured differently](environment_configure.md#selecting-what-gitlab-version-to-install).
+The Toolkit by default will always attempt to install the latest GitLab version unless [configured differently](environment_configure.md#gitlab-version).
 
 However the [standard GitLab Upgrade rules still apply](https://docs.gitlab.com/ee/update/#upgrade-paths) when upgrading across multiple GitLab versions. You should refer to the docs to ensure the intended upgrade can be performed directly or if you need to upgrade to a certain version first.
 

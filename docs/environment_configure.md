@@ -289,7 +289,7 @@ The structure of these files are flexible, ansible will merge all YAML files tha
 
 - `vars.yml` - Contains all main config specific to the environment such as connection details, component settings, passwords, etc...
 
-#### Environment config - `vars.yml`
+#### Environment Config - `vars.yml`
 
 Starting with the main environment config file, `vars.yml`, which should be **saved in the same folder as the Dynamic Inventory file**, e.g. `ansible/environments/<env_name>/inventory`. This is important as Ansible will load this file alongside the Dynamic Inventory file at runtime to get all the variables.
 
@@ -378,6 +378,40 @@ Passwords and Secrets settings are what they suggest - all of the various passwo
 - `praefect_internal_token` **_Gitaly Cluster only_** - Sets the [internal access token for Gitaly Cluster and Praefect](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#secrets).
 - `praefect_postgres_password` **_Gitaly Cluster only_** - Sets the [password for Praefect's database user](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#secrets).
 
+#### Notable Optional Config
+
+There are [various variables available](#full-config-list-and-further-examples) that optionally control how Ansible configures the environment. In this section though we'll call out some notable ones.
+
+##### GitLab Version
+
+By default the Toolkit will deploy the latest [GitLab EE package](https://packages.gitlab.com/gitlab/gitlab-ee) via its repo.
+
+The Toolkit can install other GitLab versions from `13.2.0` onwards through two different methods:
+
+- The Toolkit can be configured to install a specific GitLab version via the `gitlab_version` inventory variable. This should be set to the full semantic version, e.g. `14.0.0`. If left unset (the default) the Toolkit will look to install the latest version.
+  - The Toolkit can also be configured to install a different edition of GitLab, i.e. CE or EE, via the `gitlab_edition` inventory variable. If left unset the Toolkit will look to install the EE edition as recommended for the Reference Architectures.
+- Repo - A different repo and package can be specified via the two inventory variables `gitlab_repo_script_url` and `gitlab_repo_package` respectively. The Toolkit will first install the repo via the script provided and then install the package.
+- Deb file - The Toolkit can install a Debian file directly in several ways:
+  - If the package needs to be downloaded from the specific URL you can specify this via the `gitlab_deb_download_url` inventory variable.
+    - If the URL to download the deb file requires authorization or other headers you can pass these in a Hash format via the `gitlab_deb_download_url_headers` inventory variable.
+  - If the package needs to be uploaded from the local host where Ansible is running, add the `gitlab_deb_host_path` inventory variable that should be set to the local path where the file is located.
+  - An additional variable, `gitlab_deb_target_path` configures where Ansible should copy the Debian file onto the targets before installing but this is set to `/tmp` by default and doesn't need to be changed.
+
+##### Object Storage Prefix
+
+If the `object_storage_prefix` variable was used in Terraform to change what prefix is used for the buckets then this should also be configured in Ansible via `gitlab_object_storage_prefix`.
+
+#### Full config list and further examples
+
+The default Ansible config is defined as [Role Defaults](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#understanding-variable-precedence) to ensure correct precedence in the [`common_vars`](../ansible/roles/common_vars/defaults/main.yml) role.
+
+Additional config can be found in the following locations:
+
+- `group_vars/<group_name>.yml` - Variables specific to a group of nodes.
+- `<role>/defaults/main.yml` - Variables specific to that role.
+
+As mentioned earlier, we may also refer to additional variables in detail later in these docs under the [Advanced sections](environment_advanced.md) where they are applicable.
+
 #### Sensitive variable handling in Ansible
 
 As shown above, various sensitive variables such as passwords are required when configuring GitLab with the Toolkit. Storing passwords in plaintext should always be avoided in production systems and with any files stored in source control.
@@ -414,32 +448,6 @@ gitlab_rails_password: "{{ lookup('amazon.aws.aws_secret', 'gitlab_rails_passwor
 ```
 
 Note that region is required here but since you've already configured it earlier in your `vars.yml` file as `aws_region` this can be reused.
-
-#### Selecting what GitLab version to install
-
-By default the Toolkit will deploy the latest [GitLab EE package](https://packages.gitlab.com/gitlab/gitlab-ee) via its repo.
-
-The Toolkit can install other GitLab versions from `13.2.0` onwards through two different methods:
-
-- The Toolkit can be configured to install a specific GitLab version via the `gitlab_version` inventory variable. This should be set to the full semantic version, e.g. `14.0.0`. If left unset (the default) the Toolkit will look to install the latest version.
-  - The Toolkit can also be configured to install a different edition of GitLab, i.e. CE or EE, via the `gitlab_edition` inventory variable. If left unset the Toolkit will look to install the EE edition as recommended for the Reference Architectures.
-- Repo - A different repo and package can be specified via the two inventory variables `gitlab_repo_script_url` and `gitlab_repo_package` respectively. The Toolkit will first install the repo via the script provided and then install the package.
-- Deb file - The Toolkit can install a Debian file directly in several ways:
-  - If the package needs to be downloaded from the specific URL you can specify this via the `gitlab_deb_download_url` inventory variable.
-    - If the URL to download the deb file requires authorization or other headers you can pass these in a Hash format via the `gitlab_deb_download_url_headers` inventory variable.
-  - If the package needs to be uploaded from the local host where Ansible is running, add the `gitlab_deb_host_path` inventory variable that should be set to the local path where the file is located.
-  - An additional variable, `gitlab_deb_target_path` configures where Ansible should copy the Debian file onto the targets before installing but this is set to `/tmp` by default and doesn't need to be changed.
-
-#### Full config list and further examples
-
-The default Ansible config is defined as [Role Defaults](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#understanding-variable-precedence) to ensure correct precedence in the [`common_vars`](../ansible/roles/common_vars/defaults/main.yml) role.
-
-Additional config can be found in the following locations:
-
-- `group_vars/<group_name>.yml` - Variables specific to a group of nodes.
-- `<role>/defaults/main.yml` - Variables specific to that role.
-
-As mentioned earlier, we may also refer to additional variables in detail later in these docs under the [Advanced sections](environment_advanced.md) where they are applicable.
 
 ## 3. Run the GitLab Environment Toolkit's Docker container (optional)
 

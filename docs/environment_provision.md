@@ -284,6 +284,7 @@ In addition to the above, the following optional settings are also available:
 - `object_storage_location` - The [GCS Location](https://cloud.google.com/storage/docs/locations) buckets are created in. Refer to the [Object Storage Location (GCP)](#object-storage-location-gcp) below for more info.
 - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
 - `object_storage_labels` - Labels to apply to object storage buckets.
+- `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :warning:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
 - `allow_stopping_for_update` - Controls whether Terraform can restart VMs when making changes if required. Should only be disabled for additional resilience. Defaults to `true`.
 
 :information_source:&nbsp; Redis prefixes depend on the target Reference Architecture - set `redis_*` for combined Redis, `redis_cache_*` and `redis_persistent_*` for separated Redis setup.
@@ -494,6 +495,8 @@ output "gitlab_ref_arch_aws" {
   - `prefix` - The name prefix of the project. Set in `variables.tf`.
   - `ssh_public_key_file` - The file path of the public SSH key. Set in `variables.tf`.
   - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
+  - `object_storage_versioning` - Controls whether Object Storage versioning is enabled for the buckets. Refer to the [Object Storage versioning (AWS)](#object-storage-versioning-aws) below for more info.
+  - `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :warning:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
 
@@ -738,6 +741,7 @@ output "gitlab_ref_arch_azure" {
   - `vm_admin_username` - The username of the administrator for the virtual machines. Set in `variables.tf`.
   - `ssh_public_key_file_path` - The file path of the public SSH key. Set in `variables.tf`.
   - `external_ip_type` - [The type of Public IP](https://docs.microsoft.com/en-us/azure/virtual-network/ip-services/public-ip-addresses) that will be created for each VM. Can be either `Standard` (recommended) or `Basic`. Default is `Basic` for backwards compatability.
+  - `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :warning:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
 
