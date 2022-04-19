@@ -154,7 +154,7 @@ module "gitlab_ref_arch_aws" {
   source = "../../modules/gitlab_ref_arch_aws"
 
   prefix = var.prefix
-  ssh_public_key_file = file(var.ssh_public_key_file)
+  ssh_public_key = file(var.ssh_public_key_file)
 
   create_network = true
 
@@ -210,7 +210,7 @@ module "gitlab_ref_arch_aws" {
   source = "../../modules/gitlab_ref_arch_aws"
 
   prefix = var.prefix
-  ssh_public_key_file = file(var.ssh_public_key_file)
+  ssh_public_key = file(var.ssh_public_key_file)
 
   vpc_id = "<vpc-id>"
   subnet_pub_ids = ["<public-subnet-1-id>", "<public-subnet-2-id>"]

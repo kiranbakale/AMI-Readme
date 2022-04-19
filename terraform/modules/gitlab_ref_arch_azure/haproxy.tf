@@ -10,12 +10,12 @@ module "haproxy_external" {
   disk_size              = coalesce(var.haproxy_external_disk_size, var.default_disk_size)
   storage_account_type   = coalesce(var.haproxy_external_storage_account_type, var.default_storage_account_type)
 
-  resource_group_name      = var.resource_group_name
-  subnet_id                = azurerm_subnet.gitlab.id
-  vm_admin_username        = var.vm_admin_username
-  ssh_public_key_file_path = var.ssh_public_key_file_path
-  location                 = var.location
-  external_ip_type         = var.external_ip_type
+  resource_group_name = var.resource_group_name
+  subnet_id           = azurerm_subnet.gitlab.id
+  vm_admin_username   = var.vm_admin_username
+  ssh_public_key      = var.ssh_public_key != null ? var.ssh_public_key : file(var.ssh_public_key_file_path)
+  location            = var.location
+  external_ip_type    = var.external_ip_type
 
   external_ip_names      = var.haproxy_external_external_ip_names
   network_security_group = var.haproxy_external_node_count == 0 ? null : azurerm_network_security_group.haproxy[0]
@@ -40,12 +40,12 @@ module "haproxy_internal" {
   disk_size              = coalesce(var.haproxy_internal_disk_size, var.default_disk_size)
   storage_account_type   = coalesce(var.haproxy_internal_storage_account_type, var.default_storage_account_type)
 
-  resource_group_name      = var.resource_group_name
-  subnet_id                = azurerm_subnet.gitlab.id
-  vm_admin_username        = var.vm_admin_username
-  ssh_public_key_file_path = var.ssh_public_key_file_path
-  location                 = var.location
-  external_ip_type         = var.external_ip_type
+  resource_group_name = var.resource_group_name
+  subnet_id           = azurerm_subnet.gitlab.id
+  vm_admin_username   = var.vm_admin_username
+  ssh_public_key      = var.ssh_public_key != null ? var.ssh_public_key : file(var.ssh_public_key_file_path)
+  location            = var.location
+  external_ip_type    = var.external_ip_type
 
   network_security_group = azurerm_network_security_group.ssh
 
