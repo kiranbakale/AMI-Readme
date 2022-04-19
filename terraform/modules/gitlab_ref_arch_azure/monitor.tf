@@ -1,9 +1,10 @@
 module "monitor" {
   source = "../gitlab_azure_instance"
 
-  prefix     = var.prefix
-  node_type  = "monitor"
-  node_count = var.monitor_node_count
+  prefix          = var.prefix
+  node_type       = "monitor"
+  node_count      = var.monitor_node_count
+  additional_tags = var.additional_tags
 
   size                   = var.monitor_size
   source_image_reference = var.source_image_reference

@@ -1,9 +1,10 @@
 module "pgbouncer" {
   source = "../gitlab_azure_instance"
 
-  prefix     = var.prefix
-  node_type  = "pgbouncer"
-  node_count = var.pgbouncer_node_count
+  prefix          = var.prefix
+  node_type       = "pgbouncer"
+  node_count      = var.pgbouncer_node_count
+  additional_tags = var.additional_tags
 
   size                   = var.pgbouncer_size
   source_image_reference = var.source_image_reference

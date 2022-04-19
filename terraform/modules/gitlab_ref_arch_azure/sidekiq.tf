@@ -1,9 +1,10 @@
 module "sidekiq" {
   source = "../gitlab_azure_instance"
 
-  prefix     = var.prefix
-  node_type  = "sidekiq"
-  node_count = var.sidekiq_node_count
+  prefix          = var.prefix
+  node_type       = "sidekiq"
+  node_count      = var.sidekiq_node_count
+  additional_tags = var.additional_tags
 
   size                   = var.sidekiq_size
   source_image_reference = var.source_image_reference

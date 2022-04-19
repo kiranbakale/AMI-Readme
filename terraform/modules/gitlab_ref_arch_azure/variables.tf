@@ -76,6 +76,11 @@ variable "project" {
   default = null
 }
 
+variable "additional_tags" {
+  type    = map(any)
+  default = {}
+}
+
 # Machines
 variable "consul_node_count" {
   type    = number

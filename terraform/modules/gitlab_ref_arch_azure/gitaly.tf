@@ -1,9 +1,10 @@
 module "gitaly" {
   source = "../gitlab_azure_instance"
 
-  prefix     = var.prefix
-  node_type  = "gitaly"
-  node_count = var.gitaly_node_count
+  prefix          = var.prefix
+  node_type       = "gitaly"
+  node_count      = var.gitaly_node_count
+  additional_tags = var.additional_tags
 
   size                   = var.gitaly_size
   source_image_reference = var.source_image_reference

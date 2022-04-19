@@ -1,9 +1,10 @@
 module "gitlab_nfs" {
   source = "../gitlab_azure_instance"
 
-  prefix     = var.prefix
-  node_type  = "gitlab-nfs"
-  node_count = var.gitlab_nfs_node_count
+  prefix          = var.prefix
+  node_type       = "gitlab-nfs"
+  node_count      = var.gitlab_nfs_node_count
+  additional_tags = var.additional_tags
 
   size                   = var.gitlab_nfs_size
   source_image_reference = var.source_image_reference
