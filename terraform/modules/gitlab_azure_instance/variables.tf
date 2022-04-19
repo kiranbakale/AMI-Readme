@@ -91,3 +91,8 @@ variable "geo_deployment" {
   type    = string
   default = null
 }
+
+variable "additional_tags" {
+  type    = map(any)
+  default = {}
+}

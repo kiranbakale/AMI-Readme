@@ -1,9 +1,10 @@
 module "haproxy_external" {
   source = "../gitlab_azure_instance"
 
-  prefix     = var.prefix
-  node_type  = "haproxy-external"
-  node_count = var.haproxy_external_node_count
+  prefix          = var.prefix
+  node_type       = "haproxy-external"
+  node_count      = var.haproxy_external_node_count
+  additional_tags = var.additional_tags
 
   size                   = var.haproxy_external_size
   source_image_reference = var.source_image_reference
@@ -31,9 +32,10 @@ output "haproxy_external" {
 module "haproxy_internal" {
   source = "../gitlab_azure_instance"
 
-  prefix     = var.prefix
-  node_type  = "haproxy-internal"
-  node_count = var.haproxy_internal_node_count
+  prefix          = var.prefix
+  node_type       = "haproxy-internal"
+  node_count      = var.haproxy_internal_node_count
+  additional_tags = var.additional_tags
 
   size                   = var.haproxy_internal_size
   source_image_reference = var.source_image_reference
