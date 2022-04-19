@@ -146,7 +146,7 @@ module "gitlab_ref_arch_aws" {
   source = "../../modules/gitlab_ref_arch_aws"
 
   prefix = var.prefix
-  ssh_public_key_file = file(var.ssh_public_key_file)
+  ssh_public_key = file(var.ssh_public_key_file)
 
   # 10k
   consul_node_count = 3

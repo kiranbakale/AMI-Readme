@@ -437,7 +437,7 @@ module "gitlab_ref_arch_aws" {
   source = "../../modules/gitlab_ref_arch_aws"
 
   prefix = var.prefix
-  ssh_public_key_file = file(var.ssh_public_key_file)
+  ssh_public_key = file(var.ssh_public_key_file)
 
   # 10k
   consul_node_count = 3
@@ -493,7 +493,7 @@ output "gitlab_ref_arch_aws" {
 - `module "gitlab_ref_arch_aws"` - Module config block with name.
   - `source` - The relative path to the `gitlab_ref_arch_aws` module. We assume you're creating config in the `terraform/environments/` folder here but if you're in a different location this setting must be updated to the correct path.
   - `prefix` - The name prefix of the project. Set in `variables.tf`.
-  - `ssh_public_key_file` - The file path of the public SSH key. Set in `variables.tf`.
+  - `ssh_public_key` - The SSH key value, typically read from a SSH key file set as `ssh_public_key_file` in `variables.tf`.
   - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
   - `object_storage_versioning` - Controls whether Object Storage versioning is enabled for the buckets. Refer to the [Object Storage versioning (AWS)](#object-storage-versioning-aws) below for more info.
   - `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :warning:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
@@ -678,7 +678,7 @@ module "gitlab_ref_arch_azure" {
   location = var.location
   storage_account_name = var.storage_account_name
   vm_admin_username = var.vm_admin_username
-  ssh_public_key_file_path = var.ssh_public_key_file_path
+  ssh_public_key = file(var.ssh_public_key_file_path)
   external_ip_type = "Standard"
 
   # 10k
@@ -739,7 +739,7 @@ output "gitlab_ref_arch_azure" {
   - `location` - The location of the resource group. Set in `variables.tf`.
   - `storage_account_name` - The name of the storage account. Set in `variables.tf`.
   - `vm_admin_username` - The username of the administrator for the virtual machines. Set in `variables.tf`.
-  - `ssh_public_key_file_path` - The file path of the public SSH key. Set in `variables.tf`.
+  - `ssh_public_key` - The SSH key value, typically read from a SSH key file set as `ssh_public_key_file` in `variables.tf`.
   - `external_ip_type` - [The type of Public IP](https://docs.microsoft.com/en-us/azure/virtual-network/ip-services/public-ip-addresses) that will be created for each VM. Can be either `Standard` (recommended) or `Basic`. Default is `Basic` for backwards compatability.
   - `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :warning:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
 
@@ -812,18 +812,18 @@ Terraform has multiple [Data Sources](https://www.terraform.io/docs/language/dat
 
 As the Terraform config files you've configured are normal Terraform files, you can configure Data Sources to first collect variables and then pass them into the Toolkit's modules.
 
-As an example, on an AWS environment, if you wanted to set the `ssh_public_key_file` variable via a JSON Key-Value secret that's named the same with a key also under the same name on [AWS Secret Manager](https://aws.amazon.com/secrets-manager/) you would use the [`aws_secretsmanager_secret_version` data source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/secretsmanager_secret_version) as follows:
+As an example, on an AWS environment, if you wanted to set the `ssh_public_key` variable via a JSON Key-Value secret that's named the same with a key also under the same name on [AWS Secret Manager](https://aws.amazon.com/secrets-manager/) you would use the [`aws_secretsmanager_secret_version` data source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/secretsmanager_secret_version) as follows:
 
 ```tf
-data "aws_secretsmanager_secret_version" "ssh_public_key_file" {
-  secret_id = "ssh_public_key_file"
+data "aws_secretsmanager_secret_version" "ssh_public_key" {
+  secret_id = "ssh_public_key"
 }
 
 module "gitlab_ref_arch_aws" {
   source = "../../modules/gitlab_ref_arch_aws"
 
   prefix = var.prefix
-  ssh_public_key_file = jsondecode(aws_secretsmanager_secret_version.ssh_public_key_file.secret_string)["ssh_public_key_file"]
+  ssh_public_key = jsondecode(aws_secretsmanager_secret_version.ssh_public_key.secret_string)["ssh_public_key"]
 [...]
 }
 ```

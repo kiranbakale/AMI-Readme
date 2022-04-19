@@ -10,12 +10,12 @@ module "redis" {
   disk_size              = coalesce(var.redis_disk_size, var.default_disk_size)
   storage_account_type   = coalesce(var.redis_storage_account_type, var.default_storage_account_type)
 
-  resource_group_name      = var.resource_group_name
-  subnet_id                = azurerm_subnet.gitlab.id
-  vm_admin_username        = var.vm_admin_username
-  ssh_public_key_file_path = var.ssh_public_key_file_path
-  location                 = var.location
-  external_ip_type         = var.external_ip_type
+  resource_group_name = var.resource_group_name
+  subnet_id           = azurerm_subnet.gitlab.id
+  vm_admin_username   = var.vm_admin_username
+  ssh_public_key      = var.ssh_public_key != null ? var.ssh_public_key : file(var.ssh_public_key_file_path)
+  location            = var.location
+  external_ip_type    = var.external_ip_type
 
   network_security_group = azurerm_network_security_group.ssh
 
@@ -43,12 +43,12 @@ module "redis_cache" {
   disk_size              = coalesce(var.redis_cache_disk_size, var.default_disk_size)
   storage_account_type   = coalesce(var.redis_cache_storage_account_type, var.default_storage_account_type)
 
-  resource_group_name      = var.resource_group_name
-  subnet_id                = azurerm_subnet.gitlab.id
-  vm_admin_username        = var.vm_admin_username
-  ssh_public_key_file_path = var.ssh_public_key_file_path
-  location                 = var.location
-  external_ip_type         = var.external_ip_type
+  resource_group_name = var.resource_group_name
+  subnet_id           = azurerm_subnet.gitlab.id
+  vm_admin_username   = var.vm_admin_username
+  ssh_public_key      = var.ssh_public_key != null ? var.ssh_public_key : file(var.ssh_public_key_file_path)
+  location            = var.location
+  external_ip_type    = var.external_ip_type
 
   network_security_group = azurerm_network_security_group.ssh
 
@@ -74,12 +74,12 @@ module "redis_persistent" {
   disk_size              = coalesce(var.redis_persistent_disk_size, var.default_disk_size)
   storage_account_type   = coalesce(var.redis_persistent_storage_account_type, var.default_storage_account_type)
 
-  resource_group_name      = var.resource_group_name
-  subnet_id                = azurerm_subnet.gitlab.id
-  vm_admin_username        = var.vm_admin_username
-  ssh_public_key_file_path = var.ssh_public_key_file_path
-  location                 = var.location
-  external_ip_type         = var.external_ip_type
+  resource_group_name = var.resource_group_name
+  subnet_id           = azurerm_subnet.gitlab.id
+  vm_admin_username   = var.vm_admin_username
+  ssh_public_key      = var.ssh_public_key != null ? var.ssh_public_key : file(var.ssh_public_key_file_path)
+  location            = var.location
+  external_ip_type    = var.external_ip_type
 
   network_security_group = azurerm_network_security_group.ssh
 
