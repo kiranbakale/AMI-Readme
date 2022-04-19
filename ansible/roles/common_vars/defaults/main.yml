@@ -5,7 +5,7 @@
 ansible_python_interpreter: auto
 swap_file_size_mb: "2048"
 swap_swappiness: "10"
-internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
+internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ansible.utils.ipaddr('network/prefix') }}"
 
 ################################################################################
 ## Cloud Provider Settings
@@ -105,7 +105,10 @@ gitlab_rpm_target_path: "{{ lookup('env','GITLAB_TARGET_RPM_PATH') | default('/t
 
 gitlab_admin_email: "admin@example.com"
 
-# Object Storage Buckets
+# Object Storage Settings
+gitlab_object_storage_type: "object_storage"  # object_storage or nfs
+
+## Object Storage Buckets
 gitlab_object_storage_prefix: "{{ prefix }}"
 gitlab_object_storage_artifacts_bucket: "{{ gitlab_object_storage_prefix }}-artifacts"
 gitlab_object_storage_backups_bucket: "{{ gitlab_object_storage_prefix }}-backups"
@@ -220,7 +223,8 @@ sidekiq_max_concurrency: 10
 ################################################################################
 
 # GitLab NFS
-gitlab_nfs_int_ip: "{{ groups['gitlab_nfs'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') }}"
+gitlab_nfs_target_group: "{{ 'gitlab_nfs' if 'gitlab_nfs' in groups else (groups.keys() | select('match', 'gitaly_primary|gitlab_rails_primary') | first) }}"
+gitlab_nfs_int_ip: "{{ groups[gitlab_nfs_target_group] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') }}"
 gitlab_nfs_path: "/mnt/gitlab-nfs"
 
 # Elastic
@@ -328,6 +332,11 @@ geo_secondary_site_postgres_int_ip: "{{ (groups[geo_secondary_site_postgres_grou
 
 geo_secondary_postgres_host: ""
 geo_secondary_praefect_postgres_host: ""
+
+geo_primary_gitlab_nfs_target_group: "{{ (geo_primary_site_group_name + '_gitlab_nfs' if geo_primary_site_group_name + '_gitlab_nfs' in groups else (groups.keys() | select('match', geo_primary_site_group_name + '(_gitaly_primary|_gitlab_rails_primary)') | first)) if geo_primary_site_group_name in group_names else ''}}"
+geo_primary_gitlab_nfs_int_ip: "{{ groups[geo_primary_gitlab_nfs_target_group] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') if geo_primary_site_group_name in group_names else '' }}"
+geo_secondary_gitlab_nfs_target_group: "{{ (geo_secondary_site_group_name + '_gitlab_nfs' if geo_secondary_site_group_name + '_gitlab_nfs' in groups else (groups.keys() | select('match', geo_secondary_site_group_name + '(_gitaly_primary|_gitlab_rails_primary)') | first)) if geo_secondary_site_group_name in group_names else '' }}"
+geo_secondary_gitlab_nfs_int_ip: "{{ groups[geo_secondary_gitlab_nfs_target_group] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') if geo_secondary_site_group_name in group_names else '' }}"
 
 geo_disable_secondary_proxying: false
 geo_enable_object_storage_replication: true

@@ -1,5 +1,0 @@
----
-- hosts: gitlab_nfs
-  roles:
-    - gitlab_nfs
-  become: true

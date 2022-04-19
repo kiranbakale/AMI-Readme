@@ -1,4 +1,0 @@
----
-dependencies:
-  - role: common
-  - role: cloudalchemy.node_exporter

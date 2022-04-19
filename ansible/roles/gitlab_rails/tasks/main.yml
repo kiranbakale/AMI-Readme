@@ -1,14 +1,4 @@
 ---
-- name: Mount GitLab NFS
-  mount:
-    fstype: nfs
-    opts: defaults,nofail,lookupcache=positive
-    state: mounted
-    src: "{{ gitlab_nfs_int_ip }}:{{ gitlab_nfs_path }}"
-    path: "{{ gitlab_nfs_path }}"
-  tags: nfs
-  when: ('gitlab_nfs' in groups)
-
 - name: Configure SSH Fast Lookup
   blockinfile:
     path: /etc/ssh/sshd_config
@@ -19,32 +9,35 @@
         AuthorizedKeysCommandUser git
       Match all        # End match, settings apply to all users again
 
-- name: Create SSH directory on GitLab NFS if missing
-  file:
-    path: "{{ gitlab_nfs_path }}/ssh"
-    state: directory
-  when: "'gitlab_rails_primary' in group_names"
-  tags: ssh
+- name: Propagate SSH Keys
+  block:
+    - name: Create SSH directory on GitLab NFS if missing
+      file:
+        path: "{{ gitlab_nfs_path }}/ssh"
+        state: directory
+      when: "'gitlab_rails_primary' in group_names"
 
-- name: Copy SSH keys to NFS if missing
-  shell: "cp -n /etc/ssh/ssh_host_*_key* {{ gitlab_nfs_path }}/ssh"
-  when: "'gitlab_rails_primary' in group_names"
-  tags: ssh
+    - name: Copy SSH keys to NFS if missing
+      shell: "cp -n /etc/ssh/ssh_host_*_key* {{ gitlab_nfs_path }}/ssh"
+      when: "'gitlab_rails_primary' in group_names"
 
-- name: Copy SSH keys from NFS
-  shell: "cp {{ gitlab_nfs_path }}/ssh/ssh_host_*_key* /etc/ssh"
-  when: "'gitlab_rails_secondary' in group_names"
-  tags: ssh
+    - name: Copy SSH keys from NFS
+      shell: "cp -u {{ gitlab_nfs_path }}/ssh/ssh_host_*_key* /etc/ssh"
+      when: "'gitlab_rails_secondary' in group_names"
 
-- name: Reload SSH service
-  service:
-    name: "{{ 'sshd' if ansible_facts['os_family'] == 'RedHat' else 'ssh' }}"
-    state: reloaded
-  tags: ssh
+    - name: Reload SSH service
+      service:
+        name: "{{ 'sshd' if ansible_facts['os_family'] == 'RedHat' else 'ssh' }}"
+        state: reloaded
+  tags: ssh_keys
 
-- name: Copy secrets file from NFS
-  shell: "cp {{ gitlab_nfs_path }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
-  tags: secrets
+- name: Propagate Secrets if existing
+  include_role:
+    name: common
+    tasks_from: secrets
+  tags:
+    - reconfigure
+    - secrets
 
 - name: Copy GCP service account file
   copy:
@@ -181,6 +174,16 @@
   until: result is success
   tags: reconfigure
 
+- name: Propagate Secrets if new
+  include_role:
+    name: common
+    tasks_from: secrets
+  vars:
+    gitlab_secrets_reconfigure: true
+  tags:
+    - reconfigure
+    - secrets
+
 - name: Restart GitLab
   shell: gitlab-ctl stop && gitlab-ctl start
   register: result
@@ -190,10 +193,14 @@
     - reconfigure
     - restart
 
-- name: Copy secrets file to NFS if missing
-  shell: "cp -n /etc/gitlab/gitlab-secrets.json {{ gitlab_nfs_path }}"
-  tags: secrets
+# https://docs.gitlab.com/ee/administration/job_logs.html#enable-or-disable-incremental-logging
+- name: Enable Incremental Logging (Object Storage)
+  command: "gitlab-rails runner 'Feature.enable(:ci_enable_live_trace)'"
   run_once: true
+  tags: reconfigure
+  when:
+    - gitlab_object_storage_type == 'object_storage'
+    - geo_secondary_site_group_name not in groups
 
 - name: Create skip-auto-reconfigure file
   file:
