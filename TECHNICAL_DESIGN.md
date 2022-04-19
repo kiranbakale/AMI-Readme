@@ -10,7 +10,20 @@ Unless specified otherwise all additions, changes, etc... to the Toolkit should 
 
 The GitLab Environment Toolkit (GET) is a collection of tools to deploy and operate production GitLab instances based on our [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/), including automation of common day 2 tasks, using the official [Omnibus](https://docs.gitlab.com/omnibus/) or [Helm](https://docs.gitlab.com/charts/) packages.
 
-Created and maintained by the GitLab Quality Engineering Enablement team, the Toolkit - built with Terraform and Ansible - supports provisioning and configuring machines and other related infrastructure respectively.
+Created and maintained by the GitLab Quality Engineering Enablement team, the Toolkit - built with Terraform and Ansible - supports provisioning and configuring machines and other related infrastructure respectively:
+
+- Support for deploying all Reference Architectures sizes dynamically from 1k to 50k.
+- Support for deploying Cloud Native Hybrid variants of the Reference Architectures (AWS & GCP only at this time).
+- GCP, AWS and Azure cloud provider support
+- Upgrades
+- Release and nightly Omnibus builds support
+- Advanced search with Elasticsearch
+- Geo support
+- Zero Downtime Upgrades support
+- Built in Load Balancing and Monitoring (Prometheus, Grafana) setup
+- External SSL termination
+- Alternative sources (Cloud Services, Custom Servers) for select components (Load Balancers, PostgreSQL, Redis)
+- On Prem Support (Ansible)
 
 ### What is it not?
 
@@ -21,6 +34,18 @@ Outside of supporting the deployment of GitLab at scale (e.g. Load Balancers) th
 All feature requests and issues should be considered against this principle. Quite often requests are better raised against GitLab itself.
 
 ## Design Principles
+
+### Focused Design
+
+The Toolkit is designed to deploy a _base_ GitLab environment based on the Reference Architectures and then provide various advanced features and / or hooks that users can opt into based on the requirements, not unlike Omnibus or Helm.
+
+This is very much by design and a core pillar of the Toolkit. Features should only be enabled by default where we're confident it applies to most users and doesn't add additional costs. Failure to do this will cause confusion and complaints. For example a change that may make sense for a SaaS environment doesn't for a Self Managed one.
+
+We also must maintain a high bar for any new features or additions. Provisioning and Configuration tools can get complicated fast, being pulled in _many_ directions quickly and fall into disrepair as the maintenance cost becomes too high. The Toolkit already touches on a [substantial amount of areas](#integrations-list) and every new feature is additional long term maintenance.
+
+Changes should only be considered when directly related to deploying GitLab at scale that can't be done in other existing Tools or Cloud Providers. Additionally the Toolkit shouldn't be working around or trying to make up for limitations in these other areas due to the high maintenance cost - These should be tackled directly in the dependent area.
+
+All changes must be strictly considered against the above.
 
 ### Simplicity
 
@@ -42,12 +67,6 @@ It's critical that all code we add to the Toolkit is simple where possible. Ever
 
 We askew complicated code designs or patterns wherever possible to achieve this principle.
 
-### Reference Architecture based design
-
-The Toolkit is designed to deploy the supported [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/). Other architectures are not supported at this time. This is achieve maintainability as well as test what we as a company actually recommend.
-
-We also aim to provide supported customization and config hooks that are simple and maintainable.
-
 ### AHA (Avoid Hasty Abstractions)
 
 Generally we follow the pragmatic principle of [AHA - _Avoid Hasty Abstractions_](https://kentcdodds.com/blog/aha-programming#aha-) over [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
@@ -66,6 +85,22 @@ We use industry leading tools natively for Provisioning and Configuration wherev
 We avoid custom code/implementations wherever possible as this will add additional maintenance cost.
 
 ## Technical Implementations
+
+### Integrations List
+
+The Toolkit integrates with many tools and services, along with contending with their own designs:
+
+- Terraform
+- Ansible
+- GitLab
+  - Omnibus
+  - Helm
+- Cloud Providers (AWS, GCP, Azure)
+  - VMs
+  - Kubernetes (Helm)
+  - Disks
+  - Networking (IPs, VPCs, Subnets, Gateways, Routing, Firewalls, etc...)
+  - Services (e.g. RDS, etc...)
 
 ### Terraform
 
