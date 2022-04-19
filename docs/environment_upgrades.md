@@ -80,3 +80,9 @@ Running the zero downtime update process with GET is done in the same way as bui
   If you want to have a highly available setup, Praefect requires a third-party PostgreSQL database and will need to be updated manually.
 
 The update process can take a couple of hours to complete and the full runtime will depend on the number of nodes in the deployment.
+
+## OS Upgrades
+
+OS version upgrades should be handled directly and follow the standard process for each OS. The Toolkit doesn't handle this for you as they typically involve inputs and require restarts.
+
+:warning:&nbsp; On Cloud Providers, changing the machine image should be avoided as this is treated as the base disk and will trigger a full rebuild and lead to data loss.
