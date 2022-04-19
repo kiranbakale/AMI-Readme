@@ -176,7 +176,7 @@ upload-terraform-module:
   stage: upload
   image: alpine
   services:
-    - docker:stable-dind
+    - docker:20-dind
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: tcp://docker:2375

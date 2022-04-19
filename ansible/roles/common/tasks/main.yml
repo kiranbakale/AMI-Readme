@@ -69,6 +69,10 @@
       when: cloud_provider != 'none'
       tags: data_disks
 
+    - name: Setup NFS
+      import_tasks: nfs.yml
+      tags: nfs
+
     # Removes the official release repo if it's present as we typically want to stick with Nightly
     # Prevents apt from switching to the release channel (when an official release is younger than nightly)
     - name: Ensure only GitLab Nightly apt repo is installed unless specified otherwise (Ubuntu)

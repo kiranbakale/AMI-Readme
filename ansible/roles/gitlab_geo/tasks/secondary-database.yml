@@ -30,6 +30,7 @@
   import_tasks: secondary-database-patroni-workaround.yml
   when:
     - postgres_replication_manager == 'patroni'
+    - ('postgres' in group_names)
 
 - name: Secondary Database - Run gitlab-ctl reconfigure
   command: gitlab-ctl reconfigure

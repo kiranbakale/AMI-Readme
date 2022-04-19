@@ -30,7 +30,7 @@ The Toolkit allows for you to provide custom GitLab config that will be used whe
 Custom config should only be used in advanced scenarios where you are fully aware of the intended effects or for areas that the Toolkit doesn't support natively due to potential permutations such as:
 
 - Omniauth
-- Custom Object Storage
+- Custom [Object Storage](https://docs.gitlab.com/ee/administration/object_storage.html)
 - Email
 
 Custom configs are treated the same as our built in config templates. As such you have access to the same variables for added flexibility.
@@ -226,7 +226,7 @@ Please note the following caveats before proceeding:
 - Your milage may vary - Due to the sheer potential number of customizations this support is offered on a best effort basis.
 - Custom Server setups must follow the [requirements](../README.md#requirements).
 - Terraform support is not available. VMs and services must be provisioned separately.
-- Object Storage config must be configured via [Custom Config](#custom-config) on any GitLab Rails or Sidekiq nodes as well as Helm Chart for Cloud Native Hybrid environments.
+- [Object Storage](https://docs.gitlab.com/ee/administration/object_storage.html) config must be configured via [Custom Config](#custom-config) on any GitLab Rails or Sidekiq nodes as well as Helm Chart for Cloud Native Hybrid environments.
 - Data Disks configuration is not supported. These must be configured separately.
 - On Cloud Native Hybrid environments the Kubernetes cluster must be configured as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) and `kubeconfig` file created separately.
 
@@ -436,6 +436,22 @@ The Toolkit can also optionally upgrade all packages and clean up unneeded packa
 
 - `system_packages_upgrade`: Configures the Toolkit to upgrade all packages on nodes. Default is `false`. Can also be set as via the environment variable `SYSTEM_PACKAGES_UPGRADE`.
 - `system_packages_autoremove`: Configures the Toolkit to autoremove any old or unneeded packages on nodes. Default is `false`. Can also be set as via the environment variable `SYSTEM_PACKAGES_AUTOREMOVE`.
+
+## NFS Options
+
+How NFS is used by either both GitLab or the Toolkit is nuanced.
+
+The various ways it's used are as follows:
+
+- Toolkit - Requires NFS to propagate select config and SSH keys.
+- GitLab - Can be optionally used to store data but this isn't recommended over [Object Storage](https://docs.gitlab.com/ee/administration/object_storage.html).
+  - Note this does **not** include Git repository data, which is [deprecated](https://docs.gitlab.com/ee/administration/nfs.html#gitaly-and-nfs-deprecation).
+
+As such, the Toolkit will always configure a NFS server for its own use only by default on a select node depending on what's available - NFS, Gitaly or Rails in that order. This happens seamlessly in the background and the server is only used during Toolkit runs.
+
+:information_source:&nbsp; It's recommended you still deploy a separate NFS server as a best practice. This is to reduce blast radius and to avoid any issues with NFS, which tends to not handle any server issues well.
+
+It's possible to also use this NFS server to also store GitLab object data by setting the Ansible variable `gitlab_object_storage_type` to `nfs`. A dedicated GitLab NFS node would be required in this setup, however do note this is generally unrecommended over [Object Storage](https://docs.gitlab.com/ee/administration/object_storage.html).
 
 ## Custom IAM Instance Policies (AWS)
 

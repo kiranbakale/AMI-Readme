@@ -1,13 +1,4 @@
 ---
-- name: Mount GitLab NFS
-  mount:
-    fstype: nfs
-    opts: defaults,nofail,lookupcache=positive
-    state: mounted
-    src: "{{ gitlab_nfs_int_ip }}:{{ gitlab_nfs_path }}"
-    path: "{{ gitlab_nfs_path }}"
-  tags: nfs
-
 - name: Setup GitLab config file
   template:
     src: templates/gitaly.gitlab.rb.j2
@@ -33,9 +24,13 @@
   tags: reconfigure
   when: gitaly_custom_config_file_path.stat.exists
 
-- name: Copy secrets file from NFS
-  shell: "cp {{ gitlab_nfs_path }}/gitlab-secrets.json /etc/gitlab/gitlab-secrets.json 2>/dev/null || true"
-  tags: secrets
+- name: Propagate Secrets if existing
+  include_role:
+    name: common
+    tasks_from: secrets
+  tags:
+    - reconfigure
+    - secrets
 
 - name: Reconfigure Gitaly
   command: gitlab-ctl reconfigure
@@ -63,6 +58,16 @@
   when: "'praefect' not in groups"
   tags: reconfigure
 
+- name: Propagate Secrets if new
+  include_role:
+    name: common
+    tasks_from: secrets
+  vars:
+    gitlab_secrets_reconfigure: true
+  tags:
+    - reconfigure
+    - secrets
+
 - name: Restart Gitaly
   command: gitlab-ctl restart
   register: result
@@ -71,11 +76,6 @@
   tags:
     - reconfigure
     - restart
-
-- name: Copy secrets file to NFS if missing
-  shell: "cp -n /etc/gitlab/gitlab-secrets.json {{ gitlab_nfs_path }}"
-  tags: secrets
-  run_once: true
 
 - name: Create skip-auto-reconfigure file
   file:
