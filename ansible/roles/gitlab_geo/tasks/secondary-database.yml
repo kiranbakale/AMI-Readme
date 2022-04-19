@@ -44,6 +44,7 @@
       gitlab-ctl replicate-geo-database \
         --slot-name={{ inventory_hostname | regex_replace("-", "_") }} \
         --host={{ geo_primary_site_postgres_int_ip }} \
+        --sslmode=verify-ca \
         --force
     responses:
       (.*)Confirmation: "replicate"
