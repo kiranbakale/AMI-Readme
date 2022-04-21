@@ -367,6 +367,8 @@ resource "aws_iam_policy" "amazon_eks_node_autoscaler_policy" {
   name        = "${var.prefix}-eks-node-cluster-autoscaler"
   description = "Policy for ${var.prefix} Cluster Autoscaler"
 
+  # kics: Terraform AWS - IAM policies allow all ('*') in a statement action - False positive, recommended by AWS for this specific policy.
+  # kics-scan ignore-block
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
