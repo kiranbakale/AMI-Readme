@@ -3,8 +3,7 @@
 ################################################################################
 
 ansible_python_interpreter: auto
-swap_file_size_mb: "2048"
-swap_swappiness: "10"
+swap_file_state: absent
 internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
 
 ################################################################################
