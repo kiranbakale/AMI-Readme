@@ -54,6 +54,12 @@ resource "aws_db_instance" "gitlab_geo_tracking" {
   allow_major_version_upgrade = true
 
   skip_final_snapshot = true
+
+  lifecycle {
+    ignore_changes = [
+      username
+    ]
+  }
 }
 
 output "rds_geo_tracking_postgres_connection" {

@@ -861,7 +861,7 @@ variable "rds_geo_tracking_postgres_port" {
 }
 variable "rds_geo_tracking_postgres_username" {
   type    = string
-  default = "praefect"
+  default = "gitlab_geo"
 }
 variable "rds_geo_tracking_postgres_password" {
   type    = string
