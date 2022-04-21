@@ -23,7 +23,7 @@
   block:
     - name: Install NFS Server
       package:
-        name: "{{ 'nfs-kernel-server' if ansible_facts['os_family'] == 'Debian' else 'nfs-server' }}"
+        name: "{{ 'nfs-kernel-server' if ansible_facts['os_family'] == 'Debian' else 'nfs-utils' }}"
       register: result
       retries: 2
       delay: 3
