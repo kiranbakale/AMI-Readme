@@ -83,7 +83,9 @@
   delegate_to: "{{ groups['gitaly'][0] }}"
   delegate_facts: true
   become: true
-  when: postgres_external
+  when:
+    - postgres_external
+    - cloud_native_hybrid_geo_role != 'secondary'
   tags:
     - reconfigure
     - db_migrate
