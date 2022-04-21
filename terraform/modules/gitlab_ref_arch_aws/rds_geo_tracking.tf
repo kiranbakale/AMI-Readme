@@ -4,6 +4,12 @@ locals {
   rds_geo_tracking_postgres_subnet_ids = local.backend_subnet_ids != null ? local.backend_subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_geo_tracking_default_subnet_count)
 }
 
+data "aws_kms_key" "aws_geo_rds" {
+  count = local.rds_geo_tracking_postgres_create && var.rds_geo_tracking_postgres_kms_key_arn == null && var.default_kms_key_arn == null ? 1 : 0
+
+  key_id = "alias/aws/rds"
+}
+
 resource "aws_db_subnet_group" "gitlab_geo" {
   count      = local.rds_geo_tracking_postgres_create ? 1 : 0
   name       = "${var.prefix}-geo-rds-subnet-group"
@@ -40,7 +46,7 @@ resource "aws_db_instance" "gitlab_geo_tracking" {
   allocated_storage     = var.rds_geo_tracking_postgres_allocated_storage
   max_allocated_storage = var.rds_geo_tracking_postgres_max_allocated_storage
   storage_encrypted     = true
-  kms_key_id            = coalesce(var.rds_geo_tracking_postgres_kms_key_arn, var.default_kms_key_arn, try(data.aws_kms_key.aws_rds[0].arn, null))
+  kms_key_id            = coalesce(var.rds_geo_tracking_postgres_kms_key_arn, var.default_kms_key_arn, try(data.aws_kms_key.aws_geo_rds[0].arn, null))
 
   backup_window           = var.rds_geo_tracking_postgres_backup_window
   backup_retention_period = var.rds_geo_tracking_postgres_backup_retention_period

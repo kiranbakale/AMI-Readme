@@ -23,6 +23,15 @@
 
 - name: Get details for GitLab Charts Task Runner Pod if present
   block:
+    - name: kubeconfig - Configure local kubeconfig to point to correct cluster
+      include_role:
+        name: gitlab_charts
+        tasks_from: kubeconfig
+        apply:
+          become: false
+          delegate_to: localhost
+          run_once: true
+
     - name: Check for Task Runner pod
       kubernetes.core.k8s_info:
         kind: Pod
