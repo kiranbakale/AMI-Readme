@@ -631,6 +631,10 @@ variable "sidekiq_iam_instance_policy_arns" {
 
 # EKS - Kubernetes \ Helm
 ## Defaults
+variable "eks_ami_id" {
+  type    = string
+  default = null
+}
 variable "eks_default_subnet_count" {
   type    = number
   default = 2

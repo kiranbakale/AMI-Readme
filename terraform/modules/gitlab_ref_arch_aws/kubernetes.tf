@@ -1,4 +1,7 @@
 locals {
+  eks_custom_ami = var.eks_ami_id != null
+  eks_ami_type   = local.eks_custom_ami ? "CUSTOM" : "AL2_x86_64"
+
   total_node_pool_count = var.webservice_node_pool_count + var.sidekiq_node_pool_count + var.supporting_node_pool_count + var.webservice_node_pool_max_count + var.sidekiq_node_pool_max_count + var.supporting_node_pool_max_count
 
   webservice_node_pool_autoscaling = var.webservice_node_pool_max_count > 0
@@ -70,17 +73,45 @@ resource "aws_kms_alias" "gitlab_cluster_key" {
 
 # Node Pools
 
+resource "aws_launch_template" "gitlab_webservice" {
+  count    = local.eks_custom_ami ? min(var.webservice_node_pool_count + var.webservice_node_pool_max_count, 1) : 0
+  image_id = var.eks_ami_id
+
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    ebs {
+      volume_size           = coalesce(var.webservice_node_pool_disk_size, var.default_disk_size)
+      volume_type           = var.default_disk_type
+      encrypted             = true
+      delete_on_termination = true
+    }
+  }
+
+  user_data = base64encode(templatefile("${path.module}/templates/userdata.sh.tpl", { cluster_name = aws_eks_cluster.gitlab_cluster[0].name }))
+}
+
 resource "aws_eks_node_group" "gitlab_webservice_pool" {
   count = min(var.webservice_node_pool_count + var.webservice_node_pool_max_count, 1)
 
   cluster_name = aws_eks_cluster.gitlab_cluster[0].name
+
+  ami_type = local.eks_ami_type
+
+  dynamic "launch_template" {
+    for_each = range(local.eks_custom_ami ? 1 : 0)
+
+    content {
+      id      = aws_launch_template.gitlab_webservice[0].id
+      version = aws_launch_template.gitlab_webservice[0].latest_version
+    }
+  }
 
   # Create a unique name to allow nodepool replacements
   node_group_name_prefix = "gitlab_webservice_pool_"
   node_role_arn          = aws_iam_role.gitlab_eks_node_role[0].arn
   subnet_ids             = local.eks_backend_node_subnet_ids
   instance_types         = [var.webservice_node_pool_instance_type]
-  disk_size              = var.webservice_node_pool_disk_size
+  disk_size              = local.eks_custom_ami ? null : var.webservice_node_pool_disk_size
 
   scaling_config {
     desired_size = local.webservice_node_pool_autoscaling ? var.webservice_node_pool_min_count : var.webservice_node_pool_count
@@ -116,17 +147,47 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
   }
 }
 
+resource "aws_launch_template" "gitlab_sidekiq" {
+  count    = local.eks_custom_ami ? min(var.sidekiq_node_pool_count + var.sidekiq_node_pool_max_count, 1) : 0
+  image_id = var.eks_ami_id
+
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    ebs {
+      volume_size           = coalesce(var.sidekiq_node_pool_disk_size, var.default_disk_size)
+      volume_type           = var.default_disk_type
+      encrypted             = true
+      delete_on_termination = true
+    }
+  }
+
+  user_data = base64encode(templatefile("${path.module}/templates/userdata.sh.tpl", { cluster_name = aws_eks_cluster.gitlab_cluster[0].name }))
+}
+
+
 resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
   count = min(var.sidekiq_node_pool_count + var.sidekiq_node_pool_max_count, 1)
 
   cluster_name = aws_eks_cluster.gitlab_cluster[0].name
+
+  ami_type = local.eks_ami_type
+
+  dynamic "launch_template" {
+    for_each = range(local.eks_custom_ami ? 1 : 0)
+
+    content {
+      id      = aws_launch_template.gitlab_sidekiq[0].id
+      version = aws_launch_template.gitlab_sidekiq[0].latest_version
+    }
+  }
+
 
   # Create a unique name to allow nodepool replacements
   node_group_name_prefix = "gitlab_sidekiq_pool_"
   node_role_arn          = aws_iam_role.gitlab_eks_node_role[0].arn
   subnet_ids             = local.eks_backend_node_subnet_ids
   instance_types         = [var.sidekiq_node_pool_instance_type]
-  disk_size              = var.sidekiq_node_pool_disk_size
+  disk_size              = local.eks_custom_ami ? null : var.sidekiq_node_pool_disk_size
 
   scaling_config {
     desired_size = local.sidekiq_node_pool_autoscaling ? var.sidekiq_node_pool_min_count : var.sidekiq_node_pool_count
@@ -162,17 +223,44 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
   }
 }
 
+resource "aws_launch_template" "gitlab_supporting" {
+  count    = local.eks_custom_ami ? min(var.supporting_node_pool_count + var.supporting_node_pool_max_count, 1) : 0
+  image_id = var.eks_ami_id
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    ebs {
+      volume_size           = coalesce(var.supporting_node_pool_disk_size, var.default_disk_size)
+      volume_type           = var.default_disk_type
+      encrypted             = true
+      delete_on_termination = true
+    }
+  }
+
+  user_data = base64encode(templatefile("${path.module}/templates/userdata.sh.tpl", { cluster_name = aws_eks_cluster.gitlab_cluster[0].name }))
+}
+
 resource "aws_eks_node_group" "gitlab_supporting_pool" {
   count = min(var.supporting_node_pool_count + var.supporting_node_pool_max_count, 1)
 
   cluster_name = aws_eks_cluster.gitlab_cluster[0].name
+
+  ami_type = local.eks_ami_type
+
+  dynamic "launch_template" {
+    for_each = range(local.eks_custom_ami ? 1 : 0)
+
+    content {
+      id      = aws_launch_template.gitlab_supporting[0].id
+      version = aws_launch_template.gitlab_supporting[0].latest_version
+    }
+  }
 
   # Create a unique name to allow nodepool replacements
   node_group_name_prefix = "gitlab_supporting_pool_"
   node_role_arn          = aws_iam_role.gitlab_eks_node_role[0].arn
   subnet_ids             = local.eks_frontend_node_subnet_ids # Select Public subnets if configured first as this pool hosts NGinx
   instance_types         = [var.supporting_node_pool_instance_type]
-  disk_size              = var.supporting_node_pool_disk_size
+  disk_size              = local.eks_custom_ami ? null : var.supporting_node_pool_disk_size
 
   scaling_config {
     desired_size = local.supporting_node_pool_autoscaling ? var.supporting_node_pool_min_count : var.supporting_node_pool_count
