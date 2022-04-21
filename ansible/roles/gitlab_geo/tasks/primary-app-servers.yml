@@ -36,10 +36,14 @@
       become: false
       delegate_to: localhost
       run_once: true
+      register: result
       kubernetes.core.k8s_exec:
         pod: "{{ task_runner_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: gitlab-rake geo:set_primary_node
+      failed_when:
+        - result.rc == 1
+        - ("GitLab Geo primary node already present" not in result.stderr)
 
     - name: Primary App Servers Hybrid - Update internal URL for primary site
       become: false
