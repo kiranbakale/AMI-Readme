@@ -17,7 +17,7 @@ module "gitlab_ref_arch_gcp" {
   # 10k Hybrid - Compute VMs
   consul_node_count = 3
   consul_machine_type = "n1-highcpu-2"
-
+  
   gitaly_node_count = 3
   gitaly_machine_type = "n1-standard-16"
 
@@ -32,9 +32,6 @@ module "gitlab_ref_arch_gcp" {
 
   haproxy_internal_node_count = 1
   haproxy_internal_machine_type = "n1-highcpu-2"
-
-  monitor_node_count = 1
-  monitor_machine_type = "n1-highcpu-4"
 
   pgbouncer_node_count = 3
   pgbouncer_machine_type = "n1-highcpu-2"

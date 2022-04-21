@@ -18,10 +18,6 @@ module "gitlab_ref_arch_aws" {
   supporting_node_pool_count = 2
   supporting_node_pool_instance_type = "m5.xlarge"
 
-  # 10k
-  consul_node_count = 3
-  consul_instance_type = "c5.large"
-
   gitaly_node_count = 3
   gitaly_instance_type = "m5.4xlarge"
 
@@ -30,9 +26,6 @@ module "gitlab_ref_arch_aws" {
 
   gitlab_nfs_node_count = 1
   gitlab_nfs_instance_type = "c5.xlarge"
-
-  monitor_node_count = 1
-  monitor_instance_type = "c5.xlarge"
 
   # 10k - AWS RDS
   rds_postgres_instance_type = "m5.2xlarge"
