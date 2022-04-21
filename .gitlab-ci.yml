@@ -90,7 +90,7 @@ check:tflint:
     name: ghcr.io/terraform-linters/tflint:latest
     entrypoint: [""]
   script:
-    - find terraform/modules/* -type d -print0 | xargs -0 -n1 -I % sh -c "printf '\n%\n' && tflint -c .tflint.hcl %"
+    - find terraform/modules/* -type d -prune -not -path templates -print0 | xargs -0 -n1 -I % sh -c "printf '\n%\n' && tflint -c .tflint.hcl %"
   only:
     - main
     - merge_requests
