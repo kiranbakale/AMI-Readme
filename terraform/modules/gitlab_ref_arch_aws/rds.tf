@@ -22,6 +22,25 @@ data "aws_kms_key" "aws_rds" {
   key_id = "alias/aws/rds"
 }
 
+resource "aws_db_parameter_group" "gitlab" {
+  name   = "${var.prefix}-rds-postgresql${var.rds_postgres_version}"
+  family = "postgres${var.rds_postgres_version}"
+
+  parameter {
+    name  = "password_encryption"
+    value = "scram-sha-256"
+  }
+
+  parameter {
+    name  = "log_min_duration_statement"
+    value = 1000
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_db_instance" "gitlab" {
   count = local.rds_postgres_create ? 1 : 0
 
@@ -45,8 +64,9 @@ resource "aws_db_instance" "gitlab" {
     aws_security_group.gitlab_internal_networking.id
   ]
 
-  replicate_source_db = var.rds_postgres_replication_database_arn
-  apply_immediately   = true
+  parameter_group_name = aws_db_parameter_group.gitlab.name
+  replicate_source_db  = var.rds_postgres_replication_database_arn
+  apply_immediately    = true
 
   allocated_storage     = var.rds_postgres_allocated_storage
   max_allocated_storage = var.rds_postgres_max_allocated_storage
