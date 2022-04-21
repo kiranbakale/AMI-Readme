@@ -1,3 +1,3 @@
 provider: AWS
-region: {{ aws_region }}
+region: {{ geo_secondary_site_aws_region if geo_secondary_site_aws_region is defined else aws_region }}
 use_iam_profile: true
