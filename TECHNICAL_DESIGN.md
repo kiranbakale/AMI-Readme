@@ -95,12 +95,18 @@ The Toolkit integrates with many tools and services, along with contending with 
 - GitLab
   - Omnibus
   - Helm
-- Cloud Providers (AWS, GCP, Azure)
+- Cloud Providers - AWS, GCP, Azure (Omnibus Only)
   - VMs
   - Kubernetes (Helm)
   - Disks
   - Networking (IPs, VPCs, Subnets, Gateways, Routing, Firewalls, etc...)
   - Services (e.g. RDS, etc...)
+
+#### Supported Cloud Providers
+
+The Toolkit primarily supports AWS and GCP as target Cloud Providers, [following the general GitLab guidance](https://docs.gitlab.com/ee/administration/reference_architectures/#recommended-cloud-providers-and-services), but we do also support Azure for Omnibus installs only. We additionally support On Prem setups for Configuration via Ansible.
+
+We're unable to support or accept any contributions for any additional Cloud Providers directly as this would come with a significant maintenance cost and would require access to them on our end for long term testing.
 
 ### Terraform
 

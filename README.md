@@ -17,7 +17,7 @@ Created and maintained by the GitLab Quality Engineering Enablement team, the To
 
 - Support for deploying all [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) sizes dynamically from [1k](https://docs.gitlab.com/ee/administration/reference_architectures/1k_users.html) to [50k](https://docs.gitlab.com/ee/administration/reference_architectures/50k_users.html).
 - Support for deploying Cloud Native Hybrid variants of the Reference Architectures (AWS & GCP only at this time).
-- GCP, AWS and Azure cloud provider support
+- GCP, AWS and Azure (Omnibus) [cloud provider support](TECHNICAL_DESIGN.md#supported-cloud-providers)
 - Upgrades
 - Release and nightly Omnibus builds support
 - Advanced search with Elasticsearch
