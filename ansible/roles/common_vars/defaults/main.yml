@@ -162,6 +162,7 @@ gitaly_callback_internal_api_url: "{{ ('http://' + internal_lb_host) if 'haproxy
 praefect_primary_int_ip: "{{ (groups['praefect_primary'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_primary' in groups else '' }}"
 praefect_secondary_int_ips: "{{ (groups['praefect_secondary'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'praefect_secondary' in groups else [] }}"
 praefect_int_ips: "{{ (groups['praefect'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'praefect' in groups else [] }}"
+praefect_external_token: ""
 
 ## Praefect Postgres
 praefect_postgres_int_ip: "{{ (groups['praefect_postgres'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_postgres_primary' in groups else '' }}"
