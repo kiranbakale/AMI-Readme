@@ -4,6 +4,17 @@
     name: certbot
     update_cache: true
 
+- name: Check certbot certs are existing
+  stat:
+    path: "/etc/letsencrypt/live/{{ external_host }}/fullchain.pem"
+  register: existing_cert
+
+- name: Stop HAProxy if running when no certs are present
+  docker_container:
+    name: haproxy
+    state: absent
+  when: not existing_cert.stat.exists
+
 - name: Run certbot to generate certs
   command:
     cmd: certbot certonly -n --standalone --keep --agree-tos --email {{ external_ssl_letsencrypt_issuer_email }} --cert-name {{ external_host }} -d {{ external_host }}
