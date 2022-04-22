@@ -19,6 +19,19 @@
         - gitlab_nfs_path in existing_mount.stdout
         - gitlab_nfs_int_ip not in existing_mount.stdout
 
+- name: Clear any files incorrectly at mount location
+  block:
+    - name: Check if file exists incorrectly at mount path
+      stat:
+        path: "{{ gitlab_nfs_path }}"
+      register: existing_file_mnt_path
+
+    - name: Remove file if exists incorrectly at mount path
+      file:
+        path: "{{ gitlab_nfs_path }}"
+        state: absent
+      when: existing_file_mnt_path.stat.isreg is defined and existing_file_mnt_path.stat.isreg
+
 - name: Setup NFS Server
   block:
     - name: Install NFS Server
