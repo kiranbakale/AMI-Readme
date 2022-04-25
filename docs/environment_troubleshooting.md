@@ -94,3 +94,66 @@ Error: Error creating instance: googleapi: Error 400: The resource 'projects/git
 This looks to be a race condition issue on Google's end and is [currently being investigated by them](https://github.com/hashicorp/terraform-provider-google/issues/10972).
 
 This error only happens once and rerunning should succeed without issue.
+
+## Ansible can't find any hosts
+
+Ansible uses a dynamic inventory, which allows it to discover hosts by
+matching their names with your environment's prefix. If your Ansible
+scripts are unable to find any matching hosts, check that `prefix` is
+set properly across all YAML files. For example, for the 10K AWS
+example, check:
+
+1. `all.vars.prefix` in `vars.yml`
+1. `gitlab_node_prefix` in `10k.aws_ec2.yml`
+
+Also check that your cloud access credentials are correctly specified
+in the environment. You can use `ansible-inventory` to see which
+hosts Ansible has found:
+
+```shell
+ansible-inventory -i environments/10k/inventory --graph
+```
+
+Sample output:
+
+```plaintext
+@all:
+  |--@aws_ec2:
+  |  |--mytest-consul-1
+  |  |--mytest-consul-2
+  |  |--mytest-consul-3
+  |  |--mytest-gitaly-1
+  |  |--mytest-gitlab-nfs-1
+  |  |--mytest-monitor-1
+  |  |--mytest-praefect-1
+  |--@consul:
+  |  |--mytest-consul-1
+  |  |--mytest-consul-2
+  |  |--mytest-consul-3
+  |--@gitaly:
+  |  |--mytest-gitaly-1
+  |--@gitaly_primary:
+  |  |--mytest-gitaly-1
+  |--@gitlab:
+  |--@gitlab_nfs:
+  |  |--mytest-gitlab-nfs-1
+  |--@global:
+  |--@monitor:
+  |  |--mytest-monitor-1
+  |--@nginx-ingress:
+  |--@praefect:
+  |  |--mytest-praefect-1
+  |--@praefect_primary:
+  |  |--mytest-praefect-1
+  |--@ungrouped:
+```
+
+You can also troubleshoot Ansible issues by using `ansible-inventory` to
+show the configuration for specific hosts from. For example, suppose in
+the above example you wanted to display what Ansible has loaded for
+`mytest-gitaly-1`. The following command would show JSON data for many
+of the variables used in the playbooks:
+
+```shell
+ansible-inventory -i environments/10k/inventory --graph --host mytest-gitaly-1
+```
