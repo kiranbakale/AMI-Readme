@@ -170,6 +170,9 @@ resource "aws_lb_listener" "gitlab_internal_postgres_primary" {
   }
 }
 
-output "elb_internal_host" {
-  value = try(aws_lb.gitlab_internal[0].dns_name, "")
+output "elb_internal" {
+  value = {
+    "elb_internal_host"    = try(aws_lb.gitlab_internal[0].dns_name, "")
+    "elb_internal_zone_id" = try(aws_lb.gitlab_internal[0].zone_id, "")
+  }
 }
