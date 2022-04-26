@@ -2,8 +2,8 @@
 - name: Unlock GitLab package installs
   command: "{{ 'yum versionlock delete' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark install' }} {{ gitlab_edition }}"
   register: result
-  retries: 2
-  delay: 3
+  retries: 5
+  delay: 5
   until: result is success
 
 - name: Uninstall GitLab repo package
