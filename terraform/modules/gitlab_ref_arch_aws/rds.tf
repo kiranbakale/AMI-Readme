@@ -23,6 +23,8 @@ data "aws_kms_key" "aws_rds" {
 }
 
 resource "aws_db_parameter_group" "gitlab" {
+  count = local.rds_postgres_create ? 1 : 0
+
   name   = "${var.prefix}-rds-postgresql${var.rds_postgres_version}"
   family = "postgres${var.rds_postgres_version}"
 
@@ -64,7 +66,7 @@ resource "aws_db_instance" "gitlab" {
     aws_security_group.gitlab_internal_networking.id
   ]
 
-  parameter_group_name = aws_db_parameter_group.gitlab.name
+  parameter_group_name = aws_db_parameter_group.gitlab[0].name
   replicate_source_db  = var.rds_postgres_replication_database_arn
   apply_immediately    = true
 
