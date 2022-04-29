@@ -9,7 +9,7 @@
   delegate_facts: true
   with_items: "{{ groups['elastic'] }}"
 
-- name: Configure Ultimate License
+- name: Configure License
   include_tasks: license.yml
   when: gitlab_license_plan is not defined
   tags: license
@@ -41,60 +41,94 @@
             - "'gitlab_rails' not in groups"
 
     - name: Unconfigure Elasticsearch settings
-      uri:
-        url: '{{ external_url_sanitised }}/api/v4/application/settings'
-        method: PUT
-        headers:
-          PRIVATE-TOKEN: '{{ access_token_key }}'
-        body:
-          elasticsearch_url: ""
-          elasticsearch_indexing: false
-          elasticsearch_search: false
-        follow_redirects: all
-        validate_certs: false
-        status_code: 200, 201
-        body_format: json
-      when: gitlab_license_plan == 'ultimate'
+      block:
+        - name: Unconfigure Elasticsearch settings via GitLab Rails
+          command: |
+            gitlab-rails runner "
+              ApplicationSetting.last.update(elasticsearch_url: '')
+              ApplicationSetting.last.update(elasticsearch_indexing: false)
+              ApplicationSetting.last.update(elasticsearch_search: false)
+            "
+          delegate_to: "{{ groups['gitlab_rails'][0] }}"
+          delegate_facts: true
+          become: true
+          when: "'gitlab_rails' in groups"
+
+        - name: Unconfigure Elasticsearch settings via GitLab Task Runner pod
+          kubernetes.core.k8s_exec:
+            pod: "{{ task_runner_pod }}"
+            namespace: "{{ gitlab_charts_release_namespace }}"
+            command: |
+              gitlab-rails runner "
+                ApplicationSetting.last.update(elasticsearch_url: '')
+                ApplicationSetting.last.update(elasticsearch_indexing: false)
+                ApplicationSetting.last.update(elasticsearch_search: false)
+              "
+          when:
+            - task_runner_pod is defined
+            - "'gitlab_rails' not in groups"
+      when: gitlab_license_plan in ['premium', 'ultimate']
 
     - name: Pause for 1 min for old Elasticsearch index to clear
       pause:
         minutes: 1
   when:
-    - gitlab_license_plan == 'ultimate'
+    - gitlab_license_plan in ['premium', 'ultimate']
     - elasticsearch_clean_install == 'true'
 
 - name: Get and save Environment Settings
   block:
-    - name: Get Environment Settings
-      uri:
-        url: '{{ external_url_sanitised }}/api/v4/application/settings'
-        method: GET
-        headers:
-          PRIVATE-TOKEN: '{{ access_token_key }}'
-        validate_certs: false
-        status_code: 200, 201
-        body_format: json
-        return_content: true
-      register: env_settings_response
+    - name: Get and save Environment Settings via GitLab Rails
+      command: "gitlab-rails runner 'print ApplicationSetting.last.attributes.to_json'"
+      delegate_to: "{{ groups['gitlab_rails'][0] }}"
+      delegate_facts: true
+      become: true
+      register: env_settings_response_rails
+      when: "'gitlab_rails' in groups"
 
     - name: Save Environment Settings
       set_fact:
-        gitlab_environment_settings: '{{ env_settings_response.json }}'
-  when: gitlab_license_plan == 'ultimate'
+        gitlab_environment_settings: '{{ env_settings_response_rails.stdout | from_json }}'
+      when: "'gitlab_rails' in groups"
 
-- name: Configure Elasticsearch settings
-  uri:
-    url: '{{ external_url_sanitised }}/api/v4/application/settings'
-    method: PUT
-    headers:
-      PRIVATE-TOKEN: '{{ access_token_key }}'
-    body:
-      elasticsearch_url: "{{ elasticsearch_urls | join(',') }}"
-    follow_redirects: all
-    validate_certs: false
-    status_code: 200, 201
-    body_format: json
-  when: gitlab_license_plan == 'ultimate'
+    - name: Get and save Environment Settings via GitLab Task Runner pod
+      kubernetes.core.k8s_exec:
+        pod: "{{ task_runner_pod }}"
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        command: "gitlab-rails runner 'print ApplicationSetting.last.attributes.to_json'"
+      register: env_settings_response_pod
+      when:
+        - task_runner_pod is defined
+        - "'gitlab_rails' not in groups"
+
+    - name: Save Environment Settings
+      set_fact:
+        gitlab_environment_settings: '{{ env_settings_response_pod.stdout | from_json }}'
+      when:
+        - task_runner_pod is defined
+        - "'gitlab_rails' not in groups"
+  when: gitlab_license_plan in ['premium', 'ultimate']
+
+- name: Configure Elasticsearch URL setting
+  block:
+    - name: Configure Elasticsearch URL setting via GitLab Rails
+      command: "gitlab-rails runner 'ApplicationSetting.last.update(elasticsearch_url: \"{{ elasticsearch_urls | join(',') }}\")'"
+      delegate_to: "{{ groups['gitlab_rails'][0] }}"
+      delegate_facts: true
+      become: true
+      when: "'gitlab_rails' in groups"
+
+    - name: Configure Elasticsearch URL setting via GitLab Task Runner pod
+      kubernetes.core.k8s_exec:
+        pod: "{{ task_runner_pod }}"
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        command: "gitlab-rails runner 'ApplicationSetting.last.update(elasticsearch_url: \"{{ elasticsearch_urls | join(',') }}\")'"
+      when:
+        - task_runner_pod is defined
+        - "'gitlab_rails' not in groups"
+  when:
+    - gitlab_license_plan in ['premium', 'ultimate']
+    - gitlab_environment_settings.elasticsearch_url != (elasticsearch_urls | join(','))
 
 - name: Configure Elasticsearch Index
   block:
@@ -117,22 +151,38 @@
             - "'gitlab_rails' not in groups"
 
     - name: Enable GitLab Elasticsearch indexing setting
-      uri:
-        url: '{{ external_url_sanitised }}/api/v4/application/settings'
-        method: PUT
-        headers:
-          PRIVATE-TOKEN: '{{ access_token_key }}'
-        body:
-          elasticsearch_url: "{{ elasticsearch_urls | join(',') }}"
-          elasticsearch_indexing: true
-        follow_redirects: all
-        validate_certs: false
-        status_code: 200, 201
-        body_format: json
-      register: elasticsearch_status_result
-      retries: 5
-      delay: 5
-      until: elasticsearch_status_result.status == 200 or elasticsearch_status_result.status == 201
+      block:
+        - name: Enable GitLab Elasticsearch indexing setting via GitLab Rails
+          command: |
+            gitlab-rails runner "
+              ApplicationSetting.last.update(elasticsearch_url: \"{{ elasticsearch_urls | join(',') }}\")
+              ApplicationSetting.last.update(elasticsearch_indexing: true)
+            "
+          delegate_to: "{{ groups['gitlab_rails'][0] }}"
+          delegate_facts: true
+          become: true
+          register: elasticsearch_status_result
+          retries: 5
+          delay: 5
+          until: result is success
+          when: "'gitlab_rails' in groups"
+
+        - name: Enable GitLab Elasticsearch indexing setting via GitLab Task Runner pod
+          kubernetes.core.k8s_exec:
+            pod: "{{ task_runner_pod }}"
+            namespace: "{{ gitlab_charts_release_namespace }}"
+            command: |
+              gitlab-rails runner "
+                ApplicationSetting.last.update(elasticsearch_url: \"{{ elasticsearch_urls | join(',') }}\")
+                ApplicationSetting.last.update(elasticsearch_indexing: true)
+              "
+          register: elasticsearch_status_result
+          retries: 5
+          delay: 5
+          until: result is success
+          when:
+            - task_runner_pod is defined
+            - "'gitlab_rails' not in groups"
 
     - name: Index all GitLab projects
       block:
@@ -178,40 +228,59 @@
             - task_runner_pod is defined
             - "'gitlab_rails' not in groups"
   when:
-    - gitlab_license_plan == 'ultimate'
+    - gitlab_license_plan in ['premium', 'ultimate']
     - not gitlab_environment_settings.elasticsearch_indexing
 
 - name: Get and save Environment Settings
   block:
-    - name: Get Environment Settings
-      uri:
-        url: '{{ external_url_sanitised }}/api/v4/application/settings'
-        method: GET
-        headers:
-          PRIVATE-TOKEN: '{{ access_token_key }}'
-        validate_certs: false
-        status_code: 200, 201
-        body_format: json
-        return_content: true
+    - name: Get and save Environment Settings via GitLab Rails
+      command: "gitlab-rails runner 'print ApplicationSetting.last.attributes.to_json'"
+      delegate_to: "{{ groups['gitlab_rails'][0] }}"
+      delegate_facts: true
+      become: true
       register: env_settings_response
+      when: "'gitlab_rails' in groups"
 
     - name: Save Environment Settings
       set_fact:
-        gitlab_environment_settings: '{{ env_settings_response.json }}'
-  when: gitlab_license_plan == 'ultimate'
+        gitlab_environment_settings: '{{ env_settings_response_rails.stdout | from_json }}'
+      when: "'gitlab_rails' in groups"
+
+    - name: Get and save Environment Settings via GitLab Task Runner pod
+      kubernetes.core.k8s_exec:
+        pod: "{{ task_runner_pod }}"
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        command: "gitlab-rails runner 'print ApplicationSetting.last.attributes.to_json'"
+      register: env_settings_response_pod
+      when:
+        - task_runner_pod is defined
+        - "'gitlab_rails' not in groups"
+
+    - name: Save Environment Settings
+      set_fact:
+        gitlab_environment_settings: '{{ env_settings_response_pod.stdout | from_json }}'
+      when:
+        - task_runner_pod is defined
+        - "'gitlab_rails' not in groups"
+  when: gitlab_license_plan in ['premium', 'ultimate']
 
 - name: Enable Elasticsearch Search
-  uri:
-    url: '{{ external_url_sanitised }}/api/v4/application/settings'
-    method: PUT
-    headers:
-      PRIVATE-TOKEN: '{{ access_token_key }}'
-    body:
-      elasticsearch_search: true
-    follow_redirects: all
-    validate_certs: false
-    status_code: 200, 201
-    body_format: json
+  block:
+    - name: Enable Elasticsearch Search via GitLab Rails
+      command: "gitlab-rails runner 'ApplicationSetting.last.update(elasticsearch_search: true)'"
+      delegate_to: "{{ groups['gitlab_rails'][0] }}"
+      delegate_facts: true
+      become: true
+      when: "'gitlab_rails' in groups"
+
+    - name: Enable Elasticsearch Search via GitLab Task Runner pod
+      kubernetes.core.k8s_exec:
+        pod: "{{ task_runner_pod }}"
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        command: "gitlab-rails runner 'ApplicationSetting.last.update(elasticsearch_search: true)'"
+      when:
+        - task_runner_pod is defined
+        - "'gitlab_rails' not in groups"
   when:
-    - gitlab_license_plan == 'ultimate'
+    - gitlab_license_plan in ['premium', 'ultimate']
     - not gitlab_environment_settings.elasticsearch_search

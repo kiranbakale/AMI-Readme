@@ -270,14 +270,6 @@ gitlab_charts_sidekiq_max_replicas: ""
 gitlab_charts_sidekiq_min_replicas: ""
 
 ################################################################################
-## GitLab Post Configure Settings
-################################################################################
-
-access_token_user: "root"
-access_token_key: "{{ lookup('password', 'tmp/access-token chars=ascii_lowercase,digits length=20') }}"
-access_token_scopes: "[:api]"
-
-################################################################################
 ## GitLab Component Custom Config / Tasks
 ################################################################################
 
