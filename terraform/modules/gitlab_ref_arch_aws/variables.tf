@@ -640,6 +640,12 @@ variable "eks_default_subnet_count" {
   default = 2
 }
 
+variable "eks_enabled_cluster_log_types" {
+  description = "Array of types of values to be logged to CloudWatch Logs. For possible values, visit https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html"
+  type        = list(string)
+  default     = []
+}
+
 ## Webservice
 variable "webservice_node_pool_count" {
   type    = number
@@ -1137,4 +1143,3 @@ variable "additional_tags" {
   type    = map(any)
   default = {}
 }
-
