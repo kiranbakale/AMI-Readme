@@ -19,8 +19,9 @@ locals {
 resource "aws_eks_cluster" "gitlab_cluster" {
   count = min(local.total_node_pool_count, 1)
 
-  name     = var.prefix
-  role_arn = aws_iam_role.gitlab_eks_role[0].arn
+  name                      = var.prefix
+  role_arn                  = aws_iam_role.gitlab_eks_role[0].arn
+  enabled_cluster_log_types = var.eks_enabled_cluster_log_types
 
   vpc_config {
     endpoint_private_access = true
