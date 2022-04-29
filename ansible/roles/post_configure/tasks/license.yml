@@ -1,31 +1,49 @@
-- name: Get License Plan
-  uri:
-    url: '{{ external_url_sanitised }}/api/v4/license'
-    method: GET
-    headers:
-      PRIVATE-TOKEN: '{{ access_token_key }}'
-    validate_certs: false
-    status_code: 200
-    body_format: json
-    return_content: true
-  register: license_response
+- name: Configure License via GitLab Rails
+  block:
+    - name: Configure License if missing via GitLab Rails
+      command: |
+        gitlab-rails runner "
+          if License.current&.plan == nil
+            license = License.new(data: '{{ lookup('file', gitlab_license_file) }}')
+            license.save
+          end
 
-- name: Configure Ultimate License (if missing)
-  uri:
-    url: '{{ external_url_sanitised }}/api/v4/license'
-    method: POST
-    headers:
-      PRIVATE-TOKEN: '{{ access_token_key }}'
-    body:
-      license: "{{ lookup('file', gitlab_license_file) }}"
-    follow_redirects: all
-    validate_certs: false
-    status_code: 200, 201
-    body_format: json
-    return_content: true
-  register: configure_license_response
-  when: license_response.json == None
+          print License.current.plan
+        "
+      delegate_to: "{{ groups['gitlab_rails'][0] }}"
+      delegate_facts: true
+      become: true
+      diff: false
+      register: configure_license_response
 
-- name: Save License Plan
-  set_fact:
-    gitlab_license_plan: '{{ configure_license_response.json.plan if license_response.json == None else license_response.json.plan }}'
+    - name: Save License Plan
+      set_fact:
+        gitlab_license_plan: "{{ configure_license_response.stdout }}"
+  when: "'gitlab_rails' in groups"
+  tags: license
+
+- name: Configure License via GitLab Task Runner pod
+  block:
+    - name: Configure License if missing via GitLab Task Runner pod
+      kubernetes.core.k8s_exec:
+        pod: "{{ task_runner_pod }}"
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        command: |
+          gitlab-rails runner "
+            if License.current&.plan == nil
+              license = License.new(data: '{{ lookup('file', gitlab_license_file) }}')
+              license.save
+            end
+
+            print License.current.plan
+          "
+      diff: false
+      register: configure_license_response
+
+    - name: Save License Plan
+      set_fact:
+        gitlab_license_plan: "{{ configure_license_response.stdout }}"
+  when:
+    - task_runner_pod is defined
+    - "'gitlab_rails' not in groups"
+  tags: license

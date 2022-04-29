@@ -275,6 +275,25 @@ global:
 # Run Prometheus
 prometheus:
   install: true
+  alertmanager:
+    nodeSelector:
+      workload: "support"
+  kubeStateMetrics:
+    nodeSelector:
+      workload: "support"
+  nodeExporter:
+    nodeSelector:
+      workload: "support"
+  pushgateway:
+    nodeSelector:
+      workload: "support"
+  server:
+    nodeSelector:
+      workload: "support"
+
+grafana:
+  nodeSelector:
+    workload: "support"
 
 {% if external_url_ssl and external_ssl_source == 'letsencrypt' %}
 certmanager:
@@ -290,9 +309,9 @@ certmanager:
 gitlab-runner:
   install: false
 
+{% if aws_allocation_ids != "" %}
 nginx-ingress:
   controller:
-{% if aws_allocation_ids != "" %}
     service:
       annotations:
         service.beta.kubernetes.io/aws-load-balancer-type: nlb

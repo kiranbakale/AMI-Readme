@@ -1,12 +1,17 @@
 - name: Disable Write to "authorized_keys" file setting
-  uri:
-    url: '{{ external_url_sanitised }}/api/v4/application/settings'
-    method: PUT
-    headers:
-      PRIVATE-TOKEN: '{{ access_token_key }}'
-    body:
-      authorized_keys_enabled: false
-    follow_redirects: all
-    validate_certs: false
-    status_code: 200, 201
-    body_format: json
+  block:
+    - name: Disable Write to "authorized_keys" file setting via GitLab Rails
+      command: "gitlab-rails runner 'ApplicationSetting.last.update(authorized_keys_enabled: false)'"
+      delegate_to: "{{ groups['gitlab_rails'][0] }}"
+      delegate_facts: true
+      become: true
+      when: "'gitlab_rails' in groups"
+
+    - name: Disable Write to "authorized_keys" file setting via GitLab Task Runner pod
+      kubernetes.core.k8s_exec:
+        pod: "{{ task_runner_pod }}"
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        command: "gitlab-rails runner 'ApplicationSetting.last.update(authorized_keys_enabled: false)'"
+      when:
+        - task_runner_pod is defined
+        - "'gitlab_rails' not in groups"

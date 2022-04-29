@@ -62,14 +62,14 @@ With the above done the file will be picked up by the Toolkit and used when conf
 
 ## Custom Tasks
 
-The Toolkit allows you to provide custom Ansible tasks that can be run at several different points in the setup. This allows you to run tasks as required in addition to the main GitLab setup such as installing monitoring tools, performing API calls, etc...
+The Toolkit allows you to provide custom Ansible tasks that can be run at several different points in the setup. This allows you to run tasks as required in addition to the main GitLab setup such as installing monitoring tools, etc...
 
 The Toolkit has hooks to allow tasks to be run at the following points during the setup:
 
 - Common - Tasks to run on every VM **before** the component has deployed such as installing general monitoring tools.
 - Omnibus - Tasks to run on specific Omnibus VMs **after** the component has been setup via Omnibus such as installing any specific tools for the component.
 - Helm - Tasks to run for the Kubernetes Cluster **after** the Charts have been deployed such as deploying additional components into the Cluster.
-- Post Configure - Tasks to run against the environment **after** setup from the Ansible runner such as [configuring API settings](https://docs.gitlab.com/ee/api/settings.html).
+- Post Configure - Tasks to run against the environment **after** setup from the Ansible runner.
 - Uninstall - Tasks to run as part of the uninstall process such as uninstalling any additional tools.
 
 :warning:&nbsp; **This is an advanced feature and it must be used with caution**. Running custom tasks may lead to various unintended consequences or broken environments if not used carefully.
