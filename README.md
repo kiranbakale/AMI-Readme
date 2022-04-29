@@ -84,7 +84,7 @@ At a high level the Toolkit is designed to be as straightforward as possible. A 
 skinparam defaultTextAlignment center
 
 card omnibus #ffffff [
-  <img:https://gitlab.com/uploads/-/system/project/avatar/20699/omnibus_logo.png{scale=0.225}>
+  <img:https://gitlab.com/uploads/-/system/project/avatar/20699/Omnibus-refresh2.png?width=96>
 
   Omnibus GitLab
 ]
