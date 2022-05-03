@@ -17,3 +17,8 @@ output "iam_instance_role_arn" {
 output "data_disk_device_names" {
   value = [for k, v in aws_volume_attachment.gitlab : "${k} = ${v.device_name}"]
 }
+
+output "data_disk_volume_ids" {
+  description = "AWS Volume IDs for data disks provisioned for this instance."
+  value       = [for k, v in aws_ebs_volume.gitlab : v.id]
+}
