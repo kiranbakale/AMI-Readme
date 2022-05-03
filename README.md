@@ -96,7 +96,7 @@ card charts #ffffff [
 ]
 
 card get #ffffff [
-  <img:https://gitlab.com/uploads/-/system/project/avatar/14292404/tanuki-blueprint.png{scale=0.75}>
+  <img:https://gitlab.com/uploads/-/system/project/avatar/14292404/tanuki-blueprint.png{scale=0.8}>
 
   GitLab Environment Toolkit
 
@@ -139,7 +139,7 @@ card gcp #ffffff [
 ]
 
 card azure #ffffff [
-  <img:https://iili.io/Md52r7.md.png{scale=0.5}>
+  <img:https://iili.io/Md52r7.md.png{scale=0.4}>
   
   Azure
 
