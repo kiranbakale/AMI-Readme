@@ -95,3 +95,8 @@ variable "additional_tags" {
   type    = map(any)
   default = {}
 }
+
+variable "disk_delete_on_termination" {
+  type    = bool
+  default = null
+}

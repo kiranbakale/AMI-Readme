@@ -504,6 +504,7 @@ Next in the file are the various machine settings, separated the same as the Ref
 
 - `*_node_count` - The number of machines to set up for that component
 - `*_instance_type` - The [AWS Instance Type Machine Type](https://aws.amazon.com/ec2/instance-types/) (size) for that component
+- `*_disk_delete_on_termination` - (Optional) Whether the root volume should be destroyed on instance termination. Defaults to true
 - `haproxy_external_elastic_ip_allocation_ids` - Set the external HAProxy load balancer to assume the external IP allocation ID set in `variables.tf`. Note that this is an array setting as the advanced underlying functionality needs to account for the specific setting of IPs for potentially multiple machines. In this case though it should always only be one IP allocation ID.
 
 :information_source:&nbsp; Redis prefixes depend on the target Reference Architecture - set `redis_*` for combined Redis, `redis_cache_*` and `redis_persistent_*` for separated Redis setup.
