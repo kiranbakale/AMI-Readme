@@ -1,11 +1,11 @@
 terraform {
   backend "gcs" {
-    bucket  = "<state_gcp_storage_bucket_name>"
+    bucket = "<state_gcp_storage_bucket_name>"
     prefix = "<environment_prefix>"
   }
   required_providers {
     google = {
-      source  = "hashicorp/google"
+      source = "hashicorp/google"
     }
   }
 }
