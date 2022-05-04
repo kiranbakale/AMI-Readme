@@ -35,6 +35,10 @@ variable "default_disk_type" {
   type    = string
   default = "gp3"
 }
+variable "default_disk_delete_on_termination" {
+  type    = bool
+  default = true
+}
 variable "default_disk_encrypt" {
   type    = bool
   default = true
@@ -117,6 +121,10 @@ variable "consul_disk_encrypt" {
   type    = bool
   default = null
 }
+variable "consul_disk_delete_on_termination" {
+  type    = bool
+  default = true
+}
 variable "consul_disk_kms_key_arn" {
   type    = string
   default = null
@@ -149,6 +157,10 @@ variable "elastic_disk_size" {
 variable "elastic_disk_encrypt" {
   type    = bool
   default = null
+}
+variable "elastic_disk_delete_on_termination" {
+  type    = bool
+  default = true
 }
 variable "elastic_disk_kms_key_arn" {
   type    = string
@@ -183,6 +195,10 @@ variable "gitaly_disk_encrypt" {
   type    = bool
   default = null
 }
+variable "gitaly_disk_delete_on_termination" {
+  type    = bool
+  default = true
+}
 variable "gitaly_disk_kms_key_arn" {
   type    = string
   default = null
@@ -215,6 +231,10 @@ variable "gitlab_nfs_disk_size" {
 variable "gitlab_nfs_disk_encrypt" {
   type    = bool
   default = null
+}
+variable "gitlab_nfs_disk_delete_on_termination" {
+  type    = bool
+  default = true
 }
 variable "gitlab_nfs_disk_kms_key_arn" {
   type    = string
@@ -249,6 +269,10 @@ variable "gitlab_rails_disk_encrypt" {
   type    = bool
   default = null
 }
+variable "gitlab_rails_disk_delete_on_termination" {
+  type    = bool
+  default = true
+}
 variable "gitlab_rails_disk_kms_key_arn" {
   type    = string
   default = null
@@ -281,6 +305,10 @@ variable "haproxy_external_disk_size" {
 variable "haproxy_external_disk_encrypt" {
   type    = bool
   default = null
+}
+variable "haproxy_external_disk_delete_on_termination" {
+  type    = bool
+  default = true
 }
 variable "haproxy_external_disk_kms_key_arn" {
   type    = string
@@ -319,6 +347,10 @@ variable "haproxy_internal_disk_encrypt" {
   type    = bool
   default = null
 }
+variable "haproxy_internal_disk_delete_on_termination" {
+  type    = bool
+  default = true
+}
 variable "haproxy_internal_disk_kms_key_arn" {
   type    = string
   default = null
@@ -351,6 +383,10 @@ variable "monitor_disk_size" {
 variable "monitor_disk_encrypt" {
   type    = bool
   default = null
+}
+variable "monitor_disk_delete_on_termination" {
+  type    = bool
+  default = true
 }
 variable "monitor_disk_kms_key_arn" {
   type    = string
@@ -385,6 +421,10 @@ variable "pgbouncer_disk_encrypt" {
   type    = bool
   default = null
 }
+variable "pgbouncer_disk_delete_on_termination" {
+  type    = bool
+  default = true
+}
 variable "pgbouncer_disk_kms_key_arn" {
   type    = string
   default = null
@@ -417,6 +457,10 @@ variable "postgres_disk_size" {
 variable "postgres_disk_encrypt" {
   type    = bool
   default = null
+}
+variable "postgres_disk_delete_on_termination" {
+  type    = bool
+  default = true
 }
 variable "postgres_disk_kms_key_arn" {
   type    = string
@@ -451,6 +495,10 @@ variable "praefect_disk_encrypt" {
   type    = bool
   default = null
 }
+variable "praefect_disk_delete_on_termination" {
+  type    = bool
+  default = true
+}
 variable "praefect_disk_kms_key_arn" {
   type    = string
   default = null
@@ -483,6 +531,10 @@ variable "praefect_postgres_disk_size" {
 variable "praefect_postgres_disk_encrypt" {
   type    = bool
   default = null
+}
+variable "praefect_postgres_disk_delete_on_termination" {
+  type    = bool
+  default = true
 }
 variable "praefect_postgres_disk_kms_key_arn" {
   type    = string
@@ -517,6 +569,10 @@ variable "redis_disk_encrypt" {
   type    = bool
   default = null
 }
+variable "redis_disk_delete_on_termination" {
+  type    = bool
+  default = true
+}
 variable "redis_disk_kms_key_arn" {
   type    = string
   default = null
@@ -549,6 +605,10 @@ variable "redis_cache_disk_size" {
 variable "redis_cache_disk_encrypt" {
   type    = bool
   default = null
+}
+variable "redis_cache_disk_delete_on_termination" {
+  type    = bool
+  default = true
 }
 variable "redis_cache_disk_kms_key_arn" {
   type    = string
@@ -583,6 +643,10 @@ variable "redis_persistent_disk_encrypt" {
   type    = bool
   default = null
 }
+variable "redis_persistent_disk_delete_on_termination" {
+  type    = bool
+  default = true
+}
 variable "redis_persistent_disk_kms_key_arn" {
   type    = string
   default = null
@@ -615,6 +679,10 @@ variable "sidekiq_disk_size" {
 variable "sidekiq_disk_encrypt" {
   type    = bool
   default = null
+}
+variable "sidekiq_disk_delete_on_termination" {
+  type    = bool
+  default = true
 }
 variable "sidekiq_disk_kms_key_arn" {
   type    = string
