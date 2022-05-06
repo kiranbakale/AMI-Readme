@@ -26,8 +26,8 @@ data "aws_kms_key" "aws_rds" {
 resource "aws_db_parameter_group" "gitlab" {
   count = local.rds_postgres_create ? 1 : 0
 
-  name   = "${var.prefix}-rds-postgresql${local.rds_postgres_major_version}"
-  family = "postgres${local.rds_postgres_major_version}"
+  name_prefix = "${var.prefix}-rds-pg${local.rds_postgres_major_version}-"
+  family      = "postgres${local.rds_postgres_major_version}"
 
   parameter {
     name  = "password_encryption"

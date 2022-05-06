@@ -1,7 +1,8 @@
 locals {
   rds_praefect_postgres_create = var.rds_praefect_postgres_instance_type != ""
 
-  rds_praefect_postgres_subnet_ids = local.backend_subnet_ids != null ? local.backend_subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_praefect_postgres_default_subnet_count)
+  rds_praefect_postgres_subnet_ids    = local.backend_subnet_ids != null ? local.backend_subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_praefect_postgres_default_subnet_count)
+  rds_praefect_postgres_major_version = floor(var.rds_praefect_postgres_version)
 }
 
 data "aws_kms_key" "aws_praefect_rds" {
@@ -17,6 +18,27 @@ resource "aws_db_subnet_group" "gitlab_praefect" {
 
   tags = {
     Name = "${var.prefix}-praefect-rds-subnet-group"
+  }
+}
+
+resource "aws_db_parameter_group" "gitlab_praefect" {
+  count = local.rds_praefect_postgres_create ? 1 : 0
+
+  name_prefix = "${var.prefix}-rds-praefect-pg${local.rds_praefect_postgres_major_version}-"
+  family      = "postgres${local.rds_praefect_postgres_major_version}"
+
+  parameter {
+    name  = "password_encryption"
+    value = "scram-sha-256"
+  }
+
+  parameter {
+    name  = "log_min_duration_statement"
+    value = 1000
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -42,6 +64,9 @@ resource "aws_db_instance" "gitlab_praefect" {
   vpc_security_group_ids = [
     aws_security_group.gitlab_internal_networking.id
   ]
+
+  parameter_group_name = aws_db_parameter_group.gitlab_praefect[0].name
+  apply_immediately    = true
 
   allocated_storage     = var.rds_praefect_postgres_allocated_storage
   max_allocated_storage = var.rds_praefect_postgres_max_allocated_storage
