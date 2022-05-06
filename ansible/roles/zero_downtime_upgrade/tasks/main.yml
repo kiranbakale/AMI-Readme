@@ -23,7 +23,7 @@
   block:
     - name: Remove zero downtime config
       file:
-        path: /etc/gitlab/gitlab.zero-downtime.rb
+        path: "/etc/gitlab/gitlab.{{ gitlab_node_type }}.zero-downtime.rb"
         state: absent
 
     - name: Run gitlab-ctl reconfigure
