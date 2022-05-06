@@ -11,7 +11,7 @@
 - name: Disable auto migrations
   template:
     src: templates/zero-downtime.rb.j2
-    dest: /etc/gitlab/gitlab.zero-downtime.rb
+    dest: "/etc/gitlab/gitlab.{{ gitlab_node_type }}.zero-downtime.rb"
   when: ('sidekiq_primary' not in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' not in group_names))
 
 - name: Update Gitaly
@@ -61,7 +61,7 @@
 - name: Enable auto migrations and update postgres details on deploy node
   template:
     src: templates/zero-downtime.rb.j2
-    dest: /etc/gitlab/gitlab.zero-downtime.rb
+    dest: "/etc/gitlab/gitlab.{{ gitlab_node_type }}.zero-downtime.rb"
   when: ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
 
 - name: Reconfigure deploy node
