@@ -1,7 +1,8 @@
 locals {
   rds_geo_tracking_postgres_create = var.rds_geo_tracking_postgres_instance_type != ""
 
-  rds_geo_tracking_postgres_subnet_ids = local.backend_subnet_ids != null ? local.backend_subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_geo_tracking_default_subnet_count)
+  rds_geo_tracking_postgres_subnet_ids    = local.backend_subnet_ids != null ? local.backend_subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_geo_tracking_default_subnet_count)
+  rds_geo_tracking_postgres_major_version = floor(var.rds_geo_tracking_postgres_version)
 }
 
 data "aws_kms_key" "aws_geo_rds" {
@@ -17,6 +18,27 @@ resource "aws_db_subnet_group" "gitlab_geo" {
 
   tags = {
     Name = "${var.prefix}-geo-rds-subnet-group"
+  }
+}
+
+resource "aws_db_parameter_group" "gitlab_geo_tracking" {
+  count = local.rds_geo_tracking_postgres_create ? 1 : 0
+
+  name_prefix = "${var.prefix}-rds-geo-tracking-pg${local.rds_geo_tracking_postgres_major_version}-"
+  family      = "postgres${local.rds_geo_tracking_postgres_major_version}"
+
+  parameter {
+    name  = "password_encryption"
+    value = "scram-sha-256"
+  }
+
+  parameter {
+    name  = "log_min_duration_statement"
+    value = 1000
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
@@ -42,6 +64,9 @@ resource "aws_db_instance" "gitlab_geo_tracking" {
   vpc_security_group_ids = [
     aws_security_group.gitlab_internal_networking.id
   ]
+
+  parameter_group_name = aws_db_parameter_group.gitlab_geo_tracking[0].name
+  apply_immediately    = true
 
   allocated_storage     = var.rds_geo_tracking_postgres_allocated_storage
   max_allocated_storage = var.rds_geo_tracking_postgres_max_allocated_storage
