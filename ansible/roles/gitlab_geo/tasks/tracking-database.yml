@@ -11,7 +11,8 @@
     - name: Tracking Database - Run gitlab-ctl restart for updates to take effect
       command: gitlab-ctl restart
   when:
-    - ('postgres' in group_names)
+    - ('postgres' in group_names) or
+      ('gitlab_rails' in group_names and geo_secondary_site_group_name + '_postgres_primary' not in groups and not postgres_external)
     - (geo_secondary_site_group_name in group_names)
 
 - name: Get random host to use as deploy node
