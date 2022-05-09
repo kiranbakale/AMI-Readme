@@ -421,7 +421,7 @@ In addition to this it will configure automated security upgrades and can option
 The Toolkit will setup automatic security upgrades as a convenience on the target OS via Ansible Galaxy roles as follows:
 
 - Ubuntu - [Unattended Upgrades](https://help.ubuntu.com/community/AutomaticSecurityUpdates) setup via the [`jnv.unattended-upgrades` Galaxy role](https://galaxy.ansible.com/jnv/unattended-upgrades).
-- RHEL 8 - [DNF Automatic](https://dnf.readthedocs.io/en/latest/automatic.html) setup via the [`exploide.dnf-automatic` Galaxy role](https://galaxy.ansible.com/exploide/dnf-automatic)
+- RHEL 8 - [DNF Automatic](https://dnf.readthedocs.io/en/latest/automatic.html).
 
 The role(s) configure the following:
 
