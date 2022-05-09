@@ -54,9 +54,33 @@
     - system_packages_auto_security_upgrade
     - ansible_facts['os_family'] == "Debian"
 
-- name: Configure Automatic Security Upgrades (RHEL)
-  include_role:
-    name: exploide.dnf-automatic
+- name: Configure Automatic Security Upgrades (RHEL 8)
+  block:
+    - name: Install dnf-automatic package
+      package:
+        name: dnf-automatic
+        state: present
+
+    - name: Configure dnf-automatic package
+      replace:
+        path: /etc/dnf/automatic.conf
+        regexp: "{{ item.search }}"
+        replace: "{{ item.replace }}"
+      loop:
+        - { search: 'apply_updates = \w+$', replace: 'apply_updates = yes' }
+        - { search: 'upgrade_type = \w+$', replace: 'upgrade_type = security' }
+
+    - name: Disable old dnf-automatic service if enabled
+      service:
+        name: dnf-automatic-install.timer
+        enabled: false
+
+    - name: Enable and start dnf-automatic service
+      service:
+        name: dnf-automatic.timer
+        enabled: true
+        state: started
   when:
     - system_packages_auto_security_upgrade
     - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == '8'
