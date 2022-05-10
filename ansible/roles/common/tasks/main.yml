@@ -136,6 +136,7 @@
 
     - name: Install GitLab repository
       command: "bash {{ gitlab_repo_script_path }}"
+      register: result
       retries: 2
       delay: 10
       until: result is success

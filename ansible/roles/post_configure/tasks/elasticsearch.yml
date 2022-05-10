@@ -164,7 +164,7 @@
           register: elasticsearch_status_result
           retries: 5
           delay: 5
-          until: result is success
+          until: elasticsearch_status_result is success
           when: "'gitlab_rails' in groups"
 
         - name: Enable GitLab Elasticsearch indexing setting via GitLab Task Runner pod
@@ -179,7 +179,7 @@
           register: elasticsearch_status_result
           retries: 5
           delay: 5
-          until: result is success
+          until: elasticsearch_status_result is success
           when:
             - task_runner_pod is defined
             - "'gitlab_rails' not in groups"
