@@ -31,4 +31,16 @@
   until: result is success
   when:
     - system_packages_auto_security_upgrade
-    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['os_family'] == 'RedHat'
+    - ansible_facts['distribution_major_version'] == '8'
+
+- name: Run Automatic Security Upgrades directly (RHEL - Amazon Linux 2)
+  command: yum update --security -y
+  register: result
+  retries: 5
+  delay: 5
+  until: result is success
+  when:
+    - system_packages_auto_security_upgrade
+    - ansible_facts['distribution'] == 'Amazon'
+    - ansible_facts['distribution_major_version'] == '2'

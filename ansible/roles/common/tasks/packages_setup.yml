@@ -15,7 +15,7 @@
   block:
     - name: Setup EPEL GPG key (RHEL)
       rpm_key:
-        key: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
+        key: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_facts['distribution_major_version'] }}"
         state: present
       register: result
       retries: 5
@@ -24,22 +24,30 @@
 
     - name: Setup EPEL Repo (RHEL)
       yum:
-        name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+        name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_facts['distribution_major_version'] }}.noarch.rpm"
       register: result
       retries: 5
       delay: 5
       until: result is success
-  when: ansible_facts['os_family'] == "RedHat"
+  when:
+    - ansible_facts['os_family'] == 'RedHat'
+    - ansible_facts['distribution_major_version'] == '8'
+
+- name: Setup EPEL Repo (RHEL - Amazon Linux 2)
+  command: amazon-linux-extras install epel -y
+  when:
+    - ansible_facts['distribution'] == 'Amazon'
+    - ansible_facts['distribution_major_version'] == '2'
 
 - name: Install system packages (RHEL)
   yum:
-    name: "{{ system_packages_rhel['all'] + system_packages_rhel[ansible_distribution_major_version | int] }}"
+    name: "{{ system_packages_rhel }}"
     update_cache: true
   register: result
   retries: 20
   delay: 5
   until: result is success
-  when: ansible_facts['os_family'] == "RedHat"
+  when: ansible_facts['os_family'] == 'RedHat'
 
 # Python
 - name: Install python packages
@@ -82,5 +90,31 @@
         state: started
   when:
     - system_packages_auto_security_upgrade
-    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['os_family'] == 'RedHat'
     - ansible_facts['distribution_major_version'] == '8'
+
+- name: Configure Automatic Security Upgrades (RHEL - Amazon Linux 2)
+  block:
+    - name: Install yum-cron package
+      package:
+        name: yum-cron
+        state: present
+
+    - name: Configure yum-cron package
+      replace:
+        path: /etc/yum/yum-cron.conf
+        regexp: "{{ item.search }}"
+        replace: "{{ item.replace }}"
+      loop:
+        - { search: 'apply_updates = \w+$', replace: 'apply_updates = yes' }
+        - { search: 'update_cmd = \w+$', replace: 'update_cmd = security' }
+
+    - name: Enable and start yum-cron service
+      service:
+        name: yum-cron
+        enabled: true
+        state: started
+  when:
+    - system_packages_auto_security_upgrade
+    - ansible_facts['distribution'] == 'Amazon'
+    - ansible_facts['distribution_major_version'] == '2'

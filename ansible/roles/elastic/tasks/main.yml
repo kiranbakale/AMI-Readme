@@ -1,4 +1,13 @@
 ---
+- name: Configure Docker
+  include_role:
+    name: geerlingguy.docker
+  when: ansible_facts['distribution'] != "Amazon"
+
+- name: Configure Docker (RHEL - Amazon Linux 2)
+  shell: amazon-linux-extras install docker -y && systemctl enable docker && systemctl start docker
+  when: ansible_facts['distribution'] == "Amazon"
+
 - name: Configure Kernel vm.max_map_count setting
   sysctl:
     name: vm.max_map_count

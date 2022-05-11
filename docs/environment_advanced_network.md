@@ -249,8 +249,8 @@ To lock down external network access to particular CIDR blocks these _optional_ 
 - `default_allowed_ingress_cidr_blocks`- A list of CIDR blocks that configures the IP ranges that will be able to access the network externally. This will apply to all external firewall rules that the Toolkit configures. Default is `["0.0.0.0/0"]`. More granular control over rules are also available via these settings:
   - `http_allowed_ingress_cidr_blocks`- A list of CIDR blocks that configures the IP ranges that will be able to access GitLab over HTTP/HTTPs.
   - `ssh_allowed_ingress_cidr_blocks`- A list of CIDR blocks that configures the IP ranges that will be able to access GitLab over SSH.
+  - `external_ssh_allowed_ingress_cidr_blocks`- A list of CIDR blocks that configures the IP ranges that will be able to access the network over SSH.
   - `icmp_allowed_ingress_cidr_blocks`- **GCP and Azure only** - A list of CIDR blocks that configures the IP ranges that will be able to access the network over ICMP.
-  - `external_ssh_allowed_ingress_cidr_blocks`- **AWS and Azure only** - A list of CIDR blocks that configures the IP ranges that will be able to access the network over SSH.
 
 :warning:&nbsp; **{- Changing network setup on an existing environment must be treated with the utmost caution-}**. **Doing so can be considered a significant change in GCP and may trigger the recreation of the entire environment leading to data loss**.
 
