@@ -515,7 +515,7 @@ By default the Toolkit will configure machines using the latest Ubuntu 18.04 AMI
 
 However this can be changed via the `ami_id` setting in the [module's environment config file](#configure-module-settings-environmenttf). [Refer to the AWS docs on how to find the specific AMI ID you require](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html).
 
-:information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+ and RHEL 8 images at this time.
+:information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+, RHEL 8 and Amazon Linux 2 images at this time.
 
 :warning:&nbsp; After deployment, this value shouldn't be changed as this would trigger a full rebuild (as it's treated as the base disk) and lead to data loss. Upgrading the OS should be done directly on the machines via their standard process.
 

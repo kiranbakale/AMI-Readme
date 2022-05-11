@@ -35,7 +35,7 @@
       until: result is success
       when:
         - omnibus_node
-        - ansible_facts['os_family'] == "RedHat"
+        - ansible_facts['os_family'] == 'RedHat'
       tags: gpg
 
     - name: Setup Packages
@@ -84,7 +84,7 @@
         - gitlab_repo_script_url == "https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh"
         - ansible_facts['os_family'] == "Debian"
 
-    # Allows GET to run on a node after running gitlab-ctl cleanse. The current behavior of cleanse is to
+    # Allows GET to run on a node after running gitlab-ctl cleanse. The current behaviour of cleanse is to
     # delete the /etc/gitlab folder, this will cause an error when we try to copy files to the dir.
     # GitLab Issue: https://gitlab.com/gitlab-org/omnibus-gitlab/-/issues/5814
     - name: Ensure /etc/gitlab dir exists with correct permissions
@@ -147,7 +147,8 @@
     - name: Unlock GitLab package installs
       command: "{{ 'yum versionlock delete' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark install' }} {{ gitlab_edition }}"
       register: result
-      retries: 5
+      failed_when: "result.rc != 0 and 'no matches' not in result.stderr"
+      retries: 2
       delay: 5
       until: result is success
       when: omnibus_node
@@ -228,7 +229,7 @@
           when:
             - omnibus_node
             - (gitlab_rpm_host_path != '') or (gitlab_rpm_download_url != '')
-      when: ansible_facts['os_family'] == "RedHat"
+      when: ansible_facts['os_family'] == 'RedHat'
 
     - name: Lock GitLab package updates
       command: "{{ 'yum versionlock' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark install' }} {{ gitlab_edition }}"

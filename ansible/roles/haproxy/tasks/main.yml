@@ -1,4 +1,13 @@
 ---
+- name: Configure Docker
+  include_role:
+    name: geerlingguy.docker
+  when: ansible_facts['distribution'] != "Amazon"
+
+- name: Configure Docker (RHEL - Amazon Linux 2)
+  shell: amazon-linux-extras install docker -y && systemctl enable docker && systemctl start docker
+  when: ansible_facts['distribution'] == "Amazon"
+
 - name: Create /opt/haproxy directory
   file:
     path: /opt/haproxy

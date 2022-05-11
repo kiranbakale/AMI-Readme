@@ -2,7 +2,7 @@
 ## Ansible Settings
 ################################################################################
 
-ansible_python_interpreter: auto
+ansible_python_interpreter: auto_silent
 swap_file_state: absent
 internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
 

@@ -418,10 +418,11 @@ In addition to this it will configure automated security upgrades and can option
 
 ### Automatic Security Upgrades
 
-The Toolkit will setup automatic security upgrades as a convenience on the target OS via Ansible Galaxy roles as follows:
+The Toolkit will setup automatic security upgrades as a convenience on the target OS as follows:
 
 - Ubuntu - [Unattended Upgrades](https://help.ubuntu.com/community/AutomaticSecurityUpdates) setup via the [`jnv.unattended-upgrades` Galaxy role](https://galaxy.ansible.com/jnv/unattended-upgrades).
 - RHEL 8 - [DNF Automatic](https://dnf.readthedocs.io/en/latest/automatic.html).
+- Amazon Linux 2 - [Yum Cron](https://linux.die.net/man/8/yum-cron)
 
 The role(s) configure the following:
 

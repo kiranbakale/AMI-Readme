@@ -2,9 +2,8 @@
 # Packages
 system_packages_deb: [aptitude, curl, openssh-server, ca-certificates, glances, nano, tzdata, ack-grep, tree, python3-pip, nfs-common, postfix, jq, libpq-dev, nvme-cli]
 
-system_packages_rhel:
-  all: [curl, openssh-server, ca-certificates, glances, nano, tzdata, ack, tree, python3-pip, python3-devel, nfs-utils, postfix, jq, nvme-cli, gcc, yum-plugin-versionlock]
-  8: [libpq-devel]
+system_packages_rhel_pg: "{{ 'postgresql-devel' if ansible_facts['distribution_major_version'] | int < 8 else 'libpq-devel' }}"
+system_packages_rhel: "{{ ['curl', 'openssh-server', 'ca-certificates', 'glances', 'nano', 'tzdata', 'ack', 'tree', 'python3-pip', 'python3-devel', 'nfs-utils', 'postfix', 'jq', 'nvme-cli', 'gcc', 'yum-plugin-versionlock', system_packages_rhel_pg ] }}"
 
 system_packages_upgrade: "{{ lookup('env','SYSTEM_PACKAGES_UPGRADE') | default(false, true) }}"
 system_packages_autoremove: "{{ lookup('env','SYSTEM_PACKAGES_AUTOREMOVE') | default(false, true) }}"
