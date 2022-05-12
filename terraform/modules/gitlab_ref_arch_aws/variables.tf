@@ -861,6 +861,10 @@ variable "rds_postgres_backup_window" {
   type    = string
   default = null
 }
+variable "rds_postgres_delete_automated_backups" {
+  type    = bool
+  default = true
+}
 
 ## Praefect PostgreSQL
 variable "rds_praefect_postgres_instance_type" {
@@ -923,6 +927,10 @@ variable "rds_praefect_postgres_backup_window" {
   type    = string
   default = null
 }
+variable "rds_praefect_postgres_delete_automated_backups" {
+  type    = bool
+  default = true
+}
 
 ## Geo Tracking PostgreSQL
 variable "rds_geo_tracking_postgres_instance_type" {
@@ -984,6 +992,10 @@ variable "rds_geo_tracking_postgres_backup_retention_period" {
 variable "rds_geo_tracking_postgres_backup_window" {
   type    = string
   default = null
+}
+variable "rds_geo_tracking_postgres_delete_automated_backups" {
+  type    = bool
+  default = true
 }
 
 ## Redis
