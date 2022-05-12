@@ -34,7 +34,7 @@ By design the Toolkit is meant to be **_one for all_** and aims to deploy a prod
 
 Note that the Toolkit currently has the following requirements (with related issues to increase support further):
 
-- GitLab version: `13.2.0` and upwards. ([GitLab version support issue](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/35)).
+- GitLab version: `13.2.0` (Omnibus) / `13.6.0` (Cloud Native Hybrid) and upwards.
 - OS: Ubuntu 18.04+, RHEL 8, Amazon Linux 2
   - At this time the Toolkit only supports clean OS installations. It may work with existing installations but this is not currently being tested.
   - Admin access to the OS is also required by GET to install various dependencies
