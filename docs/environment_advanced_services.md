@@ -152,6 +152,7 @@ The variables for this service start with the prefix `rds_postgres_*` and should
   - **Warning** Changing this value after the initial creation will result in the database being recreated and will lead to **data loss**.
 - [`rds_postgres_backup_retention_period`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#backup_retention_period) - The number of days to retain backups for. Must be between 0 and 35. Must be greater than 0 for Geo primary instances. Optional, default is `null`.
 - [`rds_postgres_backup_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#backup_window) - The daily time range where backups will be taken, e.g. `09:46-10:16`. Optional, default is `null`.
+- [`rds_postgres_delete_automated_backups`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#delete_automated_backups) - Whether automated backups (if taken) will be deleted when the RDS instance is deleted. Optional, default is `true`.
 
 To set up a standard AWS RDS PostgreSQL service for a 10k environment with the required variables should look like the following in your `environment.tf` file for a 10k environment is:
 

@@ -79,6 +79,8 @@ resource "aws_db_instance" "gitlab_praefect" {
   allow_major_version_upgrade = true
 
   skip_final_snapshot = true
+
+  delete_automated_backups = var.rds_praefect_postgres_delete_automated_backups
 }
 
 output "rds_praefect_postgres_connection" {
