@@ -37,10 +37,6 @@ gemnasium-python-dependency_scanning:
   rules:
     - !reference [.on_merge_request_and_merged_events, rules]
 
-bundler-audit-dependency_scanning:
-  rules:
-    - !reference [.on_merge_request_and_merged_events, rules]
-
 secret_detection:
   rules:
     - !reference [.on_merge_request_and_merged_events, rules]
