@@ -16,7 +16,7 @@ frontend http-in
     default_backend gitlab-rails
 
 frontend gitlab-ssh-in
-    bind *:2222
+    bind *:{{ gitlab_shell_ssh_port }}
     mode tcp
     option tcplog
     option clitcpka

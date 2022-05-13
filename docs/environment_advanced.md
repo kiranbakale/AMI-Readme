@@ -455,6 +455,17 @@ As such, the Toolkit will always configure a NFS server for its own use only by 
 
 It's possible to also use this NFS server to also store GitLab object data by setting the Ansible variable `gitlab_object_storage_type` to `nfs`. A dedicated GitLab NFS node would be required in this setup, however do note this is generally unrecommended over [Object Storage](https://docs.gitlab.com/ee/administration/object_storage.html).
 
+## External Git SSH Port Options
+
+The Toolkit allows you to configure the external GitLab Shell SSH port - The port that is used externally to serve the `git+ssh` service on for Git actions such as pushes or pulls.
+
+Typically this is set up on port `22` but this differs slightly with Toolkit built environments as follows:
+
+- Omnibus - Port `2222`. This is to allow the external load balancer to have it's standard SSH service to run on port `22`, which is used by Ansible for configuring.
+- Cloud Native Hybrid - Port `22`. Due to the different nature of the setup port `22` can be used normally on the Kubernetes frontend.
+
+You can configure either environment type to serve the service on a different external port via the `gitlab_shell_ssh_port` Ansible setting in your [`vars.yml`](environment_configure.md#environment-config-varsyml) file. Changing this setting also changes required firewall rules ports to match.
+
 ## Custom IAM Instance Policies (AWS)
 
 [In AWS you can attach IAM Instance Profiles / Roles to EC2 Instances](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html). These Roles can then contain [Policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html) (AKA permissions) that are attached to the instance to allow it to perform actions against AWS APIs, e.g. accessing Object Storage.

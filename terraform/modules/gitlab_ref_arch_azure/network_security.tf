@@ -50,7 +50,7 @@ resource "azurerm_network_security_rule" "ssh_rule" {
   access                      = "Allow"
   protocol                    = "Tcp"
   source_port_range           = "*"
-  destination_port_ranges     = ["2222"]
+  destination_port_ranges     = ["${var.external_ssh_port}"]
   source_address_prefixes     = coalescelist(var.ssh_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
   destination_address_prefix  = "*"
   resource_group_name         = var.resource_group_name

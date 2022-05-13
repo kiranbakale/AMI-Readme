@@ -23,7 +23,7 @@ resource "google_compute_firewall" "gitlab_ssh" {
 
   allow {
     protocol = "tcp"
-    ports    = ["2222"]
+    ports    = ["${var.external_ssh_port}"]
   }
 
   source_ranges = coalescelist(var.ssh_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)

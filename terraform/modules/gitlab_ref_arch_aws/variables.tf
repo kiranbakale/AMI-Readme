@@ -1137,6 +1137,10 @@ variable "ssh_allowed_ingress_cidr_blocks" {
   default = []
 }
 
+variable "external_ssh_port" {
+  type    = number
+  default = 2222
+}
 variable "external_ssh_allowed_ingress_cidr_blocks" {
   type    = list(any)
   default = []

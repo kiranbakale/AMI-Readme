@@ -80,8 +80,8 @@ resource "aws_security_group" "gitlab_external_git_ssh" {
   # kics-scan ignore-block
   ingress {
     description = "External Git SSH access for ${var.prefix}"
-    from_port   = 2222
-    to_port     = 2222
+    from_port   = var.external_ssh_port
+    to_port     = var.external_ssh_port
     protocol    = "tcp"
     cidr_blocks = coalescelist(var.ssh_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
   }
