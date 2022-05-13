@@ -106,6 +106,7 @@ global:
     secret: gitlab-initial-root-password
     key: password
   shell:
+    port: "{{ gitlab_charts_shell_ssh_port }}"
     authToken:
       secret: gitlab-shell-token
       key: password

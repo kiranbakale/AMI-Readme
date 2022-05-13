@@ -6,7 +6,7 @@ Released under the [GitLab EE license](LICENSE).
 
 GET configures a base GitLab environment based on the Reference Architectures that can be built upon accordingly.
 
-Customers are very welcome to trial and evaluate GET today, however be aware of [key limitations](#missing-features-to-be-aware-of) of the current iteration. For production environments further manual setup will be required based on your specific requirements.
+Customers are very welcome to trial and evaluate GET today. However it's recommended that you do independently review the Toolkit to ensure it meets your requirements, especially around [security](docs/environment_post_considerations.md#security), while also being aware of any current [key limitations](#missing-features-to-be-aware-of). For production environments [further manual setup](docs/environment_post_considerations.md) will be required based on your specific requirements.
 >>>
 
 ![alt text](https://assets.gitlab-static.net/uploads/-/system/project/avatar/14292404/tanuki-blueprint.png "GitLab Environment Toolkit")

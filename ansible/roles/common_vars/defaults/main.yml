@@ -104,6 +104,8 @@ gitlab_rpm_target_path: "{{ lookup('env','GITLAB_TARGET_RPM_PATH') | default('/t
 
 gitlab_admin_email: "admin@example.com"
 
+gitlab_shell_ssh_port: "2222"
+
 # Object Storage Settings
 gitlab_object_storage_type: "object_storage"  # object_storage or nfs
 
@@ -250,6 +252,8 @@ kubeconfig_setup: false
 
 gitlab_charts_release_namespace: default
 gitlab_charts_show_values: false
+
+gitlab_charts_shell_ssh_port: "{{ gitlab_shell_ssh_port if gitlab_shell_ssh_port != '2222' else '22' }}"
 
 use_iam_profile: true
 
