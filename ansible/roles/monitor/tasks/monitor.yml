@@ -38,13 +38,21 @@
   tags: reconfigure
   register: monitor_custom_config_file_path
 
-- name: Setup custom GitLab config file
+- name: Setup Custom Config
   template:
     src: "{{ monitor_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.monitor.custom.rb"
     mode: 0644
   tags: reconfigure
   when: monitor_custom_config_file_path.stat.exists
+
+- name: Copy over any Custom Files
+  copy:
+    src: "{{ item.src_path }}"
+    dest: "{{ item.dest_path }}"
+    mode: "{{ item.mode if item.mode is defined else 'preserve' }}"
+  loop: "{{ monitor_custom_files_paths }}"
+  tags: reconfigure
 
 - name: Reconfigure GitLab
   command: gitlab-ctl reconfigure

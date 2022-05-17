@@ -7,6 +7,14 @@
     - reconfigure
     - secrets
 
+- name: Copy over any Custom Files
+  copy:
+    src: "{{ item.src_path }}"
+    dest: "{{ item.dest_path }}"
+    mode: "{{ item.mode if item.mode is defined else 'preserve' }}"
+  loop: "{{ praefect_custom_files_paths }}"
+  tags: reconfigure
+
 - name: Check if custom config exists
   stat:
     path: "{{ praefect_custom_config_file }}"
@@ -65,7 +73,7 @@
       vars:
         db_migrate: true
 
-    - name: Setup custom GitLab config file
+    - name: Setup Custom Config
       template:
         src: "{{ praefect_custom_config_file }}"
         dest: "/etc/gitlab/gitlab.praefect.custom.rb"
@@ -94,7 +102,7 @@
   until: result is success
   tags: reconfigure
 
-- name: Setup custom GitLab config file
+- name: Setup Custom Config
   template:
     src: "{{ praefect_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.praefect.custom.rb"

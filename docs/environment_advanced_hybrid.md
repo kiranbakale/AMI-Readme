@@ -9,7 +9,7 @@
 - [GitLab Environment Toolkit - Advanced - Network Setup](environment_advanced_network.md)
 - [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
-- [GitLab Environment Toolkit - Advanced - Custom Config / Tasks, Data Disks, Advanced Search and more](environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
@@ -413,7 +413,7 @@ The Toolkit provides several other settings that can customize a Cloud Native Hy
 
 Once your config file is in place as desired you can proceed to [configure as normal](environment_configure.md#3-configure-update).
 
-### Custom Secrets
+### Custom Secrets (via Custom Tasks)
 
 If you require to add additional Kubernetes Secrets for your deployment the Toolkit does provide a hook to do this via a tasks list.
 

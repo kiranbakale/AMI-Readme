@@ -13,13 +13,21 @@
   tags: reconfigure
   register: redis_custom_config_file_path
 
-- name: Setup custom GitLab config file
+- name: Setup Custom Config
   template:
     src: "{{ lookup('vars', redis_group_name + '_custom_config_file') }}"
     dest: "/etc/gitlab/gitlab.{{ redis_group_name }}.custom.rb"
     mode: 0644
   tags: reconfigure
   when: redis_custom_config_file_path.stat.exists
+
+- name: Copy over any Custom Files
+  copy:
+    src: "{{ item.src_path }}"
+    dest: "{{ item.dest_path }}"
+    mode: "{{ item.mode if item.mode is defined else 'preserve' }}"
+  loop: "{{ lookup('vars', redis_group_name + '_custom_files_paths') }}"
+  tags: reconfigure
 
 - name: Propagate Secrets if existing
   include_role:

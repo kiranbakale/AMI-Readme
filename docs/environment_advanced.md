@@ -1,4 +1,4 @@
-# Advanced - Custom Config / Tasks, Data Disks, Advanced Search and more
+# Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search and more
 
 - [GitLab Environment Toolkit - Quick Start Guide](environment_quick_start_guide.md)
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
@@ -9,7 +9,7 @@
 - [GitLab Environment Toolkit - Advanced - Network Setup](environment_advanced_network.md)
 - [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
-- [**GitLab Environment Toolkit - Advanced - Custom Config / Tasks, Data Disks, Advanced Search and more**](environment_advanced.md)
+- [**GitLab Environment Toolkit - Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search and more**](environment_advanced.md)
 - [GitLab Environment Toolkit - Upgrade Notes](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
@@ -23,9 +23,9 @@ On this page we'll detail all of the supported advanced setups you can do with t
 
 ## Custom Config
 
-The Toolkit allows for you to provide custom GitLab config that will be used when setting up components via Omnibus or Helm charts.
+The Toolkit allows for providing custom GitLab config that will be used when setting up components via Omnibus or Helm charts.
 
-:warning:&nbsp; **This feature must be used with caution**. Any custom config passed will always take precedence and may lead to various unintended consequences or broken environments if not used carefully.
+:warning:&nbsp; **This is an advanced feature and it must be used with caution**. Any custom config passed will always take precedence and may lead to various unintended consequences or broken environments if not used carefully.
 
 Custom config should only be used in advanced scenarios where you are fully aware of the intended effects or for areas that the Toolkit doesn't support natively due to potential permutations such as:
 
@@ -62,7 +62,7 @@ With the above done the file will be picked up by the Toolkit and used when conf
 
 ## Custom Tasks
 
-The Toolkit allows you to provide custom Ansible tasks that can be run at several different points in the setup. This allows you to run tasks as required in addition to the main GitLab setup such as installing monitoring tools, etc...
+The Toolkit allows for providing custom Ansible tasks that can be run at several different points in the setup. This allows you to run tasks as required in addition to the main GitLab setup such as installing monitoring tools, etc...
 
 The Toolkit has hooks to allow tasks to be run at the following points during the setup:
 
@@ -93,13 +93,46 @@ Any task within the [Ansible library](https://docs.ansible.com/ansible/2.9/modul
 - If there's a requirement to only run Common tasks across all Omnibus VMs only you can do this by setting a `when` condition on the tasks to the Toolkit provided variable `omnibus_node`.
 - With the exception of Common, tasks will run after component setup.
 
-## Custom Grafana Dashboards
+## Custom Files
 
-When using the Toolkit it is possible to pass custom Grafana dashboards during setup to allow Grafana to monitor any metrics required by the user.
+The Toolkit allows for copying files or folders to component node groups as desired. This can be useful when additional files are required for setup such as SSL certificates.
+
+:warning:&nbsp; **This is an advanced feature and it must be used with caution**. Adding custom files may lead to various unintended consequences or broken environments if not used carefully.
+
+Setting up common files is straightforward. All that's required is for you to have the files ready in a location that's reachable by Ansible on the machine it's running on and then configuring Ansible to copy the files or folder from that location to a specified one on the node group as follows:
+
+1. Place the files you wish to be copied for each component node group in a location that's reachable by Ansible. Similar to Custom Tasks we recommend you place your files or folder in the inventory under the `files/` folder, E.G. `ansible/environments/<env_name>/files/<component>/`.
+1. Configure Ansible to copy the files and where to via the `*_custom_files_paths` setting (see structure below) in your [`vars.yml`](environment_configure.md#environment-config-varsyml) file.
+    - Available component options: `consul`, `postgres`, `pgbouncer`, `redis`, `redis_cache`, `redis_persistent`, `praefect_postgres`, `praefect`, `gitaly`, `gitlab_rails`, `sidekiq` and `monitor`.
+
+:information_source:&nbsp; Files are always copied before any components are configured.
+
+The `*_custom_files_paths` setting is a list of files or folders for each component that Ansible is to copy. An example for Gitaly with descriptions below is as follows:
+
+```yml
+gitaly_custom_files_paths: [
+  { src_path: "<custom_files_path>/gitaly/example_folder", dest_path: "/etc/gitlab/ssl/", mode: "0644" },
+  { src_path: "<custom_files_path>/gitaly/example.file", dest_path: "/etc/gitlab/ssl/" }
+]
+```
+
+- `*_custom_files_paths` - The main setting for each node group. Default is `[]`.
+  - `src_path` - The path on the machine running Ansible where it can expect to find the file or folder to copy.
+    - If the path is a folder it will be copied recursively as a child folder.
+    - If the path is a folder and ends with a `/` only the contents of the folder will be copied.
+  - `dest_path` - The path on the target machine to copy the files to.
+    - If the path doesn't exist it will be created when either the path ends with a `/` or `src_path` is a directory.
+  - `mode` - Sets the permissions for the file or folder to have when copied. If not specified the permissions of the source files or folder are preserved.
+
+With the above done the files will be copied by the Toolkit.
+
+### Custom Grafana Dashboards
+
+When using the Toolkit it is possible to copy custom dashboards during setup to be used in Grafana.
 
 By default we recommend storing any custom dashboards alongside your Ansible inventory in `environments/<inventory name>/files/grafana/<collection name>/<dashboard files>`. You can create multiple folders to store different dashboards or store everything in a single folder. If you want to store your custom dashboards in a folder other than `environments/<inventory name>/files/grafana/` then you can set the variable `monitor_custom_dashboards_path` to point to your custom location.
 
-Once the dashboards are in place you can add the `monitor_custom_dashboards` variable into your `vars.yml` file.
+Once the dashboards are in place you can add the `monitor_custom_dashboards` variable into your [`vars.yml`](environment_configure.md#environment-config-varsyml) file.
 
 ```yaml
 monitor_custom_dashboards: [{ display_name: 'Sidekiq Dashboards', folder: "my_sidekiq_dashboards" }, { display_name: 'Gitaly Dashboards', folder: "my_gitaly_dashboards" }]

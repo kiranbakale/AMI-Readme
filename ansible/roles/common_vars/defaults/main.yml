@@ -5,6 +5,7 @@
 ansible_python_interpreter: auto_silent
 swap_file_state: absent
 internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
+inventory_path: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}"
 
 ################################################################################
 ## Cloud Provider Settings
@@ -50,7 +51,7 @@ external_ssl_source: ""  # letsencrypt or user
 external_ssl_letsencrypt_issuer_email: ""
 
 ### User Provided Certificates
-external_ssl_files_host_path: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/certificates"
+external_ssl_files_host_path: "{{ inventory_path }}/../files/certificates"
 external_ssl_files_host_certificate_file: "{{ external_ssl_files_host_path }}/{{ external_host }}.pem"
 external_ssl_files_host_key_file: "{{ external_ssl_files_host_path }}/{{ external_host }}.key"
 
@@ -181,7 +182,7 @@ praefect_postgres_external: "{{ 'praefect_postgres' not in groups and praefect_p
 # GitLab Monitor
 monitor_int_ip: "{{ (groups['monitor'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'monitor' in groups else '' }}"
 monitor_custom_dashboards: []
-monitor_custom_dashboards_path: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/grafana"
+monitor_custom_dashboards_path: "{{ inventory_path }}/../files/grafana"
 monitor_custom_prometheus_scrape_config: ''
 
 # GitLab Redis
@@ -270,41 +271,58 @@ gitlab_charts_sidekiq_max_replicas: ""
 gitlab_charts_sidekiq_min_replicas: ""
 
 ################################################################################
-## GitLab Component Custom Config / Tasks
+## GitLab Component Custom Config / Tasks / Files
 ################################################################################
 
-consul_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/consul.rb.j2"
-postgres_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/postgres.rb.j2"
-pgbouncer_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/pgbouncer.rb.j2"
-redis_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/redis.rb.j2"
-redis_cache_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/redis_cache.rb.j2"
-redis_persistent_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/redis_persistent.rb.j2"
-praefect_postgres_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/praefect_postgres.rb.j2"
-praefect_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/praefect.rb.j2"
-gitaly_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/gitaly.rb.j2"
-gitlab_rails_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/gitlab_rails.rb.j2"
-sidekiq_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/sidekiq.rb.j2"
-monitor_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/monitor.rb.j2"
-gitlab_charts_custom_config_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_configs/gitlab_charts.yml.j2"
+## Custom Config
+consul_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/consul.rb.j2"
+postgres_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/postgres.rb.j2"
+pgbouncer_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/pgbouncer.rb.j2"
+redis_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/redis.rb.j2"
+redis_cache_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/redis_cache.rb.j2"
+redis_persistent_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/redis_persistent.rb.j2"
+praefect_postgres_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/praefect_postgres.rb.j2"
+praefect_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/praefect.rb.j2"
+gitaly_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/gitaly.rb.j2"
+gitlab_rails_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/gitlab_rails.rb.j2"
+sidekiq_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/sidekiq.rb.j2"
+monitor_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/monitor.rb.j2"
+gitlab_charts_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/gitlab_charts.yml.j2"
 
-consul_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/consul.yml"
-postgres_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/postgres.yml"
-pgbouncer_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/pgbouncer.yml"
-redis_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/redis.yml"
-redis_cache_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/redis_cache.yml"
-redis_persistent_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/redis_persistent.yml"
-praefect_postgres_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/praefect_postgres.yml"
-praefect_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/praefect.yml"
-gitaly_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/gitaly.yml"
-gitlab_rails_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/gitlab_rails.yml"
-sidekiq_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/sidekiq.yml"
-monitor_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/monitor.yml"
-gitlab_charts_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/gitlab_charts.yml"
-gitlab_charts_secrets_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/gitlab_charts_secrets.yml"
+## Custom Tasks
+consul_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/consul.yml"
+postgres_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/postgres.yml"
+pgbouncer_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/pgbouncer.yml"
+redis_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/redis.yml"
+redis_cache_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/redis_cache.yml"
+redis_persistent_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/redis_persistent.yml"
+praefect_postgres_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/praefect_postgres.yml"
+praefect_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/praefect.yml"
+gitaly_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/gitaly.yml"
+gitlab_rails_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/gitlab_rails.yml"
+sidekiq_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/sidekiq.yml"
+monitor_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/monitor.yml"
+gitlab_charts_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/gitlab_charts.yml"
+gitlab_charts_secrets_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/gitlab_charts_secrets.yml"
 
-common_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/common.yml"
-post_configure_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/post_configure.yml"
-uninstall_custom_tasks_file: "{{ inventory_dir | default(ansible_inventory_sources[0], true) }}/../files/gitlab_tasks/uninstall.yml"
+common_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/common.yml"
+post_configure_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/post_configure.yml"
+uninstall_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/uninstall.yml"
+
+## Custom Files
+
+consul_custom_files_paths: []
+postgres_custom_files_paths: []
+pgbouncer_custom_files_paths: []
+redis_custom_files_paths: []
+redis_cache_custom_files_paths: []
+redis_persistent_custom_files_paths: []
+praefect_postgres_custom_files_paths: []
+praefect_custom_files_paths: []
+gitaly_custom_files_paths: []
+gitlab_rails_custom_files_paths: []
+sidekiq_custom_files_paths: []
+monitor_custom_files_paths: []
 
 ################################################################################
 ## GitLab Geo Settings

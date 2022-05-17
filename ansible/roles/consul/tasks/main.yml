@@ -13,13 +13,21 @@
   tags: reconfigure
   register: consul_custom_config_file_path
 
-- name: Setup custom GitLab config file
+- name: Setup Custom Config
   template:
     src: "{{ consul_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.consul.custom.rb"
     mode: 0644
   tags: reconfigure
   when: consul_custom_config_file_path.stat.exists
+
+- name: Copy over any Custom Files
+  copy:
+    src: "{{ item.src_path }}"
+    dest: "{{ item.dest_path }}"
+    mode: "{{ item.mode if item.mode is defined else 'preserve' }}"
+  loop: "{{ consul_custom_files_paths }}"
+  tags: reconfigure
 
 - name: Propagate Secrets if existing
   include_role:
@@ -31,15 +39,13 @@
 
 - name: Stop Consul
   shell: gitlab-ctl stop consul
-  tags:
-    - reconfigure
+  tags: reconfigure
 
 - name: Clear old Consul data
   file:
     path: /var/opt/gitlab/consul/data
     state: absent
-  tags:
-    - reconfigure
+  tags: reconfigure
 
 - name: Reconfigure Consul
   command: gitlab-ctl reconfigure
