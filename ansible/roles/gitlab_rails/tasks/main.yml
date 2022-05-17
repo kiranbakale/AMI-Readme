@@ -50,6 +50,14 @@
   when:
     - cloud_provider == 'gcp'
 
+- name: Copy over any Custom Files
+  copy:
+    src: "{{ item.src_path }}"
+    dest: "{{ item.dest_path }}"
+    mode: "{{ item.mode if item.mode is defined else 'preserve' }}"
+  loop: "{{ gitlab_rails_custom_files_paths }}"
+  tags: reconfigure
+
 - name: Check if custom config exists
   stat:
     path: "{{ gitlab_rails_custom_config_file }}"
@@ -130,7 +138,7 @@
         - reconfigure
         - db_migrate
 
-    - name: Setup custom GitLab config file
+    - name: Setup Custom Config
       template:
         src: "{{ gitlab_rails_custom_config_file }}"
         dest: "/etc/gitlab/gitlab.gitlab_rails.custom.rb"
@@ -159,7 +167,7 @@
   until: result is success
   tags: reconfigure
 
-- name: Setup custom GitLab config file
+- name: Setup Custom Config
   template:
     src: "{{ gitlab_rails_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.gitlab_rails.custom.rb"

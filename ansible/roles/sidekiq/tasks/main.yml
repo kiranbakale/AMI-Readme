@@ -13,13 +13,21 @@
   tags: reconfigure
   register: sidekiq_custom_config_file_path
 
-- name: Setup custom GitLab config file
+- name: Setup Custom Config
   template:
     src: "{{ sidekiq_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.sidekiq.custom.rb"
     mode: 0644
   tags: reconfigure
   when: sidekiq_custom_config_file_path.stat.exists
+
+- name: Copy over any Custom Files
+  copy:
+    src: "{{ item.src_path }}"
+    dest: "{{ item.dest_path }}"
+    mode: "{{ item.mode if item.mode is defined else 'preserve' }}"
+  loop: "{{ sidekiq_custom_files_paths }}"
+  tags: reconfigure
 
 - name: Propagate Secrets if existing
   include_role:
