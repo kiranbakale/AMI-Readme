@@ -36,11 +36,19 @@ First we need to sort how Terraform and Ansible will authenticate against AWS.
 - [Generate an Access Key on AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey) for the user you intend the Toolkit to use.
 - Take the key values and set them to the environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` respectively on the machine you're running the Toolkit
 
+<details><summary>Example command to export environment variables</summary>
+
+```sh
+export AWS_ACCESS_KEY_ID="<AWS_ACCESS_KEY_ID>" AWS_SECRET_ACCESS_KEY="<AWS_SECRET_ACCESS_KEY>"
+```
+
+</details>
+
 ### 1b. SSH Key
 
 Next we need an SSH key to be configured on the machines to allow Ansible access directly to the boxes.
 
-Generating the key itself is as normal and covered in the main [GitLab docs](https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair). Save the key to a location that's reachable by the Toolkit, which we'll configure later on to use this key.
+Generating the key itself is as normal and covered in the main [GitLab docs](https://docs.gitlab.com/ee/user/ssh.html#generate-an-ssh-key-pair). Copy the created public and private keys to `gitlab-environment-toolkit/keys`.
 
 :information_source:&nbsp; _For the purposes of this guide we'll use a public key named **`gitlab-10k.pub`** saved in the location **`gitlab-environment-toolkit/keys`**_.
 
@@ -50,9 +58,9 @@ Next we need a place to save the Terraform State file. It's recommended this is 
 
 With AWS this is straightforward as we can store the file on S3 object storage. Create a standard [AWS storage bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html) for this.
 
-:information_source:&nbsp; _For the purposes of this guide we'll create a bucket named **`gitlab-10k-terraform-state`**_.
+:information_source:&nbsp; _For the purposes of this guide we'll create a bucket named **`gitlab-10k-tf-state`**_.
 
-:information_source:&nbsp; You will need to use your own name for the bucket here, this is because bucket names are global in AWS and you will likely get a naming conflict using **`gitlab-10k-terraform-state`**
+:information_source:&nbsp; The bucket may be named as desired. However please note that the Toolkit will create a bucket later with the naming format `<prefix>-terraform-state` for the [Terraform Module Registry](https://docs.gitlab.com/ee/user/packages/terraform_module_registry/) feature in GitLab by default (which can also be changed if required). Each bucket requires a unique name to avoid clashes.
 
 ### 1d. Static External IP
 
@@ -60,7 +68,7 @@ Finally the last bit of prep we need is a Static External IP that the environmen
 
 Follow [AWS's docs on how to do this](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html#using-instance-addressing-eips-allocating), selecting the default options.
 
-Once created you'll be given an allocation ID. Keep a note of this to be used later.
+Once created you'll be given an allocation ID and IP address. Keep a note of this to be used later.
 
 :information_source:&nbsp; _For the purposes of this guide we'll use the IP `65.228.130.134` that has the allocation ID **`eipalloc-VoWQKqdu42P8aYoy0`**_.
 
@@ -101,13 +109,15 @@ variable "region" {
 }
 
 variable "ssh_public_key_file" {
-  default = "../../keys/gitlab-10k.pub"
+  default = "../../../keys/gitlab-10k.pub"
 }
 
 variable "external_ip_allocation" {
   default = "eipalloc-VoWQKqdu42P8aYoy0"
 }
 ```
+
+:information_source:&nbsp; Make sure to update `external_ip_allocation` to the allocation ID created in [`Static External IP`](#1d-static-external-ip) step.
 
 </details>
 
@@ -118,7 +128,7 @@ Next is the Main file, which configures Terraform how to authenticate against AW
 ```tf
 terraform {
   backend "s3" {
-    bucket = "gitlab-10k-terraform-state"
+    bucket = "gitlab-10k-tf-state"
     key    = "gitlab-10k.tfstate"
     region = "us-east-1"
   }
@@ -152,7 +162,7 @@ module "gitlab_ref_arch_aws" {
   consul_node_count = 3
   consul_instance_type = "c5.large"
 
-  elastic_node_count = 3 
+  elastic_node_count = 3
   elastic_instance_type = "c5.4xlarge"
 
   gitaly_node_count = 3
@@ -207,7 +217,8 @@ With the above config in place we should now be ready to run Terraform.
 
 The machines and infrastructure are now ready to be provisioned with Terraform. This is done via a few commands as follows:
 
-1. Change to the Terraform directory - `cd gitlab-environment-toolkit/terraform/environments/gitlab-10k`.
+1. Change to the Terraform directory - `cd terraform/environments/gitlab-10k` in the `gitlab-environment-toolkit` directory.
+1. Ensure that [Authentication environment variables](#1a-authentication) are set
 1. Run `terraform init` to initialize Terraform and perform required preparation such as downloading required providers. This typically only needs to be run once for the first build or after any notable config changes.
 1. Run `terraform apply` to actually provision the infrastructure, a confirmation prompt will be shown by Terraform before proceeding.
 
@@ -225,11 +236,11 @@ Let's go through the steps for each.
 
 First we need to install Ansible. There are various ways to install Ansible, we recommend using Python in a Virtual Environment. Once installed we also need to install some Python and Ansible packages. The steps for all of this are as follows:
 
-1. Create a virtual environment called `get-python-env` - `python3 -m venv get-python-env`
+1. Create a virtual environment called `get-python-env` - `python3 -m venv get-python-env` in the `gitlab-environment-toolkit` directory
 1. Activate the new environment - `. ./get-python-env/bin/activate`
 1. Install Ansible - `pip3 install ansible`
-1. Install Python packages - `pip3 install -r gitlab-environment-toolkit/ansible/requirements/requirements.txt`.
-1. Install Ansible Galaxy Collections and Roles - `ansible-galaxy install -r gitlab-environment-toolkit/ansible/requirements/ansible-galaxy-requirements.yml`.
+1. Install Python packages - `pip3 install -r ansible/requirements/requirements.txt`.
+1. Install Ansible Galaxy Collections and Roles - `ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml`.
 1. Install OpenSSH Client if not already installed - E.G. for Ubuntu `apt-get install openssh-client`.
 1. Note that if you're on a Mac OS machine you also need to install `gnu-tar` - `brew install gnu-tar`.
 
@@ -276,7 +287,7 @@ all:
   vars:
     # Ansible Settings
     ansible_user: "ubuntu"
-    ansible_ssh_private_key_file: "../../keys/gitlab-10k.pub"
+    ansible_ssh_private_key_file: "{{ lookup('env', 'PWD') }}/../keys/gitlab-10k"
 
     # Cloud Settings, available options: gcp, aws, azure
     cloud_provider: "aws"
@@ -285,7 +296,7 @@ all:
     aws_region: "us-east-1"
 
     # General Settings
-    prefix: "gitlab-qa-10k"
+    prefix: "gitlab-10k"
     external_url: "http://65.228.130.134"
 
     # Passwords / Secrets
@@ -301,6 +312,8 @@ all:
     praefect_postgres_password: '<praefect_postgres_password>'
 ```
 
+:information_source:&nbsp; Make sure to update `external_url` to the IP created in [`Static External IP`](#1d-static-external-ip) step.
+
 :information_source:&nbsp; Passwords shown above are only for illustration practices and should not be used in any environment under any circumstances.
 
 </details>
@@ -309,7 +322,8 @@ all:
 
 GitLab is now ready to be configured with Ansible. This is done via a few commands as follows:
 
-1. Change to the Ansible directory - `cd gitlab-environment-toolkit/ansible`.
+1. Change to the Ansible directory - `cd ansible` in the `gitlab-environment-toolkit` directory.
+1. Ensure that [Authentication environment variables](#1a-authentication) are set
 1. Run `ansible-playbook -i environments/gitlab-10k/inventory playbooks/all.yml` to run through all the playbooks and configure GitLab.
 
 After Ansible has finished running, GitLab will now be configured and the environment ready to go.
