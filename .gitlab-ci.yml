@@ -96,7 +96,7 @@ check:tflint:
 
 check:ansible-lint:
   stage: test
-  image: quay.io/ansible/toolset
+  image: registry.gitlab.com/pipeline-components/ansible-lint:latest
   script:
     - chmod 700 ansible
     - cd ansible
