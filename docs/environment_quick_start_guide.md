@@ -19,7 +19,7 @@ On this page you'll find a Quick Start Guide where we go through the steps with 
 
 For the purpose of this guide we'll go through the steps required for one of the more common setups - An [Omnibus 10k Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html) on Amazon Web Services (AWS). All resources will be created in the `US East (N. Virginia)` region, this will be referred to as `us-east-1` whenever a region is required throughout this guide.
 
-:information_source:&nbsp; This quick guide won't cover all the potential options available and assumes a working knowledge of the Toolkit, Terraform, Ansible and GitLab. It's recommended you still read the docs in full to ensure the environment is configured as per your requirements.
+:information_source:&nbsp; This quick guide won't cover all the potential options available and assumes a working knowledge of Terraform, Ansible and GitLab. It's recommended you still read the docs in full to ensure the environment is configured as per your requirements.
 
 [[_TOC_]]
 
