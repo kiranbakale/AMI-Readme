@@ -260,7 +260,7 @@ Before running the `gitlab_geo.yml` playbook you will need to add some more vari
   - `geo_primary_site_group_name`: This should match the `geo_site` that was set in terraform for the site you want to use as a primary, any `-` should be replaced with `_` as the names are altered when pulled from the cloud provider.
   - `geo_primary_site_name`: This is will be used to identify the sites in the Geo Settings UI. This can be set to any string value.
 - Secondary site settings
-  - `secondary_external_url` - This should match `external_url`. It is recommended to set this directly and not use the `external_url` variable. This is due to how [Ansible handles variables when using multiple inventories](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#using-multiple-inventory-sources).
+  - `secondary_external_url` - This should match `external_url`. It is required to set this directly with a value and not to set this to the `external_url` variable. This is due to how [Ansible handles variables when using multiple inventories](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#using-multiple-inventory-sources).
   - `geo_secondary_site_group_name`: This should match the `geo_site` that was set in terraform for the sites you want to use as a secondary, any `-` should be replaced with `_` as the names are altered when pulled from the cloud provider.
   - `geo_secondary_site_name`: This is will be used to identify the sites in the Geo Settings UI. This can be set to any string value.
 
