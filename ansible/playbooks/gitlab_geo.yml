@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: all:!gitlab_cluster:!ungrouped
   roles:
     - gitlab_geo
   become: true
