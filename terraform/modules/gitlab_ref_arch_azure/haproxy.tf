@@ -18,8 +18,8 @@ module "haproxy_external" {
   location            = var.location
   external_ip_type    = var.external_ip_type
 
-  external_ip_names      = var.haproxy_external_external_ip_names
-  network_security_group = var.haproxy_external_node_count == 0 ? null : azurerm_network_security_group.haproxy[0]
+  external_ip_names          = var.haproxy_external_external_ip_names
+  application_security_group = var.haproxy_external_node_count == 0 ? null : azurerm_application_security_group.haproxy[0]
 
   geo_site       = var.geo_site
   geo_deployment = var.geo_deployment
@@ -49,7 +49,7 @@ module "haproxy_internal" {
   location            = var.location
   external_ip_type    = var.external_ip_type
 
-  network_security_group = azurerm_network_security_group.ssh
+  application_security_group = azurerm_application_security_group.ssh
 
   geo_site       = var.geo_site
   geo_deployment = var.geo_deployment

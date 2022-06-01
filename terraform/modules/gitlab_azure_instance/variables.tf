@@ -77,7 +77,7 @@ variable "label_secondaries" {
   default = false
 }
 
-variable "network_security_group" {
+variable "application_security_group" {
   type    = any # Resouce passthrough is object of undetermined types so any is required
   default = null
 }

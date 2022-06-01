@@ -18,7 +18,7 @@ module "redis" {
   location            = var.location
   external_ip_type    = var.external_ip_type
 
-  network_security_group = azurerm_network_security_group.ssh
+  application_security_group = azurerm_application_security_group.ssh
 
   geo_site       = var.geo_site
   geo_deployment = var.geo_deployment
@@ -52,7 +52,7 @@ module "redis_cache" {
   location            = var.location
   external_ip_type    = var.external_ip_type
 
-  network_security_group = azurerm_network_security_group.ssh
+  application_security_group = azurerm_application_security_group.ssh
 
   geo_site       = var.geo_site
   geo_deployment = var.geo_deployment
@@ -84,7 +84,7 @@ module "redis_persistent" {
   location            = var.location
   external_ip_type    = var.external_ip_type
 
-  network_security_group = azurerm_network_security_group.ssh
+  application_security_group = azurerm_application_security_group.ssh
 
   geo_site       = var.geo_site
   geo_deployment = var.geo_deployment
