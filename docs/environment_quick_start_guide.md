@@ -82,12 +82,14 @@ Let's go through the steps for each.
 
 ### 2a. Installing Terraform with `asdf`
 
-First we need to install Terraform. To easily switch between Terraform versions we recommend to install via [`asdf`](https://asdf-vm.com/#/) as follows:
+First we need to install Terraform. For the Toolkit we recommend Terraform `v1.1.0` and higher. Also note that Terraform generally works best when all users for an environment are using the same major version due to its State.
 
-1. Install asdf as per its documentation
+We recommend to install Terraform via [`asdf`](https://asdf-vm.com/#/) to allow for easy switching between Terraform versions as follows (using `v1.1.0` as an example):
+
+1. Install `asdf` as per its [documentation](https://asdf-vm.com/#/core-manage-asdf?id=install)
 1. Add the Terraform asdf plugin - `asdf plugin add terraform`
-1. Install the intended Terraform version - `asdf install terraform 1.0.11`
-1. Set that version to be the main on your PATH - `asdf global terraform 1.0.11`
+1. Install the intended Terraform version - `asdf install terraform 1.1.0`
+1. Set that version to be the main on your PATH - `asdf global terraform 1.1.0`
 
 Terraform should now be installed and ready on your `PATH`.
 

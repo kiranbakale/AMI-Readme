@@ -23,7 +23,7 @@ The Toolkit provides multiple curated [Terraform Modules](../terraform/modules) 
 
 ## 1. Install Terraform
 
-For the Toolkit we recommend Terraform `1.x`.
+For the Toolkit we recommend Terraform `v1.1.0` and higher.
 
 Terraform generally works best when all users for an environment are using the same major version due to its State. Improvements have been made that allow for the easier upgrading and downgrading of state however. As such it's recommended that all users sync on the same version of Terraform when working against the same environment and any Terraform upgrades are done in unison.
 
@@ -41,12 +41,12 @@ Installing Terraform with a version manager such as `asdf` has several benefits:
 - The Terraform version can be specified in a `.tool-versions` file which `asdf` will look for and automatically switch to.
 - Being able to switch Terraform versions is particularly useful if you're using the Toolkit to manage multiple environments where versions differ.
 
-Installing Terraform with `asdf` is done as follows:
+Installing Terraform with `asdf` is done as follows (using `v1.1.0` as an example):
 
 1. Install `asdf` as per its [documentation](https://asdf-vm.com/#/core-manage-asdf?id=install)
 1. Add the Terraform `asdf` plugin - `asdf plugin add terraform`
-1. Install the intended Terraform version - `asdf install terraform 1.0.11`
-1. Set that version to be the main on your PATH - `asdf global terraform 1.0.11`
+1. Install the intended Terraform version - `asdf install terraform 1.1.0`
+1. Set that version to be the main on your PATH - `asdf global terraform 1.1.0`
 
 With the above completed Terraform should now be available on your command line. You can check this by running `terraform version`.
 
