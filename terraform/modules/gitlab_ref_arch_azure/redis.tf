@@ -17,6 +17,7 @@ module "redis" {
   ssh_public_key      = var.ssh_public_key != null ? var.ssh_public_key : file(var.ssh_public_key_file_path)
   location            = var.location
   external_ip_type    = var.external_ip_type
+  setup_external_ip   = var.setup_external_ips
 
   application_security_group = azurerm_application_security_group.ssh
 
@@ -51,6 +52,7 @@ module "redis_cache" {
   ssh_public_key      = var.ssh_public_key != null ? var.ssh_public_key : file(var.ssh_public_key_file_path)
   location            = var.location
   external_ip_type    = var.external_ip_type
+  setup_external_ip   = var.setup_external_ips
 
   application_security_group = azurerm_application_security_group.ssh
 
@@ -83,6 +85,7 @@ module "redis_persistent" {
   ssh_public_key      = var.ssh_public_key != null ? var.ssh_public_key : file(var.ssh_public_key_file_path)
   location            = var.location
   external_ip_type    = var.external_ip_type
+  setup_external_ip   = var.setup_external_ips
 
   application_security_group = azurerm_application_security_group.ssh
 

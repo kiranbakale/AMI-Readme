@@ -17,6 +17,7 @@ module "haproxy_external" {
   ssh_public_key      = var.ssh_public_key != null ? var.ssh_public_key : file(var.ssh_public_key_file_path)
   location            = var.location
   external_ip_type    = var.external_ip_type
+  setup_external_ip   = var.setup_external_ips
 
   external_ip_names          = var.haproxy_external_external_ip_names
   application_security_group = var.haproxy_external_node_count == 0 ? null : azurerm_application_security_group.haproxy[0]
@@ -48,6 +49,7 @@ module "haproxy_internal" {
   ssh_public_key      = var.ssh_public_key != null ? var.ssh_public_key : file(var.ssh_public_key_file_path)
   location            = var.location
   external_ip_type    = var.external_ip_type
+  setup_external_ip   = var.setup_external_ips
 
   application_security_group = azurerm_application_security_group.ssh
 

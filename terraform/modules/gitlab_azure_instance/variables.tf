@@ -47,6 +47,11 @@ variable "external_ip_type" {
   default = "Basic"
 }
 
+variable "setup_external_ip" {
+  type    = bool
+  default = true
+}
+
 variable "size" {
   type    = string
   default = "Standard_D2s_v3"

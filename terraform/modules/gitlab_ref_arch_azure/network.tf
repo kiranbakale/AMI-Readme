@@ -11,3 +11,39 @@ resource "azurerm_subnet" "gitlab" {
   address_prefixes     = var.subnet_address_ranges
   resource_group_name  = var.resource_group_name
 }
+
+# External IPs
+## Setup NAT when not using external IPs for internet access
+resource "azurerm_public_ip" "nat_gateway_public_ip" {
+  count = var.setup_external_ips ? 0 : 1
+
+  name                = "${var.prefix}-nat-gateway-public-ip"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_nat_gateway" "nat_gateway" {
+  count = var.setup_external_ips ? 0 : 1
+
+  name                    = "${var.prefix}-nat-gateway"
+  location                = var.location
+  resource_group_name     = var.resource_group_name
+  sku_name                = "Standard"
+  idle_timeout_in_minutes = var.nat_gateway_idle_timeout_in_minutes
+}
+
+resource "azurerm_nat_gateway_public_ip_association" "nat_gateway" {
+  count = var.setup_external_ips ? 0 : 1
+
+  nat_gateway_id       = azurerm_nat_gateway.nat_gateway[0].id
+  public_ip_address_id = azurerm_public_ip.nat_gateway_public_ip[0].id
+}
+
+resource "azurerm_subnet_nat_gateway_association" "nat_gateway" {
+  count = var.setup_external_ips ? 0 : 1
+
+  subnet_id      = azurerm_subnet.gitlab.id
+  nat_gateway_id = azurerm_nat_gateway.nat_gateway[0].id
+}
