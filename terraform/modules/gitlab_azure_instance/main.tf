@@ -18,10 +18,11 @@ data "azurerm_public_ip" "gitlab_external_ips" {
 
 locals {
   external_ip_ids = [for ip in data.azurerm_public_ip.gitlab_external_ips : ip.id]
+  external_ips    = length(local.external_ip_ids) == 0 ? azurerm_public_ip.gitlab[*].id : local.external_ip_ids
 }
 
 resource "azurerm_public_ip" "gitlab" {
-  count               = length(local.external_ip_ids) == 0 ? var.node_count : 0
+  count               = length(local.external_ip_ids) == 0 && var.setup_external_ip ? var.node_count : 0
   name                = "${var.prefix}-${var.node_type}-ip-${count.index + 1}"
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -42,7 +43,7 @@ resource "azurerm_network_interface" "gitlab" {
     name                          = "${var.prefix}-${var.node_type}-internal-ip-configuration-${count.index + 1}"
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = length(local.external_ip_ids) == 0 ? azurerm_public_ip.gitlab[count.index].id : local.external_ip_ids[count.index]
+    public_ip_address_id          = var.setup_external_ip ? local.external_ips[count.index] : null
   }
 }
 

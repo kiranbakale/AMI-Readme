@@ -516,9 +516,13 @@ Passing in your policies is done in Terraform via the following variables in you
 
 Container Registry is enabled by default if you're deploying [Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/#available-reference-architectures) configured with external SSL via GET using AWS cloud provider. Container Registry in that case will run in k8s and use an s3 bucket for storage.
 
-## Disable External IPs (GCP)
+## Disable External IPs (GCP, Azure)
 
-Optionally, you may want to disable External IPs on your provisioned nodes. This is done in Terraform with the `setup_external_ips` variable being set to false in your `environment.tf` file:
+Optionally, you may want to disable External IPs on your provisioned nodes. This is done in Terraform with the `setup_external_ips` variable being set to false in your `environment.tf` file.
+
+:information_source:&nbsp; For AWS setups, Public IPs are managed separately via [network settings](environment_advanced_network.md#created-subnet-types-public-private) and are assigned depending on subnet type.
+
+**GCP**
 
 ```tf
 module "gitlab_ref_arch_gcp" {
@@ -529,10 +533,25 @@ module "gitlab_ref_arch_gcp" {
 }
 ```
 
+**Azure**
+
+```tf
+module "gitlab_ref_arch_azure" {
+  source = "../../modules/gitlab_ref_arch_azure"
+[...]
+
+  setup_external_ips = false
+}
+```
+
+Additionally with Azure there's the following optional settings in Terraform:
+
+- `nat_gateway_idle_timeout_in_minutes` - **Azure only** TCP connections [idle timeout](https://docs.microsoft.com/en-us/azure/virtual-network/nat-gateway/nat-gateway-resource#idle-timeout-timers). Default is `4`, can be increased to up to 120 minutes.
+
 Once set no external IPs will be created or added to your nodes.
 
 In this setup however some tweaks will need to be made to ansible:
 
 - It will need to be run from a box that can access the boxes via internal IPs
-- When using the Dynamic Inventory it will need to be adjusted to return internal IPs. This can be done by changing the `compose.ansible_host` setting to `private_ip_address`
 - The `external_url` setting should be set to the URL that the instance will be reachable internally
+- **GCP only** When using the Dynamic Inventory it will need to be adjusted to return internal IPs. This can be done by changing the `compose.ansible_host` setting to `private_ip_address`

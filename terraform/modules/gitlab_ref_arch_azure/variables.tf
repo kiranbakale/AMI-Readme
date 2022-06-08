@@ -398,3 +398,14 @@ variable "icmp_allowed_ingress_cidr_blocks" {
   type    = list(any)
   default = []
 }
+
+## External IPs
+variable "setup_external_ips" {
+  type    = bool
+  default = true
+}
+
+variable "nat_gateway_idle_timeout_in_minutes" {
+  type    = number
+  default = 4
+}
