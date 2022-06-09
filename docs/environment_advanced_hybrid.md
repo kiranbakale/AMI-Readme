@@ -213,6 +213,48 @@ output "gitlab_ref_arch_aws" {
 }
 ```
 
+#### EKS Version and Upgrades
+
+By default the Toolkit will leave it up to [AWS to manage the Kubernetes version for the cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_cluster#version).
+
+However you can also specify the version as well as control upgrades if desired in Terraform via the following setting in your [`environment.tf`](environment_provision.md#configure-module-settings-environmenttf) file:
+
+- `eks_version` - The Kubernetes version that the cluster should use if direct control is desired. Increase this value to perform an upgrade directly. Default is `null`.
+
+:information_source:&nbsp; After performing a cluster upgrade there may be some components that can also be upgraded. The Toolkit doesn't manage this at this time but any upgrades can be viewed and performed on the [AWS Management Console](https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html#update-existing-cluster)
+
+#### EKS Endpoint Setup
+
+[EKS Clusters have an endpoint](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html) that is used in several ways including inter-node communication as well as giving access to tools such as the Toolkit, `kubectl`, etc... This endpoint can be configured to be Public, Private or both.
+
+The Toolkit will configure this endpoint to be both Public and Private by default. In this setup the Kubernetes nodes will default to the Private endpoint and keep their connections internal but there's still an authenticated Public endpoint that the Toolkit uses to configure the cluster as well as be available for any debugging via `kubectl`.
+
+In some cases you may prefer to restrict who can connect to the Public endpoint or disable it entirely. This is configurable in the Toolkit via Terraform with the following settings in your [`environment.tf`](environment_provision.md#configure-module-settings-environmenttf) file:
+
+- `eks_endpoint_public_access` - Controls if the Public endpoint is enabled. Defaults to `true`.
+  - :information_source:&nbsp; If this is disabled Ansible needs to be run within the same VPC as the Kubernetes cluster to ensure access.
+- `eks_endpoint_public_access_cidr_blocks` - A list of CIDR blocks that are allowed access to the Public endpoint. Defaults to `['0.0.0.0/0']`.
+
+#### EKS Control-Plane Logging
+
+Amazon EKS control plane logging provides audit and diagnostic logs directly from the Amazon EKS control plane to CloudWatch Logs. You can select the exact log types you need by configuring the `eks_enabled_cluster_log_types` variable as an array of string values. Possible values are described in [Amazon EKS control plane logging documentation](https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html). Logs are sent as log streams to AWS CloudWatch.
+
+:information_source:&nbsp; Note that there are additional costs to enable this feature. Refer to the above docs for more info.
+
+#### EKS Secrets Envelope Encryption
+
+As an additional security layer for Kubernetes secrets, which are already encrypted on disk automatically, you can optionally enable [envelope encryption of Kubernetes secrets in EKS](https://aws.amazon.com/blogs/containers/using-eks-encryption-provider-support-for-defense-in-depth/) with your own KMS key.
+
+Note however there are several limitations to this feature, such as manually having to encrypt any existing secrets, and it's recommended you review the [documentation](https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html#enable-kms) in full.
+
+:warning:&nbsp; Enabling this feature is irreversible. Any changes to the key or attempting to disable the feature will require a full rebuild of the cluster.
+
+Enabling the feature is controlled via the following variables:
+
+- `eks_envelope_encryption` - Enables EKS Envelope Encryption. Optional, default is `false`.
+- `eks_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt Kubernetes secrets. Note that the key should have the correct policy to allow access for the cluster's IAM role, [refer to the AWS docs for more info](https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html#enable-kms). If not provided `default_kms_key_arm` or a Toolkit managed AWS KMS key will be used in that order. Optional, default is `null`.
+  - Due to limitations with this feature, it's strongly recommended that you use your own KMS key with the correct policies that align with your security requirements.
+
 #### Networking (AWS)
 
 As detailed in the earlier [Configuring network setup (AWS)](environment_provision.md#configure-network-setup-aws) section the same networking options apply for Hybrid environments on AWS.
@@ -226,10 +268,6 @@ For EKS a [Cluster is required to be spread across at least 2 Availability Zones
 - Default - Will attach to a number of default subnets. This is configurable via the `eks_default_subnet_count` variable that has a default of `2`.
 - Create - Will create a number of subnets. This is configurable via the `subnet_pub_count` variable that has a default of `2`.
 - Existing - When providing an existing network it's required that it has at least 2 subnets, each on a separate Zone.
-
-#### Deprovisioning
-
-If you ever want to deprovision resources created, with a Cloud Native Hybrid on AWS **you must run [helm uninstall gitlab](https://helm.sh/docs/helm/helm_uninstall/)** before running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html). This ensure all resources are correctly removed.
 
 #### Defining AWS Auth Roles with `aws_auth_roles`
 
@@ -246,25 +284,9 @@ aws eks --region <AWS REGION NAME> update-kubeconfig --name `<CLUSTER NAME>`
 kubectl edit -n kube-system configmap/aws-auth
 ```
 
-#### EKS Secrets Envelope Encryption
+#### Deprovisioning
 
-As an additional security layer for Kubernetes secrets, which are already encrypted on disk automatically, you can optionally enable [envelope encryption of Kubernetes secrets in EKS](https://aws.amazon.com/blogs/containers/using-eks-encryption-provider-support-for-defense-in-depth/) with your own KMS key.
-
-Note however there are several limitations to this feature, such as manually having to encrypt any existing secrets, and it's recommended you review the [documentation](https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html#enable-kms) in full.
-
-:warning:&nbsp; Enabling this feature is irreversible. Any changes to the key or attempting to disable the feature will require a full rebuild of the cluster.
-
-Enabling the feature is controlled via the following variables:
-
-- `eks_envelope_encryption` - Enables EKS Envelope Encryption. Optional, default is `false`.
-- `eks_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt Kubernetes secrets. Note that the key should have the correct policy to allow access for the cluster's IAM role, [refer to the AWS docs for more info](https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html#enable-kms). If not provided `default_kms_key_arm` or a Toolkit managed AWS KMS key will be used in that order. Optional, default is `null`.
-  - Due to limitations with this feature, it's strongly recommended that you use your own KMS key with the correct policies that align with your security requirements.
-
-#### EKS Control-Plane Logging
-
-Amazon EKS control plane logging provides audit and diagnostic logs directly from the Amazon EKS control plane to CloudWatch Logs. You can select the exact log types you need by configuring the `eks_enabled_cluster_log_types` variable as an array of string values. Possible values are described in [Amazon EKS control plane logging documentation](https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html). Logs are sent as log streams to AWS CloudWatch.
-
-:information_source:&nbsp; Note that there are additional costs to enable this feature. Refer to the above docs for more info.
+If you ever want to deprovision resources created, with a Cloud Native Hybrid on AWS **you must run [helm uninstall gitlab](https://helm.sh/docs/helm/helm_uninstall/)** before running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html). This ensure all resources are correctly removed.
 
 ### Cluster Autoscaling
 
@@ -300,7 +322,7 @@ As a convenience, the Toolkit can automatically run these commands for you in it
 
 Like Provisioning with Terraform, configuring the Helm deployment for the Kubernetes cluster only requires a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) - Namely a few extra settings required for Helm.
 
-By design, this file is similar to the one used in a [standard environment](environment_provision.md#configure-module-settings-environmenttf) with the following additional settings:
+By design, this file is similar to the one used in a [standard environment](environment_configure.md#environment-config-varsyml) with the following additional settings:
 
 - `cloud_native_hybrid_environment` - Sets Ansible to know it's configuring a Cloud Native Hybrid Reference Architecture environment. Required.
 - `kubeconfig_setup` - When true, will attempt to automatically configure the `.kubeconfig` file entry for the provisioned Kubernetes cluster.

@@ -20,10 +20,14 @@ resource "aws_eks_cluster" "gitlab_cluster" {
   count = min(local.total_node_pool_count, 1)
 
   name                      = var.prefix
+  version                   = var.eks_version
   role_arn                  = aws_iam_role.gitlab_eks_role[0].arn
   enabled_cluster_log_types = var.eks_enabled_cluster_log_types
 
   vpc_config {
+    endpoint_public_access = var.eks_endpoint_public_access
+    public_access_cidrs    = var.eks_endpoint_public_access_cidr_blocks
+
     endpoint_private_access = true
     subnet_ids              = local.eks_cluster_subnet_ids
 
@@ -97,6 +101,7 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
   cluster_name = aws_eks_cluster.gitlab_cluster[0].name
 
   ami_type = local.eks_ami_type
+  version  = local.eks_custom_ami ? null : var.eks_version
 
   dynamic "launch_template" {
     for_each = range(local.eks_custom_ami ? 1 : 0)
@@ -172,6 +177,7 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
   cluster_name = aws_eks_cluster.gitlab_cluster[0].name
 
   ami_type = local.eks_ami_type
+  version  = local.eks_custom_ami ? null : var.eks_version
 
   dynamic "launch_template" {
     for_each = range(local.eks_custom_ami ? 1 : 0)
@@ -246,6 +252,7 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
   cluster_name = aws_eks_cluster.gitlab_cluster[0].name
 
   ami_type = local.eks_ami_type
+  version  = local.eks_custom_ami ? null : var.eks_version
 
   dynamic "launch_template" {
     for_each = range(local.eks_custom_ami ? 1 : 0)

@@ -699,6 +699,10 @@ variable "sidekiq_iam_instance_policy_arns" {
 
 # EKS - Kubernetes \ Helm
 ## Defaults
+variable "eks_version" {
+  type    = string
+  default = null
+}
 variable "eks_ami_id" {
   type    = string
   default = null
@@ -707,7 +711,14 @@ variable "eks_default_subnet_count" {
   type    = number
   default = 2
 }
-
+variable "eks_endpoint_public_access" {
+  type    = bool
+  default = true
+}
+variable "eks_endpoint_public_access_cidr_blocks" {
+  type    = list(string)
+  default = ["0.0.0.0/0"]
+}
 variable "eks_enabled_cluster_log_types" {
   description = "Array of types of values to be logged to CloudWatch Logs. For possible values, visit https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html"
   type        = list(string)
