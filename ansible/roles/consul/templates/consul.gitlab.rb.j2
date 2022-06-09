@@ -4,7 +4,7 @@ gitlab_rails['auto_migrate'] = false
 
 consul['configuration'] = {
   server: true,
-  retry_join: %w({{ consul_int_ips | join(' ') }}),
+  retry_join: %w({{ consul_int_addrs | join(' ') }}),
   bind_addr: '{{ ansible_default_ipv4.address }}',
   log_json: true
 }

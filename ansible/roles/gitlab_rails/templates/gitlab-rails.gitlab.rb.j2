@@ -85,7 +85,7 @@ gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
 consul['enable'] = true
 consul['configuration'] = {
   bind_addr: '{{ ansible_default_ipv4.address }}',
-  retry_join: %w({{ (consul_int_ips if 'consul' in groups else gitlab_rails_int_ips) | join(' ') }}),
+  retry_join: %w({{ (consul_int_addrs if 'consul' in groups else gitlab_rails_int_addrs) | join(' ') }}),
 {% if 'consul' not in groups and 'gitlab_rails_primary' in group_names %}
   server: true,
   bootstrap_expect: 1    # Non HA leader
@@ -129,7 +129,7 @@ redis['master_name'] = 'gitlab-redis'
 redis['master_password'] = '{{ redis_password }}'
 
 gitlab_rails['redis_sentinels'] = [
-{% for ip in redis_int_ips %}
+{% for ip in redis_int_addrs %}
   {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
@@ -144,22 +144,22 @@ gitlab_rails['redis_shared_state_instance'] = 'redis://:{{ redis_persistent_pass
 gitlab_rails['redis_actioncable_instance'] = 'redis://:{{ redis_persistent_password }}@gitlab-redis-persistent'
 
 gitlab_rails['redis_cache_sentinels'] = [
-{% for ip in redis_cache_int_ips %}
+{% for ip in redis_cache_int_addrs %}
   {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
 gitlab_rails['redis_queues_sentinels'] = [
-{% for ip in redis_persistent_int_ips %}
+{% for ip in redis_persistent_int_addrs %}
   {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
 gitlab_rails['redis_shared_state_sentinels'] = [
-{% for ip in redis_persistent_int_ips %}
+{% for ip in redis_persistent_int_addrs %}
   {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
 gitlab_rails['redis_actioncable_sentinels'] = [
-{% for ip in redis_persistent_int_ips %}
+{% for ip in redis_persistent_int_addrs %}
   {host: '{{ ip }}', port: {{ redis_sentinel_port }}},
 {% endfor %}
 ]
@@ -215,7 +215,7 @@ gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['auto_migrate'] = false
 
 {% if groups['postgres'] | length > 1 %}
-gitlab_rails['db_load_balancing'] = { 'hosts' => {{ postgres_int_ips }} }
+gitlab_rails['db_load_balancing'] = { 'hosts' => {{ postgres_int_addrs }} }
 {% endif %}
 
 {% endif %}
@@ -239,7 +239,7 @@ grafana['enable'] = false
 
 gitlab_rails['env'] = {
 {%- if 'jaeger' in groups %}
-  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1",
+  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_addr }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1",
 {% endif %}
 }
 
@@ -248,7 +248,7 @@ gitlab_workhorse['env'] = {
   "GEO_SECONDARY_PROXY" => "0",
 {% endif %}
 {%- if 'jaeger' in groups %}
-"GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1",
+"GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_addr }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1",
 {% endif %}
 }
 
@@ -257,7 +257,7 @@ gitlab_workhorse['env'] = {
 gitaly['enable'] = false
 git_data_dirs({
   "default" => {
-    "gitaly_address" => "tcp://{{ internal_lb_host }}:2305",
+    "gitaly_address" => "{{ 'tls' if praefect_ssl else 'tcp' }}://{{ internal_lb_host }}:{{ praefect_ssl_port if gitaly_ssl else '2305' }}",
     "gitaly_token" => '{{ praefect_external_token }}'
   }
 })
@@ -267,10 +267,10 @@ gitaly['enable'] = false
 gitlab_rails['gitaly_token'] = '{{ gitaly_token }}'
 
 git_data_dirs({
-  'default' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_int_ip }}:8075' },
-  'storage1' => { 'gitaly_address' => 'tcp://{{ gitaly_primary_int_ip }}:8075' },
-{% for gitaly_secondary_ip in gitaly_secondary_int_ips %}
-  "storage{{loop.index + 1}}" => { 'gitaly_address' => 'tcp://{{ gitaly_secondary_ip }}:8075' },
+  'default' => { 'gitaly_address' => "{{ 'tls' if gitaly_ssl else 'tcp' }}://{{ gitaly_primary_int_addr }}:{{ gitaly_ssl_port if gitaly_ssl else '8075' }}" },
+  'storage1' => { 'gitaly_address' => "{{ 'tls' if gitaly_ssl else 'tcp' }}://{{ gitaly_primary_int_addr }}:{{ gitaly_ssl_port if gitaly_ssl else '8075' }}" },
+{% for gitaly_secondary_ip in gitaly_secondary_int_addrs %}
+  "storage{{loop.index + 1}}" => { 'gitaly_address' => "{{ 'tls' if gitaly_ssl else 'tcp' }}://{{ gitaly_secondary_ip }}:{{ gitaly_ssl_port if gitaly_ssl else '8075' }}" },
 {% endfor %}
 })
 {% else %}

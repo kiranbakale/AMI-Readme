@@ -7,7 +7,9 @@ output "external_addresses" {
 }
 
 output "internal_addresses" {
-  value = aws_instance.gitlab[*].private_ip
+  value = {
+    for _, v in aws_instance.gitlab[*] : v.private_dns => v.private_ip
+  }
 }
 
 output "iam_instance_role_arn" {

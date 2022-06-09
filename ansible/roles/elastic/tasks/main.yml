@@ -35,8 +35,8 @@
     env:
       ES_JAVA_OPTS: "-Xms{{ elasticsearch_heap_size }}m -Xmx{{ elasticsearch_heap_size }}m"
       bootstrap.memory_lock: 'true'
-      cluster.initial_master_nodes: "{{ elastic_int_ips | join(',') }}"
-      discovery.seed_hosts: "{{ elastic_int_ips | join(',') }}"
+      cluster.initial_master_nodes: "{{ groups['elastic'] | join(',') }}"
+      discovery.seed_hosts: "{{ groups['elastic'] | join(',') }}"
       xpack.monitoring.enabled: 'true'
       xpack.monitoring.collection.enabled: 'true'
     volumes:

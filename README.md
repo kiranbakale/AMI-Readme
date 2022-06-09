@@ -24,7 +24,7 @@ Created and maintained by the GitLab Quality Engineering Enablement team, the To
 - Geo support
 - Zero Downtime Upgrades support
 - Built in Load Balancing and Monitoring (Prometheus, Grafana) setup
-- External SSL termination
+- SSL / TLS support (either direct or via hooks)
 - Alternative sources (Cloud Services, Custom Servers) for select components (Load Balancers, PostgreSQL, Redis)
 - On Prem Support (Ansible)
 
@@ -49,7 +49,7 @@ Note that the Toolkit currently has the following requirements (with related iss
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](docs/environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](docs/environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](docs/environment_advanced_hybrid.md)
-- [GitLab Environment Toolkit - Advanced - External SSL](docs/environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - SSL](docs/environment_advanced_ssl.md)
 - [GitLab Environment Toolkit - Advanced - Network Setup](docs/environment_advanced_network.md)
 - [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](docs/environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](docs/environment_advanced_geo.md)

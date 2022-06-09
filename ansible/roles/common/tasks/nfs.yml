@@ -9,7 +9,7 @@
       command: "umount -f -l {{ gitlab_nfs_path }}"
       when:
         - gitlab_nfs_path in existing_mount.stdout
-        - gitlab_nfs_int_ip not in existing_mount.stdout
+        - gitlab_nfs_int_addr not in existing_mount.stdout
 
     - name: Remove existing mount config if not correct server
       mount:
@@ -17,7 +17,7 @@
         state: absent
       when:
         - gitlab_nfs_path in existing_mount.stdout
-        - gitlab_nfs_int_ip not in existing_mount.stdout
+        - gitlab_nfs_int_addr not in existing_mount.stdout
 
 - name: Setup NFS Server
   block:
@@ -49,7 +49,7 @@
       service:
         name: "{{ 'nfs-server' if ansible_facts['os_family'] == 'RedHat' else 'nfs-kernel-server' }}"
         state: restarted
-  when: ansible_default_ipv4.address == gitlab_nfs_int_ip
+  when: gitlab_nfs_int_addr == ansible_default_ipv4.address or gitlab_nfs_int_addr == ansible_fqdn
 
 - name: Clear any files incorrectly at mount location
   block:
@@ -69,8 +69,8 @@
     fstype: nfs
     opts: defaults,nofail,lookupcache=positive
     state: mounted
-    src: "{{ gitlab_nfs_int_ip }}:{{ gitlab_nfs_path }}"
+    src: "{{ gitlab_nfs_int_addr }}:{{ gitlab_nfs_path }}"
     path: "{{ gitlab_nfs_path }}"
   when:
-    - ansible_default_ipv4.address != gitlab_nfs_int_ip
+    - not (gitlab_nfs_int_addr == ansible_default_ipv4.address or gitlab_nfs_int_addr == ansible_fqdn)
     - omnibus_node

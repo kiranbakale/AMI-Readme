@@ -121,8 +121,12 @@ global:
     external:
     - name: default
       hostname: "{{ internal_lb_host }}"
+{% if praefect_ssl %}
+      port: "{{ praefect_ssl_port }}"
+      tlsEnabled: true
+{% else %}
       port: 2305
-      tlsEnabled: false
+{% endif %}
 {% elif 'gitaly' in groups %}
     authToken:
       secret: gitlab-gitaly-external-token
@@ -130,14 +134,22 @@ global:
     enabled: false # Gitaly runs outside of cluster
     external:
     - name: default
-      hostname: "{{ gitaly_primary_int_ip }}"
+      hostname: "{{ gitaly_primary_int_addr }}"
+{% if gitaly_ssl %}
+      port: "{{ gitaly_ssl_port }}"
+      tlsEnabled: true
+{% else %}
       port: 8075
-      tlsEnabled: false
-{% for gitaly_secondary_ip in gitaly_secondary_int_ips %}
+{% endif %}
+{% for gitaly_secondary_ip in gitaly_secondary_int_addrs %}
     - name: "storage{{loop.index + 1}}"
       hostname: "{{ gitaly_secondary_ip }}"
+{% if gitaly_ssl %}
+      port: "{{ gitaly_ssl_port }}"
+      tlsEnabled: true
+{% else %}
       port: 8075
-      tlsEnabled: false
+{% endif %}
 {% endfor %}
 {% endif %}
   grafana:
@@ -161,6 +173,13 @@ global:
     configureCertmanager: false
     tls:
       enabled: false
+{% endif %}
+  certificates:
+    customCAs:
+{% if 'praefect' in groups and praefect_ssl %}
+      - secret: praefect-ca
+{% elif 'gitaly' in groups and gitaly_ssl %}
+      - secret: gitaly-ca
 {% endif %}
   minio:
     enabled: false
@@ -186,8 +205,8 @@ global:
 {% if groups['postgres'] | length > 1 %}
     load_balancing:
       hosts:
-{% for postgres_int_ip in postgres_int_ips %}
-        - "{{ postgres_int_ip }}"
+{% for postgres_int_addr in postgres_int_addrs %}
+        - "{{ postgres_int_addr }}"
 {% endfor %}
 {% endif %}
 {% endif %}
@@ -234,7 +253,7 @@ global:
       secret: gitlab-redis-password
       key: password
     sentinels:
-{% for ip in redis_int_ips %}
+{% for ip in redis_int_addrs %}
       - host: '{{ ip }}'
         port: '{{ redis_sentinel_port }}'
 {% endfor %}
@@ -248,7 +267,7 @@ global:
         secret: gitlab-redis-cache-password
         key: password
       sentinels:
-{% for ip in redis_cache_int_ips %}
+{% for ip in redis_cache_int_addrs %}
       - host: '{{ ip }}'
 {% endfor %}
     host: gitlab-redis-persistent
@@ -256,7 +275,7 @@ global:
       secret: gitlab-redis-persistent-password
       key: password
     sentinels:
-{% for ip in redis_persistent_int_ips %}
+{% for ip in redis_persistent_int_addrs %}
       - host: '{{ ip }}'
 {% endfor %}
 {% endif %}

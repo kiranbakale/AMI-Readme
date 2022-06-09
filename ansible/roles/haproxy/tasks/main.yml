@@ -50,7 +50,7 @@
     recreate: true
     restart_policy: unless-stopped
     state: started
-    ports: ['80:80', '6432:6432', '2305:2305', '1936:1936', '5432:5432']
+    ports: ['80:80', '6432:6432', '1936:1936', '5432:5432', "{{ (praefect_ssl_port + ':' + praefect_ssl_port) if praefect_ssl else '2305:2305' }}"]
     volumes:
       - /opt/haproxy:/usr/local/etc/haproxy:ro
     sysctls:

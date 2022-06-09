@@ -20,9 +20,13 @@ gitlab_rails['auto_migrate'] = false
 
 gitlab_rails['internal_api_url'] = '{{ gitaly_callback_internal_api_url }}'
 
-# Make Gitaly accept connections on all network interfaces. You must use
-# firewalls to restrict access to this address/port.
+{% if gitaly_ssl %}
+gitaly['tls_listen_addr'] = "0.0.0.0:{{ gitaly_ssl_port }}"
+gitaly['certificate_path'] = "/etc/gitlab/ssl/gitaly_cert.pem"
+gitaly['key_path'] = "/etc/gitlab/ssl/gitaly_key.pem"
+{% else %}
 gitaly['listen_addr'] = "0.0.0.0:8075"
+{% endif %}
 
 gitaly['prometheus_grpc_latency_buckets'] = [0.001, 0.005, 0.025, 0.1, 0.5, 1.0, 10.0, 30.0, 60.0, 300.0, 1500.0]
 gitaly['ruby_num_workers'] = {{ gitaly_ruby_num_workers }}
@@ -31,14 +35,14 @@ gitaly['pack_objects_cache_enabled'] = {{ gitaly_pack_objects_cache | lower }}
 
 {% if 'jaeger' in groups %}
 gitaly['env'] = {
-  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_ip }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
+  "GITLAB_TRACING" => "opentracing://jaeger?http_endpoint=http%3A%2F%2F{{ jaeger_int_addr }}%3A14268%2Fapi%2Ftraces&sampler=const&sampler_param=0.1"
 }
 {% endif %}
 
 consul['enable'] = true
 consul['configuration'] = {
   bind_addr: '{{ ansible_default_ipv4.address }}',
-  retry_join: %w({{ (consul_int_ips if 'consul' in groups else gitlab_rails_int_ips) | join(' ') }})
+  retry_join: %w({{ (consul_int_addrs if 'consul' in groups else gitlab_rails_int_addrs) | join(' ') }})
 }
 consul['monitoring_service_discovery'] = true
 

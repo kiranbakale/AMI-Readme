@@ -11,11 +11,12 @@ inventory_path: "{{ inventory_dir | default(ansible_inventory_sources[0], true) 
 ## Cloud Provider Settings
 ################################################################################
 
-internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address'], alicloud: ['private_ip_address'], tencentcloud: ['private_ip_address'], none: ['ansible_default_ipv4', 'address']}
-external_ip_lookup: {gcp: ['networkInterfaces', 0, 'accessConfigs', 0, 'natIP'], azure: ['public_ipv4_addresses', 0], aws: ['public_ip_address'], alicloud: ['public_ip_address'], tencentcloud: ['public_ip_address'], none: ['inventory_hostname']}
-
 cloud_provider: ''
 cloud_provider_labels_name: "{{ 'labels' if cloud_provider == 'gcp' else 'tags' }}"
+
+internal_addr_use_hostnames: false
+internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address'], alicloud: ['private_ip_address'], tencentcloud: ['private_ip_address'], none: ['ansible_default_ipv4', 'address']}
+internal_addr_lookup: "{{ ['ansible_fqdn'] if internal_addr_use_hostnames else internal_ip_lookup[cloud_provider] }}"
 
 ## GCP
 gcp_service_account_host_file: "{{ service_account_file | default('', true) }}"
@@ -58,14 +59,13 @@ external_ssl_files_host_key_file: "{{ external_ssl_files_host_path }}/{{ externa
 ## Load Balancers
 
 ### HAProxy
-#### haproxy_internal_primary_site_group_name: Sets the group name for haproxy_internal_int_ip for Geo or non Geo deployments
+#### haproxy_internal_primary_site_group_name: Sets the group name for haproxy_internal_int_addr for Geo or non Geo deployments
 haproxy_internal_primary_site_group_name: "{% if geo_primary_site_group_name + '_haproxy_internal_primary' in groups %}{{ geo_primary_site_group_name }}_haproxy_internal_primary{% elif 'haproxy_internal' in groups %}haproxy_internal{% else %}{% endif %}"
-haproxy_internal_int_ip: "{{ (groups[haproxy_internal_primary_site_group_name] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_internal' in groups else ''}}"
-haproxy_external_int_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
-haproxy_external_ext_ip: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, external_ip_lookup[cloud_provider]) | join('')) if 'haproxy_external' in groups else '' }}"
+haproxy_internal_int_addr: "{{ (groups[haproxy_internal_primary_site_group_name] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'haproxy_internal' in groups else ''}}"
+haproxy_external_int_addr: "{{ (groups['haproxy_external'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'haproxy_external' in groups else '' }}"
 
 ### Internal Load Balancer
-internal_lb_host: "{{ haproxy_internal_int_ip }}"
+internal_lb_host: "{{ haproxy_internal_int_addr }}"
 
 ################################################################################
 ## GitLab Install Settings
@@ -127,18 +127,18 @@ gitlab_object_storage_registry_bucket: "{{ gitlab_object_storage_prefix }}-regis
 ################################################################################
 
 # Consul
-consul_int_ips: "{{ (groups['consul'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'consul' in groups else [] }}"
+consul_int_addrs: "{{ (groups['consul'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'consul' in groups else [] }}"
 
 # GitLab Rails (Application nodes)
-gitlab_rails_int_ips: "{{ (groups['gitlab_rails'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'gitlab_rails_primary' in groups else [] }}"
+gitlab_rails_int_addrs: "{{ (groups['gitlab_rails'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'gitlab_rails_primary' in groups else [] }}"
 gitlab_rails_monitoring_cidr_blocks: ['0.0.0.0/0']
 
 # GitLab Postgres / PGBouncer
-postgres_primary_int_ip: "{{ (groups['postgres_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'postgres_primary' in groups else '' }}"
-postgres_int_ips: "{{ (groups['postgres'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'postgres' in groups else [] }}"
-pgbouncer_int_ips: "{{ (groups['pgbouncer'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'pgbouncer' in groups else [] }}"
+postgres_primary_int_addr: "{{ (groups['postgres_primary'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'postgres_primary' in groups else '' }}"
+postgres_int_addrs: "{{ (groups['postgres'] | map('extract', hostvars, internal_addr_lookup) | list) if 'postgres' in groups else [] }}"
+pgbouncer_int_addrs: "{{ (groups['pgbouncer'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'pgbouncer' in groups else [] }}"
 
-postgres_host: "{{ postgres_primary_int_ip }}"
+postgres_host: "{{ postgres_primary_int_addr }}"
 postgres_port: '5432'
 postgres_migrations_host: "{{ postgres_host }}"
 postgres_migrations_port: '5432'
@@ -156,19 +156,33 @@ postgres_trust_auth_cidr_blocks: ['0.0.0.0/0']
 postgres_md5_auth_cidr_blocks: ['0.0.0.0/0']
 
 # Gitaly
-gitaly_primary_int_ip: "{{ (groups['gitaly_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'gitaly_primary' in groups else '' }}"
-gitaly_secondary_int_ips: "{{ (groups['gitaly_secondary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'gitaly_secondary' in groups else [] }}"
+gitaly_primary_int_addr: "{{ (groups['gitaly_primary'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'gitaly_primary' in groups else '' }}"
+gitaly_secondary_int_addrs: "{{ (groups['gitaly_secondary'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'gitaly_secondary' in groups else [] }}"
 gitaly_callback_internal_api_url: "{{ ('http://' + internal_lb_host) if 'haproxy_internal' in groups and 'gitlab_rails' in groups else external_url_sanitised }}"
 
+## Gitaly SSL
+gitaly_ssl_cert_file: ""
+gitaly_ssl_key_file: ""
+gitaly_ssl_ca_file: ""
+gitaly_ssl_port: "9999"
+gitaly_ssl: "{{ gitaly_ssl_cert_file != '' and gitaly_ssl_key_file != '' }}"
+
 # Praefect
-praefect_primary_int_ip: "{{ (groups['praefect_primary'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_primary' in groups else '' }}"
-praefect_secondary_int_ips: "{{ (groups['praefect_secondary'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'praefect_secondary' in groups else [] }}"
-praefect_int_ips: "{{ (groups['praefect'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'praefect' in groups else [] }}"
+praefect_primary_int_addr: "{{ (groups['praefect_primary'] | map('extract', hostvars, internal_addr_lookup) | join('')) if 'praefect_primary' in groups else '' }}"
+praefect_secondary_int_addrs: "{{ (groups['praefect_secondary'] | map('extract', hostvars, internal_addr_lookup) | list) if 'praefect_secondary' in groups else [] }}"
+praefect_int_addrs: "{{ (groups['praefect'] | map('extract', hostvars, internal_addr_lookup) | list) if 'praefect' in groups else [] }}"
 praefect_external_token: ""
 
+## Praefect SSL
+praefect_ssl_cert_file: ""
+praefect_ssl_key_file: ""
+praefect_ssl_ca_file: ""
+praefect_ssl_port: "3305"
+praefect_ssl: "{{ praefect_ssl_cert_file != '' and praefect_ssl_key_file != '' }}"
+
 ## Praefect Postgres
-praefect_postgres_int_ip: "{{ (groups['praefect_postgres'] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'praefect_postgres_primary' in groups else '' }}"
-praefect_postgres_host: "{{ praefect_postgres_int_ip if praefect_postgres_int_ip != '' else postgres_host }}"
+praefect_postgres_int_addr: "{{ (groups['praefect_postgres'] | map('extract', hostvars, internal_addr_lookup) | join('')) if 'praefect_postgres_primary' in groups else '' }}"
+praefect_postgres_host: "{{ praefect_postgres_int_addr if praefect_postgres_int_addr != '' else postgres_host }}"
 praefect_postgres_port: '5432'
 praefect_postgres_cache_host: "{{ praefect_postgres_host }}"
 praefect_postgres_cache_port: '5432'
@@ -182,6 +196,7 @@ praefect_postgres_database_name: "praefect_production"
 praefect_postgres_external: "{{ 'praefect_postgres' not in groups and praefect_postgres_host != '' }}"
 
 # GitLab Monitor
+monitor_int_addr: "{{ (groups['monitor'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'monitor' in groups else '' }}"
 monitor_int_ip: "{{ (groups['monitor'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'monitor' in groups else '' }}"
 monitor_custom_dashboards: []
 monitor_custom_dashboards_path: "{{ inventory_path }}/../files/grafana"
@@ -189,28 +204,28 @@ monitor_custom_prometheus_scrape_config: ''
 
 # GitLab Redis
 ## Combined
-redis_primary_int_ip: "{{ (groups['redis_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'redis' in groups else '' }}"
-redis_int_ips: "{{ (groups['redis'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis' in groups else [] }}"
+redis_primary_int_addr: "{{ (groups['redis_primary'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'redis' in groups else '' }}"
+redis_int_addrs: "{{ (groups['redis'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'redis' in groups else [] }}"
 
-redis_host: "{{ redis_primary_int_ip }}"
+redis_host: "{{ redis_primary_int_addr }}"
 redis_password: ""
 redis_port: 6379
 redis_external: "{{ 'redis' not in groups and redis_host != '' }}"
 
 ## Cache
-redis_cache_primary_int_ip: "{{ (groups['redis_cache_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'redis_cache' in groups else '' }}"
-redis_cache_int_ips: "{{ (groups['redis_cache'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis_cache' in groups else [] }}"
+redis_cache_primary_int_addr: "{{ (groups['redis_cache_primary'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'redis_cache' in groups else '' }}"
+redis_cache_int_addrs: "{{ (groups['redis_cache'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'redis_cache' in groups else [] }}"
 
-redis_cache_host: "{{ redis_cache_primary_int_ip }}"
+redis_cache_host: "{{ redis_cache_primary_int_addr }}"
 redis_cache_password: "{{ redis_password }}"
 redis_cache_port: "{{ redis_port }}"
 redis_cache_external: "{{ 'redis_cache' not in groups and redis_cache_host != '' }}"
 
 ## Persistent
-redis_persistent_primary_int_ip: "{{ (groups['redis_persistent_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'redis_persistent' in groups else '' }}"
-redis_persistent_int_ips: "{{ (groups['redis_persistent'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'redis_persistent' in groups else [] }}"
+redis_persistent_primary_int_addr: "{{ (groups['redis_persistent_primary'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'redis_persistent' in groups else '' }}"
+redis_persistent_int_addrs: "{{ (groups['redis_persistent'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'redis_persistent' in groups else [] }}"
 
-redis_persistent_host: "{{ redis_persistent_primary_int_ip }}"
+redis_persistent_host: "{{ redis_persistent_primary_int_addr }}"
 redis_persistent_password: "{{ redis_password }}"
 redis_persistent_port: "{{ redis_port }}"
 redis_persistent_external: "{{ 'redis_persistent' not in groups and redis_persistent_host != '' }}"
@@ -227,17 +242,17 @@ sidekiq_max_concurrency: 10
 
 # GitLab NFS
 gitlab_nfs_target_group: "{{ 'gitlab_nfs' if 'gitlab_nfs' in groups else (groups.keys() | select('match', 'gitaly_primary|gitlab_rails_primary') | first) }}"
-gitlab_nfs_int_ip: "{{ groups[gitlab_nfs_target_group] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') }}"
+gitlab_nfs_int_addr: "{{ groups[gitlab_nfs_target_group] | map('extract', hostvars, internal_addr_lookup) | join('') }}"
 gitlab_nfs_path: "/mnt/gitlab-nfs"
 
 # Elastic
 elasticsearch_clean_install: "{{ lookup('env','ELASTICSEARCH_CLEAN_INSTALL') | default('false', true) }}"
-elastic_primary_int_ip: "{{ (groups['elastic_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'elastic_primary' in groups else '' }}"
-elastic_int_ips: "{{ (groups['elastic'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | list) if 'elastic' in groups else [] }}"
-elasticsearch_urls: "{{ (elastic_int_ips | map('regex_replace', '^(.*)$', 'http://\\1:9200') | list) if elastic_int_ips | length > 0 else [] }}"
+elastic_primary_int_addr: "{{ (groups['elastic_primary'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'elastic_primary' in groups else '' }}"
+elastic_int_addrs: "{{ (groups['elastic'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'elastic' in groups else [] }}"
+elasticsearch_urls: "{{ (elastic_int_addrs | map('regex_replace', '^(.*)$', 'http://\\1:9200') | list) if elastic_int_addrs | length > 0 else [] }}"
 
 # Jaeger Distributed Tracing
-jaeger_int_ip: "{{ (groups['jaeger'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'jaeger' in groups else '' }}"
+jaeger_int_addr: "{{ (groups['jaeger'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'jaeger' in groups else '' }}"
 
 ################################################################################
 ## GitLab Cloud Native Hybrid Settings (Helm)
