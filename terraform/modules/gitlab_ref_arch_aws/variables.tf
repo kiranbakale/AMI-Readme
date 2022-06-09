@@ -1233,6 +1233,11 @@ variable "elb_internal_create" {
   type    = bool
   default = false
 }
+variable "elb_internal_praefect_port" {
+  type    = number
+  default = 2305
+}
+
 
 variable "additional_tags" {
   type    = map(any)

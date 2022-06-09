@@ -40,7 +40,7 @@ frontend kibana
 backend gitlab-rails
     option httpchk GET /-/readiness
 
-{% for ip in gitlab_rails_int_ips %}
+{% for ip in gitlab_rails_int_addrs %}
     server gitlab-rails{{loop.index}} {{ ip }}:80 check inter 3s fall 1
 {% endfor %}
 
@@ -50,7 +50,7 @@ backend gitlab-rails-ssh
     option httpchk GET /-/readiness
     option srvtcpka
 
-{% for ip in gitlab_rails_int_ips %}
+{% for ip in gitlab_rails_int_addrs %}
     server gitlab-rails{{loop.index}} {{ ip }}:22 track gitlab-rails/gitlab-rails{{loop.index}}
 {% endfor %}
 
@@ -58,17 +58,17 @@ backend gitlab-rails-ssh
 backend grafana
     option httpchk GET /-/grafana/api/health
 
-    server grafana {{ monitor_int_ip }}:80 check
+    server grafana {{ monitor_int_addr }}:80 check
 
 backend prometheus
     option httpchk GET /-/healthy
 
-    server prometheus {{ monitor_int_ip }}:9090 check
+    server prometheus {{ monitor_int_addr }}:9090 check
 {% endif %}
 
 {% if 'elastic' in groups %}
 backend kibana
     option httpchk GET /api/status
 
-    server kibana {{ elastic_primary_int_ip }}:5601 check inter 10s fall 1
+    server kibana {{ elastic_primary_int_addr }}:5601 check inter 10s fall 1
 {% endif %}

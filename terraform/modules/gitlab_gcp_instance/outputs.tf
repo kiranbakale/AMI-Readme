@@ -3,7 +3,9 @@ output "machine_names" {
 }
 
 output "internal_addresses" {
-  value = google_compute_instance.gitlab[*].network_interface[0].network_ip
+  value = {
+    for _, v in google_compute_instance.gitlab[*] : "${v.name}.c.${v.project}.internal" => v.network_interface[0].network_ip
+  }
 }
 
 output "external_addresses" {

@@ -94,7 +94,7 @@ resource "aws_lb_target_group" "gitlab_internal_praefect" {
   count = var.elb_internal_create && var.praefect_node_count > 0 ? 1 : 0
 
   name     = "${format("%.19s", var.prefix)}-int-praefect"
-  port     = 2305
+  port     = var.elb_internal_praefect_port
   protocol = "TCP"
   vpc_id   = coalesce(local.vpc_id, local.default_vpc_id)
 
@@ -120,7 +120,7 @@ resource "aws_lb_listener" "gitlab_internal_praefect" {
   count = var.elb_internal_create && var.praefect_node_count > 0 ? 1 : 0
 
   load_balancer_arn = aws_lb.gitlab_internal[0].arn
-  port              = 2305
+  port              = var.elb_internal_praefect_port
   protocol          = "TCP"
 
   default_action {

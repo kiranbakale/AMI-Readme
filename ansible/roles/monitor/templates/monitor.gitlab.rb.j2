@@ -16,15 +16,15 @@ prometheus['scrape_configs'] = [
     'static_configs' => [
       'targets' => [
 {% if 'haproxy_external' in groups %}
-        "{{ haproxy_external_int_ip }}:9100",
+        "{{ haproxy_external_int_addr }}:9100",
 {% endif %}
 {% if 'haproxy_internal' in groups %}
-        "{{ haproxy_internal_int_ip }}:9100",
+        "{{ haproxy_internal_int_addr }}:9100",
 {% endif %}
-{% for ip in elastic_int_ips %}
+{% for ip in elastic_int_addrs %}
         "{{ ip }}:9100",
 {% endfor %}
-        "{{ gitlab_nfs_int_ip }}:9100"
+        "{{ gitlab_nfs_int_addr }}:9100"
       ],
     ],
   },
@@ -33,10 +33,10 @@ prometheus['scrape_configs'] = [
     'static_configs' => [
       'targets' => [
 {% if 'haproxy_external' in groups %}
-        "{{ haproxy_external_int_ip }}:1936",
+        "{{ haproxy_external_int_addr }}:1936",
 {% endif %}
 {% if 'haproxy_internal' in groups %}
-        "{{ haproxy_internal_int_ip }}:1936"
+        "{{ haproxy_internal_int_addr }}:1936"
 {% endif %}
       ],
     ],
@@ -46,7 +46,7 @@ prometheus['scrape_configs'] = [
     'job_name': 'pgbouncer',
     'static_configs' => [
       'targets' => [
-{% for ip in pgbouncer_int_ips %}
+{% for ip in pgbouncer_int_addrs %}
         "{{ ip }}:9188",
 {% endfor %}
       ],
@@ -58,7 +58,7 @@ prometheus['scrape_configs'] = [
     'job_name': 'praefect',
     'static_configs' => [
       'targets' => [
-{% for ip in praefect_int_ips %}
+{% for ip in praefect_int_addrs %}
         "{{ ip }}:9652",
 {% endfor %}
       ],
@@ -129,7 +129,7 @@ grafana['datasources'] = [
 consul['enable'] = true
 consul['configuration'] = {
   bind_addr: '{{ ansible_default_ipv4.address }}',
-  retry_join: %w({{ (consul_int_ips if 'consul' in groups else gitlab_rails_int_ips) | join(' ') }})
+  retry_join: %w({{ (consul_int_addrs if 'consul' in groups else gitlab_rails_int_addrs) | join(' ') }})
 }
 consul['monitoring_service_discovery'] = true
 

@@ -5,7 +5,7 @@
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
-- [GitLab Environment Toolkit - Advanced - External SSL](environment_advanced_ssl.md)
+- [GitLab Environment Toolkit - Advanced - SSL](environment_advanced_ssl.md)
 - [**GitLab Environment Toolkit - Advanced - Network Setup**](environment_advanced_network.md)
 - [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
@@ -264,3 +264,11 @@ To lock down internal network access to particular CIDR blocks these _optional_ 
   - :information_source:&nbsp; Changes to this setting currently has some known issues in certain setups - [gitlab-org/omnibus-gitlab#6594](https://gitlab.com/gitlab-org/omnibus-gitlab/-/issues/6594) and [gitlab-org/omnibus-gitlab#6590](https://gitlab.com/gitlab-org/omnibus-gitlab/-/issues/6590).
   - :information_source:&nbsp; [There are additional considerations for this setting when using Geo](https://docs.gitlab.com/ee/administration/geo/setup/database.html#postgresql-replication).
 - `geo_tracking_postgres_md5_auth_cidr_blocks` - A list of CIDR blocks allowed to access [Geo Tracking Postgres (Omnibus)](https://docs.gitlab.com/ee/administration/geo/replication/multiple_servers.html#step-3-configure-the-geo-tracking-database-on-the-geo-secondary-site). Default is `['0.0.0.0/0']`.
+
+## Configuring Internal Connection Type (IPs / Hostnames)
+
+The Toolkit by default uses IPs for internal connections. However this can be switched to use internal hostnames as discovered by Ansible via the following setting in your [`vars.yml`](environment_configure.md#environment-config-varsyml) file:
+
+- `internal_addr_use_hostnames` - Flag to switch the Toolkit to use internal hostnames for connections. Default is `false`.
+
+:information_source:&nbsp; On the main Cloud Providers internal hostnames are available by default (For more info - [GCP](https://cloud.google.com/compute/docs/internal-dns), [AWS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-naming.html), [Azure](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-name-resolution-for-vms-and-role-instances#reverse-dns-considerations)). Terraform output shows the hostnames for each VM. For On Prem installs hostnames and DNS will need to be configured separately.

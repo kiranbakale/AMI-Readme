@@ -20,7 +20,7 @@ frontend internal-pgbouncer-tcp-in
 
 {% if 'praefect' in groups %}
 frontend internal-praefect-tcp-in
-    bind *:2305
+    bind *:"{{ praefect_ssl_port if praefect_ssl else '2305' }}"
     mode tcp
     option tcplog
     option clitcpka
@@ -44,7 +44,7 @@ backend gitlab-rails
     option tcp-check
     option srvtcpka
 
-{% for ip in gitlab_rails_int_ips %}
+{% for ip in gitlab_rails_int_addrs %}
     server gitlab-rails{{loop.index}} {{ ip }}:80 check inter 3s fall 1
 {% endfor %}
 {% endif %}
@@ -55,7 +55,7 @@ backend pgbouncer
     option tcp-check
     option srvtcpka
 
-{% for ip in pgbouncer_int_ips %}
+{% for ip in pgbouncer_int_addrs %}
     server pgbouncer{{loop.index}} {{ ip }}:6432 check inter 3s fall 1
 {% endfor %}
 {% endif %}
@@ -66,8 +66,8 @@ backend praefect
     option tcp-check
     option srvtcpka
 
-{% for ip in praefect_int_ips %}
-    server praefect{{loop.index}} {{ ip }}:2305 check inter 3s fall 1
+{% for ip in praefect_int_addrs %}
+    server praefect{{loop.index}} {{ ip }}:"{{ praefect_ssl_port if praefect_ssl else '2305' }}" check inter 3s fall 1
 {% endfor %}
 {% endif %}
 
@@ -77,7 +77,7 @@ backend postgresql
     option httpchk
     http-check expect status 200
 
-{% for ip in postgres_int_ips %}
+{% for ip in postgres_int_addrs %}
     server postgresql{{loop.index}} {{ ip }}:5432 maxconn 100 check port 8008 inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
 {% endfor %}
 {% endif -%}

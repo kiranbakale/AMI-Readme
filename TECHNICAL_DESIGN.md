@@ -21,7 +21,7 @@ Created and maintained by the GitLab Quality Engineering Enablement team, the To
 - Geo support
 - Zero Downtime Upgrades support
 - Built in Load Balancing and Monitoring (Prometheus, Grafana) setup
-- External SSL termination
+- SSL / TLS (either direct or via hooks)
 - Alternative sources (Cloud Services, Custom Servers) for select components (Load Balancers, PostgreSQL, Redis)
 - On Prem Support (Ansible)
 

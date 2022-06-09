@@ -3,7 +3,9 @@ output "machine_names" {
 }
 
 output "internal_addresses" {
-  value = azurerm_linux_virtual_machine.gitlab[*].private_ip_address
+  value = {
+    for _, v in azurerm_linux_virtual_machine.gitlab[*] : "${v.name}.internal.cloudapp.net" => v.private_ip_address
+  }
 }
 
 output "external_addresses" {
