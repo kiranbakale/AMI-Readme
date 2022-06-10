@@ -195,15 +195,15 @@ The variables that need to be set in the Inventory Variables [`vars.yml`](enviro
 Gitaly (for both Sharded or Cluster):
 
 - `gitaly_ssl_cert_file` - Path to the Gitaly Certificate file to upload. Default is `''`.
-- `gitaly_ssl_ca_file` - Path to the Gitaly Key file to upload. Default is `''`.
-- `gitaly_ssl_key_file` - Path to the Gitaly CA file to upload. Default is `''`.
+- `gitaly_ssl_key_file` - Path to the Gitaly Key file to upload. Default is `''`.
+- `gitaly_ssl_ca_file` - Path to the Gitaly CA file to upload. Default is `''`.
 - `gitaly_ssl_port` - The port Gitaly will use for SSL connections. This shouldn't need to be changed in most circumstances. Default is `9999`.
 
 Praefect (for Cluster):
 
 - `praefect_ssl_cert_file` - Path to the Praefect Certificate file to upload. Default is `''`.
-- `praefect_ssl_ca_file` - Path to the Praefect Key file to upload. Default is `''`.
-- `praefect_ssl_key_file` - Path to the Praefect CA file to upload. Default is `''`.
+- `praefect_ssl_key_file` - Path to the Praefect Key file to upload. Default is `''`.
+- `praefect_ssl_ca_file` - Path to the Praefect CA file to upload. Default is `''`.
 - `praefect_ssl_port` - The port Praefect will use for SSL connections. This shouldn't need to be changed in most circumstances. Default is `3035`.
 
 In addition to the above there are some other settings you may need to set depending on your setup as follows:
