@@ -39,6 +39,13 @@
     - ansible_facts['distribution'] == 'Amazon'
     - ansible_facts['distribution_major_version'] == '2'
 
+# For more recent PG Client Libraries on Amazon Linux 2 only. Version doesn't need to match PG Server.
+- name: Enable PostgreSQL Client Repo (RHEL - Amazon Linux 2)
+  command: amazon-linux-extras enable postgresql13 -y
+  when:
+    - ansible_facts['distribution'] == 'Amazon'
+    - ansible_facts['distribution_major_version'] == '2'
+
 - name: Install system packages (RHEL)
   yum:
     name: "{{ system_packages_rhel }}"
