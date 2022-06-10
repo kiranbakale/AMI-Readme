@@ -53,7 +53,7 @@ resource "aws_db_instance" "gitlab_geo_tracking" {
   iops           = var.rds_geo_tracking_postgres_iops
   storage_type   = var.rds_geo_tracking_postgres_storage_type
 
-  name     = var.rds_geo_tracking_postgres_database_name
+  db_name  = var.rds_geo_tracking_postgres_database_name
   port     = var.rds_geo_tracking_postgres_port
   username = var.rds_geo_tracking_postgres_username
   password = var.rds_geo_tracking_postgres_password

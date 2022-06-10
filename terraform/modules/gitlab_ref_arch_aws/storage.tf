@@ -3,20 +3,6 @@ resource "aws_s3_bucket" "gitlab_object_storage_buckets" {
   bucket        = "${var.object_storage_prefix != null ? var.object_storage_prefix : var.prefix}-${each.value}"
   force_destroy = var.object_storage_force_destroy
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm     = "aws:kms"
-        kms_master_key_id = var.object_storage_kms_key_arn != null ? var.object_storage_kms_key_arn : var.default_kms_key_arn
-      }
-      bucket_key_enabled = true
-    }
-  }
-
-  versioning {
-    enabled = var.object_storage_versioning
-  }
-
   lifecycle {
     ignore_changes = [
       replication_configuration
@@ -24,6 +10,30 @@ resource "aws_s3_bucket" "gitlab_object_storage_buckets" {
   }
 
   tags = var.object_storage_tags
+}
+
+resource "aws_s3_bucket_versioning" "gitlab_object_storage_buckets" {
+  for_each = aws_s3_bucket.gitlab_object_storage_buckets
+
+  bucket = each.value.id
+
+  versioning_configuration {
+    status = var.object_storage_versioning ? "Enabled" : "Disabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "gitlab_object_storage_buckets" {
+  for_each = aws_s3_bucket.gitlab_object_storage_buckets
+
+  bucket = each.value.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm     = "aws:kms"
+      kms_master_key_id = var.object_storage_kms_key_arn != null ? var.object_storage_kms_key_arn : var.default_kms_key_arn
+    }
+    bucket_key_enabled = true
+  }
 }
 
 # IAM Policies

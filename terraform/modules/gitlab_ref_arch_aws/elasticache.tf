@@ -17,10 +17,10 @@ resource "aws_elasticache_subnet_group" "gitlab" {
 resource "aws_elasticache_replication_group" "gitlab_redis" {
   count = var.elasticache_redis_node_count > 0 ? 1 : 0
 
-  replication_group_id          = "${format("%.34s", var.prefix)}-redis" # Must be 40 characters or lower
-  replication_group_description = "${var.prefix}-redis"
-  node_type                     = "cache.${var.elasticache_redis_instance_type}"
-  number_cache_clusters         = var.elasticache_redis_node_count
+  replication_group_id = "${format("%.34s", var.prefix)}-redis" # Must be 40 characters or lower
+  description          = "${var.prefix}-redis"
+  node_type            = "cache.${var.elasticache_redis_instance_type}"
+  num_cache_clusters   = var.elasticache_redis_node_count
 
   engine_version             = var.elasticache_redis_engine_version
   port                       = var.elasticache_redis_port
@@ -83,11 +83,11 @@ resource "aws_elasticache_parameter_group" "gitlab_redis_cache" {
 resource "aws_elasticache_replication_group" "gitlab_redis_cache" {
   count = var.elasticache_redis_cache_node_count > 0 ? 1 : 0
 
-  replication_group_id          = "${format("%.28s", var.prefix)}-redis-cache" # Must be 40 characters or lower
-  replication_group_description = "${var.prefix}-redis-cache"
-  node_type                     = "cache.${var.elasticache_redis_cache_instance_type}"
-  number_cache_clusters         = var.elasticache_redis_cache_node_count
-  parameter_group_name          = aws_elasticache_parameter_group.gitlab_redis_cache[0].name
+  replication_group_id = "${format("%.28s", var.prefix)}-redis-cache" # Must be 40 characters or lower
+  description          = "${var.prefix}-redis-cache"
+  node_type            = "cache.${var.elasticache_redis_cache_instance_type}"
+  num_cache_clusters   = var.elasticache_redis_cache_node_count
+  parameter_group_name = aws_elasticache_parameter_group.gitlab_redis_cache[0].name
 
   engine_version             = local.elasticache_redis_cache_engine_version
   port                       = local.elasticache_redis_cache_port
@@ -134,10 +134,10 @@ locals {
 resource "aws_elasticache_replication_group" "gitlab_redis_persistent" {
   count = var.elasticache_redis_persistent_node_count > 0 ? 1 : 0
 
-  replication_group_id          = "${format("%.23s", var.prefix)}-redis-persistent" # Must be 40 characteers or lower
-  replication_group_description = "${var.prefix}-redis-persistent"
-  node_type                     = "cache.${var.elasticache_redis_persistent_instance_type}"
-  number_cache_clusters         = var.elasticache_redis_persistent_node_count
+  replication_group_id = "${format("%.23s", var.prefix)}-redis-persistent" # Must be 40 characteers or lower
+  description          = "${var.prefix}-redis-persistent"
+  node_type            = "cache.${var.elasticache_redis_persistent_instance_type}"
+  num_cache_clusters   = var.elasticache_redis_persistent_node_count
 
   engine_version             = local.elasticache_redis_persistent_engine_version
   port                       = local.elasticache_redis_persistent_port
