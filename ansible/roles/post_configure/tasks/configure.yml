@@ -12,6 +12,10 @@
         pod: "{{ task_runner_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: "gitlab-rails runner 'ApplicationSetting.last.update(authorized_keys_enabled: false)'"
+      register: result
+      retries: 24
+      delay: 5
+      until: result is success
       when:
         - task_runner_pod is defined
         - "'gitlab_rails' not in groups"
