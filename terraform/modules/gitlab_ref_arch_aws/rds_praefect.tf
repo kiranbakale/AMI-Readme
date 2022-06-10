@@ -53,7 +53,7 @@ resource "aws_db_instance" "gitlab_praefect" {
   iops           = var.rds_praefect_postgres_iops
   storage_type   = var.rds_praefect_postgres_storage_type
 
-  name     = var.rds_praefect_postgres_database_name
+  db_name  = var.rds_praefect_postgres_database_name
   port     = var.rds_praefect_postgres_port
   username = var.rds_praefect_postgres_username
   password = var.rds_praefect_postgres_password

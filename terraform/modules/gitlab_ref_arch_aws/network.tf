@@ -17,9 +17,13 @@ resource "aws_default_vpc" "default" {
   }
 }
 
-data "aws_subnet_ids" "defaults" {
-  count  = local.default_network ? 1 : 0
-  vpc_id = aws_default_vpc.default[0].id
+data "aws_subnets" "defaults" {
+  count = local.default_network ? 1 : 0
+
+  filter {
+    name   = "vpc-id"
+    values = [aws_default_vpc.default[0].id]
+  }
 
   filter {
     name   = "default-for-az"
@@ -169,7 +173,7 @@ resource "aws_vpc_peering_connection_accepter" "gitlab_vpc_peering_accepter" {
 
 locals {
   default_vpc_id     = local.default_network ? aws_default_vpc.default[0].id : null
-  default_subnet_ids = local.default_network ? data.aws_subnet_ids.defaults[0].ids : null
+  default_subnet_ids = local.default_network ? data.aws_subnets.defaults[0].ids : null
 
   vpc_id          = local.create_network ? aws_vpc.gitlab_vpc[0].id : var.vpc_id
   subnet_pub_ids  = local.create_network ? aws_subnet.gitlab_vpc_sn_pub[*].id : var.subnet_pub_ids

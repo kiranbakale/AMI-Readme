@@ -55,7 +55,7 @@ resource "aws_db_instance" "gitlab" {
   iops           = var.rds_postgres_iops
   storage_type   = var.rds_postgres_storage_type
 
-  name     = var.rds_postgres_database_name
+  db_name  = var.rds_postgres_database_name
   port     = var.rds_postgres_port
   username = var.rds_postgres_username
   password = var.rds_postgres_password
