@@ -10,7 +10,7 @@
 - name: Start Jaeger Docker
   docker_container:
     name: jaeger
-    image: jaegertracing/all-in-one
+    image: "{{ jaeger_docker_image }}"
     pull: true
     restart_policy: always
     state: started

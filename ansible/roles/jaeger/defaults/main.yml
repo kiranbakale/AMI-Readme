@@ -1,0 +1,3 @@
+---
+
+jaeger_docker_image: jaegertracing/all-in-one

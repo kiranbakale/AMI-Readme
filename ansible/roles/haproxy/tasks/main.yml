@@ -45,7 +45,7 @@
 - name: Start HAProxy Internal Docker
   docker_container:
     name: haproxy
-    image: haproxy:alpine
+    image: "{{ haproxy_docker_image }}"
     pull: true
     recreate: true
     restart_policy: unless-stopped
@@ -67,7 +67,7 @@
 - name: Start HAProxy External Docker
   docker_container:
     name: haproxy
-    image: haproxy:alpine
+    image: "{{ haproxy_docker_image }}"
     pull: true
     recreate: true
     restart_policy: unless-stopped
