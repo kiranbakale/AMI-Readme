@@ -214,7 +214,6 @@
     update_repo_cache: true
     release_namespace: "{{ gitlab_charts_release_namespace }}"
     values: "{{ gitlab_charts_values }}"
-    wait: true
   tags:
     - reconfigure
     - charts
