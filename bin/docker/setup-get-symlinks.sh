@@ -1,6 +1,5 @@
 #!/bin/bash
 
-script_path="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 get_path="/gitlab-environment-toolkit"
 get_configs_path="/environments"
 
@@ -28,7 +27,7 @@ if [[ -d "$get_path/keys" ]]; then
   ln -nsf $get_configs_path/keys/* $get_path/keys/
 fi
 
-if [[ -d "$get_configs_path/modules" ]]; then
+if [[ ! -e "$get_configs_path/modules" ]]; then
   printf "Linking $get_path/terraform/modules to $get_configs_path/modules\n"
   ln -nsf $get_path/terraform/modules $get_configs_path/modules
 fi
