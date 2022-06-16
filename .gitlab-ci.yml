@@ -13,7 +13,7 @@ stages:
 
 danger-review:
   variables:
-    BUNDLE_GEMFILE: danger/Gemfile
+    GITLAB_DANGERFILES_VERSION: "~> 3.0"
 
 #################################
 ##            SAST             ##
