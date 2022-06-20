@@ -12,5 +12,8 @@ skip_list:
   - meta-no-info  # Don't compare to empty string, https://github.com/ansible-community/ansible-lint/issues/457
   - command-instead-of-module  # meta/main.yml should contain relevant info
   - line-length
+  - yaml[line-length]
   - braces
   - package-latest
+  - fqcn-builtins
+  - var-spacing  # https://github.com/ansible/ansible-lint/issues/2209

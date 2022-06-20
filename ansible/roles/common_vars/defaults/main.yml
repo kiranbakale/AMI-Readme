@@ -90,18 +90,18 @@ gitlab_repo_list_path: "/etc/apt/sources.list.d/gitlab_{{ 'gitlab_' + 'nightly-b
 
 gitlab_deb_force_install: false
 ## Specify absolute path to the local deb package on host
-gitlab_deb_host_path: "{{ lookup('env','GITLAB_HOST_DEB_PATH')}}"
+gitlab_deb_host_path: "{{ lookup('env','GITLAB_HOST_DEB_PATH') }}"
 ## Specify deb package url
-gitlab_deb_download_url: "{{ lookup('env','GITLAB_DEB_DOWNLOAD_URL')}}"
+gitlab_deb_download_url: "{{ lookup('env','GITLAB_DEB_DOWNLOAD_URL') }}"
 gitlab_deb_download_url_headers: "{{ lookup('env','GITLAB_DEB_DOWNLOAD_URL_HEADERS') | default({}, true) }}"
-gitlab_deb_target_path: "{{ lookup('env','GITLAB_TARGET_DEB_PATH') | default('/tmp/gitlab_deb_package.deb', true)}}"
+gitlab_deb_target_path: "{{ lookup('env','GITLAB_TARGET_DEB_PATH') | default('/tmp/gitlab_deb_package.deb', true) }}"
 
 ## Specify absolute path to the local rpm package on host
-gitlab_rpm_host_path: "{{ lookup('env','GITLAB_HOST_RPM_PATH')}}"
+gitlab_rpm_host_path: "{{ lookup('env','GITLAB_HOST_RPM_PATH') }}"
 ## Specify rpm package url
-gitlab_rpm_download_url: "{{ lookup('env','GITLAB_RPM_DOWNLOAD_URL')}}"
+gitlab_rpm_download_url: "{{ lookup('env','GITLAB_RPM_DOWNLOAD_URL') }}"
 gitlab_rpm_download_url_headers: "{{ lookup('env','GITLAB_RPM_DOWNLOAD_URL_HEADERS') | default({}, true) }}"
-gitlab_rpm_target_path: "{{ lookup('env','GITLAB_TARGET_RPM_PATH') | default('/tmp/gitlab_rpm_package.rpm', true)}}"
+gitlab_rpm_target_path: "{{ lookup('env','GITLAB_TARGET_RPM_PATH') | default('/tmp/gitlab_rpm_package.rpm', true) }}"
 
 gitlab_admin_email: "admin@example.com"
 
@@ -362,7 +362,7 @@ geo_secondary_site_postgres_int_ip: "{{ (groups[geo_secondary_site_postgres_grou
 geo_secondary_postgres_host: ""
 geo_secondary_praefect_postgres_host: ""
 
-geo_primary_gitlab_nfs_target_group: "{{ (geo_primary_site_group_name + '_gitlab_nfs' if geo_primary_site_group_name + '_gitlab_nfs' in groups else (groups.keys() | select('match', geo_primary_site_group_name + '(_gitaly_primary|_gitlab_rails_primary)') | first)) if geo_primary_site_group_name in group_names else ''}}"
+geo_primary_gitlab_nfs_target_group: "{{ (geo_primary_site_group_name + '_gitlab_nfs' if geo_primary_site_group_name + '_gitlab_nfs' in groups else (groups.keys() | select('match', geo_primary_site_group_name + '(_gitaly_primary|_gitlab_rails_primary)') | first)) if geo_primary_site_group_name in group_names else '' }}"
 geo_primary_gitlab_nfs_int_ip: "{{ groups[geo_primary_gitlab_nfs_target_group] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') if geo_primary_site_group_name in group_names else '' }}"
 geo_secondary_gitlab_nfs_target_group: "{{ (geo_secondary_site_group_name + '_gitlab_nfs' if geo_secondary_site_group_name + '_gitlab_nfs' in groups else (groups.keys() | select('match', geo_secondary_site_group_name + '(_gitaly_primary|_gitlab_rails_primary)') | first)) if geo_secondary_site_group_name in group_names else '' }}"
 geo_secondary_gitlab_nfs_int_ip: "{{ groups[geo_secondary_gitlab_nfs_target_group] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') if geo_secondary_site_group_name in group_names else '' }}"
