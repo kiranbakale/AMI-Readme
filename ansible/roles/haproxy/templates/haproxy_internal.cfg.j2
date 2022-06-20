@@ -20,7 +20,7 @@ frontend internal-pgbouncer-tcp-in
 
 {% if 'praefect' in groups %}
 frontend internal-praefect-tcp-in
-    bind *:"{{ praefect_ssl_port if praefect_ssl else '2305' }}"
+    bind *:{{ praefect_ssl_port if praefect_ssl else '2305' }}
     mode tcp
     option tcplog
     option clitcpka
@@ -67,7 +67,7 @@ backend praefect
     option srvtcpka
 
 {% for ip in praefect_int_addrs %}
-    server praefect{{loop.index}} {{ ip }}:"{{ praefect_ssl_port if praefect_ssl else '2305' }}" check inter 3s fall 1
+    server praefect{{loop.index}} {{ ip }}:{{ praefect_ssl_port if praefect_ssl else '2305' }} check inter 3s fall 1
 {% endfor %}
 {% endif %}
 
