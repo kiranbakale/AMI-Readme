@@ -119,6 +119,7 @@ card aws #ffffff [
   ELBs
   RDS
   Elasticache
+  OpenSearch
 ]
 
 card gcp #ffffff [
