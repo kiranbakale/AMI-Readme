@@ -179,6 +179,8 @@ locals {
   subnet_pub_ids  = local.create_network ? aws_subnet.gitlab_vpc_sn_pub[*].id : var.subnet_pub_ids
   subnet_priv_ids = local.create_network ? aws_subnet.gitlab_vpc_sn_priv[*].id : var.subnet_priv_ids
 
+  vpc_cidr_block = !local.default_network ? aws_vpc.gitlab_vpc[0].cidr_block : aws_default_vpc.default[0].cidr_block
+
   # Target Subnets for resource types. Selected dynamically from what's been configured - Private / Public or Default
   backend_subnet_ids  = !local.default_network ? coalescelist(local.subnet_priv_ids, local.subnet_pub_ids) : null
   frontend_subnet_ids = !local.default_network ? coalescelist(local.subnet_pub_ids, local.subnet_priv_ids) : null

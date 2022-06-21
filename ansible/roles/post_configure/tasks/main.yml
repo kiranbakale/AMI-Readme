@@ -69,7 +69,7 @@
     - name: Configure Advanced Search with Elasticsearch
       import_tasks: elasticsearch.yml
       when:
-        - "'elastic' in groups"
+        - ('elastic' in groups or advanced_search_external)
         - gitlab_license_file is defined
         - gitlab_license_plan is defined
       tags: elasticsearch

@@ -1131,6 +1131,60 @@ variable "elasticache_redis_persistent_snapshot_window" {
   default = null
 }
 
+## OpenSearch (AWS Service)
+variable "opensearch_node_count" {
+  type    = number
+  default = 0
+}
+variable "opensearch_instance_type" {
+  type    = string
+  default = ""
+}
+variable "opensearch_master_node_count" {
+  type    = number
+  default = null
+}
+variable "opensearch_master_instance_type" {
+  type    = string
+  default = null
+}
+variable "opensearch_warm_node_count" {
+  type    = number
+  default = null
+}
+variable "opensearch_warm_instance_type" {
+  type    = string
+  default = null
+}
+variable "opensearch_engine_version" {
+  type    = string
+  default = null
+}
+variable "opensearch_volume_size" {
+  type    = number
+  default = 500
+}
+variable "opensearch_volume_type" {
+  type    = string
+  default = "io1"
+}
+variable "opensearch_volume_iops" {
+  type    = number
+  default = 1000
+}
+variable "opensearch_multi_az" {
+  type    = bool
+  default = true
+}
+variable "opensearch_default_subnet_count" {
+  type    = number
+  default = 2
+}
+variable "opensearch_kms_key_arn" {
+  type    = string
+  default = null
+}
+
 # Networking
 ## Default network
 variable "default_allowed_ingress_cidr_blocks" {

@@ -101,7 +101,7 @@
 - name: Configure Elasticsearch URL setting
   block:
     - name: Configure Elasticsearch URL setting via GitLab Rails
-      command: "gitlab-rails runner 'ApplicationSetting.last.update(elasticsearch_url: \"{{ elasticsearch_urls | join(',') }}\")'"
+      command: "gitlab-rails runner 'ApplicationSetting.last.update(elasticsearch_url: \"{{ advanced_search_hosts | join(',') }}\")'"
       delegate_to: "{{ groups['gitlab_rails'][0] }}"
       delegate_facts: true
       become: true
@@ -111,13 +111,13 @@
       kubernetes.core.k8s_exec:
         pod: "{{ task_runner_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
-        command: "gitlab-rails runner 'ApplicationSetting.last.update(elasticsearch_url: \"{{ elasticsearch_urls | join(',') }}\")'"
+        command: "gitlab-rails runner 'ApplicationSetting.last.update(elasticsearch_url: \"{{ advanced_search_hosts | join(',') }}\")'"
       when:
         - task_runner_pod is defined
         - "'gitlab_rails' not in groups"
   when:
     - gitlab_license_plan in ['premium', 'ultimate']
-    - gitlab_environment_settings.elasticsearch_url != (elasticsearch_urls | join(','))
+    - gitlab_environment_settings.elasticsearch_url != (advanced_search_hosts | join(','))
 
 - name: Configure Elasticsearch Index
   block:
@@ -144,7 +144,7 @@
         - name: Enable GitLab Elasticsearch indexing setting via GitLab Rails
           command: |
             gitlab-rails runner "
-              ApplicationSetting.last.update(elasticsearch_url: \"{{ elasticsearch_urls | join(',') }}\")
+              ApplicationSetting.last.update(elasticsearch_url: \"{{ advanced_search_hosts | join(',') }}\")
               ApplicationSetting.last.update(elasticsearch_indexing: true)
             "
           delegate_to: "{{ groups['gitlab_rails'][0] }}"
@@ -162,7 +162,7 @@
             namespace: "{{ gitlab_charts_release_namespace }}"
             command: |
               gitlab-rails runner "
-                ApplicationSetting.last.update(elasticsearch_url: \"{{ elasticsearch_urls | join(',') }}\")
+                ApplicationSetting.last.update(elasticsearch_url: \"{{ advanced_search_hosts | join(',') }}\")
                 ApplicationSetting.last.update(elasticsearch_indexing: true)
               "
           register: elasticsearch_status_result

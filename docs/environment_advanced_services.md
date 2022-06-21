@@ -33,6 +33,7 @@ Several components of the GitLab setup can be switched to a cloud service or cus
 - [Load Balancers](https://docs.gitlab.com/ee/administration/load_balancer.html) - [AWS ELB](https://aws.amazon.com/elasticloadbalancing/), _Custom_
 - [PostgreSQL](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#provide-your-own-postgresql-instance) - [AWS RDS](https://aws.amazon.com/rds/postgresql/), _Custom_
 - [Redis](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#providing-your-own-redis-instance) - [AWS Elasticache](https://aws.amazon.com/elasticache/redis/), _Custom_
+- [Advanced Search](https://docs.gitlab.com/ee/user/search/advanced_search.html) - [AWS OpenSearch](https://aws.amazon.com/opensearch-service/), _Custom_
 
 :information_source:&nbsp; Support for more services is ongoing. Unless specified otherwise the above is the current supported services by the Toolkit.
 
@@ -146,7 +147,7 @@ The variables for this service start with the prefix `rds_postgres_*` and should
 - `rds_postgres_max_allocated_storage` - The max disk size for the instance. Optional, default is `1000`.
 - `rds_postgres_multi_az` - Specifies if the RDS instance is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`.
 - `rds_postgres_default_subnet_count` - Specifies the number of default subnets to use when running on the default network. Optional, default is `2`.
-- `rds_postgres_iops` - The amount of provisioned IOPS. Setting this implies a storage_type of "io1". Optional, default is `1000`.
+- `rds_postgres_iops` - The amount of provisioned IOPS. Setting this requires a storage_type of `io1`. Optional, default is `1000`.
 - `rds_postgres_storage_type` - The type of storage to use. Optional, default is `io1`.
 - `rds_postgres_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt the database instance. If not provided `default_kms_key_arm` or the default AWS KMS key will be used in that order. Optional, default is `null`.
   - **Warning** Changing this value after the initial creation will result in the database being recreated and will lead to **data loss**.
@@ -358,7 +359,70 @@ Once set, Ansible can then be run as normal. During the run it will configure th
 
 After Ansible is finished running your environment will now be ready.
 
-### Sensitive variable handling
+## Advanced Search
+
+The Toolkit supports provisioning and / or configuring an alternative search backend (Elasticsearch or OpenSearch) for [GitLab Advanced Search](https://docs.gitlab.com/ee/user/search/advanced_search.html).
+
+:information_source:&nbsp; The Reference Architectures [don't proffer guidance on sizing Search backends at this time](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#configure-advanced-search). This is due to search backend requirements varying notably depending on data shape and search index design. However as a general guidance in testing we've found that sizing the Search backends similarly to the Gitaly nodes looks to be a good starting point that you can then adjust accordingly.
+
+When using an alternative search backend the following changes apply when deploying via the Toolkit:
+
+- Elasticsearch doesn't need to be provisioned in Terraform.
+
+Head to the relevant section(s) below for details on how to provision and/or configure.
+
+### Provisioning with Terraform
+
+Provisioning an alternative search backend via a cloud service differs slightly but has been designed in the Toolkit to be as similar as possible to deploying Elasticsearch via Omnibus. As such, it only requires some different config in your Environment's config file (environment.tf).
+
+Like the main provisioning docs there are sections for each supported provider on how to achieve this. Follow the section for your selected provider and then move onto the next step.
+
+#### AWS OpenSearch
+
+The Toolkit supports provisioning an [AWS OpenSearch](https://aws.amazon.com/opensearch-service/) service domain (instance) with everything GitLab requires or recommends such as built in HA support over AZs and encryption.
+
+:information_source:&nbsp; [AWS OpenSearch is the replacement for AWS Elasticsearch](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/rename.html) and supports both Elasticsearch and OpenSearch as backends.
+
+The variables for this service start with the prefix `opensearch_*` and should replace any previous `elastic_*` variables. The available variables are as follows:
+
+- `opensearch_node_count` - The number of data nodes for the OpenSearch domain that serve search requests. This should be set to at least `2` or higher and should match the number of intended subnets. **Required**.
+- `opensearch_instance_type`- The [AWS Instance Type](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/supported-instance-types.html) for the OpenSearch domain to use without the `.search` suffix. For example, to use a `c5.4xlarge` OpenSearch instance type, the value of this variable should be `c5.4xlarge`. **Required**.
+- `opensearch_engine_version` - The [engine and version](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/what-is.html#choosing-version) of the OpenSearch domain. Should only be changed to versions that are supported by GitLab. The setting should be given in the format `<ENGINE_VERSION>`, e.g. `OpenSearch_1.1`. If not set will use the AWS default. Optional.
+  - :information_source:&nbsp; Opensearch engine is only supported by GitLab versions 15 and higher. For versions lower Elasticsearch 7.10 should be used.
+- `opensearch_volume_size` - The volume size per data node. Optional, default is `500`.
+- `opensearch_volume_type` - The type of storage to use per data node. Optional, default is `io1`.
+- `opensearch_volume_iops` - The amount of provisioned IOPS per data node. Setting this requires a storage_type of `io1`. Optional, default is `1000`.
+- `opensearch_multi_az` - Specifies if the OpenSearch domain is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`.
+- `opensearch_default_subnet_count` - Specifies the number of default subnets to use when running on the default network. Optional, default is `2`.
+- `opensearch_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt the OpenSearch domain. If not provided `default_kms_key_arm` or the default AWS KMS key will be used in that order. Optional, default is `null`.
+
+In addition to the above there are several optional features available in AWS OpenSearch that the Toolkit can also configure via the following variables:
+
+- `opensearch_master_node_count` - The number of [master nodes](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-dedicatedmasternodes.html) for the OpenSearch domain that can optionally manage the data nodes. Deploying these nodes is optional but refer to the AWS docs linked for the latest guidance. If set the general recommendation from AWS is to deploy `3` master nodes.
+- `opensearch_master_instance_type` - The [AWS Instance Type](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/supported-instance-types.html) for the master nodes to use without the `.search` suffix. For example, to use a `c5.large` OpenSearch instance type, the value of this variable should be `c5.large`.
+- `opensearch_warm_node_count` - The number of [UltraWarm storage nodes](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/ultrawarm.html) for the OpenSearch domain that can optionally store read only data that doesn't change often. Deploying these nodes is optional but refer to the AWS docs linked for the latest guidance but note they do require master nodes to be deployed. If set, note that the minimum supported number is `2`.
+- `opensearch_warm_instance_type` - The [AWS UltraWarm Instance Type](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/ultrawarm.html#ultrawarm-calc) for the warm nodes to use. Note that these instance types have a different naming convention and the only options are `ultrawarm1.medium.search` and `ultrawarm1.large.search`. Refer to the AWS docs for more info.
+
+Once the variables are set in your file you can proceed to provision the service as normal. Note that this can take several minutes on AWS's side.
+
+Once provisioned you'll see several new outputs at the end of the process. Key from this is the `opensearch_host` output, which contains the address for the OpenSearch domain that then needs to be passed to Ansible to configure. Take a note of this address for the next step.
+
+### Configuring with Ansible
+
+Configuring GitLab to use alternative search backend(s) with Ansible is the same regardless of its origin. All that's required is a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) to point the Toolkit at the Search instance(s).
+
+:information_source:&nbsp; This config is the same for custom search backend(s) that have been provisioned outside of Omnibus or Cloud Services. Although please note, in this setup it's expected that HA is in place and the URL to connect to the search backend(s) never changes.
+
+The available variables in Ansible for this are as follows:
+
+- `advanced_search_hosts` - The list of search backend URLs GitLab should use for Advanced Search. Provided in Terraform outputs if provisioned earlier. **Required**.
+  - When using a service such as AWS OpenSearch this will typically be only one address but still be provided in list format, e.g. `["https://<AWS_OPENSEARCH_URL>"]`.
+
+Once set, Ansible can then be run as normal. During the run it will configure the various GitLab components to use the search backend(s) as given.
+
+After Ansible is finished running your environment will now be ready.
+
+## Sensitive variable handling
 
 When configuring these alternatives you'll sometimes need to configure sensitive values such as passwords. Earlier in the docs guidance was given on how to handle these more securely in both Terraform and Ansible. Refer to the below sections for further information.
 
