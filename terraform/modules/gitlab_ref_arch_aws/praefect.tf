@@ -20,6 +20,7 @@ module "praefect" {
     var.default_iam_instance_policy_arns,
     var.praefect_iam_instance_policy_arns
   ])
+  iam_permissions_boundary_arn = var.default_iam_permissions_boundary_arn
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
   security_group_ids = [

@@ -322,6 +322,8 @@ resource "aws_iam_role" "gitlab_eks_role" {
       },
     ]
   })
+
+  permissions_boundary = var.default_iam_permissions_boundary_arn
 }
 
 resource "aws_iam_role" "gitlab_eks_node_role" {
@@ -340,6 +342,8 @@ resource "aws_iam_role" "gitlab_eks_node_role" {
       },
     ]
   })
+
+  permissions_boundary = var.default_iam_permissions_boundary_arn
 }
 
 # Policies
@@ -480,9 +484,11 @@ data "aws_iam_policy_document" "assume_role_policy" {
 
 resource "aws_iam_role" "gitlab_addon_vpc_cni_role" {
   count = min(local.total_node_pool_count, 1)
+  name  = "${var.prefix}-gitlab_addon_vpc_cni_role"
 
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy[count.index].json
-  name               = "${var.prefix}-gitlab_addon_vpc_cni_role"
+
+  permissions_boundary = var.default_iam_permissions_boundary_arn
 }
 
 resource "aws_iam_role_policy_attachment" "gitlab_addon_vpc_cni_policy" {

@@ -51,6 +51,10 @@ variable "default_iam_instance_policy_arns" {
   type    = list(string)
   default = []
 }
+variable "default_iam_permissions_boundary_arn" {
+  type    = string
+  default = null
+}
 
 variable "ssh_public_key" {
   type    = string
