@@ -101,7 +101,7 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
   cluster_name = aws_eks_cluster.gitlab_cluster[0].name
 
   ami_type = local.eks_ami_type
-  version  = local.eks_custom_ami ? null : var.eks_version
+  version  = local.eks_custom_ami ? null : aws_eks_cluster.gitlab_cluster[0].version
 
   dynamic "launch_template" {
     for_each = range(local.eks_custom_ami ? 1 : 0)
@@ -177,7 +177,7 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
   cluster_name = aws_eks_cluster.gitlab_cluster[0].name
 
   ami_type = local.eks_ami_type
-  version  = local.eks_custom_ami ? null : var.eks_version
+  version  = local.eks_custom_ami ? null : aws_eks_cluster.gitlab_cluster[0].version
 
   dynamic "launch_template" {
     for_each = range(local.eks_custom_ami ? 1 : 0)
@@ -252,7 +252,7 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
   cluster_name = aws_eks_cluster.gitlab_cluster[0].name
 
   ami_type = local.eks_ami_type
-  version  = local.eks_custom_ami ? null : var.eks_version
+  version  = local.eks_custom_ami ? null : aws_eks_cluster.gitlab_cluster[0].version
 
   dynamic "launch_template" {
     for_each = range(local.eks_custom_ami ? 1 : 0)
@@ -410,18 +410,38 @@ resource "aws_iam_role_policy_attachment" "amazon_eks_node_autoscaler_policy" {
 
 # Addons
 
+data "aws_eks_addon_version" "kube_proxy" {
+  count = min(local.total_node_pool_count, 1)
+
+  addon_name         = "kube-proxy"
+  kubernetes_version = aws_eks_cluster.gitlab_cluster[0].version
+  most_recent        = true
+}
+
 resource "aws_eks_addon" "kube_proxy" {
   count = min(local.total_node_pool_count, 1)
 
-  cluster_name = aws_eks_cluster.gitlab_cluster[0].name
-  addon_name   = "kube-proxy"
+  cluster_name      = aws_eks_cluster.gitlab_cluster[0].name
+  addon_name        = "kube-proxy"
+  addon_version     = data.aws_eks_addon_version.kube_proxy[0].version
+  resolve_conflicts = "OVERWRITE"
+}
+
+data "aws_eks_addon_version" "coredns" {
+  count = min(local.total_node_pool_count, 1)
+
+  addon_name         = "coredns"
+  kubernetes_version = aws_eks_cluster.gitlab_cluster[0].version
+  most_recent        = true
 }
 
 resource "aws_eks_addon" "coredns" {
   count = min(local.total_node_pool_count, 1)
 
-  cluster_name = aws_eks_cluster.gitlab_cluster[0].name
-  addon_name   = "coredns"
+  cluster_name      = aws_eks_cluster.gitlab_cluster[0].name
+  addon_name        = "coredns"
+  addon_version     = data.aws_eks_addon_version.coredns[0].version
+  resolve_conflicts = "OVERWRITE"
 
   # coredns needs nodes to run on, so don't create it until
   # the node-pools have been created
@@ -433,11 +453,20 @@ resource "aws_eks_addon" "coredns" {
 }
 
 ## vpc-cni Addon
+data "aws_eks_addon_version" "vpc_cni" {
+  count = min(local.total_node_pool_count, 1)
+
+  addon_name         = "vpc-cni"
+  kubernetes_version = aws_eks_cluster.gitlab_cluster[0].version
+  most_recent        = true
+}
+
 resource "aws_eks_addon" "vpc_cni" {
   count = min(local.total_node_pool_count, 1)
 
   cluster_name             = aws_eks_cluster.gitlab_cluster[0].name
   addon_name               = "vpc-cni"
+  addon_version            = data.aws_eks_addon_version.vpc_cni[0].version
   service_account_role_arn = aws_iam_role.gitlab_addon_vpc_cni_role[count.index].arn
   resolve_conflicts        = "OVERWRITE"
 
@@ -508,7 +537,8 @@ resource "aws_iam_role_policy_attachment" "gitlab_s3_eks_role_policy_attachment"
 
 output "kubernetes" {
   value = {
-    "kubernetes_cluster_name" = try(aws_eks_cluster.gitlab_cluster[0].name, "")
+    "kubernetes_cluster_name"    = try(aws_eks_cluster.gitlab_cluster[0].name, "")
+    "kubernetes_cluster_version" = try(aws_eks_cluster.gitlab_cluster[0].version, "")
 
     # Expose All Roles created for EKS
     "kubernetes_eks_role"           = try(aws_iam_role.gitlab_eks_role[0].name, "")
@@ -519,5 +549,14 @@ output "kubernetes" {
     "kubernetes_cluster_oidc_issuer_url" = try(aws_eks_cluster.gitlab_cluster[0].identity[0].oidc[0].issuer, "")
     "kubernetes_oidc_provider"           = try(replace(aws_eks_cluster.gitlab_cluster[0].identity[0].oidc[0].issuer, "https://", ""), "")
     "kubernetes_oidc_provider_arn"       = try(aws_iam_openid_connect_provider.gitlab_cluster_openid[0].arn, "")
+
+    # Node Group / Addon Versions
+    "kubernetes_webservice_node_group_ami_release_version" = try(aws_eks_node_group.gitlab_webservice_pool[0].release_version, "")
+    "kubernetes_sidekiq_node_group_ami_release_version"    = try(aws_eks_node_group.gitlab_sidekiq_pool[0].release_version, "")
+    "kubernetes_supporting_node_group_ami_release_version" = try(aws_eks_node_group.gitlab_supporting_pool[0].release_version, "")
+
+    "kubernetes_addon_kube_proxy_version" = try(aws_eks_addon.kube_proxy[0].addon_version, "")
+    "kubernetes_addon_coredns_version"    = try(aws_eks_addon.coredns[0].addon_version, "")
+    "kubernetes_addon_vpc_cni_version"    = try(aws_eks_addon.vpc_cni[0].addon_version, "")
   }
 }
