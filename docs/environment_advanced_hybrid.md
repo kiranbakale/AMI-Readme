@@ -221,7 +221,11 @@ However you can also specify the version as well as control upgrades if desired 
 
 - `eks_version` - The Kubernetes version that the cluster should use if direct control is desired. Increase this value to perform an upgrade directly. Default is `null`.
 
-:information_source:&nbsp; After performing a cluster upgrade there may be some components that can also be upgraded. The Toolkit doesn't manage this at this time but any upgrades can be viewed and performed on the [AWS Management Console](https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html#update-existing-cluster)
+##### EKS Node Group and Addons Version Management
+
+When AWS releases a new version of EKS Node Group machines or Addons, the Toolkit will update these automatically on its next run.
+
+Note that this isn't the same as EKS Cluster version (although a new Cluster version will typically come with new versions for its dependents) as AWS may still release versions of these components for the current Cluster.
 
 #### EKS Endpoint Setup
 
