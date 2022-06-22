@@ -154,6 +154,8 @@ resource "aws_iam_role" "gitlab_s3_replication_role" {
       }
     ]
   })
+
+  permissions_boundary = var.default_iam_permissions_boundary_arn
 }
 
 resource "aws_iam_policy" "gitlab_s3_replication_policy" {

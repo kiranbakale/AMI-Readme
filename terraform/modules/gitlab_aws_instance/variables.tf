@@ -26,6 +26,11 @@ variable "iam_instance_policy_arns" {
   default = []
 }
 
+variable "iam_permissions_boundary_arn" {
+  type    = string
+  default = null
+}
+
 variable "instance_type" {
   type    = string
   default = "t3.micro"

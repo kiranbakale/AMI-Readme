@@ -79,6 +79,8 @@ resource "aws_iam_role" "gitlab_dlm" {
       },
     ]
   })
+
+  permissions_boundary = var.iam_permissions_boundary_arn
 }
 
 resource "aws_iam_role_policy" "gitlab_dlm" {
