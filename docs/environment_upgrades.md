@@ -1,4 +1,4 @@
-# Upgrade Notes
+# Upgrades (Toolkit, Environment)
 
 - [GitLab Environment Toolkit - Quick Start Guide](environment_quick_start_guide.md)
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
@@ -10,30 +10,24 @@
 - [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search and more](environment_advanced.md)
-- [**GitLab Environment Toolkit - Upgrade Notes**](environment_upgrades.md)
+- [**GitLab Environment Toolkit - Upgrades (Toolkit, Environment)**](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 - [GitLab Environment Toolkit - Troubleshooting](environment_troubleshooting.md)
 
-The Toolkit fully supports handling GitLab upgrades for your environment - with both standard and [Zero Downtime upgrades](https://docs.gitlab.com/ee/update/zero_downtime.html) supported.
+When discussing upgrades there's not only the Environment to consider but also the Toolkit itself.
 
-On this page we'll detail notes about performing upgrades that you should consider beforehand. **It's worth noting this guide is supplementary to the rest of the docs and it will assume this throughout.**
+On this page we'll detail how both work. **It's worth noting this guide is supplementary to the rest of the docs and it will assume this throughout.**
 
 [[_TOC_]]
 
-## How Upgrades Work
-
-By design the Toolkit will perform upgrades much in the same way as the first build - any _provisioning_ changes are handled by Terraform and _configuration_ changes handled by Ansible.
-
-Typically this should be seamless and running the same commands just as you did in the main runs should only be required to perform any GitLab upgrades.
-
-## Use the latest version of the Toolkit
+## Toolkit Upgrades
 
 Before running any upgrades for your environment we recommend using the latest version of the Toolkit. This will ensure that the latest GitLab config is used when updating and will avoid any issues.
 
-### Check for any Toolkit breaking or config changes
+When updating the Toolkit, we recommend checking the [Toolkit's release notes](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/releases) for any called out breaking or config changes to ensure no issues occur on upgrade.
 
-In addition to the above, when updating the Toolkit, we recommend checking the [Toolkit's release notes](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/releases) for any called out breaking or config changes to ensure no issues occur on upgrade.
+In addition to the above please be aware of the following guidance also:
 
 ### Perform Terraform Dry Runs for new Toolkit versions
 
@@ -53,13 +47,21 @@ With the above considerations it's worth calling out specifically that you shoul
 
 This recommendation is especially so with Production instances. If you're using the Toolkit with non production instances where a risk of data loss is acceptable then the above combination may be desirable.
 
-## Follow GitLab Upgrade Paths
+## Environment Upgrades
+
+The Toolkit fully supports handling GitLab upgrades for your environment - with both [standard](https://docs.gitlab.com/ee/update/with_downtime.html) and [Zero Downtime upgrades](https://docs.gitlab.com/ee/update/zero_downtime.html) supported.
+
+By design the Toolkit will perform upgrades much in the same way as the first build - any _provisioning_ changes are handled by Terraform and _configuration_ changes handled by Ansible.
+
+Typically this should be seamless and running the same commands just as you did in the main runs should only be required to perform any GitLab upgrades but be aware of the guidance below as applicable.
+
+### Follow GitLab Upgrade Paths
 
 The Toolkit by default will always attempt to install the latest GitLab version unless [configured differently](environment_configure.md#gitlab-version).
 
 However the [standard GitLab Upgrade rules still apply](https://docs.gitlab.com/ee/update/#upgrade-paths) when upgrading across multiple GitLab versions. You should refer to the docs to ensure the intended upgrade can be performed directly or if you need to upgrade to a certain version first.
 
-## Zero Downtime Updates
+### Zero Downtime Updates
 
 For Zero Downtime Updates, the toolkit follows the [GitLab documented process](https://docs.gitlab.com/omnibus/update/README.html#zero-downtime-updates) and as such the documentation should be read and understood before proceeding with an update.
 
@@ -83,6 +85,8 @@ The update process can take a couple of hours to complete and the full runtime w
 
 ## OS Upgrades
 
-OS version upgrades should be handled directly and follow the standard process for each OS. The Toolkit doesn't handle this for you as they typically involve inputs and require restarts.
+OS version upgrades should be handled directly and follow the standard process for each OS. Refer to the OS's docs for more info.
 
-:warning:&nbsp; On Cloud Providers, changing the machine image should be avoided as this is treated as the base disk and will trigger a full rebuild and lead to data loss.
+The Toolkit can't handle OS upgrades for you as they typically involve inputs and require restarts.
+
+:warning:&nbsp; On Cloud Providers, changing the machine image in Terraform **must be avoided** as this is treated as the base disk and will trigger a full rebuild and lead to data loss.
