@@ -16,15 +16,11 @@
   command: gitlab-ctl restart redis
   when: ('redis' in group_names)
 
-- name: Start Puma if Deploy Node
-  command: gitlab-ctl start puma
-  when: ('sidekiq' not in group_names and 'gitlab_rails_primary' in group_names)
-
 - name: Reload Puma
   command: gitlab-ctl hup puma
   when: ('gitlab_rails' in group_names)
 
-- name: Wait for GitLab to be ready
+- name: Wait for GitLab Rails to be ready
   uri:
     url: 'http://localhost/-/readiness'
     timeout: 60
@@ -32,4 +28,7 @@
   until: result.status == 200
   retries: 20
   delay: 5
-  when: ('gitlab_rails' in group_names)
+  when:
+    - ('gitlab_rails' in group_names)
+    - skip_healthcheck is defined
+    - not skip_healthcheck
