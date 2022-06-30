@@ -36,6 +36,7 @@
   import_tasks: update-gitlab.yml
   vars:
     skip_reconfigure: true
+    skip_healthcheck: true
   when: ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
 
 - name: "Get current Postgres leader when using Patroni"
@@ -67,13 +68,13 @@
 - name: Reconfigure deploy node
   command: gitlab-ctl reconfigure
   environment:
-    SKIP_POST_DEPLOYMENT_MIGRATIONS: true
+    SKIP_POST_DEPLOYMENT_MIGRATIONS: "true"
   when: ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
 
 - name: Run pre deployment migrations on secondary site when using Geo
   command: gitlab-rake {{ geo_migration_task }}
   environment:
-    SKIP_POST_DEPLOYMENT_MIGRATIONS: true
+    SKIP_POST_DEPLOYMENT_MIGRATIONS: "true"
   when:
     - ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
     - (geo_secondary_site_group_name in group_names)
@@ -100,6 +101,7 @@
   with_items: "{{ groups['gitlab_rails'] }}"
   vars:
     skip_reconfigure: false
+    skip_healthcheck: false
   when: "hostvars[host_item].inventory_hostname == inventory_hostname"
   loop_control:
     loop_var: host_item
