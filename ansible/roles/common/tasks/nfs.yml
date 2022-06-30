@@ -21,6 +21,11 @@
 
 - name: Setup NFS Server
   block:
+    - name: Configure Node Exporter if dedicated NFS server
+      include_role:
+        name: cloudalchemy.node_exporter
+      when: "'gitlab_nfs' in group_names"
+
     - name: Install NFS Server
       package:
         name: "{{ 'nfs-kernel-server' if ansible_facts['os_family'] == 'Debian' else 'nfs-utils' }}"
