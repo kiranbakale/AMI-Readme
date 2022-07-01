@@ -7,9 +7,9 @@
       become: true
       when: "'gitlab_rails' in groups"
 
-    - name: Disable Write to "authorized_keys" file setting via GitLab Task Runner pod
+    - name: Disable Write to "authorized_keys" file setting via GitLab Toolbox pod
       kubernetes.core.k8s_exec:
-        pod: "{{ task_runner_pod }}"
+        pod: "{{ toolbox_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: "gitlab-rails runner 'ApplicationSetting.last.update(authorized_keys_enabled: false)'"
       register: result
@@ -17,5 +17,5 @@
       delay: 5
       until: result is success
       when:
-        - task_runner_pod is defined
+        - toolbox_pod is defined
         - "'gitlab_rails' not in groups"

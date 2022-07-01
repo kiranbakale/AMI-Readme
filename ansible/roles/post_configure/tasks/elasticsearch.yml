@@ -17,16 +17,16 @@
           become: true
           when: "'gitlab_rails' in groups"
 
-        - name: Delete old Elasticsearch index for GitLab via GitLab Task Runner pod
+        - name: Delete old Elasticsearch index for GitLab via GitLab Toolbox pod
           kubernetes.core.k8s_exec:
-            pod: "{{ task_runner_pod }}"
+            pod: "{{ toolbox_pod }}"
             namespace: "{{ gitlab_charts_release_namespace }}"
             command: "{{ item }}"
           loop:
             - gitlab-rake gitlab:elastic:delete_index
             - gitlab-rake gitlab:elastic:clear_index_status
           when:
-            - task_runner_pod is defined
+            - toolbox_pod is defined
             - "'gitlab_rails' not in groups"
 
     - name: Unconfigure Elasticsearch settings
@@ -43,9 +43,9 @@
           become: true
           when: "'gitlab_rails' in groups"
 
-        - name: Unconfigure Elasticsearch settings via GitLab Task Runner pod
+        - name: Unconfigure Elasticsearch settings via GitLab Toolbox pod
           kubernetes.core.k8s_exec:
-            pod: "{{ task_runner_pod }}"
+            pod: "{{ toolbox_pod }}"
             namespace: "{{ gitlab_charts_release_namespace }}"
             command: |
               gitlab-rails runner "
@@ -54,7 +54,7 @@
                 ApplicationSetting.last.update(elasticsearch_search: false)
               "
           when:
-            - task_runner_pod is defined
+            - toolbox_pod is defined
             - "'gitlab_rails' not in groups"
       when: gitlab_license_plan in ['premium', 'ultimate']
 
@@ -80,21 +80,21 @@
         gitlab_environment_settings: '{{ env_settings_response_rails.stdout | from_json }}'
       when: "'gitlab_rails' in groups"
 
-    - name: Get and save Environment Settings via GitLab Task Runner pod
+    - name: Get and save Environment Settings via GitLab Toolbox pod
       kubernetes.core.k8s_exec:
-        pod: "{{ task_runner_pod }}"
+        pod: "{{ toolbox_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: "gitlab-rails runner 'print ApplicationSetting.last.attributes.to_json'"
       register: env_settings_response_pod
       when:
-        - task_runner_pod is defined
+        - toolbox_pod is defined
         - "'gitlab_rails' not in groups"
 
     - name: Save Environment Settings
       set_fact:
         gitlab_environment_settings: '{{ env_settings_response_pod.stdout | from_json }}'
       when:
-        - task_runner_pod is defined
+        - toolbox_pod is defined
         - "'gitlab_rails' not in groups"
   when: gitlab_license_plan in ['premium', 'ultimate']
 
@@ -107,13 +107,13 @@
       become: true
       when: "'gitlab_rails' in groups"
 
-    - name: Configure Elasticsearch URL setting via GitLab Task Runner pod
+    - name: Configure Elasticsearch URL setting via GitLab Toolbox pod
       kubernetes.core.k8s_exec:
-        pod: "{{ task_runner_pod }}"
+        pod: "{{ toolbox_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: "gitlab-rails runner 'ApplicationSetting.last.update(elasticsearch_url: \"{{ advanced_search_hosts | join(',') }}\")'"
       when:
-        - task_runner_pod is defined
+        - toolbox_pod is defined
         - "'gitlab_rails' not in groups"
   when:
     - gitlab_license_plan in ['premium', 'ultimate']
@@ -130,13 +130,13 @@
           become: true
           when: "'gitlab_rails' in groups"
 
-        - name: Create empty index for GitLab via GitLab Task Runner pod
+        - name: Create empty index for GitLab via GitLab Toolbox pod
           kubernetes.core.k8s_exec:
-            pod: "{{ task_runner_pod }}"
+            pod: "{{ toolbox_pod }}"
             namespace: "{{ gitlab_charts_release_namespace }}"
             command: gitlab-rake gitlab:elastic:create_empty_index
           when:
-            - task_runner_pod is defined
+            - toolbox_pod is defined
             - "'gitlab_rails' not in groups"
 
     - name: Enable GitLab Elasticsearch indexing setting
@@ -156,9 +156,9 @@
           until: elasticsearch_status_result is success
           when: "'gitlab_rails' in groups"
 
-        - name: Enable GitLab Elasticsearch indexing setting via GitLab Task Runner pod
+        - name: Enable GitLab Elasticsearch indexing setting via GitLab Toolbox pod
           kubernetes.core.k8s_exec:
-            pod: "{{ task_runner_pod }}"
+            pod: "{{ toolbox_pod }}"
             namespace: "{{ gitlab_charts_release_namespace }}"
             command: |
               gitlab-rails runner "
@@ -170,7 +170,7 @@
           delay: 5
           until: elasticsearch_status_result is success
           when:
-            - task_runner_pod is defined
+            - toolbox_pod is defined
             - "'gitlab_rails' not in groups"
 
     - name: Index all GitLab projects
@@ -182,13 +182,13 @@
           become: true
           when: "'gitlab_rails' in groups"
 
-        - name: Index all GitLab projects via GitLab Task Runner pod
+        - name: Index all GitLab projects via GitLab Toolbox pod
           kubernetes.core.k8s_exec:
-            pod: "{{ task_runner_pod }}"
+            pod: "{{ toolbox_pod }}"
             namespace: "{{ gitlab_charts_release_namespace }}"
             command: gitlab-rake gitlab:elastic:index_projects
           when:
-            - task_runner_pod is defined
+            - toolbox_pod is defined
             - "'gitlab_rails' not in groups"
 
     - name: Wait until indexing is complete
@@ -204,9 +204,9 @@
           until: "(index_status_result.stdout | regex_search('[0-9]+\\.[0-9]+') | float > 90.0) or '(0/0 projects)' in index_status_result.stdout"
           when: "'gitlab_rails' in groups"
 
-        - name: Wait until indexing is complete via GitLab Task Runner pod
+        - name: Wait until indexing is complete via GitLab Toolbox pod
           kubernetes.core.k8s_exec:
-            pod: "{{ task_runner_pod }}"
+            pod: "{{ toolbox_pod }}"
             namespace: "{{ gitlab_charts_release_namespace }}"
             command: gitlab-rake gitlab:elastic:index_projects_status
           register: index_status_result
@@ -214,7 +214,7 @@
           delay: 10
           until: "(index_status_result.stdout | regex_search('[0-9]+\\.[0-9]+') | float > 90.0) or '(0/0 projects)' in index_status_result.stdout"
           when:
-            - task_runner_pod is defined
+            - toolbox_pod is defined
             - "'gitlab_rails' not in groups"
   when:
     - gitlab_license_plan in ['premium', 'ultimate']
@@ -235,21 +235,21 @@
         gitlab_environment_settings: '{{ env_settings_response_rails.stdout | from_json }}'
       when: "'gitlab_rails' in groups"
 
-    - name: Get and save Environment Settings via GitLab Task Runner pod
+    - name: Get and save Environment Settings via GitLab Toolbox pod
       kubernetes.core.k8s_exec:
-        pod: "{{ task_runner_pod }}"
+        pod: "{{ toolbox_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: "gitlab-rails runner 'print ApplicationSetting.last.attributes.to_json'"
       register: env_settings_response_pod
       when:
-        - task_runner_pod is defined
+        - toolbox_pod is defined
         - "'gitlab_rails' not in groups"
 
     - name: Save Environment Settings
       set_fact:
         gitlab_environment_settings: '{{ env_settings_response_pod.stdout | from_json }}'
       when:
-        - task_runner_pod is defined
+        - toolbox_pod is defined
         - "'gitlab_rails' not in groups"
   when: gitlab_license_plan in ['premium', 'ultimate']
 
@@ -262,13 +262,13 @@
       become: true
       when: "'gitlab_rails' in groups"
 
-    - name: Enable Elasticsearch Search via GitLab Task Runner pod
+    - name: Enable Elasticsearch Search via GitLab Toolbox pod
       kubernetes.core.k8s_exec:
-        pod: "{{ task_runner_pod }}"
+        pod: "{{ toolbox_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: "gitlab-rails runner 'ApplicationSetting.last.update(elasticsearch_search: true)'"
       when:
-        - task_runner_pod is defined
+        - toolbox_pod is defined
         - "'gitlab_rails' not in groups"
   when:
     - gitlab_license_plan in ['premium', 'ultimate']

@@ -21,7 +21,7 @@
   when: gitlab_root_password == ''
   tags: config-check
 
-- name: Get details for GitLab Charts Task Runner Pod if present
+- name: Get details for running GitLab Charts Toolbox Pod
   block:
     - name: kubeconfig - Configure local kubeconfig to point to correct cluster
       include_role:
@@ -32,17 +32,51 @@
           delegate_to: localhost
           run_once: true
 
-    - name: Check for Task Runner pod
+    - name: Check for Toolbox Deployment
+      kubernetes.core.k8s_info:
+        kind: Deployment
+        label_selectors:
+          - app in (task-runner, toolbox)
+      register: toolbox_deployment_list
+
+    - name: Save Toolbox deployment name
+      set_fact:
+        toolbox_deployment: "{{ toolbox_deployment_list | json_query('resources[0].metadata.name') }}"
+      when: toolbox_deployment_list.resources | length != 0
+
+    - name: Wait for Toolbox deployment to become ready
+      kubernetes.core.k8s_info:
+        kind: Deployment
+        name: "{{ toolbox_deployment }}"
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        wait: true
+        wait_condition:
+          type: Available
+          status: "True"
+        wait_timeout: 360
+
+    - name: Check for Toolbox pods
       kubernetes.core.k8s_info:
         kind: Pod
         label_selectors:
           - app in (task-runner, toolbox)
-      register: task_runner_pod_list
+      register: toolbox_pod_list
 
-    - name: Save Task Runner pod name
+    - name: Save Toolbox pod name
       set_fact:
-        task_runner_pod: "{{ task_runner_pod_list | json_query('resources[0].metadata.name') }}"
-      when: task_runner_pod_list.resources | length != 0
+        toolbox_pod: "{{ toolbox_pod_list | json_query('resources[0].metadata.name') }}"
+      when: toolbox_pod_list.resources | length != 0
+
+    - name: Wait for Toolbox pod to become ready
+      kubernetes.core.k8s_info:
+        kind: Pod
+        name: "{{ toolbox_pod }}"
+        namespace: "{{ gitlab_charts_release_namespace }}"
+        wait: true
+        wait_condition:
+          type: Ready
+          status: "True"
+        wait_timeout: 360
   when:
     - cloud_native_hybrid_environment
     - "'gitlab_rails' not in groups"

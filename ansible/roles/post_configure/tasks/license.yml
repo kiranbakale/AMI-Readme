@@ -22,11 +22,11 @@
   when: "'gitlab_rails' in groups"
   tags: license
 
-- name: Configure License via GitLab Task Runner pod
+- name: Configure License via GitLab Toolbox pod
   block:
-    - name: Configure License if missing via GitLab Task Runner pod
+    - name: Configure License if missing via GitLab Toolbox pod
       kubernetes.core.k8s_exec:
-        pod: "{{ task_runner_pod }}"
+        pod: "{{ toolbox_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: |
           gitlab-rails runner "
@@ -44,6 +44,6 @@
       set_fact:
         gitlab_license_plan: "{{ configure_license_response.stdout }}"
   when:
-    - task_runner_pod is defined
+    - toolbox_pod is defined
     - "'gitlab_rails' not in groups"
   tags: license
