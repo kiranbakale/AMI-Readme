@@ -266,7 +266,7 @@ Please note the following caveats before proceeding:
 
 To configure Custom Servers with Ansible the setup process involves the following:
 
-1. Creating a Static Inventory fine
+1. Creating a Static Inventory file
 1. Generating the Facts Cache
 1. Configuring the [Environment `vars.yml` file](environment_configure.md#environment-config-varsyml)
 
