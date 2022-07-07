@@ -1,3 +1,5 @@
+geo_multi_node: "{{ 'postgres' in groups or postgres_external }}"
+
 geo_secondary_site_postgres_primary_nodename: "{{ (groups[geo_secondary_site_postgres_group_name] | map('extract', hostvars, ['ansible_nodename']) | join('')) }}"
 
 geo_secondary_site_rails_primary_int_ip: "{{ (groups[geo_secondary_site_group_name + '_gitlab_rails_primary'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) }}"

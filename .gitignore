@@ -23,3 +23,4 @@ config/*
 !config/README.md
 get-python-env
 /.bundle
+.idea

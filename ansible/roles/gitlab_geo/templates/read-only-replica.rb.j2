@@ -1,9 +1,5 @@
 {% if 'postgres' in group_names %}
 postgresql['md5_auth_cidr_addresses'] = ['{{ geo_secondary_site_postgres_int_ip }}/32', '{{ geo_secondary_site_postgres_int_ip }}/32']
-
-{% if geo_secondary_site_group_name + '_sidekiq_primary' in groups %}
-geo_logcursor['enable'] = false
-{% endif %}
 {% elif postgres_external %}
 gitlab_rails['db_host'] = '{{ geo_secondary_postgres_host }}'
 gitlab_rails['db_username'] = 'gitlab'
