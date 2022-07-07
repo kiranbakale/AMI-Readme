@@ -44,6 +44,8 @@
   tags:
     - tracking-database
     - secondary
+  when:
+    - ('postgres_primary' in group_names)
 
 - name: Configure the frontend app servers on the secondary site
   import_tasks: secondary-frontend-app-servers.yml
