@@ -95,7 +95,7 @@ The [`keys`](../keys) directory in this project is provided as a central place t
 In addition to creating the Service Account and saving the key we need to also setup [OS Login](https://cloud.google.com/compute/docs/instances/managing-instance-access)
 for the account to enable SSH access to the created VMs on GCP, which is required by Ansible. This is done as follows:
 
-1. [Generate an SSH key pair](https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair) and store it in the [`keys`](../keys) directory.
+1. [Generate an SSH key pair](https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair) (ED25519 recommended) and store it in the [`keys`](../keys) directory.
 1. With the `gcloud` command set it to point at your intended project
 
    ```terminal
@@ -169,7 +169,7 @@ SSH authentication for the created machines on AWS will require an SSH key.
 
 This is straightforward with AWS. All that's required is for a key to be created and then for this to be accessible for the Toolkit to handle the rest:
 
-- [Generate an SSH key pair](https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair) and store it in the [`keys`](../keys) directory.
+- [Generate an SSH key pair](https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair) (ED25519 recommended) and store it in the [`keys`](../keys) directory.
 
 It is also possible to use an existing SSH key pair, but it is recommended to use a new key to avoid any potential security implications.
 
@@ -221,7 +221,7 @@ First think of an admin username that will be used for SSH connection to the Azu
 
 All that's required for an SSH key is to be created and then for this to be accessible for the Toolkit to handle the rest:
 
-- [Generate an SSH key pair](https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair) and store it in the `keys` directory.
+- [Generate an SSH key pair](https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair) (ED25519 recommended) and store it in the `keys` directory.
 
 It is also possible to use an existing SSH key pair, but it is recommended to use a new key to avoid any potential security implications.
 
