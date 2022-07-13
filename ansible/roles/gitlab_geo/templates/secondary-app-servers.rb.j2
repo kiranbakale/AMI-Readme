@@ -1,4 +1,5 @@
 gitlab_rails['geo_node_name'] = "{{ geo_secondary_site_name }}"
+gitlab_rails['auto_migrate'] = false
 
 {% if 'gitlab_rails' in group_names %}
 geo_logcursor['enable'] = true
