@@ -63,8 +63,11 @@
 
 # Automated Security Upgrades
 - name: Configure Automatic Security Upgrades (Ubuntu)
-  include_role:
-    name: jnv.unattended-upgrades
+  block:
+    - name: Install unattended-upgrades package
+      package:
+        name: unattended-upgrades
+        state: present
   when:
     - system_packages_auto_security_upgrade
     - ansible_facts['os_family'] == "Debian"
