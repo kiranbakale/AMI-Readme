@@ -21,7 +21,7 @@ On this page you'll find troubleshooting guidance for various areas when using t
 
 ## Ansible Install Failure - `No matching distribution found`
 
-Ansible `5.x` requires Python `3.8` and higher. Attempting to install this version of Ansible via `pip` on a lower version of Python will fail with the following error:
+Ansible `6.x` upwards requires Python `3.8` and higher. Attempting to install this version of Ansible via `pip` on a lower version of Python will fail with the following error:
 
 ```sh
 ERROR: No matching distribution found for ansible==5.0.1

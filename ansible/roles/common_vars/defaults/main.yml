@@ -4,7 +4,7 @@
 
 ansible_python_interpreter: auto_silent
 swap_file_state: absent
-internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ipaddr('network/prefix') }}"
+internal_cidr_16: "{{ (ansible_default_ipv4.address + '/16') | ansible.utils.ipaddr('network/prefix') }}"
 inventory_path: "{{ inventory_dir | default(ansible_inventory_sources[0] | dirname, true) }}"
 
 ################################################################################
