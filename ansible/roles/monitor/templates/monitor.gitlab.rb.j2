@@ -69,14 +69,14 @@ prometheus['scrape_configs'] = [
 ]
 
 # Grafana
-{% if grafana_password is defined and grafana_password != '' %}
-grafana['admin_password'] = "{{ grafana_password | regex_escape() }}"
-{% endif %}
-grafana['disable_login_form'] = false
 grafana['env'] = {
-  'GF_AUTH_ANONYMOUS_ENABLED' => true,
   'GF_SERVER_ROOT_URL' => '{{ external_url_sanitised }}/-/grafana'
 }
+
+{% if grafana_password is defined and grafana_password != '' %}
+grafana['admin_password'] = "{{ grafana_password | regex_escape() }}"
+grafana['disable_login_form'] = false
+{% endif %}
 
 grafana['dashboards'] = [
   {
@@ -114,15 +114,6 @@ grafana['dashboards'] = [
     }
   },
 {% endfor %}
-]
-
-grafana['datasources'] = [
-  {
-    'name' => 'GitLab Omnibus',
-    'type' => 'prometheus',
-    'access' => 'proxy',
-    'url' => 'http://localhost:9090'
-  }
 ]
 
 # Consul
