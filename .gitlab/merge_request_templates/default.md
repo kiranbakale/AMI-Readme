@@ -9,11 +9,18 @@ We aim to review all MRs within 2 weeks although generally it's much quicker tha
 -->
 
 ## What does this MR do?
+
 <!-- Briefly describe what this MR is about. -->
 
 
 <!-- Set the appropriate milestone -->
 /milestone %
+
+<!-- Set Work Type Classification label(s) for the MR - https://about.gitlab.com/handbook/engineering/metrics/#work-type-classification -->
+/label ~type::
+
+<!-- Set Workflow label for the MR - https://about.gitlab.com/handbook/engineering/workflow/#basics -->
+/label ~workflow::
 
 ## Related issues
 
@@ -36,11 +43,5 @@ When ready for review, the Author applies the ~"workflow::ready for review" labe
   - [ ] If this MR adds an optional configuration - check that all permutations continue to work.
   - [ ] For Terraform changes: setup a previous version environment, then run a `terraform plan` with your new changes and ensure nothing will be destroyed. If anything will be destroyed and this can't be avoided please add a comment to the current MR.
 - [ ] Create any follow-up issue(s) to support the new feature across other supported cloud providers or advanced configurations. Create 1 issue for each provider/configuration. Contact the [Quality Enablement](https://about.gitlab.com/handbook/engineering/quality/sec-enablement-qe-team/) team if unsure.
-
-<!-- Set Work Type Classification label(s) for the MR - https://about.gitlab.com/handbook/engineering/metrics/#work-type-classification -->
-/label ~type::
-
-<!-- Set Workflow label for the MR - https://about.gitlab.com/handbook/engineering/workflow/#basics -->
-/label ~workflow::
 
 /label ~"section::enablement"
