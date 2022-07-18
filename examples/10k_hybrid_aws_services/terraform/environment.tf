@@ -1,7 +1,7 @@
 module "gitlab_ref_arch_aws" {
   source = "../../modules/gitlab_ref_arch_aws"
 
-  prefix              = var.prefix
+  prefix         = var.prefix
   ssh_public_key = file(var.ssh_public_key_file)
 
   create_network      = true
