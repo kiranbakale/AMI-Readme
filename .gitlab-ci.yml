@@ -72,7 +72,7 @@ check:terraform-fmt:
   before_script:
     - terraform version
   script:
-    - terraform fmt -check -recursive -diff terraform/
+    - terraform fmt -check -recursive -diff terraform/ || terraform fmt -check -recursive -diff examples/
   only:
     - main
     - merge_requests
