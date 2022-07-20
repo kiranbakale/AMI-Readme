@@ -219,13 +219,29 @@ By default the Toolkit will leave it up to [AWS to manage the Kubernetes version
 
 However you can also specify the version as well as control upgrades if desired in Terraform via the following setting in your [`environment.tf`](environment_provision.md#configure-module-settings-environmenttf) file:
 
-- `eks_version` - The Kubernetes version that the cluster should use if direct control is desired. Increase this value to perform an upgrade directly. Default is `null`.
+- `eks_version` - The Kubernetes version that the cluster should use if direct control is desired. Increase this value to perform an upgrade directly. Note that when set this also upgrades the Node Group VM's to use the latest AMI version for the cluster (see below for more info). Default is `null`.
 
-##### EKS Node Group and Addons Version Management
+##### EKS Node Group Version Management
 
-When AWS releases a new version of EKS Node Group machines or Addons, the Toolkit will update these automatically on its next run.
+Like EKS Version, AWS won't automatically upgrade the Cluster's Node Group VMs.
+
+However if `eks_version` has been specified above Terraform will then default to upgrading the VMs to the latest available [AMI version](https://docs.aws.amazon.com/eks/latest/userguide/eks-linux-ami-versions.html) that's available to the Cluster.
+
+As an additional layer of configuration, you can also specify a specific AMI release version directly to be used for the Node Group VMs via the following Terraform setting in your [`environment.tf`](environment_provision.md#configure-module-settings-environmenttf) file:
+
+- `eks_node_group_ami_release_version` - The [AMI release version](https://docs.aws.amazon.com/eks/latest/userguide/eks-linux-ami-versions.html) to use for the EKS Node Group VMs. Version, if given, must be compatible with the EKS version. Recommended to only be set when there's a known issue, etc... with the latest version. Refer to the AWS docs for more info. Defaults to `null`.
+
+##### EKS Addons Version Management
+
+When AWS releases a new version of EKS Addons, the Toolkit will update these automatically on its next run by default.
 
 Note that this isn't the same as EKS Cluster version (although a new Cluster version will typically come with new versions for its dependents) as AWS may still release versions of these components for the current Cluster.
+
+The Addon versions can also be controlled directly if desired via Terraform with the following settings in your [`environment.tf`](environment_provision.md#configure-module-settings-environmenttf) file:
+
+- `eks_kube_proxy_version` - Version to use for the [EKS Kube Proxy addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-kube-proxy.html). Defaults to `""`.
+- `eks_coredns_version` - Version to use for the [EKS CoreDNS addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-coredns.html). Defaults to `""`.
+- `eks_vpc_cni_version` - Version to use for the [EKS VPC CNI addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html). Defaults to `""`.
 
 #### EKS Endpoint Setup
 

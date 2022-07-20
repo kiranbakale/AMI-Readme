@@ -100,8 +100,9 @@ resource "aws_eks_node_group" "gitlab_webservice_pool" {
 
   cluster_name = aws_eks_cluster.gitlab_cluster[0].name
 
-  ami_type = local.eks_ami_type
-  version  = local.eks_custom_ami ? null : aws_eks_cluster.gitlab_cluster[0].version
+  ami_type        = local.eks_ami_type
+  version         = local.eks_custom_ami ? null : aws_eks_cluster.gitlab_cluster[0].version
+  release_version = local.eks_custom_ami ? null : var.eks_node_group_ami_release_version
 
   dynamic "launch_template" {
     for_each = range(local.eks_custom_ami ? 1 : 0)
@@ -176,8 +177,9 @@ resource "aws_eks_node_group" "gitlab_sidekiq_pool" {
 
   cluster_name = aws_eks_cluster.gitlab_cluster[0].name
 
-  ami_type = local.eks_ami_type
-  version  = local.eks_custom_ami ? null : aws_eks_cluster.gitlab_cluster[0].version
+  ami_type        = local.eks_ami_type
+  version         = local.eks_custom_ami ? null : aws_eks_cluster.gitlab_cluster[0].version
+  release_version = local.eks_custom_ami ? null : var.eks_node_group_ami_release_version
 
   dynamic "launch_template" {
     for_each = range(local.eks_custom_ami ? 1 : 0)
@@ -251,8 +253,9 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
 
   cluster_name = aws_eks_cluster.gitlab_cluster[0].name
 
-  ami_type = local.eks_ami_type
-  version  = local.eks_custom_ami ? null : aws_eks_cluster.gitlab_cluster[0].version
+  ami_type        = local.eks_ami_type
+  version         = local.eks_custom_ami ? null : aws_eks_cluster.gitlab_cluster[0].version
+  release_version = local.eks_custom_ami ? null : var.eks_node_group_ami_release_version
 
   dynamic "launch_template" {
     for_each = range(local.eks_custom_ami ? 1 : 0)
@@ -411,7 +414,7 @@ resource "aws_iam_role_policy_attachment" "amazon_eks_node_autoscaler_policy" {
 # Addons
 
 data "aws_eks_addon_version" "kube_proxy" {
-  count = min(local.total_node_pool_count, 1)
+  count = var.eks_kube_proxy_version != "" ? 0 : min(local.total_node_pool_count, 1)
 
   addon_name         = "kube-proxy"
   kubernetes_version = aws_eks_cluster.gitlab_cluster[0].version
@@ -423,12 +426,12 @@ resource "aws_eks_addon" "kube_proxy" {
 
   cluster_name      = aws_eks_cluster.gitlab_cluster[0].name
   addon_name        = "kube-proxy"
-  addon_version     = data.aws_eks_addon_version.kube_proxy[0].version
+  addon_version     = var.eks_kube_proxy_version != "" ? var.eks_kube_proxy_version : data.aws_eks_addon_version.kube_proxy[0].version
   resolve_conflicts = "OVERWRITE"
 }
 
 data "aws_eks_addon_version" "coredns" {
-  count = min(local.total_node_pool_count, 1)
+  count = var.eks_coredns_version != "" ? 0 : min(local.total_node_pool_count, 1)
 
   addon_name         = "coredns"
   kubernetes_version = aws_eks_cluster.gitlab_cluster[0].version
@@ -440,7 +443,7 @@ resource "aws_eks_addon" "coredns" {
 
   cluster_name      = aws_eks_cluster.gitlab_cluster[0].name
   addon_name        = "coredns"
-  addon_version     = data.aws_eks_addon_version.coredns[0].version
+  addon_version     = var.eks_coredns_version != "" ? var.eks_coredns_version : data.aws_eks_addon_version.coredns[0].version
   resolve_conflicts = "OVERWRITE"
 
   # coredns needs nodes to run on, so don't create it until
@@ -454,7 +457,7 @@ resource "aws_eks_addon" "coredns" {
 
 ## vpc-cni Addon
 data "aws_eks_addon_version" "vpc_cni" {
-  count = min(local.total_node_pool_count, 1)
+  count = var.eks_vpc_cni_version != "" ? 0 : min(local.total_node_pool_count, 1)
 
   addon_name         = "vpc-cni"
   kubernetes_version = aws_eks_cluster.gitlab_cluster[0].version
@@ -466,7 +469,7 @@ resource "aws_eks_addon" "vpc_cni" {
 
   cluster_name             = aws_eks_cluster.gitlab_cluster[0].name
   addon_name               = "vpc-cni"
-  addon_version            = data.aws_eks_addon_version.vpc_cni[0].version
+  addon_version            = var.eks_vpc_cni_version != "" ? var.eks_vpc_cni_version : data.aws_eks_addon_version.vpc_cni[0].version
   service_account_role_arn = aws_iam_role.gitlab_addon_vpc_cni_role[count.index].arn
   resolve_conflicts        = "OVERWRITE"
 
