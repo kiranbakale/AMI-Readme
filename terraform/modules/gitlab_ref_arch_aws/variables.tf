@@ -729,6 +729,25 @@ variable "eks_enabled_cluster_log_types" {
   default     = []
 }
 
+## Node Group / Addons Versions
+variable "eks_node_group_ami_release_version" {
+  type    = string
+  default = null
+}
+
+variable "eks_kube_proxy_version" {
+  type    = string
+  default = ""
+}
+variable "eks_coredns_version" {
+  type    = string
+  default = ""
+}
+variable "eks_vpc_cni_version" {
+  type    = string
+  default = ""
+}
+
 ## Webservice
 variable "webservice_node_pool_count" {
   type    = number
@@ -788,7 +807,6 @@ variable "supporting_node_pool_disk_size" {
   type    = string
   default = null
 }
-
 ## Cluster Autoscaling (Optional)
 variable "supporting_node_pool_max_count" {
   type    = number
