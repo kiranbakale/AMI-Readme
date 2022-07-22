@@ -67,7 +67,7 @@ Hopefully with this overview it's clearer how Ansible in the Toolkit works. Belo
 
 The Toolkit requires Ansible to be installed. We recommend [Ansible `6.0` or higher](https://docs.ansible.com/ansible/devel/reference_appendices/release_and_maintenance.html#ansible-community-changelogs) but versions containing [`ansible-core 2.12` upwards](https://docs.ansible.com/ansible/devel/reference_appendices/release_and_maintenance.html#ansible-core-changelogs) should continue to work if desired.
 
-Whatever version you chose will have a corresponding Python version requirement. For Ansible `6.x`, [Python `3.8` or higher is required](https://github.com/ansible-community/ansible-build-data/blob/main/5/CHANGELOG-v5.rst#major-changes-1). Refer to the corresponding release notes for Ansible to verify the required Python version.
+Whatever version you chose will have a corresponding Python version requirement. For Ansible `6.x`, [Python `3.8` or higher is required](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#control-node-requirements). Refer to the corresponding release notes for Ansible to verify the required Python version.
 
 When choosing an [Ansible control node](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#control-node-requirements), we recommend that it's in the same or near location as the environment being built to avoid network slowdown. Additionally, if you plan to use a cloud machine as a control node it is _not_ recommended to use [burstable instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html) as they can lead to inconsistent behaviour.
 
