@@ -10,6 +10,7 @@ locals {
   zones = length(var.availability_zones) > 0 ? var.availability_zones : data.aws_availability_zones.defaults.names
 }
 
+# Default Network
 resource "aws_default_vpc" "default" {
   count = local.default_network ? 1 : 0
   tags = {
@@ -35,7 +36,7 @@ data "aws_availability_zones" "defaults" {
   exclude_names = var.zones_exclude
 }
 
-# Create new network stack
+# Create Network
 resource "aws_vpc" "gitlab_vpc" {
   count                = local.create_network ? 1 : 0
   cidr_block           = var.vpc_cidr_block
@@ -178,8 +179,6 @@ locals {
   vpc_id          = local.create_network ? aws_vpc.gitlab_vpc[0].id : var.vpc_id
   subnet_pub_ids  = local.create_network ? aws_subnet.gitlab_vpc_sn_pub[*].id : var.subnet_pub_ids
   subnet_priv_ids = local.create_network ? aws_subnet.gitlab_vpc_sn_priv[*].id : var.subnet_priv_ids
-
-  vpc_cidr_block = !local.default_network ? aws_vpc.gitlab_vpc[0].cidr_block : aws_default_vpc.default[0].cidr_block
 
   # Target Subnets for resource types. Selected dynamically from what's been configured - Private / Public or Default
   backend_subnet_ids  = !local.default_network ? coalescelist(local.subnet_priv_ids, local.subnet_pub_ids) : null

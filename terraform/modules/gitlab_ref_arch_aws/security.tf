@@ -3,6 +3,10 @@ resource "aws_key_pair" "ssh_key" {
   public_key = var.ssh_public_key != null ? var.ssh_public_key : var.ssh_public_key_file
 }
 
+data "aws_vpc" "selected" {
+  id = coalesce(local.vpc_id, local.default_vpc_id)
+}
+
 resource "aws_security_group" "gitlab_internal_networking" {
   # Allows for machine internal connections as well as outgoing internet access
   # Avoid changes that cause replacement due to EKS Cluster issue
@@ -15,7 +19,7 @@ resource "aws_security_group" "gitlab_internal_networking" {
     to_port     = 0
     protocol    = "-1"
     self        = true
-    cidr_blocks = [local.vpc_cidr_block]
+    cidr_blocks = [data.aws_vpc.selected.cidr_block]
   }
 
   dynamic "ingress" {
@@ -137,7 +141,7 @@ resource "aws_security_group" "gitlab_opensearch_security_group" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [local.vpc_cidr_block]
+    cidr_blocks = [data.aws_vpc.selected.cidr_block]
   }
 }
 
