@@ -47,6 +47,14 @@
   when:
     - ('postgres_primary' in group_names)
 
+- name: Restart gitlab-workhorse on single node instances
+  command: gitlab-ctl restart gitlab-workhorse
+  tags:
+    - secondary
+  when:
+    - not geo_multi_node
+    - (geo_secondary_site_group_name + 'gitlab_rails' in groups)
+
 - name: Configure the frontend app servers on the secondary site
   import_tasks: secondary-frontend-app-servers.yml
   tags:
