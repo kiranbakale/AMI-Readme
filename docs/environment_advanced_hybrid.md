@@ -342,19 +342,26 @@ As a convenience, the Toolkit can automatically run these commands for you in it
 
 Like Provisioning with Terraform, configuring the Helm deployment for the Kubernetes cluster only requires a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) - Namely a few extra settings required for Helm.
 
-By design, this file is similar to the one used in a [standard environment](environment_configure.md#environment-config-varsyml) with the following additional settings:
+By design, this file is similar to the one used in a [standard environment](environment_configure.md#environment-config-varsyml).
 
-- `cloud_native_hybrid_environment` - Sets Ansible to know it's configuring a Cloud Native Hybrid Reference Architecture environment. Required.
-- `kubeconfig_setup` - When true, will attempt to automatically configure the `.kubeconfig` file entry for the provisioned Kubernetes cluster.
-- `external_ip` - **GCP only** External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid installs.
-- `external_url` - A URL for the environment (Note - Not just an IP). You will need to use an `A` type DNS entry (for example `http://gitlab.somecompany.com`) pointing to _one_ of the Elastic IPs created in the [Create Static External IP - AWS Elastic IP Allocation](environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) step. Alternatively, this could be set to `http://<AWS_Elastic_IP>.nip.io`.
-- `gcp_zone` - **GCP only** Default Zone name the GCP project is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
-- `aws_region` - **AWS only** Name of the region where the EKS cluster is located. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
-- `aws_allocation_ids` - **AWS only** A comma separated list of Elastic IP allocation IDs, that will be assigned to the AWS load balancer.
-  - With AWS you **must have an [Elastic IP](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/docs/environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) for each subnet being used**. For example using a VPC with 3 subnets will require the creation of 3 Elastic IPs and their individual allocation IDs will need to be stored in this list.
-Below are examples for a `vars.yml` file with all config for each cloud provider based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative):
+First let's detail the general settings that apply to any Cloud Provider:
+
+- `cloud_native_hybrid_environment` - Tells Ansible it's configuring a Cloud Native Hybrid Reference Architecture environment. **Required.**
+- `kubeconfig_setup` - When true, will attempt to automatically configure the `.kubeconfig` file entry for the provisioned Kubernetes cluster. **Recommended unless kubeconfig is to be setup separately.**
+- `external_url` - A URL for the environment (Note - Not just an IP). You will need to use an `A` type DNS entry (for example `http://gitlab.somecompany.com`). **Required.**
+  - :information_source:&nbsp; - On AWS this address should be resolving to _one_ of the Elastic IPs created in the [Create Static External IP - AWS Elastic IP Allocation](environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) step. 
+  - Services such as [`nip.io`](https://nip.io/) can provide hostnames without needing to configure DNS but note that this wouldn't be recommend for production environments.
+
+Next are specific Cloud Provider examples that will also detail any specific settings for each provider along with a section on various other additional settings that may be used. 
 
 ### Google Cloud Platform (GCP)
+
+For environments using GKE the following additional settings are available:
+
+- `external_ip` - External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid installs. **Required.**
+- `gcp_zone` - Zone name the GCP Kubernetes cluster is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
+
+A full `vars.yml` file config example for GKE based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) is as follows:
 
 ```yml
 all:
@@ -396,6 +403,15 @@ all:
 ```
 
 ### Amazon Web Services (AWS)
+
+For environments using EKS the following additional settings are available:
+
+- `aws_region` - Name of the region where the EKS cluster is located. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
+- `aws_allocation_ids` - A comma separated list of Elastic IP allocation IDs, that will be assigned to the AWS load balancer. **Required.**
+  - With AWS you **must have an [Elastic IP](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/docs/environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) for each subnet being used**. For example using a VPC with 3 subnets will require the creation of 3 Elastic IPs and their individual allocation IDs will need to be stored in this list.
+- `cloud_native_hybrid_cluster_autoscaler_setup` - When `true` will deploy the [Cluster Autoscaler](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html) onto the AWS EKS Kubernetes cluster to enable node autoscaling. Set to `false` by default.
+
+A full `vars.yml` file config example for ELS based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) is as follows:
 
 ```yml
 all:
@@ -451,7 +467,6 @@ The Toolkit provides several other settings that can customize a Cloud Native Hy
 - `gitlab_charts_sidekiq_min_replicas_scaler`: Sets the scalar value (`0.0` - `1.0`) to scale minimum pod replicas against the automatically calculated maximum value. Setting this value may affect the performance of the environment and should only be done so for specific reasons. If pod count is overridden directly by `gitlab_charts_sidekiq_min_replicas` this value will have no effect. Set to `0.75` by default.
 - `gitlab_charts_sidekiq_max_replicas`: Override for the number of max Sidekiq replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
 - `gitlab_charts_sidekiq_min_replicas`: Override for the number of min Sidekiq replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
-- `cloud_native_hybrid_cluster_autoscaler_setup` (AWS only) - When `true` will deploy the [Cluster Autoscaler](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html) onto the AWS EKS Kubernetes cluster to enable node autoscaling. Set to `false` by default.
 
 Once your config file is in place as desired you can proceed to [configure as normal](environment_configure.md#3-configure-update).
 
@@ -474,3 +489,9 @@ With the above done, the file will be run before the Helm Charts deployment to a
 ## Geo
 
 More information on setting up Geo within GET can be found in our [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md) documentation.
+
+## Troubleshooting
+
+Cloud Native Hybrid environments have quite a few moving parts, all of which could cause a failure.
+
+Some common Troubleshooting steps to follow for these setups can be found on the [GitLab Environment Toolkit - Troubleshooting](environment_troubleshooting.md#cloud-native-hybrids) page.
