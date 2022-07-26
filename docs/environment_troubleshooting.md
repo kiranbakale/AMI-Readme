@@ -145,7 +145,9 @@ This wipes the records from the specific server and will unblock it to start rep
 
 In this section are troubleshooting steps for some common Cloud Native Hybrid environment issues.
 
-For these setups it's worth noting that they have quite a few moving parts, all of which could cause a failure. For example, Ansible doesn't configure the Kubernetes components directly instead deploying the Helm Charts that in turn instruct Kubernetes on what to setup. The Charts contain various checks and pre-actions that can subsequently fail internally. Additionally some of the setup happens at the Cloud Provider level that can also fail internally.
+For these setups, it's worth noting that they have quite a few moving parts, all of which could cause a failure. For example, Ansible doesn't configure the Kubernetes components directly, instead deploying the [Helm Charts](https://docs.gitlab.com/charts/) that in turn instruct Kubernetes on what to set up. The Charts contain various checks and pre-actions that can subsequently fail internally. Additionally, some setup happens at the Cloud Provider level that can also fail internally.
+
+With that context, some of the more common failures are listed below with troubleshooting steps.
 
 ### Environment not resolvable on URL
 
@@ -163,27 +165,27 @@ fatal: [localhost]: FAILED! => changed=false
   msg: 'Status code was 503 and not [200]: HTTP Error 503: Service Unavailable'
 ```
 
-This error is due to the Toolkit doing a sanity check to see if the setup has been successful after deploying the Helm Charts. When this error is thrown it means that the deployment was unsuccessful for some reason.
+This error is due to the Toolkit doing a sanity check to see if the setup has been successful after deploying the Helm Charts. When this error is thrown, it means that the deployment failed to complete for some reason.
 
-Some of the common reasons for this may be:
+Some common reasons for this may be:
 
-- Misconfiguration - Double check that `cloud_native_hybrid_environment` and `kubeconfig_setup` are enabled to instruct the Toolkit to deploy the Charts
+- Double check that `cloud_native_hybrid_environment` and `kubeconfig_setup` are enabled to instruct the Toolkit to deploy the Charts
 - AWS EKS has failed to configure the AWS Load Balancer (which it manages directly) due to not enough Elastic IPs being given via the [`aws_allocation_ids` setting](environment_advanced_hybrid.md#amazon-web-services-aws-1) - There should be one for every Subnet.
-- Webservice / Sidekiq pods have failed to deploy due to one of their pre-actions or checks failing. [See below section for more info](#webservice--sidekiq-pods-not-deploying).
+- Webservice / Sidekiq pods have failed to deploy due to one of their pre-actions or checks failing. [See the below Webservice / Sidekiq Pods not deploying section for more info](#webservice--sidekiq-pods-not-deploying).
 
 ### Webservice / Sidekiq Pods not deploying
 
-There may be times when the Webservice / Sidekiq pods may not deploy on the target Kubernetes cluster even though the Toolkit has completed "successfully". This is because Ansible has been successful in giving the _instruction_ via Helm to deploy said pods but then some of the pre-actions or additional checks that happen in Kubernetes have failed.
+There may be times when the Webservice / Sidekiq pods may not deploy on the target Kubernetes cluster even though the Toolkit has completed "successfully". While Ansible has been successful in giving the _instruction_ via the Helm Charts to deploy said pods, something such as any pre-actions or additional checks that happen in Kubernetes have failed to complete.
 
-The pod's pre-actions or additional checks, done via [Init Containers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) act as a sanity check for the whole environment and if anything is wrong they will fail to deploy. These include performing database migrations and if the backends can be connected to. When this is the case you may see the `Init:CrashLoopBackOff` error being thrown in Kubernetes.
+The pod's pre-actions or additional checks, done via [Init Containers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/), act as a sanity check for the whole environment and if anything is wrong they will fail to deploy. These include running checks such as if the backends can be connected to or performing configuration. When this is the case, you may see the `Init:CrashLoopBackOff` error being thrown in Kubernetes when you run commands such as `kubectl get pods`.
 
-Typically this is due to a misconfiguration, specifically that the pods have failed to connect to the backends. To find the misconfiguration the following steps are recommended:
+Typically, this is due to a misconfiguration, specifically that the pods have failed to connect to the backends. To debug further, the following steps are recommended:
 
 - Double check that the [configuration](environment_advanced_hybrid.md#4-configuring-the-helm-charts-deployment-with-ansible) is correct. Some examples:
   - If using any external services ([RDS](environment_advanced_services.md#configuring-with-ansible-1) / [Elasticache](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/docs/environment_advanced_services.md#configuring-with-ansible-2) / [Internal LB](environment_advanced_services.md#configuring-with-ansible)) that the config for each has been added for the environment to use them.
 - [Debug the Init Containers](https://kubernetes.io/docs/tasks/debug/debug-application/debug-init-containers/). In particular checking the logs of each Init Container may prove to be very useful as errors thrown by these containers aren't typically surfaced. An example of how this can be done as follows:
   - Get the name of any `webservice` pods - `kubectl get pods -l app=webservice`
-  - Using that name retrieve the list of it's Init Container names - `kubectl get pod <WEBSERVICE_POD_NAME> -o jsonpath={.spec.initContainers[*].name}`
+  - Using that name, retrieve the list of its Init Container names - `kubectl get pod <WEBSERVICE_POD_NAME> -o jsonpath={.spec.initContainers[*].name}`
   - Look through the logs of each container for any errors - `kubectl logs <WEBSERVICE_POD_NAME> -c <INIT_CONTAINER_NAME>`
 
 ### `Could not match supplied host pattern, ignoring: gitlab_cluster` Warning
@@ -196,7 +198,7 @@ Depending on the Toolkit version you may see the following warning being thrown 
 
 [This warning is due to an Ansible quirk](https://github.com/ansible/ansible/issues/40030) and can be ignored.
 
-For some background, GKE / EKS will setup VMs to be the Nodes in the Kubernetes cluster. These VMs show up in normal lists and can appear in Ansible Inventories as a result. Ansible can't configure these nodes directly that are instead managed by GKE / EKS, which Ansible configures later via Helm. As such, depending on cloud provider, Ansible is configured to ignore these machines directly and this can sometimes result in the above warning.
+For some background, GKE / EKS will set up VMs to be the Nodes in the Kubernetes cluster. These VMs show up in normal lists and can appear in Ansible Inventories as a result. Ansible can't configure these nodes directly that are instead managed by GKE / EKS, which Ansible configures later via Helm. As such, depending on cloud provider, Ansible is configured to ignore these machines directly and this can sometimes result in the above warning.
 
 From GitLab Environment Toolkit version `2.4.0` onwards this warning is disabled by default as it's expected.
 
