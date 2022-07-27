@@ -32,7 +32,7 @@ Several components of the GitLab setup can be switched to a cloud service or cus
 
 - [Load Balancers](https://docs.gitlab.com/ee/administration/load_balancer.html) - [AWS ELB](https://aws.amazon.com/elasticloadbalancing/), _Custom_
 - [PostgreSQL](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#provide-your-own-postgresql-instance) - [AWS RDS](https://aws.amazon.com/rds/postgresql/), _Custom_
-- [Redis](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#providing-your-own-redis-instance) - [AWS Elasticache](https://aws.amazon.com/elasticache/redis/), _Custom_
+- [Redis](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#providing-your-own-redis-instance) - [AWS ElastiCache](https://aws.amazon.com/elasticache/redis/), _Custom_
 - [Advanced Search](https://docs.gitlab.com/ee/user/search/advanced_search.html) - [AWS OpenSearch](https://aws.amazon.com/opensearch-service/), _Custom_
 
 :information_source:&nbsp; Support for more services is ongoing. Unless specified otherwise the above is the currently supported services by the Toolkit.
@@ -272,9 +272,9 @@ Provisioning an alternative Redis store via a cloud service differs slightly per
 
 Like the main provisioning docs there are sections for each supported provider on how to achieve this. Follow the section for your selected provider and then move onto the next step.
 
-#### AWS Elasticache
+#### AWS ElastiCache
 
-The Toolkit supports provisioning an AWS Elasticache Redis service instance with everything GitLab requires or recommends such as built in HA support over AZs and encryption.
+The Toolkit supports provisioning an AWS ElastiCache Redis service instance with everything GitLab requires or recommends such as built in HA support over AZs and encryption.
 
 There are different variables to be set depending on the target architecture size and if it requires separate Redis instances (10k and up). First we'll detail the general settings that apply to all Redis setups:
 
@@ -282,7 +282,7 @@ The variables to set are dependent on if the setup is to have combined or separa
 
 For required variables they need to be set for each Redis service you are provisioning:
 
-- `elasticache_redis_instance_type` - The [AWS Instance Type](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html) of the Redis instance to use without the `cache.` prefix. For example, to use a `cache.m5.2xlarge` Elasticache instance type, the value of this variable should be `m5.2xlarge`. **Required**.
+- `elasticache_redis_instance_type` - The [AWS Instance Type](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html) of the Redis instance to use without the `cache.` prefix. For example, to use a `cache.m5.2xlarge` ElastiCache instance type, the value of this variable should be `m5.2xlarge`. **Required**.
   - `elasticache_redis_cache_instance_type` or `elasticache_redis_persistent_instance_type` when setting up separate services.
 - `elasticache_redis_node_count` - The number of replicas of the Redis instance to have for failover purposes. This should be set to at least `2` or higher for HA and `1` if this isn't a requirement. **Required**.
   - `elasticache_redis_cache_node_count` or `elasticache_redis_persistent_node_count` when setting up separate services.
@@ -300,7 +300,9 @@ For optional variables they work in a default like manner. When configuring for 
   - Optionally `elasticache_redis_cache_port` or `elasticache_redis_persistent_port` can be used to override for separate services.
 - `elasticache_redis_multi_az` - Specifies if the Redis instance is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`.
   - Optionally `elasticache_redis_cache_multi_az` or `elasticache_redis_persistent_multi_az` can be used to override for separate services.
-- [`elasticache_redis_snapshot_retention_limit`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group#snapshot_retention_limit) -  The number of days to retain backups for. Optional, default is `null`.
+- [`elasticache_redis_maintenance_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group#maintenance_window) - The weekly time range for when maintenance on the instance is performed, e.g. `sun:05:00-sun:09:00`. Optional, default is `null`.
+  - Optionally `elasticache_redis_cache_maintenance_window` or `elasticache_redis_persistent_maintenance_window` can be used to override for separate services.
+- [`elasticache_redis_snapshot_retention_limit`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group#snapshot_retention_limit) - The number of days to retain backups for. Optional, default is `null`.
   - Optionally `elasticache_redis_cache_snapshot_retention_limit` or `elasticache_redis_persistent_snapshot_retention_limit` can be used to override for separate services.
 - [`elasticache_redis_snapshot_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group#snapshot_window) - The daily time range where backups will be taken, e.g. `09:46-10:16`. Optional, default is `null`.
   - Optionally `elasticache_redis_cache_snapshot_window` or `elasticache_redis_persistent_snapshot_window` can be used to override for separate services.
@@ -308,7 +310,7 @@ For optional variables they work in a default like manner. When configuring for 
 
 If deploying a combined Redis setup that contains all queues (5k and lower) the following settings should be set (replacing any previous `redis_*` settings):
 
-As an example, to set up a standard AWS Elasticache Redis service for a [5k](https://docs.gitlab.com/ee/administration/reference_architectures/5k_users.html) environment with the required variables should look like the following in your `environment.tf` file:
+As an example, to set up a standard AWS ElastiCache Redis service for a [5k](https://docs.gitlab.com/ee/administration/reference_architectures/5k_users.html) environment with the required variables should look like the following in your `environment.tf` file:
 
 ```tf
 module "gitlab_ref_arch_aws" {

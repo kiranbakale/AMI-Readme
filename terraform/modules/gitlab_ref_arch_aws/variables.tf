@@ -1062,6 +1062,10 @@ variable "elasticache_redis_multi_az" {
   type    = bool
   default = true
 }
+variable "elasticache_redis_maintenance_window" {
+  type    = string
+  default = null
+}
 variable "elasticache_redis_snapshot_retention_limit" {
   type    = number
   default = null
@@ -1105,6 +1109,10 @@ variable "elasticache_redis_cache_multi_az" {
   type    = bool
   default = null
 }
+variable "elasticache_redis_cache_maintenance_window" {
+  type    = string
+  default = null
+}
 variable "elasticache_redis_cache_snapshot_retention_limit" {
   type    = number
   default = null
@@ -1142,6 +1150,10 @@ variable "elasticache_redis_persistent_port" {
 }
 variable "elasticache_redis_persistent_multi_az" {
   type    = bool
+  default = null
+}
+variable "elasticache_redis_persistent_maintenance_window" {
+  type    = string
   default = null
 }
 variable "elasticache_redis_persistent_snapshot_retention_limit" {
