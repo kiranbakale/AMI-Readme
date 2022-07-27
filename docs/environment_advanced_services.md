@@ -20,7 +20,7 @@ The Toolkit supports using alternative sources for select components, such as cl
 - Cloud Services - The Toolkit supports both _provisioning_ and _configuration_ for environments to use.
 - Custom Servers - For servers, provided by users, the Toolkit supports the _configuration_ for environments to use.
 
-On this page we'll detail how to setup the Toolkit to provision and/or configure these alternatives. **It's also worth noting this guide is supplementary to the rest of the docs and it will assume this throughout.**
+On this page we'll detail how to set up the Toolkit to provision and/or configure these alternatives. **It's also worth noting this guide is supplementary to the rest of the docs, and it will assume this throughout.**
 
 [[_TOC_]]
 
@@ -35,7 +35,7 @@ Several components of the GitLab setup can be switched to a cloud service or cus
 - [Redis](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#providing-your-own-redis-instance) - [AWS Elasticache](https://aws.amazon.com/elasticache/redis/), _Custom_
 - [Advanced Search](https://docs.gitlab.com/ee/user/search/advanced_search.html) - [AWS OpenSearch](https://aws.amazon.com/opensearch-service/), _Custom_
 
-:information_source:&nbsp; Support for more services is ongoing. Unless specified otherwise the above is the current supported services by the Toolkit.
+:information_source:&nbsp; Support for more services is ongoing. Unless specified otherwise the above is the currently supported services by the Toolkit.
 
 ## Load Balancers
 
@@ -62,7 +62,7 @@ Like the main provisioning docs there are sections for each supported provider o
 
 ##### Internal (NLB)
 
-The Toolkit supports provisioning an AWS NLB service as the Internal Load Balancer with everything GitLab requires set up.
+The Toolkit supports provisioning an AWS NLB service as the Internal Load Balancer with everything GitLab requires to be set up.
 
 The variable(s) for this service start with the prefix `elb_internal_*` and should replace any previous `haproxy_internal_*` settings. The available variable(s) are as follows:
 
@@ -212,7 +212,7 @@ The required variables in Ansible for this are as follows:
 - `postgres_username` - The username of the PostgreSQL instance. Optional, default is `gitlab`.
 - `postgres_database_name` - The name of the main database in the instance for use by GitLab. Optional, default is `gitlabhq_production`.
 - `postgres_port` - The port of the PostgreSQL instance. Should only be changed if the instance isn't running with the default port. Optional, default is `5432`.
-- `postgres_load_balancing_hosts` - A list of all PostgreSQL hostnames to use in [Database Load Balancing](https://docs.gitlab.com/ee/administration/postgresql/database_load_balancing.html). This is only applicable when running with an alternative Postgres setup (non Omnibus) where you have multiple read replicas. The main host should also be included in this list to be used in load balancing. Optional, default is `[]`.
+- `postgres_load_balancing_hosts` - A list of all PostgreSQL hostnames to use in [Database Load Balancing](https://docs.gitlab.com/ee/administration/postgresql/database_load_balancing.html). This is only applicable when running with an alternative Postgres setup (non-Omnibus) where you have multiple read replicas. The main host should also be included in this list to be used in load balancing. Optional, default is `[]`.
 - `praefect_postgres_username` - The username to create for Praefect on the PostgreSQL instance. Optional, default is `praefect`.
 - `praefect_postgres_password` - The password for the Praefect user on the PostgreSQL instance. **Required**.
 - `praefect_postgres_database_name` - The name of the database to create for Praefect on the PostgreSQL instance. Optional, default is `praefect_production`.
@@ -276,9 +276,9 @@ Like the main provisioning docs there are sections for each supported provider o
 
 The Toolkit supports provisioning an AWS Elasticache Redis service instance with everything GitLab requires or recommends such as built in HA support over AZs and encryption.
 
-There's different variables to be set depending on the target architecture size and if it requires separated Redis instances (10k and up). First we'll detail the general settings that apply to all Redis setups:
+There are different variables to be set depending on the target architecture size and if it requires separate Redis instances (10k and up). First we'll detail the general settings that apply to all Redis setups:
 
-The variables to set are dependent on if the setup is to have combined or separated Redis queues depending on the target Reference Architecture. The only difference is that the prefix of each variable changes depending on what Redis instances you're provisioning - `elasticache_redis_*`, `elasticache_redis_cache_*` and `elasticache_redis_persistent_*`, each replacing any existing `redis_*`, `redis_cache_*` or `redis_persistent_*` variables respectively.
+The variables to set are dependent on if the setup is to have combined or separated Redis queues depending on the target Reference Architecture. For the latter, some variables will have a different prefix depending on what Redis instances you're provisioning - `elasticache_redis_*`, `elasticache_redis_cache_*` and `elasticache_redis_persistent_*`, each replacing any applicable existing `redis_*`, `redis_cache_*` or `redis_persistent_*` variables respectively. These will be called out below.
 
 For required variables they need to be set for each Redis service you are provisioning:
 
@@ -290,7 +290,7 @@ For required variables they need to be set for each Redis service you are provis
   - `elasticache_redis_cache_kms_key_arn` or `elasticache_redis_persistent_kms_key_arn` when setting up separate services.
   - **Warning** Changing this value after the initial creation will result in the Redis instance being recreated and may lead to **data loss**.
 
-For optional variables they work in a default like manner. When configuring for any Redis types the main `elasticache_redis_*` variable can be set once and this will apply to all but you can also additionally override this behavior with specific variables as follows:
+For optional variables they work in a default like manner. When configuring for any Redis types the main `elasticache_redis_*` variable can be set once and this will apply to all but you can also additionally override this behaviour with specific variables as follows:
 
 - `elasticache_redis_password` - The password of the Redis instance. Must follow the [requirements as mandated by AWS](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/auth.html#auth-overview). **Required**.
   - Optionally `elasticache_redis_cache_password` or `elasticache_redis_persistent_password` can be used to override for separate services.
@@ -347,8 +347,9 @@ Configuring GitLab to use alternative Redis store(s) with Ansible is the same re
 
 :information_source:&nbsp; This config is the same for custom Redis instance(s) that have been provisioned outside of Omnibus or Cloud Services. Although please note, in this setup it's expected that HA is in place and the URL to connect to the Redis instance(s) never changes.
 
-The variables to set are dependent on if the setup is to have combined or separated Redis queues depending on the target Reference Architecture. The only different is that the prefix of each variable changes depending on what Redis instances you're provisioning - `redis_*`, `redis_cache_*` and `redis_persistent_*` respectively. All of the variables are the same for each instance type and are described once below:
+The variables to set are dependent on if the setup is to have combined or separated Redis queues depending on the target Reference Architecture. The only difference is that the prefix of the variables change depending on what Redis instances you're provisioning - `redis_*`, `redis_cache_*` and `redis_persistent_*` respectively. All the variables are the same for each instance type and are described once below:
 
+- `redis_password` - The password for the instance. **Required**.
 - `redis_host` - The hostname of the Redis instance. Provided in Terraform outputs if provisioned earlier. **Required**.
   - Becomes `redis_cache_host` or `redis_persistent_host` when setting up separate stores.
 - `redis_port` - The port of the Redis instance. Should only be changed if required. Optional, default is `6379`.
@@ -363,7 +364,7 @@ After Ansible is finished running your environment will now be ready.
 
 The Toolkit supports provisioning and / or configuring an alternative search backend (Elasticsearch or OpenSearch) for [GitLab Advanced Search](https://docs.gitlab.com/ee/user/search/advanced_search.html).
 
-:information_source:&nbsp; The Reference Architectures [don't proffer guidance on sizing Search backends at this time](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#configure-advanced-search). This is due to search backend requirements varying notably depending on data shape and search index design. However as a general guidance in testing we've found that sizing the Search backends similarly to the Gitaly nodes looks to be a good starting point that you can then adjust accordingly.
+:information_source:&nbsp; The Reference Architectures [don't proffer guidance on sizing Search backends at this time](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#configure-advanced-search). This is due to search backend requirements varying notably depending on data shape and search index design. However, as a general guidance in testing we've found that sizing the Search backends similarly to the Gitaly nodes looks to be a good starting point that you can then adjust accordingly.
 
 When using an alternative search backend the following changes apply when deploying via the Toolkit:
 
@@ -424,7 +425,7 @@ After Ansible is finished running your environment will now be ready.
 
 ## Sensitive variable handling
 
-When configuring these alternatives you'll sometimes need to configure sensitive values such as passwords. Earlier in the docs guidance was given on how to handle these more securely in both Terraform and Ansible. Refer to the below sections for further information.
+When configuring these alternatives you'll sometimes need to configure sensitive values such as passwords. Earlier in the documentation, guidance was given on how to handle these more securely in both Terraform and Ansible. Refer to the below sections for further information.
 
 - [Sensitive variable handling in Terraform](environment_provision.md#sensitive-variable-handling-in-terraform)
 - [Sensitive variable handling in Ansible](environment_configure.md#sensitive-variable-handling-in-ansible)
