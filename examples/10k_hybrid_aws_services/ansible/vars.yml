@@ -20,7 +20,7 @@ all:
     # RDS Settings
     postgres_host: "<rds_url>"
 
-    # Elasticache Settings
+    # ElastiCache Settings
     redis_cache_host: "<elasticache_cache_url>"
     redis_persistent_host: "<elasticache_persistent_url>"
 

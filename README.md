@@ -118,7 +118,7 @@ card aws #ffffff [
   Gateways, IPs, etc...)
   ELBs
   RDS
-  Elasticache
+  ElastiCache
   OpenSearch
 ]
 
