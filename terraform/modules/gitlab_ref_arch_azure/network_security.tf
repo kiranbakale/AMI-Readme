@@ -64,7 +64,7 @@ resource "azurerm_network_security_rule" "git_ssh_rule" {
   access                                     = "Allow"
   protocol                                   = "Tcp"
   source_port_range                          = "*"
-  destination_port_ranges                    = ["${var.external_ssh_port}"]
+  destination_port_ranges                    = [var.external_ssh_port]
   source_address_prefixes                    = coalescelist(var.ssh_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
   destination_application_security_group_ids = [azurerm_application_security_group.haproxy[0].id]
   resource_group_name                        = var.resource_group_name

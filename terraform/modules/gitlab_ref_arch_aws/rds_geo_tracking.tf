@@ -75,6 +75,7 @@ resource "aws_db_instance" "gitlab_geo_tracking" {
 
   backup_window           = var.rds_geo_tracking_postgres_backup_window
   backup_retention_period = var.rds_geo_tracking_postgres_backup_retention_period
+  maintenance_window      = var.rds_geo_tracking_postgres_maintenance_window
 
   allow_major_version_upgrade = true
 

@@ -125,7 +125,7 @@ resource "aws_iam_role_policy" "gitlab_dlm" {
         ]
         Effect    = "Allow"
         Resource  = "arn:aws:ec2:*:*:instance/*"
-        Condition = { "StringEquals" = { "aws:ResourceTag/gitlab_node_prefix" = "${var.prefix}", "aws:ResourceTag/gitlab_node_type" = "${var.node_type}" } }
+        Condition = { "StringEquals" = { "aws:ResourceTag/gitlab_node_prefix" = var.prefix, "aws:ResourceTag/gitlab_node_type" = var.node_type } }
       },
       {
         Action = [

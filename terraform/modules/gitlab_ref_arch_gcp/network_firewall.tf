@@ -23,7 +23,7 @@ resource "google_compute_firewall" "gitlab_ssh" {
 
   allow {
     protocol = "tcp"
-    ports    = ["${var.external_ssh_port}"]
+    ports    = [var.external_ssh_port]
   }
 
   source_ranges = coalescelist(var.ssh_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
@@ -44,7 +44,7 @@ resource "google_compute_firewall" "ssh" {
   }
 
   source_ranges = coalescelist(var.external_ssh_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
-  target_tags   = ["${var.prefix}"]
+  target_tags   = [var.prefix]
 }
 
 resource "google_compute_firewall" "icmp" {
@@ -58,7 +58,7 @@ resource "google_compute_firewall" "icmp" {
   }
 
   source_ranges = coalescelist(var.icmp_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
-  target_tags   = ["${var.prefix}"]
+  target_tags   = [var.prefix]
 }
 
 # Created or Existing network rules
