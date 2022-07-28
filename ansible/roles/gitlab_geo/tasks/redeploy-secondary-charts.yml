@@ -63,6 +63,19 @@
     - "'values' in item.key"
     - geo_recovery is defined and geo_recovery
 
+- name: Redeploy Secondary Charts - Get GitLab Charts version if App version specified
+  block:
+    - name: Get all GitLab Charts versions
+      command: helm search repo gitlab/gitlab -l -o json
+      register: gitlab_charts_versions
+
+    - name: Match GitLab Charts version to App version
+      set_fact:
+        gitlab_charts_version: "{{ (gitlab_charts_versions.stdout | from_json | selectattr('name', 'equalto', 'gitlab/gitlab') | selectattr('app_version', 'equalto', gitlab_version))[0].version }}"
+  when:
+    - gitlab_charts_version is not defined
+    - gitlab_version != ""
+
 - name: Redeploy Secondary Charts - Install GitLab Charts for Cloud Native Hybrid environments
   become: false
   delegate_to: localhost
