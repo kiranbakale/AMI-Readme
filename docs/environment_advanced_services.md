@@ -117,7 +117,7 @@ How and where these are configured can be done in several ways depending on if G
 
 - Non Geo
   - GitLab and Praefect can be configured on the same Database instance (recommended) or separated
-- Geo 
+- Geo
   - GitLab and Praefect should be separated to avoid replication of the latter.
   - Geo Tracking DB can be configured on the same Database instance as Praefect on the secondary site (recommended) or separated
 
@@ -154,6 +154,7 @@ The variables for this service start with the prefix `rds_postgres_*` and should
 - [`rds_postgres_backup_retention_period`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#backup_retention_period) - The number of days to retain backups for. Must be between 0 and 35. Must be greater than 0 for Geo primary instances. Optional, default is `null`.
 - [`rds_postgres_backup_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#backup_window) - The daily time range where backups will be taken, e.g. `09:46-10:16`. Optional, default is `null`.
 - [`rds_postgres_delete_automated_backups`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#delete_automated_backups) - Whether automated backups (if taken) will be deleted when the RDS instance is deleted. Optional, default is `true`.
+- [`rds_postgres_maintenance_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#maintenance_window) - The window to perform maintenance in, e.g. `Mon:00:00-Mon:03:00`. Optional, default is `null`. Must not overlap with `rds_postgres_backup_window`.
 
 To set up a standard AWS RDS PostgreSQL service for a 10k environment with the required variables should look like the following in your `environment.tf` file for a 10k environment is:
 
@@ -300,7 +301,7 @@ For optional variables they work in a default like manner. When configuring for 
   - Optionally `elasticache_redis_cache_port` or `elasticache_redis_persistent_port` can be used to override for separate services.
 - `elasticache_redis_multi_az` - Specifies if the Redis instance is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`.
   - Optionally `elasticache_redis_cache_multi_az` or `elasticache_redis_persistent_multi_az` can be used to override for separate services.
-- [`elasticache_redis_maintenance_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group#maintenance_window) - The weekly time range for when maintenance on the instance is performed, e.g. `sun:05:00-sun:09:00`. Optional, default is `null`.
+- [`elasticache_redis_maintenance_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group#maintenance_window) - The weekly time range for when maintenance on the instance is performed, e.g. `sun:05:00-sun:09:00`. Optional, default is `null`. Must not overlap with `elasticache_redis_snapshot_window`.
   - Optionally `elasticache_redis_cache_maintenance_window` or `elasticache_redis_persistent_maintenance_window` can be used to override for separate services.
 - [`elasticache_redis_snapshot_retention_limit`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group#snapshot_retention_limit) - The number of days to retain backups for. Optional, default is `null`.
   - Optionally `elasticache_redis_cache_snapshot_retention_limit` or `elasticache_redis_persistent_snapshot_retention_limit` can be used to override for separate services.
