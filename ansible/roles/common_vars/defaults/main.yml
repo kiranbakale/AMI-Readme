@@ -16,7 +16,7 @@ cloud_provider: ''
 cloud_provider_labels_name: "{{ 'labels' if cloud_provider == 'gcp' else 'tags' }}"
 
 internal_addr_use_hostnames: false
-internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address'], alicloud: ['private_ip_address'], tencentcloud: ['private_ip_address'], none: ['ansible_default_ipv4', 'address']}
+internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address'], none: ['ansible_default_ipv4', 'address']}
 internal_addr_lookup: "{{ ['ansible_fqdn'] if internal_addr_use_hostnames else internal_ip_lookup[cloud_provider] }}"
 
 ## GCP
@@ -28,14 +28,6 @@ gcp_zone: ""
 ## AWS
 aws_region: ""
 aws_allocation_ids: ""
-
-## Alicloud
-alicloud_region: ""
-alicloud_endpoint: ""
-
-## Tencentcloud
-tencentcloud_region: ""
-tencentcloud_endpoint: ""
 
 ################################################################################
 ## Network Settings
