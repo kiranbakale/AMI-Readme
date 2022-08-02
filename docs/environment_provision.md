@@ -311,6 +311,10 @@ To ensure good performance you should select a [location](https://cloud.google.c
 
 :warning:&nbsp; **{- Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss-}**+
 
+##### Object Storage versioning (GCP)
+
+The Toolkit can enable [versioning in Google Cloud Storage buckets](https://cloud.google.com/storage/docs/object-versioning) within GCP by setting the `object_storage_versioning` flag to `true`. This will enable the storing of multiple variants of an object in the same bucket. As this can lead to increased storage costs it is recommended to set up an [Object Lifecycle Management](https://cloud.google.com/storage/docs/lifecycle) to remove older versions of stored objects.
+
 ##### Configure Network Setup (GCP)
 
 By default the toolkit sets up the infrastructure on the default network stack as provided by GCP. However, it can also support other advanced setups such as creating a new network or using an existing one. To learn more refer to [Configure network setup (GCP)](environment_advanced_network.md#configure-network-setup-gcp).
