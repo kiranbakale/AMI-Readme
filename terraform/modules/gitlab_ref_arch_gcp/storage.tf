@@ -7,6 +7,10 @@ resource "google_storage_bucket" "gitlab_object_storage_buckets" {
 
   uniform_bucket_level_access = true
 
+  versioning {
+    enabled = var.object_storage_versioning
+  }
+
   labels = var.object_storage_labels
 }
 

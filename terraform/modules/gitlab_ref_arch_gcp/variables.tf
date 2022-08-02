@@ -55,6 +55,11 @@ variable "object_storage_labels" {
   type        = map(string)
   default     = {}
 }
+variable "object_storage_versioning" {
+  description = "Enable GCS bucket versioning"
+  type        = bool
+  default     = false
+}
 
 # Machines
 variable "consul_node_count" {
