@@ -145,8 +145,8 @@
 
 - name: Add GitLab Charts repo
   kubernetes.core.helm_repository:
-    name: gitlab
-    repo_url: "https://charts.gitlab.io/"
+    name: "{{ gitlab_charts_repo_name }}"
+    repo_url: "{{ gitlab_charts_repo_url }}"
   tags:
     - reconfigure
     - charts
@@ -200,16 +200,16 @@
 - name: Show charts values if configured
   debug:
     msg: "{{ gitlab_charts_values }}"
+  when: gitlab_charts_show_values
   tags:
     - reconfigure
     - charts
     - charts_values
-  when: gitlab_charts_show_values
 
 - name: Install GitLab Charts
   kubernetes.core.helm:
     name: gitlab
-    chart_ref: gitlab/gitlab
+    chart_ref: "{{ gitlab_charts_repo_name }}/gitlab"
     chart_version: "{{ gitlab_charts_version | default(None) }}"
     update_repo_cache: true
     release_namespace: "{{ gitlab_charts_release_namespace }}"
