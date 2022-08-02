@@ -263,8 +263,6 @@ cloud_native_hybrid_cluster_autoscaler_setup: false
 kubeconfig_setup: false
 
 gitlab_charts_release_namespace: default
-gitlab_charts_show_values: false
-
 gitlab_charts_shell_ssh_port: "{{ gitlab_shell_ssh_port if gitlab_shell_ssh_port != '2222' else '22' }}"
 
 use_iam_profile: true
