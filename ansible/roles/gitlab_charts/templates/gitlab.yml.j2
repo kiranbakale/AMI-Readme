@@ -6,6 +6,13 @@ gitlab:
 {% endif %}
     maxReplicas: "{{ gitlab_charts_webservice_max_replicas if gitlab_charts_webservice_max_replicas != '' else webservice_pods }}"
     minReplicas: "{{ gitlab_charts_webservice_min_replicas if gitlab_charts_webservice_min_replicas != '' else (webservice_pods | int * gitlab_charts_webservice_min_replicas_scaler) | int }}"
+    hpa:
+{% if gitlab_version != '' and gitlab_version is version('15.2', '<') %}
+      targetAverageValue: 1600m
+{% else %}
+      cpu:
+        targetAverageValue: 1600m
+{% endif %}
     resources:
       limits:
         memory: "{{ webservice_limits_memory_gb }}G"
@@ -33,6 +40,13 @@ gitlab:
     maxReplicas: "{{ gitlab_charts_sidekiq_max_replicas if gitlab_charts_sidekiq_max_replicas != '' else sidekiq_pods }}"
     minReplicas: "{{ gitlab_charts_sidekiq_min_replicas if gitlab_charts_sidekiq_min_replicas != '' else (sidekiq_pods | int * gitlab_charts_sidekiq_min_replicas_scaler) | int }}"
     concurrency: "{{ sidekiq_max_concurrency }}"
+    hpa:
+{% if gitlab_version != '' and gitlab_version is version('15.2', '<') %}
+      targetAverageValue: 700m
+{% else %}
+      cpu:
+        targetAverageValue: 700m
+{% endif %}
     resources:
       limits:
         memory: "{{ gitlab_charts_sidekiq_limits_memory_gb }}G"
