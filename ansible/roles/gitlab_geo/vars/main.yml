@@ -11,5 +11,5 @@ tracking_db_md5_auth: "['{{ geo_secondary_site_rails_primary_int_ip }}/32'{% for
 
 local_tmp: "{{ local_tmp_dir if local_tmp_dir is defined else 'tmp/' }}"
 
-geo_primary_internal_url: "{{ external_url }}"
-geo_secondary_internal_url: "{{ secondary_external_url | default('') }}"
+geo_primary_internal_url: "{{ geo_primary_external_url | default('') }}"
+geo_secondary_internal_url: "{{ geo_secondary_external_url | default('') }}"

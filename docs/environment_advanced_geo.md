@@ -196,7 +196,7 @@ ansible
 
 For Omnibus environments the site folders are treated the same as non Geo environments with the exception of needing 1 new variable:
 
-- `geo_primary_site_group_name`/`geo_secondary_site_group_name`: These should match the `geo_site` that was set in terraform for the site you want to use as a primary/secondary, any `-` should be replaced with `_` as the names are altered when pulled from the cloud provider. Each setting only needs to go into the site that corresponds to its role i.e. primary or secondary.
+- `geo_primary_site_group_name`/`geo_secondary_site_group_name` - These should match the `geo_site` that was set in terraform for the site you want to use as a primary/secondary, any `-` should be replaced with `_` as the names are altered when pulled from the cloud provider. Each setting only needs to go into the site that corresponds to its role i.e. primary or secondary.
 
 You can also remove the GitLab license from the sites that will not be set as the primary before running the `ansible-playbook` command. To remove the license from the secondary site you can just remove the `gitlab_license_file` setting from the secondary `vars.yml` file.
 
@@ -257,32 +257,33 @@ As these environments are still separate from each other at this point, they can
 Before running the `gitlab_geo.yml` playbook you will need to add some more variables to each inventory depending on its initial role as a primary or secondary.
 
 - Primary site settings
-  - `geo_primary_site_group_name`: This should match the `geo_site` that was set in terraform for the site you want to use as a primary, any `-` should be replaced with `_` as the names are altered when pulled from the cloud provider.
-  - `geo_primary_site_name`: This is will be used to identify the sites in the Geo Settings UI. This can be set to any string value.
+  - `geo_primary_external_url` - This should match the `external_url` for the primary site. It is required to set this directly with a value and not to set this to the `external_url` variable. This is due to how [Ansible handles variables when using multiple inventories](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#using-multiple-inventory-sources).
+  - `geo_primary_site_group_name` - This should match the `geo_site` that was set in terraform for the site you want to use as a primary, any `-` should be replaced with `_` as the names are altered when pulled from the cloud provider.
+  - `geo_primary_site_name` - This is will be used to identify the sites in the Geo Settings UI. This can be set to any string value.
 - Secondary site settings
-  - `secondary_external_url` - This should match `external_url`. It is required to set this directly with a value and not to set this to the `external_url` variable. This is due to how [Ansible handles variables when using multiple inventories](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#using-multiple-inventory-sources).
-  - `geo_secondary_site_group_name`: This should match the `geo_site` that was set in terraform for the sites you want to use as a secondary, any `-` should be replaced with `_` as the names are altered when pulled from the cloud provider.
-  - `geo_secondary_site_name`: This is will be used to identify the sites in the Geo Settings UI. This can be set to any string value.
+  - `geo_secondary_external_url` - This should match the `external_url` for the secondary site. It is required to set this directly with a value and not to set this to the `external_url` variable. This is due to how [Ansible handles variables when using multiple inventories](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#using-multiple-inventory-sources).
+  - `geo_secondary_site_group_name` - This should match the `geo_site` that was set in terraform for the sites you want to use as a secondary, any `-` should be replaced with `_` as the names are altered when pulled from the cloud provider.
+  - `geo_secondary_site_name` - This is will be used to identify the sites in the Geo Settings UI. This can be set to any string value.
 
 For Cloud Native Hybrid environments you will need to add some more Geo specific variables:
 
-- `cloud_native_hybrid_geo`: This need to be set to `true` in all inventories used for a cloud native hybrid instance.
-- `cloud_native_hybrid_geo_role`: Should be set to `primary` or `secondary` depending on the inventory.
+- `cloud_native_hybrid_geo` - This need to be set to `true` in all inventories used for a cloud native hybrid instance.
+- `cloud_native_hybrid_geo_role` - Should be set to `primary` or `secondary` depending on the inventory.
 - For the below variables, only one version of each variable needs to be set depending on the sites role.
-  - `geo_primary_site_prefix`/`geo_secondary_site_prefix`: Set the prefix used for the current site.
-  - `geo_primary_site_gcp_project`/`geo_secondary_site_gcp_project`: **GCP only** The name of the GCP project.
-  - `geo_primary_site_gcp_zone`/`geo_secondary_site_gcp_zone`: **GCP only** The zone used for this site.
-  - `geo_primary_site_aws_region`/`geo_secondary_site_aws_region`: **AWS only** The region used in AWS.
+  - `geo_primary_site_prefix`/`geo_secondary_site_prefix` - Set the prefix used for the current site.
+  - `geo_primary_site_gcp_project`/`geo_secondary_site_gcp_project` - **GCP only** The name of the GCP project.
+  - `geo_primary_site_gcp_zone`/`geo_secondary_site_gcp_zone` - **GCP only** The zone used for this site.
+  - `geo_primary_site_aws_region`/`geo_secondary_site_aws_region` - **AWS only** The region used in AWS.
 
 Once done we can then run the command `ansible-playbook -i environments/my-geo-deployment/<secondary>/inventory -i environments/my-geo-deployment/<primary>/inventory playbooks/gitlab_geo.yml`.
 
-:information_source:&nbsp; It should be noted, when passing in multiple inventories the second inventory's variables will take precedence over the first. As such the secondary site should be passed first and then the primary.
+:information_source:&nbsp; It should be noted, when passing in multiple inventories the second inventory's variables will take precedence over the first.
 
 Once complete the 2 sites will now be part of the same Geo deployment.
 
 :information_source:&nbsp; When setting up multiple Geo secondaries you will need to rerun the above command replacing the secondary path for each secondary inventory. After the first run the primary will be setup and its tasks can be skipped for each consecutive secondary with the following command `ansible-playbook -i environments/my-geo-deployment/<secondary>/inventory -i environments/my-geo-deployment/<primary>/inventory playbooks/gitlab-geo.yml -t secondary`. Each consecutive site can also be added in parallel by running the command from multiple terminals.
 
-## Geo Proxying for Secondary Sites
+## Geo Proxying for Secondary Sites with a Unified URL
 
 > The Geo Proxying for Secondary Sites is only available for deployments using GitLab versions 14.6 or above.
 
@@ -298,12 +299,13 @@ To use a single unified URL to access the primary and secondary sites with the T
 
 ```yaml
 external_url: "<Unified URL>"
-secondary_external_url: "<Unified URL>"
+geo_primary_external_url: "<Unified URL>"
+geo_secondary_external_url: "<Unified URL>"
 geo_primary_internal_url: "<Primary URL>"
 geo_secondary_internal_url: "<Secondary URL>"
 ```
 
-Although not required, if you want to disable the Geo proxying feature you can set `geo_disable_secondary_proxying: true` in both your primary and secondary inventories. This doesn't need to be disabled if you're not planning on using secondary proxying, this only needs to be set if you want to disable the feature entirely.
+Although not required, if you want to disable the Geo proxying feature you can set `geo_disable_secondary_proxying: true` in both your primary and secondary inventories.
 
 ## Failover and Recovery
 

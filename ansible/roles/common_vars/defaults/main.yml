@@ -341,6 +341,9 @@ monitor_custom_files_paths: []
 ## GitLab Geo Settings
 ################################################################################
 
+geo_primary_external_url: "{{ external_url }}"
+geo_secondary_external_url: "{{ secondary_external_url if secondary_external_url is defined }}"
+
 geo_primary_site_group_name: "geo_primary_site"
 geo_secondary_site_group_name: "geo_secondary_site"
 
