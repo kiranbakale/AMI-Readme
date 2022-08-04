@@ -17,7 +17,7 @@
 
 When discussing upgrades there's not only the Environment to consider but also the Toolkit itself.
 
-On this page we'll detail how both work. **It's worth noting this guide is supplementary to the rest of the docs and it will assume this throughout.**
+On this page we'll detail how both work. **It's worth noting this guide is supplementary to the rest of the docs, and it will assume this throughout.**
 
 [[_TOC_]]
 
@@ -37,13 +37,13 @@ This is done simply by running `terraform plan`.
 
 Once completed the output will show what actions are to be performed. If any actions are listed to be performed, especially destroy actions, we recommend checking these against the [release notes](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/releases) where these should be called out to ensure they are intended. If any of the actions look suspect please reach out to us via the [issue tracker](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues) or via the standard [support channels](https://about.gitlab.com/support/).
 
-This is recommended as certain infrastructure changes can trigger large destroy actions that in turn can lead to the loss of the environment and data. While this is behavior from the cloud providers, every effort is made with the Toolkit to ensure this is avoided but since the consequences can be significant it's always best to do the dry run as described above out an abundance of caution.
+This is recommended as certain infrastructure changes can trigger large destroy actions that in turn can lead to the loss of the environment and data. While this is behaviour from the cloud providers, every effort is made with the Toolkit to ensure this is avoided but since the consequences can be significant it's always best to do the dry run as described above out an abundance of caution.
 
-In addition to this we'll endeavor to call out any config options that if changed could also lead to the above.
+In addition to this we'll endeavour to call out any config options that if changed could also lead to the above.
 
 ### Avoid automated Toolkit updates and Terraform Auto Approve together
 
-With the above considerations it's worth calling out specifically that you should avoid automated Toolkit updates along with using the Terraform `--auto-approve` behavior together. This option, available with various Terraform commands such as `terraform apply`, instructs Terraform to make all changes without confirmation.
+With the above considerations it's worth calling out specifically that you should avoid automated Toolkit updates along with using the Terraform `--auto-approve` behaviour together. This option, available with various Terraform commands such as `terraform apply`, instructs Terraform to make all changes without confirmation.
 
 This recommendation is especially so with Production instances. If you're using the Toolkit with non production instances where a risk of data loss is acceptable then the above combination may be desirable.
 
@@ -53,19 +53,21 @@ The Toolkit fully supports handling GitLab upgrades for your environment - with 
 
 By design the Toolkit will perform upgrades much in the same way as the first build - any _provisioning_ changes are handled by Terraform and _configuration_ changes handled by Ansible.
 
-Typically this should be seamless and running the same commands just as you did in the main runs should only be required to perform any GitLab upgrades but be aware of the guidance below as applicable.
+Typically, this should be seamless and running the same commands just as you did in the main runs should only be required to perform any GitLab upgrades but be aware of the guidance below as applicable.
 
 ### Follow GitLab Upgrade Paths
 
 The Toolkit by default will always attempt to install the latest GitLab version unless [configured differently](environment_configure.md#gitlab-version).
 
-However the [standard GitLab Upgrade rules still apply](https://docs.gitlab.com/ee/update/#upgrade-paths) when upgrading across multiple GitLab versions. You should refer to the docs to ensure the intended upgrade can be performed directly or if you need to upgrade to a certain version first.
+However, the [standard GitLab Upgrade rules still apply](https://docs.gitlab.com/ee/update/#upgrade-paths) when upgrading across multiple GitLab versions. You should refer to the docs to ensure the intended upgrade can be performed directly or if you need to upgrade to a certain version first.
 
 ### Zero Downtime Updates
 
 For Zero Downtime Updates, the toolkit follows the [GitLab documented process](https://docs.gitlab.com/omnibus/update/README.html#zero-downtime-updates) and as such the documentation should be read and understood before proceeding with an update.
 
-:information_source:&nbsp; As with any update process there may rarely be times where a small number of requests fail when the update is in progress. For example, when updating a primary node it can take up to a few seconds for a new leader to be elected.
+:information_source:&nbsp; As with any update process there may rarely be times when a few requests fail when the update is in progress. For example, when updating a primary node it can take up to a few seconds for a new leader to be elected.
+
+:information_source:&nbsp; Note that Zero Downtime Updates are **not available** for Cloud Native Hybrid environments as they aren't supported in the [GitLab Charts](https://docs.gitlab.com/charts/installation/upgrade.html).
 
 Running the zero downtime update process with GET is done in the same way as building the initial environment but with a different playbook instead:
 
@@ -81,7 +83,7 @@ Running the zero downtime update process with GET is done in the same way as bui
 :information_source:&nbsp; This will cause downtime due to GET only using a single Praefect Postgres node.
   If you want to have a highly available setup, Praefect requires a third-party PostgreSQL database and will need to be updated manually.
 
-The update process can take a couple of hours to complete and the full runtime will depend on the number of nodes in the deployment.
+The update process can take a couple of hours to complete, and the full runtime will depend on the number of nodes in the deployment.
 
 ## OS Upgrades
 
