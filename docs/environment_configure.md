@@ -386,6 +386,8 @@ There are [various variables available](#full-config-list-and-further-examples) 
 
 By default the Toolkit will deploy the latest [GitLab EE package](https://packages.gitlab.com/gitlab/gitlab-ee) via its repo.
 
+However, the [standard GitLab Upgrade rules still apply](https://docs.gitlab.com/ee/update/#upgrade-paths) when upgrading across multiple GitLab versions. You should refer to the docs to ensure the intended upgrade can be performed directly or if you need to upgrade to a certain version first.
+
 The Toolkit can install other GitLab versions from `13.2.0` onwards through two different methods:
 
 - The Toolkit can be configured to install a specific GitLab version via the `gitlab_version` inventory variable. This should be set to the full semantic version, e.g. `14.0.0`. If left unset (the default) the Toolkit will look to install the latest version.

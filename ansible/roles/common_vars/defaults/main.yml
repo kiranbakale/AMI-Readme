@@ -67,6 +67,7 @@ internal_lb_host: "{{ haproxy_internal_int_addr }}"
 prefix: ''
 omnibus_node: true
 
+## When setting a specific version for upgrading to, review [standard GitLab Upgrade rules still apply](https://docs.gitlab.com/ee/update/#upgrade-paths)
 gitlab_version: ""
 ## Alternatively set to "gitlab-ce" to install the Community Edition
 gitlab_edition: "gitlab-ee"
