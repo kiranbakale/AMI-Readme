@@ -111,16 +111,16 @@
 
     - name: Set Webservice CPU and memory resources
       set_fact:
-        # Configure larger amount of workers for hybrid environments bigger than 2k based on available CPUs
-        webservice_requests_cpu: "{{ gitlab_charts_webservice_requests_cpu if gitaly_cpus | int >= 48 else 2 }}"
-        webservice_requests_memory_gb: "{{ gitlab_charts_webservice_requests_memory_gb if gitaly_cpus | int >= 48 else 2.5 }}"
-        webservice_limits_memory_gb: "{{ gitlab_charts_webservice_limits_memory_gb if gitaly_cpus | int >= 48 else 2.6 }}"
+        # Configure lower amount of workers for smaller hybrid environments (2k or smaller) based on available CPUs
+        webservice_requests_cpu: "{{ gitlab_charts_webservice_requests_cpu if gitaly_cpus | int >= 12 else (gitlab_charts_webservice_requests_cpu / 2 | round | int) }}"
+        webservice_requests_memory_gb: "{{ gitlab_charts_webservice_requests_memory_gb if gitaly_cpus | int >= 12 else (gitlab_charts_webservice_requests_memory_gb / 2 | round(1, 'floor')) }}"
+        webservice_limits_memory_gb: "{{ gitlab_charts_webservice_limits_memory_gb if gitaly_cpus | int >= 12 else (gitlab_charts_webservice_limits_memory_gb / 2 | round(1, 'floor')) }}"
 
     - name: Set Pod Counts
       set_fact:
-        # Calculate maximum pod count by scaling to Gitaly CPU count
-        webservice_pods: "{{ (gitaly_cpus | int / 2.4) | round | int }}"
-        sidekiq_pods: "{{ (gitaly_cpus | int / 3.4) | round | int if gitaly_cpus | int <= 48 else 14 }}"
+        # Calculate maximum pod count by matching Gitaly CPU count to RA sizes or best effort if no matches
+        webservice_replicas: "{{ webservice_default_replica_counts[gitaly_cpus] | default((gitaly_cpus | int / 2.4) | round | int, 'true') }}"
+        sidekiq_replicas: "{{ sidekiq_default_replica_counts[gitaly_cpus] | default(14 if gitaly_cpus | int >= 48 else (8 if gitaly_cpus | int >= 12 else 2), 'true') }}"
 
     - name: Show calculated numbers for charts
       debug:
@@ -135,8 +135,8 @@
           sidekiq_requests_memory_gb: {{ gitlab_charts_sidekiq_requests_memory_gb }}
           sidekiq_limits_memory_gb: {{ gitlab_charts_sidekiq_limits_memory_gb }}
 
-          webservice_pods: {{ webservice_pods }}
-          sidekiq_pods: {{ sidekiq_pods }}
+          webservice_replicas: {{ webservice_replicas }}
+          sidekiq_replicas: {{ sidekiq_replicas }}
       when: gitlab_charts_show_values
   tags:
     - reconfigure
