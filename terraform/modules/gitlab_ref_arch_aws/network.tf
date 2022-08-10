@@ -56,6 +56,10 @@ resource "aws_subnet" "gitlab_vpc_sn_pub" {
   availability_zone       = element(local.zones, count.index)
   map_public_ip_on_launch = true
 
+  # Workaround for https://github.com/hashicorp/terraform-provider-aws/issues/10329
+  timeouts {
+    delete = "30m"
+  }
   tags = {
     Name                     = "${var.prefix}-sub-pub-${count.index + 1}"
     "kubernetes.io/role/elb" = 1
@@ -109,6 +113,10 @@ resource "aws_subnet" "gitlab_vpc_sn_priv" {
   cidr_block        = var.subnet_priv_cidr_block[count.index]
   availability_zone = element(local.zones, count.index)
 
+  # Workaround for https://github.com/hashicorp/terraform-provider-aws/issues/10329
+  timeouts {
+    delete = "30m"
+  }
   tags = {
     Name                              = "${var.prefix}-sub-priv-${count.index + 1}"
     "kubernetes.io/role/internal-elb" = 1
