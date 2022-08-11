@@ -4,12 +4,13 @@
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
+- [GitLab Environment Toolkit - Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
+- [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - SSL](environment_advanced_ssl.md)
 - [GitLab Environment Toolkit - Advanced - Network Setup](environment_advanced_network.md)
-- [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
-- [GitLab Environment Toolkit - Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search and more](environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Monitoring](environment_advanced_monitoring.md)
 - [GitLab Environment Toolkit - Upgrades (Toolkit, Environment)](environment_upgrades.md)
 - [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [**GitLab Environment Toolkit - Considerations After Deployment - Backups, Security**](environment_post_considerations.md)
@@ -39,3 +40,17 @@ Security is a significant area and typically is very dependent on your specific 
 As a general rule the Toolkit will look to use reasonable setup practices in relation to security but it's **strongly** recommended that you undertake a full review of the environment's setup to ensure it meets your requirements.
 
 In addition to this we have [further documentation on various practices that apply to any GitLab environment that you may also want to consider](https://docs.gitlab.com/ee/security/index.html#securing-your-gitlab-installation).
+
+## Monitoring
+
+[The Toolkit does optionally provide a monitoring stack based on Prometheus and Grafana](environment_advanced_monitoring.md).
+
+However, do note this is optional and not required to be used. You can use a separate monitoring stack as desired and the Toolkit aims to provide reasonable hooks for this such as [Custom Tasks](environment_advanced.md#custom-tasks) or [Custom Files](environment_advanced.md#custom-files).
+
+### Logging
+
+By default, the Toolkit doesn't configure any additional logging monitoring outside what's provided by default in Omnibus, Kubernetes and the respective Cloud Providers.
+
+This is due to there being various logging strategies that are available for you to consider based on requirements and cost that's best handled directly.
+
+However, the Toolkit does aim to provide reasonable hooks for you to set up whatever log monitoring as desired such as [Custom Tasks](environment_advanced.md#custom-tasks) or [Custom Files](environment_advanced.md#custom-files).

@@ -17,3 +17,4 @@ skip_list:
   - package-latest
   - fqcn-builtins
   - var-spacing  # https://github.com/ansible/ansible-lint/issues/2209
+  - no-handler # Tasks that run when changed should likely be handlers

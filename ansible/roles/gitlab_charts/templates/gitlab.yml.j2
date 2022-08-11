@@ -24,12 +24,14 @@ gitlab:
       proxyBodySize: 0  # Bigger file uploads, e.g. imports
     nodeSelector:
       workload: webservice
-    monitoring:
-      exporter:
+    metrics:
+      enabled: true
+      serviceMonitor:
         enabled: true
     workhorse:
-      monitoring:
-        exporter:
+      metrics:
+        enabled: true
+        serviceMonitor:
           enabled: true
 # Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
 {% if not (cloud_provider == 'aws' and external_url_ssl and external_ssl_source != '') %}
@@ -53,6 +55,10 @@ gitlab:
       requests:
         cpu: "{{ gitlab_charts_sidekiq_requests_cpu }}"
         memory: "{{ gitlab_charts_sidekiq_requests_memory_gb }}G"
+    metrics:
+      enabled: true
+      podMonitor:
+        enabled: true
     nodeSelector:
       workload: sidekiq
 # Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
@@ -64,7 +70,7 @@ gitlab:
 {% if cloud_provider != 'none' %}
     backups:
       objectStorage:
-        {{ lookup('template', 'task_runner_backups_object_storage.' + cloud_provider + '.yml.j2') | indent(width=8) }}
+        {{ lookup('template', 'object_storage/task_runner_backups_object_storage.' + cloud_provider + '.yml.j2') | indent(width=8) }}
 {% endif %}
 # Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
 {% if not (cloud_provider == 'aws' and external_url_ssl and external_ssl_source != '') %}
@@ -82,6 +88,16 @@ gitlab:
       username: "{{ postgres_username }}"
       database: "{{ postgres_database_name }}"
 {% endif %}
+  gitlab-exporter:
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+  kas:
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
 
 global:
   # Deploy pods to Supporting node pool by default unless otherwise configured
@@ -115,13 +131,13 @@ global:
   initialRootPassword:
     secret: gitlab-initial-root-password
     key: password
+  railsSecrets:
+    secret: gitlab-rails-secrets
   shell:
     port: {{ gitlab_charts_shell_ssh_port }}
     authToken:
       secret: gitlab-shell-token
       key: password
-  railsSecrets:
-    secret: gitlab-rails-secrets
   gitaly:
 {% if 'praefect' in groups %}
     authToken:
@@ -162,16 +178,14 @@ global:
 {% endif %}
 {% endfor %}
 {% endif %}
-  grafana:
-    enabled: true
   hosts:
 {% if cloud_provider != 'aws' %}
     externalIP: "{{ external_ip }}"
 {% endif %}
-    domain: "{{ external_url | regex_replace('^https?:\/\/') }}"
+    domain: "{{ external_host }}"
     https: {{ external_url_ssl | lower }}
     gitlab:
-      name: "{{ external_url | regex_replace('^https?:\/\/') }}"
+      name: "{{ external_host }}"
   ingress:
 {% if external_url_ssl and external_ssl_source == 'letsencrypt' %}
     configureCertmanager: true
@@ -302,28 +316,22 @@ global:
         key: password
 {% endif %}
 
-# Run Prometheus
-prometheus:
-  install: true
-  alertmanager:
-    nodeSelector:
-      workload: "support"
-  kubeStateMetrics:
-    nodeSelector:
-      workload: "support"
-  nodeExporter:
-    nodeSelector:
-      workload: "support"
-  pushgateway:
-    nodeSelector:
-      workload: "support"
-  server:
-    nodeSelector:
-      workload: "support"
-
-grafana:
-  nodeSelector:
-    workload: "support"
+nginx-ingress:
+  controller:
+    scope:
+      enabled: false
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+{% if aws_allocation_ids != "" %}
+    service:
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-type: nlb
+        service.beta.kubernetes.io/aws-load-balancer-eip-allocations: "{{ aws_allocation_ids | replace(' ', '') }}"
+        service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+        service.beta.kubernetes.io/aws-load-balancer-target-node-labels: workload=support
+{% endif %}
 
 {% if external_url_ssl and external_ssl_source == 'letsencrypt' %}
 certmanager:
@@ -333,21 +341,6 @@ certmanager-issuer:
 {% else %}
 certmanager:
   install: false
-{% endif %}
-
-# https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
-gitlab-runner:
-  install: false
-
-{% if aws_allocation_ids != "" %}
-nginx-ingress:
-  controller:
-    service:
-      annotations:
-        service.beta.kubernetes.io/aws-load-balancer-type: nlb
-        service.beta.kubernetes.io/aws-load-balancer-eip-allocations: "{{ aws_allocation_ids | replace(' ', '') }}"
-        service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
-        service.beta.kubernetes.io/aws-load-balancer-target-node-labels: workload=support
 {% endif %}
 
 # Run outside of cluster
@@ -362,4 +355,9 @@ registry:
   enabled: false
 {% endif %}
 postgresql:
+  install: false
+prometheus:
+  install: false
+# https://docs.gitlab.com/ee/ci/runners/#configuring-runners-in-gitlab
+gitlab-runner:
   install: false

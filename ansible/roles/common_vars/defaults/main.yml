@@ -150,6 +150,7 @@ postgres_trust_auth_cidr_blocks: ['0.0.0.0/0']
 postgres_md5_auth_cidr_blocks: ['0.0.0.0/0']
 
 # Gitaly
+gitaly_int_addrs: "{{ (groups['gitaly'] | map('extract', hostvars, internal_addr_lookup) | list) if 'gitaly' in groups else [] }}"
 gitaly_primary_int_addr: "{{ (groups['gitaly_primary'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'gitaly_primary' in groups else '' }}"
 gitaly_secondary_int_addrs: "{{ (groups['gitaly_secondary'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'gitaly_secondary' in groups else [] }}"
 gitaly_callback_internal_api_url: "{{ ('http://' + internal_lb_host) if 'haproxy_internal' in groups and 'gitlab_rails' in groups else external_url_sanitised }}"
@@ -256,19 +257,22 @@ jaeger_int_addr: "{{ (groups['jaeger'] | sort | map('extract', hostvars, interna
 ################################################################################
 
 cloud_native_hybrid_environment: false
-cloud_native_hybrid_geo: false
-secondary_cloud_native_hybrid_geo: "{{ cloud_native_hybrid_geo and geo_secondary_site_group_name + '_gitlab_rails_primary' not in groups }}"
-cloud_native_hybrid_geo_role: ""
-## Node Cluster Autoscaler setup (AWS)
+
+cloud_native_hybrid_monitoring_setup: false
 cloud_native_hybrid_cluster_autoscaler_setup: false
 kubeconfig_setup: false
 
+# Geo
+cloud_native_hybrid_geo: false
+secondary_cloud_native_hybrid_geo: "{{ cloud_native_hybrid_geo and geo_secondary_site_group_name + '_gitlab_rails_primary' not in groups }}"
+cloud_native_hybrid_geo_role: ""
+
+# Charts Settings
+## GitLab
 gitlab_charts_release_namespace: default
 gitlab_charts_shell_ssh_port: "{{ gitlab_shell_ssh_port if gitlab_shell_ssh_port != '2222' else '22' }}"
 
-use_iam_profile: true
-
-## Webservice
+### Webservice
 gitlab_charts_webservice_requests_memory_gb: 5
 gitlab_charts_webservice_limits_memory_gb: 5.25
 gitlab_charts_webservice_requests_cpu: 4
@@ -276,13 +280,22 @@ gitlab_charts_webservice_min_replicas_scaler: 0.75
 gitlab_charts_webservice_max_replicas: ""
 gitlab_charts_webservice_min_replicas: ""
 
-## Sidekiq
+### Sidekiq
 gitlab_charts_sidekiq_requests_memory_gb: 2
 gitlab_charts_sidekiq_limits_memory_gb: 4
 gitlab_charts_sidekiq_requests_cpu: 0.9
 gitlab_charts_sidekiq_min_replicas_scaler: 0.75
 gitlab_charts_sidekiq_max_replicas: ""
 gitlab_charts_sidekiq_min_replicas: ""
+
+## Kube Prometheus Stack
+kube_prometheus_stack_charts_namespace: monitoring
+kube_prometheus_stack_charts_storage_size: 100Gi
+kube_prometheus_stack_charts_storage_class: ""
+kube_prometheus_stack_charts_app_version: "0.57.0"
+
+consul_charts_namespace: consul
+consul_charts_app_version: "1.12.3"
 
 ################################################################################
 ## GitLab Component Custom Config / Tasks / Files
