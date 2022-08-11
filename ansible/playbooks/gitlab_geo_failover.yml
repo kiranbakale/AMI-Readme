@@ -1,12 +1,29 @@
 ---
 - hosts: all:!gitlab_cluster:!ungrouped
   become: true
+  any_errors_fatal: false
+  ignore_unreachable: true
+  ignore_errors: true
+  no_log: true
 
   roles:
     - common_vars
 
   tasks:
-    - name: Run GitLab Geo Failover
+    - name: Geo Failover - Disable primary site
       import_role:
         name: gitlab_geo
-        tasks_from: failover
+        tasks_from: failover-disable-primary
+
+- hosts: all:!gitlab_cluster:!ungrouped
+  become: true
+  ignore_unreachable: true
+
+  roles:
+    - common_vars
+
+  tasks:
+    - name: Geo Failover - Promote secondary site
+      import_role:
+        name: gitlab_geo
+        tasks_from: failover-promote-secondary

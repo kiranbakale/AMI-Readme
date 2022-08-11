@@ -1,9 +1,12 @@
-- name: Maintenance Mode - Enable Maintenance Mode for Omnibus environments
+- name: Maintenance Mode - Set Maintenance Mode to {{ maintenance_mode_state }} for Omnibus environments
   command: |
     gitlab-rails runner "::Gitlab::CurrentSettings.update!(maintenance_mode: {{ maintenance_mode_state | lower }}, maintenance_mode_message: \"{{ maintenance_mode_message }}\")"
-  when:
-    - (site_group_name in group_names)
-    - ('gitlab_rails_primary' in group_names)
+  with_inventory_hostnames:
+    - gitlab_rails_primary:gitlab_rails_secondary:{{ site_group_name }}
+  delegate_to: "{{ item }}"
+  register: result
+  when: (result.rc | default(1)) != 0 # Keep going until the command is successful on any node
+  run_once: true
 
 - name: Maintenance mode - Enable Maintenance Mode and Set Message for Cloud Native Hybrid environments
   block:
@@ -22,6 +25,7 @@
       become: false
       delegate_to: localhost
       run_once: true
+      ignore_errors: "{{ maintenance_mode_state | lower }}"
       kubernetes.core.k8s_exec:
         pod: "{{ task_runner_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
