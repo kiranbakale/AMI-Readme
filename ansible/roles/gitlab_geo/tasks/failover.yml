@@ -1,3 +1,17 @@
+- name: Enable Maintenance Mode
+  import_tasks: maintenance-mode.yml
+  vars:
+    maintenance_mode_state: true
+    site_group_name: "{{ geo_primary_site_group_name }}"
+    site_prefix: "{{ geo_primary_site_prefix }}"
+    site_gcp_project: "{{ geo_primary_site_gcp_project if cloud_provider == 'gcp' else '' }}"
+    site_gcp_zone: "{{ geo_primary_site_gcp_zone if cloud_provider == 'gcp' else '' }}"
+    site_aws_region: "{{ geo_primary_site_aws_region if cloud_provider == 'aws' else '' }}"
+  tags:
+    - maintenance-mode
+    - maintenance-mode-enable
+    - disable-primary
+
 - name: Disable Primary Site Omnibus nodes
   block:
     - name: Stop Primary Site
@@ -7,6 +21,7 @@
       service:
         name: gitlab-runsvdir
         enabled: false
+  tags: disable-primary
   when:
     - omnibus_node
     - (geo_primary_site_group_name in group_names)
@@ -39,20 +54,23 @@
       delegate_to: localhost
       run_once: true
       kubernetes.core.k8s_scale:
-        name: gitlab-sidekiq-all-in-1-v1
+        name: gitlab-sidekiq-all-in-1-v2
         kind: Deployment
         namespace: "{{ gitlab_charts_release_namespace }}"
         replicas: 0
+  tags: disable-primary
   when: cloud_native_hybrid_geo
 
 - name: Promote Secondary Site Postgres, Sidekiq, and Gitaly Omnibus nodes
   command: gitlab-ctl geo promote -f
+  tags: promote-secondary
   when:
     - ('postgres' in group_names or 'sidekiq' in group_names or 'gitaly' in group_names)
     - (geo_secondary_site_group_name in group_names)
 
 - name: Promote GitLab Rails nodes for Omnibus environments
   command: gitlab-ctl geo promote -f
+  tags: promote-secondary
   when:
     - ('gitlab_rails' in group_names)
     - (geo_secondary_site_group_name in group_names)
@@ -120,6 +138,21 @@
         chart_version: "{{ gitlab_charts_version | default(None) }}"
         update_repo_cache: true
         release_namespace: "{{ gitlab_charts_release_namespace }}"
-        force: true
         values: "{{ gitlab_values }}"
+  tags: promote-secondary
   when: cloud_native_hybrid_geo
+
+- name: Disable Maintenance Mode
+  import_tasks: maintenance-mode.yml
+  vars:
+    maintenance_mode_state: false
+    maintenance_mode_message: "GitLab is undergoing maintenance"
+    site_group_name: "{{ geo_secondary_site_group_name }}"
+    site_prefix: "{{ geo_secondary_site_prefix }}"
+    site_gcp_project: "{{ geo_secondary_site_gcp_project if cloud_provider == 'gcp' else '' }}"
+    site_gcp_zone: "{{ geo_secondary_site_gcp_zone if cloud_provider == 'gcp' else '' }}"
+    site_aws_region: "{{ geo_secondary_site_aws_region if cloud_provider == 'aws' else '' }}"
+  tags:
+    - maintenance-mode
+    - maintenance-mode-disable
+    - promote-secondary
