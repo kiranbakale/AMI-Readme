@@ -1,3 +1,17 @@
+- name: Enable Maintenance Mode
+  import_tasks: maintenance-mode.yml
+  vars:
+    maintenance_mode_state: true
+    site_group_name: "{{ geo_primary_site_group_name }}"
+    site_prefix: "{{ geo_primary_site_prefix }}"
+    site_gcp_project: "{{ geo_primary_site_gcp_project if cloud_provider == 'gcp' else '' }}"
+    site_gcp_zone: "{{ geo_primary_site_gcp_zone if cloud_provider == 'gcp' else '' }}"
+    site_aws_region: "{{ geo_primary_site_aws_region if cloud_provider == 'aws' else '' }}"
+  tags:
+    - maintenance-mode
+    - maintenance-mode-enable
+    - disable-primary
+
 - name: Delete Geo config
   block:
     - name: Find Geo config files
@@ -37,3 +51,18 @@
   vars:
     geo_recovery: true
   import_tasks: main.yml
+
+- name: Disable Maintenance Mode
+  import_tasks: maintenance-mode.yml
+  vars:
+    maintenance_mode_state: false
+    maintenance_mode_message: "GitLab is undergoing maintenance"
+    site_group_name: "{{ geo_secondary_site_group_name }}"
+    site_prefix: "{{ geo_secondary_site_prefix }}"
+    site_gcp_project: "{{ geo_secondary_site_gcp_project if cloud_provider == 'gcp' else '' }}"
+    site_gcp_zone: "{{ geo_secondary_site_gcp_zone if cloud_provider == 'gcp' else '' }}"
+    site_aws_region: "{{ geo_secondary_site_aws_region if cloud_provider == 'aws' else '' }}"
+  tags:
+    - maintenance-mode
+    - maintenance-mode-disable
+    - promote-secondary

@@ -342,6 +342,8 @@ monitor_custom_files_paths: []
 ## GitLab Geo Settings
 ################################################################################
 
+maintenance_mode_message: "GitLab is undergoing maintenance"
+
 geo_primary_external_url: "{{ external_url }}"
 geo_secondary_external_url: "{{ secondary_external_url if secondary_external_url is defined }}"
 

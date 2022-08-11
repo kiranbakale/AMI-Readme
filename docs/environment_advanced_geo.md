@@ -309,6 +309,12 @@ Although not required, if you want to disable the Geo proxying feature you can s
 
 ## Failover and Recovery
 
+Before starting the failover or recovery process, the Toolkit will enable [Maintenance Mode](https://docs.gitlab.com/ee/administration/maintenance_mode/index.html). When enabling maintenance mode, a message can be set that will appear in a banner at the top of the site.
+
+- `maintenance_mode_message` - Sets the message to be displayed in a banner at the top of the page. Defaults to "GitLab is undergoing maintenance".
+
+After the failover or recovery process has completed, maintenance mode will be disabled.
+
 ### Failover
 
 > The Toolkit automated Geo failover process is available for Geo deployments running GitLab versions 14.2 or above.
