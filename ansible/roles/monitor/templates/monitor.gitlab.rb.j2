@@ -24,7 +24,9 @@ prometheus['scrape_configs'] = [
 {% for ip in elastic_int_addrs %}
         "{{ ip }}:9100",
 {% endfor %}
+{% if 'gitlab_nfs' in groups %}
         "{{ gitlab_nfs_int_addr }}:9100"
+{% endif %}
       ],
     ],
   },
