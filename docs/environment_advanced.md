@@ -126,23 +126,6 @@ gitaly_custom_files_paths: [
 
 With the above done the files will be copied by the Toolkit.
 
-### Custom Grafana Dashboards
-
-When using the Toolkit it is possible to copy custom dashboards during setup to be used in Grafana.
-
-By default we recommend storing any custom dashboards alongside your Ansible inventory in `environments/<inventory name>/files/grafana/<collection name>/<dashboard files>`. You can create multiple folders to store different dashboards or store everything in a single folder. If you want to store your custom dashboards in a folder other than `environments/<inventory name>/files/grafana/` then you can set the variable `monitor_custom_dashboards_path` to point to your custom location.
-
-Once the dashboards are in place you can add the `monitor_custom_dashboards` variable into your [`vars.yml`](environment_configure.md#environment-config-varsyml) file.
-
-```yaml
-monitor_custom_dashboards: [{ display_name: 'Sidekiq Dashboards', folder: "my_sidekiq_dashboards" }, { display_name: 'Gitaly Dashboards', folder: "my_gitaly_dashboards" }]
-```
-
-- `display_name`: This is how the collection will appear in the Grafana UI and the name of the folder the dashboards will be stored in on the Grafana server.
-- `folder`: This is the name of the folder in `monitor_custom_dashboards_path` that holds your collection of dashboards.
-
-To configure custom [Prometheus scape configs](https://docs.gitlab.com/ee/administration/monitoring/prometheus/#adding-custom-scrape-configurations) provide your configuration using `monitor_custom_prometheus_scrape_config` variable.
-
 ## Data Disks (GCP, AWS)
 
 The Toolkit supports provisioning and configuring extra disks, AKA data disks, for each group of machines (i.e. for all Gitaly nodes). With this set up you can have additional disk volumes mounted for storing data for added resilience and flexibility.

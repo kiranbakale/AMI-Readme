@@ -1,0 +1,129 @@
+---
+prometheus:
+  enabled: true
+  prometheusSpec:
+    replicas: 1
+    walCompression: true
+    nodeSelector:
+      workload: support
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+{% if kube_prometheus_stack_charts_storage_class != '' %}
+          storageClassName: "{{ kube_prometheus_stack_charts_storage_class }}"
+{% endif %}
+          resources:
+            requests:
+              storage: "{{ kube_prometheus_stack_charts_storage_size }}"
+    scrapeInterval: 15s
+    scrapeTimeout: 15s
+    evaluationInterval: 1m
+    retention: 30d
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+    additionalScrapeConfigs:
+      - job_name: node
+        consul_sd_configs:
+          - server: "gitlab-consul.{{ consul_charts_namespace }}.svc.cluster.local:8500"
+            services:
+              - node-exporter
+{% if 'gitaly' in groups %}
+      - job_name: gitaly
+        consul_sd_configs:
+          - server: "gitlab-consul.{{ consul_charts_namespace }}.svc.cluster.local:8500"
+            services:
+              - gitaly
+{% endif %}
+{% if 'redis' in groups %}
+      - job_name: redis
+        consul_sd_configs:
+          - server: "gitlab-consul.{{ consul_charts_namespace }}.svc.cluster.local:8500"
+            services:
+              - redis-exporter
+{% endif %}
+{% if 'postgres' in groups %}
+      - job_name: postgres
+        consul_sd_configs:
+          - server: "gitlab-consul.{{ consul_charts_namespace }}.svc.cluster.local:8500"
+            services:
+              - postgres-exporter
+{% endif %}
+{% if 'praefect' in groups %}
+      - job_name: praefect
+        static_configs:
+          - targets:
+{% for ip in praefect_int_addrs %}
+            - "{{ ip }}:9652"
+{% endfor %}
+{% endif %}
+{% if 'pgbouncer' in groups %}
+      - job_name: pgbouncer
+        static_configs:
+          - targets:
+{% for ip in pgbouncer_int_addrs %}
+            - "{{ ip }}:9188"
+{% endfor %}
+{% endif %}
+{% if 'haproxy_internal' in groups or 'elastic' in groups %}
+      - job_name: non_omnibus_node
+        static_configs:
+          - targets:
+{% for ip in [haproxy_internal_int_addr] + elastic_int_addrs %}
+            - "{{ ip }}:9100"
+{% endfor %}
+{% endif %}
+{% if 'haproxy_internal' in groups %}
+      - job_name: haproxy
+        static_configs:
+          - targets:
+            - "{{ haproxy_internal_int_addr }}:1936"
+{% endif %}
+
+grafana:
+  enabled: true
+  admin:
+    existingSecret: gitlab-grafana-initial-password
+    userKey: username
+    passwordKey: password
+  ingress:
+    enabled: true
+    ingressClassName: 'gitlab-nginx'
+    hosts: ["{{ external_host }}"]
+    path: '/-/grafana'
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: '0'  # Disables client body size limit, needed for Grafana dashboard exports
+  grafana.ini:
+    server:
+      domain: "{{ external_host }}"
+      root_url: "{{ external_url}}/-/grafana"
+      serve_from_sub_path: true
+    auth:
+      login_cookie_name: gitlab_grafana_session
+  defaultDashboardsEnabled: false
+  sidecar:
+    dashboards:
+      enabled: true
+      label: gitlab_grafana_dashboard
+      labelValue: "true"
+      folderAnnotation: gitlab_grafana_folder
+      provider:
+        foldersFromFilesStructure: true
+
+{% if cloud_provider == 'gcp' %}
+coreDns:
+  enabled: false
+kubeDns:
+  enabled: true
+{% endif %}
+
+# Alertmanager
+alertmanager:
+  enabled: false
+defaultRules:
+  create: false
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
