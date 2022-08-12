@@ -41,8 +41,7 @@ repmgr['master_on_initialization'] = {{ ('postgres_primary' in group_names) | lo
 {% endif %}
 
 {% else %}
-repmgr['enable'] = false
-patroni['enable'] = false
+roles ['postgres_role', 'pgbouncer_role']
 {% endif %}
 
 {% if postgres_version is defined %}

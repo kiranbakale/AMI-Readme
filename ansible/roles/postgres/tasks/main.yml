@@ -80,28 +80,26 @@
       register: cluster_show
       ignore_errors: true
       when: postgres_replication_manager != 'patroni'
-      tags: debug
 
     - name: Debug show output of 'gitlab-ctl repmgr cluster show'
       debug:
         msg: "{{ cluster_show.stdout }}"
-      when:
-        - cluster_show.stdout is defined
-      tags: debug
+      when: cluster_show.stdout is defined
 
     - name: Debug capture output of 'gitlab-ctl patroni members'
       shell: "gitlab-ctl patroni members 2>/dev/null"
       register: patroni_members
       ignore_errors: true
       when: postgres_replication_manager == 'patroni'
-      tags: debug
 
     - name: Debug show output of 'gitlab-ctl patroni members'
       debug:
         msg: "{{ patroni_members.stdout }}"
-      when:
-        - patroni_members.stdout is defined
-      tags: debug
+      when: patroni_members.stdout is defined
+  when: groups['postgres'] | length > 1
+  tags:
+    - debug
+    - reconfigure
 
 - name: Check secondary standby status
   shell: (gitlab-ctl repmgr cluster show 2>/dev/null | grep -E 'standby \| {{ ansible_hostname }}') || echo ""

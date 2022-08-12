@@ -109,13 +109,6 @@
       set_fact:
         gitaly_cpus: "{{ groups['gitaly'] | sort | map('extract', hostvars, ['ansible_processor_vcpus']) | list | sum }}"
 
-    - name: Set Webservice CPU and memory resources
-      set_fact:
-        # Configure lower amount of workers for smaller hybrid environments (2k or smaller) based on available CPUs
-        webservice_requests_cpu: "{{ gitlab_charts_webservice_requests_cpu if gitaly_cpus | int >= 12 else (gitlab_charts_webservice_requests_cpu / 2 | round | int) }}"
-        webservice_requests_memory_gb: "{{ gitlab_charts_webservice_requests_memory_gb if gitaly_cpus | int >= 12 else (gitlab_charts_webservice_requests_memory_gb / 2 | round(1, 'floor')) }}"
-        webservice_limits_memory_gb: "{{ gitlab_charts_webservice_limits_memory_gb if gitaly_cpus | int >= 12 else (gitlab_charts_webservice_limits_memory_gb / 2 | round(1, 'floor')) }}"
-
     - name: Set Pod Counts
       set_fact:
         # Calculate maximum pod count by matching Gitaly CPU count to RA sizes or best effort if no matches
@@ -127,9 +120,9 @@
         msg: |
           gitaly_cpus: {{ gitaly_cpus }}
 
-          webservice_requests_cpu: {{ webservice_requests_cpu }}
-          webservice_requests_memory_gb: {{ webservice_requests_memory_gb }}
-          webservice_limits_memory_gb: {{ webservice_limits_memory_gb }}
+          webservice_requests_cpu: {{ gitlab_charts_webservice_requests_cpu }}
+          webservice_requests_memory_gb: {{ gitlab_charts_webservice_requests_memory_gb }}
+          webservice_limits_memory_gb: {{ gitlab_charts_webservice_limits_memory_gb }}
 
           sidekiq_requests_cpu: {{ gitlab_charts_sidekiq_requests_cpu }}
           sidekiq_requests_memory_gb: {{ gitlab_charts_sidekiq_requests_memory_gb }}
