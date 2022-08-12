@@ -15,11 +15,11 @@ gitlab:
 {% endif %}
     resources:
       limits:
-        memory: "{{ webservice_limits_memory_gb }}G"
+        memory: "{{ gitlab_charts_webservice_limits_memory_gb }}G"
       requests:
-        cpu: "{{ webservice_requests_cpu }}"
-        memory: "{{ webservice_requests_memory_gb }}G"
-    workerProcesses: "{{ webservice_requests_cpu }}"
+        cpu: "{{ gitlab_charts_webservice_requests_cpu }}"
+        memory: "{{ gitlab_charts_webservice_requests_memory_gb }}G"
+    workerProcesses: "{{ gitlab_charts_webservice_requests_cpu }}"
     ingress:
       proxyBodySize: 0  # Bigger file uploads, e.g. imports
     nodeSelector:

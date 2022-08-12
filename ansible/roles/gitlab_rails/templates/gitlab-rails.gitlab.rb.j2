@@ -176,7 +176,15 @@ sidekiq['enable'] = false
 ## Sidekiq - Local
 sidekiq['enable'] = true
 sidekiq['listen_address'] = '0.0.0.0'
-sidekiq['max_concurrency'] = 15
+sidekiq['max_concurrency'] = {{ sidekiq_max_concurrency }}
+### Sidekiq - Scale up workers dynamically to 1/4 of CPUS unless single node
+{% if 'gitaly' in groups %}
+sidekiq['queue_groups'] = [
+{% for cpu in range((ansible_processor_vcpus / 4) | int) %}
+  "*",
+{% endfor %}
+]
+{% endif %}
 {% endif %}
 
 # Postgres
