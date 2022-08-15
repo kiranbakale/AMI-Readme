@@ -94,7 +94,7 @@ output "rds_geo_tracking_postgres_connection" {
   value = {
     "rds_geo_host"              = try(aws_db_instance.gitlab_geo_tracking[0].address, "")
     "rds_geo_port"              = try(aws_db_instance.gitlab_geo_tracking[0].port, "")
-    "rds_geo_database_name"     = try(aws_db_instance.gitlab_geo_tracking[0].name, "")
+    "rds_geo_database_name"     = try(aws_db_instance.gitlab_geo_tracking[0].db_name, "")
     "rds_geo_database_username" = try(aws_db_instance.gitlab_geo_tracking[0].username, "")
     "rds_geo_database_arn"      = try(aws_db_instance.gitlab_geo_tracking[0].arn, "")
     "rds_geo_kms_key_arn"       = try(aws_db_instance.gitlab_geo_tracking[0].kms_key_id, "")

@@ -91,7 +91,7 @@ output "rds_postgres_connection" {
   value = {
     "rds_host"              = try(aws_db_instance.gitlab[0].address, "")
     "rds_port"              = try(aws_db_instance.gitlab[0].port, "")
-    "rds_database_name"     = try(aws_db_instance.gitlab[0].name, "")
+    "rds_database_name"     = try(aws_db_instance.gitlab[0].db_name, "")
     "rds_database_username" = try(aws_db_instance.gitlab[0].username, "")
     "rds_database_arn"      = try(aws_db_instance.gitlab[0].arn, "")
     "rds_kms_key_arn"       = try(aws_db_instance.gitlab[0].kms_key_id, "")
