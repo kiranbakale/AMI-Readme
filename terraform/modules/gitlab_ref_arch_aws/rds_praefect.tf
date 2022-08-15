@@ -88,7 +88,7 @@ output "rds_praefect_postgres_connection" {
   value = {
     "rds_praefect_host"              = try(aws_db_instance.gitlab_praefect[0].address, "")
     "rds_praefect_port"              = try(aws_db_instance.gitlab_praefect[0].port, "")
-    "rds_praefect_database_name"     = try(aws_db_instance.gitlab_praefect[0].name, "")
+    "rds_praefect_database_name"     = try(aws_db_instance.gitlab_praefect[0].db_name, "")
     "rds_praefect_database_username" = try(aws_db_instance.gitlab_praefect[0].username, "")
     "rds_praefect_database_arn"      = try(aws_db_instance.gitlab_praefect[0].arn, "")
     "rds_praefect_kms_key_arn"       = try(aws_db_instance.gitlab_praefect[0].kms_key_id, "")
