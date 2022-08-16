@@ -1,7 +1,7 @@
 roles:
   - cloudalchemy.node_exporter,2.0.0
   - geerlingguy.docker,4.2.2
-  - geerlingguy.swap,1.0.2
+  - geerlingguy.docker_arm,5.0.0
 
 collections:
   - google.cloud
