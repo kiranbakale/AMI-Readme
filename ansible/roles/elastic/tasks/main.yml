@@ -1,7 +1,7 @@
 ---
 - name: Configure Docker
   include_role:
-    name: geerlingguy.docker
+    name: "{{ 'geerlingguy.docker_arm' if ansible_architecture == 'aarch64' else 'geerlingguy.docker' }}"
   when: ansible_facts['distribution'] != "Amazon"
 
 - name: Configure Docker (RHEL - Amazon Linux 2)
@@ -63,45 +63,41 @@
     - reconfigure
     - restart
 
-- name: Remove old Kibana container
-  docker_container:
-    name: kibana
-    state: absent
-  when: "'elastic_primary' in group_names"
-  tags:
-    - reconfigure
-    - restart
+- name: Setup Kibana
+  block:
+    - name: Remove old Kibana container
+      docker_container:
+        name: kibana
+        state: absent
 
-- name: Start Kibana container
-  docker_container:
-    name: kibana
-    image: "{{ kibana_docker_image }}:{{ elastic_version }}"
-    pull: true
-    restart_policy: always
-    state: started
-    env:
-      SERVER_HOST: '0.0.0.0'
-      ELASTICSEARCH_HOSTS: http://127.0.0.1:9200
-    network_mode: host
-  register: result
-  retries: 2
-  delay: 5
-  until: result is success
-  when: "'elastic_primary' in group_names"
+    - name: Start Kibana container
+      docker_container:
+        name: kibana
+        image: "{{ kibana_docker_image }}:{{ elastic_version }}"
+        pull: true
+        restart_policy: always
+        state: started
+        env:
+          SERVER_HOST: '0.0.0.0'
+          ELASTICSEARCH_HOSTS: http://127.0.0.1:9200
+        network_mode: host
+      register: result
+      retries: 2
+      delay: 5
+      until: result is success
+
+    - name: Wait for Kibana container to be available
+      uri:
+        url: 'http://localhost:5601/api/status'
+        timeout: 60
+      register: result
+      until: result.status == 200
+      retries: 20
+      delay: 5
+  when:
+    - "'elastic_primary' in group_names"
+    - "ansible_architecture != 'aarch64'"  # Kibana on ARM only supported from 7.13.1+ (different license)
   tags:
     - reconfigure
     - restart
     - kibana
-
-- name: Wait for Kibana container to be available
-  uri:
-    url: 'http://localhost:5601/api/status'
-    timeout: 60
-  register: result
-  until: result.status == 200
-  retries: 20
-  delay: 5
-  when: "'elastic_primary' in group_names"
-  tags:
-    - reconfigure
-    - restart

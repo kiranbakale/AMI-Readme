@@ -1,4 +1,13 @@
 ---
+- name: Configure Docker
+  include_role:
+    name: "{{ 'geerlingguy.docker_arm' if ansible_architecture == 'aarch64' else 'geerlingguy.docker' }}"
+  when: ansible_facts['distribution'] != "Amazon"
+
+- name: Configure Docker (RHEL - Amazon Linux 2)
+  shell: amazon-linux-extras install docker -y && systemctl enable docker && systemctl start docker
+  when: ansible_facts['distribution'] == "Amazon"
+
 - name: Remove old Jaeger container
   docker_container:
     name: jaeger
