@@ -4,6 +4,8 @@ This folder contains various Reference Architecture based config examples for th
 - [10k - GCP](10k_gcp) - A 10k Reference Architecture (Omnibus) on GCP.
 - [10k Cloud Native Hybrid - AWS](10k_hybrid_aws_services) - A 10k Reference Architecture (Cloud Native Hybrid) on AWS with services (RDS, ElastiCache, NLB).
 - [10k Cloud Native Hybrid - GCP](10k_hybrid_gcp) - A 10k Reference Architecture (Cloud Native Hybrid) on GCP.
+- [10k Geo - AWS](10k_aws_geo) - A 10k Reference Architecture (Omnibus) on AWS with Geo configured within the same region.
+- [10k Geo - GCP](10k_gcp_geo) - A 10k Reference Architecture (Omnibus) on GCP with Geo configured.
 
 Replace `<>` variable values with your own settings accordingly.
 
