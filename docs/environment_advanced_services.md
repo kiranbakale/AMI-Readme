@@ -388,6 +388,8 @@ The Toolkit supports provisioning an [AWS OpenSearch](https://aws.amazon.com/ope
 
 :information_source:&nbsp; [AWS OpenSearch is the replacement for AWS Elasticsearch](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/rename.html) and supports both Elasticsearch and OpenSearch as backends.
 
+:information_source:&nbsp; [AWS OpenSearch](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/what-is.html) specifically only supports 1, 2 or 3 Availability Zones.
+
 The variables for this service start with the prefix `opensearch_*` and should replace any previous `elastic_*` variables. The available variables are as follows:
 
 - `opensearch_node_count` - The number of data nodes for the OpenSearch domain that serve search requests. This should be set to at least `2` or higher and should match the number of intended subnets. **Required**.
@@ -398,7 +400,7 @@ The variables for this service start with the prefix `opensearch_*` and should r
 - `opensearch_volume_type` - The type of storage to use per data node. Optional, default is `io1`.
 - `opensearch_volume_iops` - The amount of provisioned IOPS per data node. Setting this requires a storage_type of `io1`. Optional, default is `1000`.
 - `opensearch_multi_az` - Specifies if the OpenSearch domain is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`.
-- `opensearch_default_subnet_count` - Specifies the number of default subnets to use when running on the default network. Optional, default is `2`.
+- `opensearch_default_subnet_count` - Specifies the number of default subnets to use when running on the default network. Can be set to either `1`, `2` or `3`. Optional, default is `2`.
 - `opensearch_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt the OpenSearch domain. If not provided `default_kms_key_arm` or the default AWS KMS key will be used in that order. Optional, default is `null`.
 
 In addition to the above there are several optional features available in AWS OpenSearch that the Toolkit can also configure via the following variables:
