@@ -23,20 +23,6 @@ frontend gitlab-ssh-in
 
     default_backend gitlab-rails-ssh
 
-{% if 'monitor' in groups %}
-frontend prometheus
-    bind *:9090
-
-    default_backend prometheus
-{% endif %}
-
-{% if 'elastic' in groups %}
-frontend kibana
-    bind *:5601
-
-    default_backend kibana
-{% endif %}
-
 backend gitlab-rails
     option httpchk GET /-/readiness
 
@@ -59,16 +45,4 @@ backend grafana
     option httpchk GET /-/grafana/api/health
 
     server grafana {{ monitor_int_addr }}:80 check
-
-backend prometheus
-    option httpchk GET /-/healthy
-
-    server prometheus {{ monitor_int_addr }}:9090 check
-{% endif %}
-
-{% if 'elastic' in groups %}
-backend kibana
-    option httpchk GET /api/status
-
-    server kibana {{ elastic_primary_int_addr }}:5601 check inter 10s fall 1
 {% endif %}

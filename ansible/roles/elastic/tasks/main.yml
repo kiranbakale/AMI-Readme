@@ -63,13 +63,14 @@
     - reconfigure
     - restart
 
+- name: Remove old Kibana container
+  docker_container:
+    name: kibana
+    state: absent
+  when: "'elastic_primary' in group_names"
+
 - name: Setup Kibana
   block:
-    - name: Remove old Kibana container
-      docker_container:
-        name: kibana
-        state: absent
-
     - name: Start Kibana container
       docker_container:
         name: kibana
@@ -95,6 +96,7 @@
       retries: 20
       delay: 5
   when:
+    - kibana_setup
     - "'elastic_primary' in group_names"
     - "ansible_architecture != 'aarch64'"  # Kibana on ARM only supported from 7.13.1+ (different license)
   tags:
