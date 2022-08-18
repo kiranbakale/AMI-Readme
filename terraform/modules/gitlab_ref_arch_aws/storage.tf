@@ -52,6 +52,7 @@ locals {
 resource "aws_iam_policy" "gitlab_s3_policy" {
   count = local.gitlab_s3_policy_create ? 1 : 0
   name  = "${var.prefix}-s3-policy"
+  path  = var.default_iam_identifier_path
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -72,6 +73,7 @@ resource "aws_iam_policy" "gitlab_s3_policy" {
 resource "aws_iam_policy" "gitlab_s3_registry_policy" {
   count = local.gitlab_s3_registry_policy_create ? 1 : 0
   name  = "${var.prefix}-s3-registry-policy"
+  path  = var.default_iam_identifier_path
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -102,6 +104,7 @@ resource "aws_iam_policy" "gitlab_s3_registry_policy" {
 resource "aws_iam_policy" "gitlab_s3_kms_policy" {
   count = local.gitlab_s3_kms_policy_create ? 1 : 0
   name  = "${var.prefix}-s3-kms-policy"
+  path  = var.default_iam_identifier_path
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -155,12 +158,14 @@ resource "aws_iam_role" "gitlab_s3_replication_role" {
     ]
   })
 
+  path                 = var.default_iam_identifier_path
   permissions_boundary = var.default_iam_permissions_boundary_arn
 }
 
 resource "aws_iam_policy" "gitlab_s3_replication_policy" {
   count = local.enable_object_storage_replication ? 1 : 0
   name  = "${var.prefix}-s3-replication-policy"
+  path  = var.default_iam_identifier_path
 
   policy = jsonencode({
     Version = "2012-10-17"

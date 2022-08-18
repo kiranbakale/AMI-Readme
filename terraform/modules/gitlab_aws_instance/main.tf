@@ -61,6 +61,7 @@ resource "aws_eip_association" "gitlab" {
 resource "aws_iam_instance_profile" "gitlab" {
   count = var.node_count > 0 && length(var.iam_instance_policy_arns) > 0 ? 1 : 0
   name  = "${var.prefix}-${var.node_type}-profile"
+  path  = var.iam_identifier_path
   role  = aws_iam_role.gitlab[0].name
 }
 
@@ -82,6 +83,7 @@ resource "aws_iam_role" "gitlab" {
     ]
   })
 
+  path                 = var.iam_identifier_path
   permissions_boundary = var.iam_permissions_boundary_arn
 }
 

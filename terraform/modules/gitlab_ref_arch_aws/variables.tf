@@ -55,6 +55,10 @@ variable "default_iam_permissions_boundary_arn" {
   type    = string
   default = null
 }
+variable "default_iam_identifier_path" {
+  type    = string
+  default = null
+}
 
 variable "ssh_public_key" {
   type    = string

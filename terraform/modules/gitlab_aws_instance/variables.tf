@@ -31,6 +31,11 @@ variable "iam_permissions_boundary_arn" {
   default = null
 }
 
+variable "iam_identifier_path" {
+  type    = string
+  default = null
+}
+
 variable "instance_type" {
   type    = string
   default = "t3.micro"
