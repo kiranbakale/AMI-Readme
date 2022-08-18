@@ -21,12 +21,12 @@ prometheus['scrape_configs'] = [
 {% if 'haproxy_internal' in groups %}
         "{{ haproxy_internal_int_addr }}:9100",
 {% endif %}
+{% if 'gitlab_nfs' in groups %}
+        "{{ gitlab_nfs_int_addr }}:9100",
+{% endif %}
 {% for ip in elastic_int_addrs %}
         "{{ ip }}:9100",
 {% endfor %}
-{% if 'gitlab_nfs' in groups %}
-        "{{ gitlab_nfs_int_addr }}:9100"
-{% endif %}
       ],
     ],
   },

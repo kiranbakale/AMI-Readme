@@ -68,12 +68,15 @@ prometheus:
       - job_name: non_omnibus_node
         static_configs:
           - targets:
-{% for ip in [haproxy_internal_int_addr] + elastic_int_addrs %}
-            - "{{ ip }}:9100"
-{% endfor %}
+{% if 'haproxy_internal' in groups %}
+            - "{{ haproxy_internal_int_addr }}:9100"
+{% endif %}
 {% if 'gitlab_nfs' in groups %}
             - "{{ gitlab_nfs_int_addr }}:9100"
 {% endif %}
+{% for ip in elastic_int_addrs %}
+            - "{{ ip }}:9100"
+{% endfor %}
 {% endif %}
 {% if 'haproxy_internal' in groups %}
       - job_name: haproxy

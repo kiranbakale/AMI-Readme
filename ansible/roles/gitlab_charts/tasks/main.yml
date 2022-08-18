@@ -144,6 +144,12 @@
     - reconfigure
     - charts
 
+- name: Update GitLab Charts repo
+  command: "helm repo update {{ gitlab_charts_repo_name }}"
+  tags:
+    - reconfigure
+    - charts
+
 - name: Get GitLab Charts version if App version specified
   # Helm doesn't allow installs by app_version - https://github.com/helm/helm/issues/8194
   block:
@@ -209,7 +215,6 @@
     name: gitlab
     chart_ref: "{{ gitlab_charts_repo_name }}/gitlab"
     chart_version: "{{ gitlab_charts_version | default(None) }}"
-    update_repo_cache: true
     release_namespace: "{{ gitlab_charts_release_namespace }}"
     values: "{{ gitlab_charts_values }}"
   tags:
