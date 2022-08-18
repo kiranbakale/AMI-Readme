@@ -127,7 +127,7 @@ locals {
   enable_object_storage_replication = var.object_storage_destination_buckets != null
   object_storage_replications_list = var.object_storage_destination_buckets != null ? flatten([
     for key, values in aws_s3_bucket.gitlab_object_storage_buckets : {
-      key = {
+      (key) = {
         destination = lookup(var.object_storage_destination_buckets, key, null)
         source      = values.arn
       }
