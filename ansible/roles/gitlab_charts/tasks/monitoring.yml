@@ -50,6 +50,9 @@
         name: hashicorp
         repo_url: https://helm.releases.hashicorp.com
 
+    - name: Update Consul repo
+      command: helm repo update hashicorp
+
     - name: Get all Consul chart versions
       command: helm search repo hashicorp/consul -l -o json
       register: consul_charts_versions
@@ -72,7 +75,6 @@
         name: gitlab-consul
         chart_ref: hashicorp/consul
         chart_version: "{{ consul_charts_version }}"
-        update_repo_cache: true
         release_namespace: "{{ consul_charts_namespace }}"
         values:
           global:
@@ -108,6 +110,9 @@
       kubernetes.core.helm_repository:
         name: prometheus-community
         repo_url: https://prometheus-community.github.io/helm-charts
+
+    - name: Update kube-prometheus-stack repo
+      command: helm repo update prometheus-community
 
     - name: Get existing kube-prometheus-stack deployment details
       kubernetes.core.helm_info:
@@ -156,16 +161,21 @@
         name: gitlab-kube-prometheus-stack
         chart_ref: prometheus-community/kube-prometheus-stack
         chart_version: "{{ kube_prometheus_stack_charts_version }}"
-        update_repo_cache: true
         release_namespace: "{{ kube_prometheus_stack_charts_namespace }}"
         values: "{{ lookup('template', 'templates/kube-prometheus-stack.yml.j2') | from_yaml }}"
       register: kube_prometheus_stack_charts_deploy
 
 - name: Redeploy GitLab Charts to configure monitoring ServiceMonitors if first deploy
-  kubernetes.core.helm:
-    name: gitlab
-    chart_ref: gitlab/gitlab
-    chart_version: "{{ gitlab_charts_version | default(None) }}"
-    release_namespace: "{{ gitlab_charts_release_namespace }}"
-    values: "{{ gitlab_charts_values }}"
+  block:
+    - name: Pause for 5 secs to ensure kube-prometheus-stack chart deployment has finished
+      wait_for:
+        timeout: 5
+
+    - name: Redeploy GitLab Charts to configure monitoring ServiceMonitors if first deploy
+      kubernetes.core.helm:
+        name: gitlab
+        chart_ref: gitlab/gitlab
+        chart_version: "{{ gitlab_charts_version | default(None) }}"
+        release_namespace: "{{ gitlab_charts_release_namespace }}"
+        values: "{{ gitlab_charts_values }}"
   when: kube_prometheus_stack_charts_existing_app_version is not defined
