@@ -80,6 +80,7 @@ resource "aws_iam_role" "gitlab_dlm" {
     ]
   })
 
+  path                 = var.iam_identifier_path
   permissions_boundary = var.iam_permissions_boundary_arn
 }
 

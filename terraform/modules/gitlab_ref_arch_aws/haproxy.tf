@@ -19,6 +19,7 @@ module "haproxy_external" {
     var.default_iam_instance_policy_arns,
     var.haproxy_external_iam_instance_policy_arns
   ])
+  iam_identifier_path          = var.default_iam_identifier_path
   iam_permissions_boundary_arn = var.default_iam_permissions_boundary_arn
 
   # Select Public subnets if configured first as this node is external
@@ -63,6 +64,7 @@ module "haproxy_internal" {
     var.default_iam_instance_policy_arns,
     var.haproxy_internal_iam_instance_policy_arns
   ])
+  iam_identifier_path          = var.default_iam_identifier_path
   iam_permissions_boundary_arn = var.default_iam_permissions_boundary_arn
 
   ssh_key_name = aws_key_pair.ssh_key.key_name

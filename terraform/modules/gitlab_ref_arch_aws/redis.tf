@@ -20,6 +20,7 @@ module "redis" {
     var.default_iam_instance_policy_arns,
     var.redis_iam_instance_policy_arns
   ])
+  iam_identifier_path          = var.default_iam_identifier_path
   iam_permissions_boundary_arn = var.default_iam_permissions_boundary_arn
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
@@ -62,6 +63,7 @@ module "redis_cache" {
     var.default_iam_instance_policy_arns,
     var.redis_cache_iam_instance_policy_arns
   ])
+  iam_identifier_path          = var.default_iam_identifier_path
   iam_permissions_boundary_arn = var.default_iam_permissions_boundary_arn
 
   ssh_key_name = aws_key_pair.ssh_key.key_name
@@ -102,6 +104,7 @@ module "redis_persistent" {
     var.default_iam_instance_policy_arns,
     var.redis_persistent_iam_instance_policy_arns
   ])
+  iam_identifier_path          = var.default_iam_identifier_path
   iam_permissions_boundary_arn = var.default_iam_permissions_boundary_arn
 
   ssh_key_name = aws_key_pair.ssh_key.key_name

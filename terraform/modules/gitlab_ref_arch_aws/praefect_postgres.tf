@@ -20,6 +20,7 @@ module "praefect_postgres" {
     var.default_iam_instance_policy_arns,
     var.praefect_postgres_iam_instance_policy_arns
   ])
+  iam_identifier_path          = var.default_iam_identifier_path
   iam_permissions_boundary_arn = var.default_iam_permissions_boundary_arn
 
   ssh_key_name = aws_key_pair.ssh_key.key_name

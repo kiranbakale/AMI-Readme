@@ -326,6 +326,7 @@ resource "aws_iam_role" "gitlab_eks_role" {
     ]
   })
 
+  path                 = var.default_iam_identifier_path
   permissions_boundary = var.default_iam_permissions_boundary_arn
 }
 
@@ -346,6 +347,7 @@ resource "aws_iam_role" "gitlab_eks_node_role" {
     ]
   })
 
+  path                 = var.default_iam_identifier_path
   permissions_boundary = var.default_iam_permissions_boundary_arn
 }
 
@@ -381,6 +383,7 @@ resource "aws_iam_policy" "amazon_eks_node_autoscaler_policy" {
 
   name        = "${var.prefix}-eks-node-cluster-autoscaler"
   description = "Policy for ${var.prefix} Cluster Autoscaler"
+  path        = var.default_iam_identifier_path
 
   # kics: Terraform AWS - IAM policies allow all ('*') in a statement action - False positive, recommended by AWS for this specific policy.
   # kics-scan ignore-block
@@ -520,6 +523,7 @@ resource "aws_iam_role" "gitlab_addon_vpc_cni_role" {
 
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy[count.index].json
 
+  path                 = var.default_iam_identifier_path
   permissions_boundary = var.default_iam_permissions_boundary_arn
 }
 

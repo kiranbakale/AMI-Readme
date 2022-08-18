@@ -20,6 +20,7 @@ module "consul" {
     var.default_iam_instance_policy_arns,
     var.consul_iam_instance_policy_arns
   ])
+  iam_identifier_path          = var.default_iam_identifier_path
   iam_permissions_boundary_arn = var.default_iam_permissions_boundary_arn
 
   ssh_key_name = aws_key_pair.ssh_key.key_name

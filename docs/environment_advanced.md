@@ -29,9 +29,9 @@ The Toolkit allows for providing custom GitLab config that will be used when set
 
 Custom config should only be used in advanced scenarios where you are fully aware of the intended effects or for areas that the Toolkit doesn't support natively due to potential permutations such as:
 
-- Omniauth
-- Custom [Object Storage](https://docs.gitlab.com/ee/administration/object_storage.html)
-- Email
+- [OmniAuth](https://docs.gitlab.com/ee/integration/omniauth.html)
+- [Custom Object Storage](https://docs.gitlab.com/ee/administration/object_storage.html)
+- [Email](https://docs.gitlab.com/omnibus/settings/smtp.html)
 
 Custom configs are treated the same as our built in config templates. As such you have access to the same variables for added flexibility.
 
@@ -493,13 +493,13 @@ As a convenience, you can also pass in additional Policies to either all instanc
 Passing in your policies is done in Terraform via the following variables in your `environment.tf` file. Note that for individual component instances the same variable suffix is used throughout, for readability this is defined once only:
 
 - `default_iam_instance_policy_arns` - List of IAM Policy [ARNs](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) to attach on all Instances, for example `["arn:aws:iam::aws:policy/AmazonS3FullAccess"]`. Defaults to `[]`.
-- `*_iam_instance_policy_arns` -  List of IAM Policy [ARNs](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) to attach on all Instances. For example if `gitaly_iam_instance_policy_arns` was set to `["arn:aws:iam::aws:policy/AmazonS3FullAccess"]` then this Policy would be applied to all Gitaly instances via a new Role. Defaults to `[]`.
+- `*_iam_instance_policy_arns` - List of IAM Policy [ARNs](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) to attach on all Instances. For example if `gitaly_iam_instance_policy_arns` was set to `["arn:aws:iam::aws:policy/AmazonS3FullAccess"]` then this Policy would be applied to all Gitaly instances via a new Role. Defaults to `[]`.
 
 ## Custom IAM Permissions Boundary (AWS)
 
 The Toolkit also allows for there to be a [Permissions Boundary](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html) to be set for all IAM Roles it creates.
 
-:warning:&nbsp; **This is an advanced feature and it must be used with caution**. Boundaries must allow for all Policies the Toolkit uses to be allow or your environment will become unstable. [The latest list of policies used by the Toolkit is shown here](https://gitlab.com/search?search=2012-10-17&nav_source=navbar&project_id=14292404&group_id=9970&search_code=true&repository_ref=main).
+:warning:&nbsp; **This is an advanced feature and it must be used with caution**. Boundaries must allow for all Policies the Toolkit uses to be allowed or your environment will become unstable. [The latest list of policies used by the Toolkit is shown here](https://gitlab.com/search?search=2012-10-17&nav_source=navbar&project_id=14292404&group_id=9970&search_code=true&repository_ref=main).
 
 While the Toolkit will be designed in line with least privilege and ensuring all such IAM entities only have the access they require to do their role you may have a general policy to always apply a "global" permissions boundary as an additional security measure.
 
@@ -508,6 +508,16 @@ To do this you first create the boundary policy separately in AWS and take note 
 - `default_iam_permissions_boundary_arn` - The IAM ARN of a [Permissions Boundary](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html) policy to be applied to all IAM Roles the Toolkit creates. Defaults to `null`.
 
 The Toolkit will then apply this boundary on the next `terraform apply` run.
+
+## Custom IAM path (AWS)
+
+The Toolkit allows to configure a custom [Path](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html) for all IAM Roles and Policies it creates. As detailed in the AWS documentation, you can use a single path, or nest multiple paths as a folder structure. This allows to match your company organizational structure.
+
+To configure custom Path add the following variable in the Terraform [Environment config file](environment_provision.md#configure-module-settings-environmenttf) file:
+
+- `default_iam_identifier_path` - The IAM [Path](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html) to be applied to all IAM Policies and Roles the Toolkit creates. Defaults to `null` which in turn results in `/` default path in AWS.
+
+The Toolkit will then apply the path on the next `terraform apply` run.
 
 ## Container Registry (AWS Hybrid)
 
