@@ -1,5 +1,5 @@
 ---
-- hosts: all:!praefect_postgres
+- hosts: all:!praefect_postgres:!gitlab_nfs:!haproxy_*
   roles:
     - zero_downtime_upgrade
   become: true

@@ -70,19 +70,22 @@ For Zero Downtime Updates, the toolkit follows the [GitLab documented process](h
 
 :information_source:&nbsp; Note that Zero Downtime Updates are **not available** for Cloud Native Hybrid environments as they aren't supported in the [GitLab Charts](https://docs.gitlab.com/charts/installation/upgrade.html).
 
-Running the zero downtime update process with GET is done in the same way as building the initial environment but with a different playbook instead:
+Running the zero downtime update process with the Toolkit is done in the same way as building the initial environment but with a different playbook instead:
 
 1. `cd` to the `ansible/` directory if not already there.
 1. Run `ansible-playbook` with the intended environment's inventory against the `zero-downtime-update.yml` playbook
 
     `ansible-playbook -i environments/10k/inventory playbooks/zero_downtime_update.yml`
 
-1. If GET is managing your Praefect Postgres instance you will need to run the following command to update this
+1. If you have a Praefect Postgres instance deployed via the Toolkit, you will need to run the following command to update it:
 
     `ansible-playbook -i environments/10k/inventory playbooks/praefect_postgres.yml`
 
-:information_source:&nbsp; This will cause downtime due to GET only using a single Praefect Postgres node.
-  If you want to have a highly available setup, Praefect requires a third-party PostgreSQL database and will need to be updated manually.
+1. If you have HAProxy load balancers deployed via the Toolkit, you will need to run the following command to update them:
+
+    `ansible-playbook -i environments/10k/inventory playbooks/haproxy.yml`
+
+:information_source:&nbsp; Updating either Praefect Postgres or the load balancers in this way will cause downtime. This is due to GET only using a single Praefect Postgres node and the load balancers being a single point of entry to the site. If you want to have a highly available setup, Praefect requires a third-party PostgreSQL database and will need to be updated manually.
 
 The update process can take a couple of hours to complete, and the full runtime will depend on the number of nodes in the deployment.
 
