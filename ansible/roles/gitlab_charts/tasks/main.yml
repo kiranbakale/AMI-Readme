@@ -5,6 +5,7 @@
     - reconfigure
     - charts
     - charts_values
+    - kube-prometheus-stack
     - kubeconfig
 
 - name: Configure chart secrets
@@ -135,6 +136,7 @@
     - reconfigure
     - charts
     - charts_values
+    - kube-prometheus-stack
 
 - name: Add GitLab Charts repo
   kubernetes.core.helm_repository:
@@ -182,6 +184,7 @@
     - reconfigure
     - charts
     - charts_values
+    - kube-prometheus-stack
 
 - name: Check if custom GitLab Chart values are provided
   stat:
@@ -191,6 +194,7 @@
     - reconfigure
     - charts
     - charts_values
+    - kube-prometheus-stack
 
 - name: Merge in custom GitLab Chart values if provided
   set_fact:
@@ -200,6 +204,7 @@
     - reconfigure
     - charts
     - charts_values
+    - kube-prometheus-stack
 
 - name: Show charts values if configured
   debug:
@@ -209,6 +214,7 @@
     - reconfigure
     - charts
     - charts_values
+    - kube-prometheus-stack
 
 - name: Install GitLab Charts
   kubernetes.core.helm:

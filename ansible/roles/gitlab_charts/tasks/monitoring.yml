@@ -167,9 +167,12 @@
 
 - name: Redeploy GitLab Charts to configure monitoring ServiceMonitors if first deploy
   block:
-    - name: Pause for 5 secs to ensure kube-prometheus-stack chart deployment has finished
-      wait_for:
-        timeout: 5
+    - name: Wait until monitoring required cluster API is available
+      kubernetes.core.k8s_cluster_info:
+      register: cluster_api_status
+      until: cluster_api_status.apis['monitoring.coreos.com/v1'] is defined
+      retries: 12
+      delay: 5
 
     - name: Redeploy GitLab Charts to configure monitoring ServiceMonitors if first deploy
       kubernetes.core.helm:
