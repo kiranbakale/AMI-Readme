@@ -94,7 +94,7 @@ gitlab_rails['auto_migrate'] = false
 consul['enable'] = true
 consul['configuration'] = {
   bind_addr: '{{ ansible_default_ipv4.address }}',
-  retry_join: %w({{ (consul_int_addrs if 'consul' in groups else gitlab_rails_int_addrs) | join(' ') }})
+  retry_join: %w({{ (consul_int_addrs | join(' ')) if 'consul' in groups else consul_single_server_int_addr }})
 }
 consul['monitoring_service_discovery'] = true
 
