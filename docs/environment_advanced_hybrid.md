@@ -243,6 +243,7 @@ The Addon versions can also be controlled directly if desired via Terraform with
 - `eks_kube_proxy_version` - Version to use for the [EKS Kube Proxy addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-kube-proxy.html). Defaults to `""`.
 - `eks_coredns_version` - Version to use for the [EKS CoreDNS addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-coredns.html). Defaults to `""`.
 - `eks_vpc_cni_version` - Version to use for the [EKS VPC CNI addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html). Defaults to `""`.
+- `eks_ebs_csi_driver_version` - Version to use for the [EBS CSI Driver addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html). Defaults to `""`.
 
 #### EKS Endpoint Setup
 

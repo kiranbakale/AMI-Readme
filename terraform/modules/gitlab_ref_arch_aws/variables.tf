@@ -751,6 +751,10 @@ variable "eks_vpc_cni_version" {
   type    = string
   default = ""
 }
+variable "eks_ebs_csi_driver_version" {
+  type    = string
+  default = ""
+}
 
 ## Webservice
 variable "webservice_node_pool_count" {

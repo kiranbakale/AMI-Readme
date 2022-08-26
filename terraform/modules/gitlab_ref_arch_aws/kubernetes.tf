@@ -416,6 +416,7 @@ resource "aws_iam_role_policy_attachment" "amazon_eks_node_autoscaler_policy" {
 
 # Addons
 
+## kube_proxy
 data "aws_eks_addon_version" "kube_proxy" {
   count = var.eks_kube_proxy_version != "" ? 0 : min(local.total_node_pool_count, 1)
 
@@ -433,6 +434,7 @@ resource "aws_eks_addon" "kube_proxy" {
   resolve_conflicts = "OVERWRITE"
 }
 
+## coredns
 data "aws_eks_addon_version" "coredns" {
   count = var.eks_coredns_version != "" ? 0 : min(local.total_node_pool_count, 1)
 
@@ -458,7 +460,7 @@ resource "aws_eks_addon" "coredns" {
   ]
 }
 
-## vpc-cni Addon
+## vpc-cni
 data "aws_eks_addon_version" "vpc_cni" {
   count = var.eks_vpc_cni_version != "" ? 0 : min(local.total_node_pool_count, 1)
 
@@ -483,6 +485,94 @@ resource "aws_eks_addon" "vpc_cni" {
   ]
 }
 
+resource "aws_iam_role" "gitlab_addon_vpc_cni_role" {
+  count = min(local.total_node_pool_count, 1)
+  name  = "${var.prefix}-gitlab_addon_vpc_cni_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action    = "sts:AssumeRoleWithWebIdentity"
+        Effect    = "Allow"
+        Principal = { Federated = aws_iam_openid_connect_provider.gitlab_cluster_openid[count.index].arn }
+        Condition = {
+          "StringEquals" = {
+            "${replace(aws_iam_openid_connect_provider.gitlab_cluster_openid[count.index].url, "https://", "")}:sub" = "system:serviceaccount:kube-system:aws-node"
+          }
+        }
+      },
+    ]
+  })
+
+  path                 = var.default_iam_identifier_path
+  permissions_boundary = var.default_iam_permissions_boundary_arn
+}
+
+resource "aws_iam_role_policy_attachment" "gitlab_addon_vpc_cni_policy" {
+  count = min(local.total_node_pool_count, 1)
+
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.gitlab_addon_vpc_cni_role[count.index].name
+}
+
+## ebs_csi_driver
+data "aws_eks_addon_version" "ebs_csi_driver" {
+  count = var.eks_ebs_csi_driver_version != "" ? 0 : min(local.total_node_pool_count, 1)
+
+  addon_name         = "aws-ebs-csi-driver"
+  kubernetes_version = aws_eks_cluster.gitlab_cluster[0].version
+  most_recent        = true
+}
+
+resource "aws_eks_addon" "ebs_csi_driver" {
+  count = min(local.total_node_pool_count, 1)
+
+  cluster_name             = aws_eks_cluster.gitlab_cluster[0].name
+  addon_name               = "aws-ebs-csi-driver"
+  addon_version            = var.eks_ebs_csi_driver_version != "" ? var.eks_ebs_csi_driver_version : data.aws_eks_addon_version.ebs_csi_driver[0].version
+  service_account_role_arn = aws_iam_role.gitlab_addon_ebs_csi_driver_role[count.index].arn
+  resolve_conflicts        = "OVERWRITE"
+
+  depends_on = [
+    # Note: To specify an existing IAM role, you must have an IAM OpenID Connect (OIDC) provider created for your cluster.
+    aws_iam_openid_connect_provider.gitlab_cluster_openid
+  ]
+}
+
+resource "aws_iam_role" "gitlab_addon_ebs_csi_driver_role" {
+  count = min(local.total_node_pool_count, 1)
+  name  = "${var.prefix}-gitlab-addon-ebs-csi-driver-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action    = "sts:AssumeRoleWithWebIdentity"
+        Effect    = "Allow"
+        Principal = { Federated = aws_iam_openid_connect_provider.gitlab_cluster_openid[count.index].arn }
+        Condition = {
+          "StringEquals" = {
+            "${replace(aws_iam_openid_connect_provider.gitlab_cluster_openid[count.index].url, "https://", "")}:aud" = "sts.amazonaws.com",
+            "${replace(aws_iam_openid_connect_provider.gitlab_cluster_openid[count.index].url, "https://", "")}:sub" = "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+          }
+        }
+      },
+    ]
+  })
+
+  path                 = var.default_iam_identifier_path
+  permissions_boundary = var.default_iam_permissions_boundary_arn
+}
+
+resource "aws_iam_role_policy_attachment" "gitlab_addon_ebs_csi_driver_policy" {
+  count = min(local.total_node_pool_count, 1)
+
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+  role       = aws_iam_role.gitlab_addon_ebs_csi_driver_role[count.index].name
+}
+
+## IAM OIDC provider for required addons
 data "tls_certificate" "gitlab_cluster_oidc" {
   count = min(local.total_node_pool_count, 1)
 
@@ -495,43 +585,6 @@ resource "aws_iam_openid_connect_provider" "gitlab_cluster_openid" {
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = [data.tls_certificate.gitlab_cluster_oidc[count.index].certificates[0].sha1_fingerprint]
   url             = aws_eks_cluster.gitlab_cluster[0].identity[0].oidc[0].issuer
-}
-
-data "aws_iam_policy_document" "assume_role_policy" {
-  count = min(local.total_node_pool_count, 1)
-
-  statement {
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-    effect  = "Allow"
-
-    condition {
-      test     = "StringEquals"
-      variable = "${replace(aws_iam_openid_connect_provider.gitlab_cluster_openid[count.index].url, "https://", "")}:sub"
-      values   = ["system:serviceaccount:kube-system:aws-node"]
-    }
-
-    principals {
-      identifiers = [aws_iam_openid_connect_provider.gitlab_cluster_openid[count.index].arn]
-      type        = "Federated"
-    }
-  }
-}
-
-resource "aws_iam_role" "gitlab_addon_vpc_cni_role" {
-  count = min(local.total_node_pool_count, 1)
-  name  = "${var.prefix}-gitlab_addon_vpc_cni_role"
-
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy[count.index].json
-
-  path                 = var.default_iam_identifier_path
-  permissions_boundary = var.default_iam_permissions_boundary_arn
-}
-
-resource "aws_iam_role_policy_attachment" "gitlab_addon_vpc_cni_policy" {
-  count = min(local.total_node_pool_count, 1)
-
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.gitlab_addon_vpc_cni_role[count.index].name
 }
 
 # Object Storage Role Policy
