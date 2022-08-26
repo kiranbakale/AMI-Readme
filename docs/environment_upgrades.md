@@ -91,8 +91,12 @@ The update process can take a couple of hours to complete, and the full runtime 
 
 ## OS Upgrades
 
-OS version upgrades should be handled directly and follow the standard process for each OS. Refer to the OS's docs for more info.
+OS version upgrades should be handled directly and follow the standard process for each OS, such as via `apt` for Ubuntu. Refer to the OS's docs for more info.
 
 The Toolkit can't handle OS upgrades for you as they typically involve inputs and require restarts.
 
-:warning:&nbsp; On Cloud Providers, changing the machine image in Terraform **must be avoided** as this is treated as the base disk and will trigger a full rebuild and lead to data loss.
+### Avoid Changing Machine OS Image
+
+For VMs on Cloud Providers, **{- you should not change the Machine OS Image in Terraform -}** ([GCP](environment_provision.md#configure-machine-os-image-gcp), [AWS](environment_provision.md#configure-machine-os-image-aws), [Azure](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/docs/environment_provision.md#configure-machine-os-image-azure)) to try and upgrade the OS on the machine.
+
+In Cloud Providers selecting a Machine OS image is effectively the same as selecting the base disk of a VM and making a change to this will trigger the Cloud Provider to remove the VM and create it anew with the new base this leading to potential data loss.

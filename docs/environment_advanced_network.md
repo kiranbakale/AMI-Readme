@@ -109,7 +109,7 @@ module "gitlab_ref_arch_gcp" {
 
 ## Configure network setup (AWS)
 
-By default the toolkit sets up the infrastructure on the default network stack as provided by AWS. However, it can also support other advanced setups such as creating a new network or using an existing one. To learn more refer to [Configure network setup (GCP)](environment_advanced_network.md#configure-network-setup-aws).
+By default the toolkit sets up the infrastructure on the default network stack as provided by AWS. However, it can also support other advanced setups such as creating a new network or using an existing one.
 
 The module for AWS can configure the [network stack](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html) (VPC, Subnets, etc...) for your environment in several different ways:
 

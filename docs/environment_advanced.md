@@ -42,7 +42,7 @@ In this section we detail how to set up custom config for Omnibus and Helm chart
 Providing custom config for components deployed via Omnibus is done as follows:
 
 1. Create a [gitlab.rb](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template) template file in the correct format with the specific custom settings you wish to apply.
-1. By default the Toolkit looks for [Jinja2 template files](https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html) in the [environment's](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/<component>.rb.j2`. Save your file in this location with the same name.
+1. By default, the Toolkit looks for [Jinja2 template files](https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html) in the [environment's](environment_configure.md#2-set-up-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/<component>.rb.j2`. Save your file in this location with the same name.
     - Files should be saved in Ansible template format - `.j2`.
     - If you wish to store your file in a different location or use a different name the full path that Ansible should use can be set via a variable for each different component e.g. `<component>_custom_config_file`.
     - Available component options: `consul`, `postgres`, `pgbouncer`, `redis`, `redis_cache`, `redis_persistent`, `praefect_postgres`, `praefect`, `gitaly`, `gitlab_rails`, `sidekiq` and `monitor`.
@@ -54,7 +54,7 @@ With the above done the file will be picked up by the Toolkit and used when conf
 Providing custom config for components deployed via Helm charts in Cloud Native Hybrid environments is done as follows:
 
 1. Create a [GitLab Charts](https://docs.gitlab.com/charts/) yaml template file in the correct format with the specific custom settings you wish to apply
-1. By default the Toolkit looks for a [Jinja2 template file](https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html) named `gitlab_charts.yml.j2` in the [environment's](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/gitlab_charts.yml.j2`. Save your file in this location with the same name.
+1. By default, the Toolkit looks for a [Jinja2 template file](https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html) named `gitlab_charts.yml.j2` in the [environment's](environment_configure.md#2-set-up-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/gitlab_charts.yml.j2`. Save your file in this location with the same name.
     - Files should be saved in Ansible template format - `.j2`.
     - If you wish to store your file in a different location or use a different name the full path that Ansible should use can be set via the `gitlab_charts_custom_config_file` inventory variable.
 
@@ -79,7 +79,7 @@ Setting up common tasks is done in the same manner for each hook as follows:
 1. Create a standard Ansible Tasks yaml file with the tasks you wish to run.
     - The file must be in a format that can be run in Ansible's [`include_tasks`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_tasks_module.html) module.
     - You can add the tag `custom_tasks` to your tasks if you wish to run the tasks in isolation.
-1. By default the Toolkit looks for each hook's Custom Tasks file(s) in the [environment inventory's](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_tasks` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_tasks/<custom_tasks_file>.yml`. This is controlled by the following settings for each:
+1. By default, the Toolkit looks for each hook's Custom Tasks file(s) in the [environment inventory's](environment_configure.md#2-set-up-the-environments-inventory-and-config) `files/gitlab_tasks` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_tasks/<custom_tasks_file>.yml`. This is controlled by the following settings for each:
     - `common_custom_tasks_file` - Full path for the Common tasks file. Defaults to `<inventory_dir>/files/gitlab_tasks/common.yml`.
     - `<component>_custom_tasks_file` - Full path for Omnibus custom tasks files. Where `<component>` should be replaced with the one intended (options below). Defaults to `<inventory_dir>/files/gitlab_tasks/<component>.yml`.
       - Available component options: `consul`, `postgres`, `pgbouncer`, `redis`, `redis_cache`, `redis_persistent`, `praefect_postgres`, `praefect`, `gitaly`, `gitlab_rails`, `sidekiq` and `monitor`.
@@ -217,6 +217,17 @@ For GitLab we suggest the following mount paths are suggested:
 
 - `/var/opt/gitlab` - Common path for GitLab to store stateful data (e.g. Git Repo data, etc...).
 - `/var/log/gitlab` - Common path for GitLab to store its logs.
+
+## Gitaly Setups - Cluster or Sharded
+
+[Gitaly](https://docs.gitlab.com/ee/administration/gitaly/), which is our repo storage backend, can be run in two different ways:
+
+- [Gitaly Cluster](https://docs.gitlab.com/ee/administration/gitaly/praefect.html) - A HA set up that stores the same copy of data on each Gitaly node with additional performance benefits. [Praefect](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#praefect) is additionally deployed in this set up to manage replication and failover.
+- [Gitaly Sharded](https://docs.gitlab.com/ee/administration/gitaly/configure_gitaly.html) - Individual Gitaly nodes that don't offer HA.
+
+The Toolkit supports setting up both of these setups. This is controlled simply by not provisioning the Praefect nodes required in Cluster. If these nodes aren't present the Toolkit automatically assumes that the environment is using Gitaly Sharded and will configure in that way.
+
+:information_source:&nbsp; Attempting to switch an existing environment from using Gitaly Cluster to Sharded or vice versa is not supported in the Toolkit and may lead to data loss.
 
 ## Advanced Search with Elasticsearch
 
@@ -509,7 +520,7 @@ To do this you first create the boundary policy separately in AWS and take note 
 
 The Toolkit will then apply this boundary on the next `terraform apply` run.
 
-## Custom IAM path (AWS)
+## Custom IAM Path (AWS)
 
 The Toolkit allows to configure a custom [Path](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html) for all IAM Roles and Policies it creates. As detailed in the AWS documentation, you can use a single path, or nest multiple paths as a folder structure. This allows to match your company organizational structure.
 

@@ -16,7 +16,7 @@
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 - [GitLab Environment Toolkit - Troubleshooting](environment_troubleshooting.md)
 
-With [Ansible](https://docs.ansible.com/ansible/latest/index.html) you can automatically configure provisioned machines.
+With [Ansible](https://docs.ansible.com/ansible/latest/index.html), you can automatically configure provisioned machines.
 
 The Toolkit provides multiple curated [Ansible Playbooks and Roles](../ansible) that will install and configure GitLab as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/).
 
@@ -24,7 +24,7 @@ The Toolkit provides multiple curated [Ansible Playbooks and Roles](../ansible) 
 
 ## Overview
 
-Installing and configuring GitLab automatically is the most involved part of the process, as such Ansible is the most involved part of the Toolkit as a result. It's worth highlighting then how it works at a high level before we detail the steps on how to setup and use it.
+Installing and configuring GitLab automatically is the most involved part of the process, as such Ansible is the most involved part of the Toolkit as a result. It's worth highlighting then how it works at a high level before we detail the steps on how to set up and use it.
 
 ### Playbooks and Roles
 
@@ -45,24 +45,24 @@ Ansible knows what Playbooks to run on what machines thanks to its [Inventory](h
 
 The Toolkit generally uses a variant of Inventories called [Dynamic Inventories](https://docs.ansible.com/ansible/latest/user_guide/intro_dynamic_inventory.html). These Inventories poll the target host provider for the current list of hosts based on several factors. With these you don't need to maintain a static Inventory file.
 
-While with the Inventory Ansible can get a full list of hosts it's to configure it doesn't know what each one is specifically. With [Groups](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#inventory-basics-formats-hosts-and-groups) Ansible can differentiate between the hosts and run the correct Playbooks against them. This is a crucial part to how Ansible runs. With Terraform we called out that we set various labels on the provisioned VMs based on their role. Ansible can read these labels and set up groups based on them, e.g. `gitlab_rails`, `postgres`, etc...
+While with the Inventory Ansible can get a full list of hosts it's to configure it doesn't know what each one is specifically. With [Groups](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#inventory-basics-formats-hosts-and-groups) Ansible can differentiate between the hosts and run the correct Playbooks against them. This is a crucial part to how Ansible runs. With Terraform, we called out that we set various labels on the provisioned VMs based on their role. Ansible can read these labels and set up groups based on them, for example `gitlab_rails`, `postgres` and so on.
 
 ### Variables
 
 [Variables](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html) are a versatile and integral part of Ansible and can be [defined in many locations](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#understanding-variable-precedence). Ansible itself also collects [many variables](https://docs.ansible.com/ansible/latest/user_guide/playbooks_vars_facts.html) about the hosts it connects to such as IPs, machine specs and more.
 
-The Toolkit uses these extensively to dynamically configure each GitLab machine depending on its type. This includes things such as selecting what and how to install, finding out IPs of other machines, etc...
+The Toolkit uses these extensively to dynamically configure each GitLab machine depending on its type. This includes things such as selecting what and how to install or finding out IPs of other machines for example.
 
 As mentioned there are various ways variables can be configured. The Toolkit uses the following locations for variables (in order of precedence):
 
 - Inventory File vars - Contains variables specific to the environment. Can contain overrides for Role Defaults.
 - Role Defaults (`<role>/default/main.yml`) - Contains default variables specific to the Role, e.g. Postgres specific settings. These can be overridden.
-- Common Vars (`role/common_vars/default/main.yml`) - Variables that are shared between Roles, which are configured themselves in a Role and imported. Most variables can be found here such as IP lists, etc...
+- Common Vars (`role/common_vars/default/main.yml`) - Variables that are shared between Roles, which are configured themselves in a Role and imported. Most variables can be found here such as IP lists for example.
 - Environment Variables - The Playbooks have been configured to use certain env vars if available.
 
 It's worth noting the Toolkit tweaks the default group variable precedence to better allow for different configurations per environment's inventory. Inventory group variables take a higher precedence here than playbook ones.
 
-Hopefully with this overview it's clearer how Ansible in the Toolkit works. Below we detail how to setup and use it.
+Hopefully with this overview its clearer how Ansible in the Toolkit works. Below we detail how to set up and use it.
 
 ## 1. Install Ansible
 
@@ -74,7 +74,7 @@ When choosing an [Ansible control node](https://docs.ansible.com/ansible/latest/
 
 It's [also strongly recommended that a recent version of `openssh` is installed on the machine](https://docs.ansible.com/ansible/latest/user_guide/connection_details.html#controlpersist-and-paramiko) where Ansible is going to be run to ensure consistent connections. 
 
-You can either use a Python virtual environment or install Ansible globally. Additionally you can avoid installing anything by using the Toolkit's Docker image. We recommend using the method you're most familiar with.
+You can either use a Python virtual environment or install Ansible globally. Additionally, you can avoid installing anything by using the Toolkit's Docker image. We recommend using the method you're most familiar with.
 
 ### Using Ansible inside a Docker container
 
@@ -84,7 +84,7 @@ With Docker the only prerequisite is installation, the [Toolkit's image](https:/
 
 If installing Ansible locally, we recommend using this approach as your local environment will be isolated from other python packages that you install on your machine. Additionally, your local environment will match the environment used for testing, validation, and building docker images, so there is less chance of package changes affecting the ansible environment you are running locally.
 
-To setup the Python virtual environment the first time, run:
+To set up the Python virtual environment the first time, run:
 
 ```shell
 # Create a virtual environment called `get-python-env`
@@ -102,7 +102,7 @@ ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
 # Ensure OpenSSH client is installed for Ansible (Ubuntu example shown)
 apt-get install openssh-client
 
-# Install gnu-tar if running from Mac OS
+# Install gnu-tar if running from macOS
 brew install gnu-tar
 ```
 
@@ -116,12 +116,12 @@ Once you've installed Ansible, install the required dependencies. You'll need to
 
 To do this you only have to run the following before proceeding:
 
-1. First install the Python packages via `pip3 install -r ansible/requirements/ansible-python-packages.txt`.
+1. First install the Python packages via `pip3 install -r ansible/requirements/requirements.txt`.
 1. Next, run the following command to install the roles - `ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml`.
 1. Ensure OpenSSH client is installed on the machine for Ansible (Ubuntu example shown) - `apt-get install openssh-client`.
-1. Note that if you're on a Mac OS machine you also need to install `gnu-tar` - `brew install gnu-tar`.
+1. Note that if you're on a macOS machine you also need to install `gnu-tar` - `brew install gnu-tar`.
 
-## 2. Setup the Environment's Inventory and Config
+## 2. Set up the Environment's Inventory and Config
 
 For your environment you'll need to set up some config and files to be used by Ansible.
 
@@ -189,11 +189,11 @@ compose:
 
 ##### Configure Authentication (GCP)
 
-Finally the last thing to configure is authentication. This is required so Ansible can access GCP to build its dynamic inventory.
+Finally, the last thing to configure is authentication. This is required to allow Ansible to access GCP to build its dynamic inventory.
 
 Ansible provides several ways to authenticate with [GCP](https://docs.ansible.com/ansible/latest/scenario_guides/guide_gce.html#credentials), you can select any method that is desired.
 
-All of the methods given involve the Service Account file you generated previously. We've found the authentication methods that work best with the Toolkit in terms of ease of use are as follows:
+All the methods given involve the Service Account file you generated previously. We've found the authentication methods that work best with the Toolkit in terms of ease of use are as follows:
 
 - `GCP_SERVICE_ACCOUNT_FILE` environment variable - Particularly useful with CI pipelines, the variable should be set to the local path of the Service Account file.
   - Note that the `GCP_AUTH_KIND` variable also needs to be set to `serviceaccount` for this authentication method.
@@ -238,11 +238,11 @@ compose:
 
 ##### Configure Authentication (AWS)
 
-Finally the last thing to configure is authentication. This is required so Ansible can access AWS to build its dynamic inventory.
+Finally, the last thing to configure is authentication. This is required to allow Ansible to access AWS to build its dynamic inventory.
 
 Ansible provides several ways to authenticate with [AWS](https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html#id3), you can select any method that is desired.
 
-All of the methods given involve the AWS Access Key you generated previously. We've found that the easiest and secure way to do this is with the official [environment variables](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#environment-variables):
+All the methods given involve the AWS Access Key you generated previously. We've found that the easiest and secure way to do this is with the official [environment variables](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#environment-variables):
 
 - `AWS_ACCESS_KEY_ID` - Set to the AWS Access Key.
 - `AWS_SECRET_ACCESS_KEY` - Set to the AWS Secret Key.
@@ -276,11 +276,11 @@ keyed_groups:
 
 ##### Configure Authentication (Azure)
 
-Finally the last thing to configure is authentication. This is required so Ansible can access Azure to build its dynamic inventory.
+Finally, the last thing to configure is authentication. This is required to allow Ansible to access Azure to build its dynamic inventory.
 
 Ansible provides several ways to authenticate with [Azure](https://docs.ansible.com/ansible/latest/collections/azure/azcollection/azure_rm_inventory.html#parameter-auth_source), you can select any method that is desired.
 
-If you are planning to run the toolkit locally it'll be easier to use [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) authentication method. In this case the credentials will be sourced from the Azure CLI profile. Otherwise you can use either [Service Principal Credentials](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html#using-service-principal) or [Active Directory Username/Password](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html#using-active-directory-username-password), please refer to [Authenticating to Azure](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html#authenticating-with-azure) documentation for details. Once you have selected the authentication method and obtained the credentials you may export them as [Environment Variables](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html#using-environment-variables) following the Ansible instructions for the specific authentication type.
+If you are planning to run the toolkit locally it'll be easier to use [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) authentication method. In this case the credentials will be sourced from the Azure CLI profile. Otherwise, you can use either [Service Principal Credentials](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html#using-service-principal) or [Active Directory Username/Password](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html#using-active-directory-username-password), please refer to [Authenticating to Azure](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html#authenticating-with-azure) documentation for details. Once you have selected the authentication method and obtained the credentials you may export them as [Environment Variables](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html#using-environment-variables) following the Ansible instructions for the specific authentication type.
 
 ### Configure Variables
 
@@ -288,7 +288,7 @@ Next we need to configure various Environment specific variables that Ansible wi
 
 The structure of these files are flexible, ansible will merge all YAML files that are saved beside the Dynamic Inventory file. For the Toolkit, we use the following files:
 
-- `vars.yml` - Contains all main config specific to the environment such as connection details, component settings, passwords, etc...
+- `vars.yml` - Contains all main config specific to the environment such as connection details, component settings, passwords and more.
 
 #### Environment Config - `vars.yml`
 
@@ -365,7 +365,7 @@ Component settings are specific component for GitLab components, e.g. Postgres:
 - `patroni_remove_data_directory_on_rewind_failure` - A specific Patroni flag that enables resetting of database data on a secondary node if attempts to sync with the primary can't be achieved. **This may lead to data loss**, refer to the [GitLab Postgres documentation](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#customizing-patroni-failover-behavior) for further info.
 - `patroni_remove_data_directory_on_diverged_timelines` - A specific Patroni flag that enables resetting of database data on a secondary node if timelines have diverged with the primary. **This may lead to data loss**, refer to the [GitLab Postgres documentation](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#customizing-patroni-failover-behavior) for further info.
 
-Passwords and Secrets settings are what they suggest - all of the various passwords and secrets that GitLab requires to be configured by the user.
+Passwords and Secrets settings are what they suggest - all the various passwords and secrets that GitLab requires to be configured by the user.
 
 - `gitlab_root_password` - Sets the password for the root user on first installation.
 - `grafana_password` - Sets the password for the [Grafana admin user](https://docs.gitlab.com/omnibus/settings/grafana.html#specifying-an-admin-password) on first installation.
@@ -374,10 +374,10 @@ Passwords and Secrets settings are what they suggest - all of the various passwo
 - `consul_database_password` - Sets the password for [Consul's database user](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#consul-information). Required for Postgres HA.
 - `pgbouncer_password` - Sets the password for [GitLab's default PgBouncer user](https://docs.gitlab.com/ee/administration/postgresql/replication_and_failover.html#pgbouncer-information)
 - `redis_password` - Sets the password for [Redis](https://docs.gitlab.com/ee/administration/redis/replication_and_failover.html#step-1-configuring-the-primary-redis-instance).
-- `gitaly_token` **_Gitaly Sharded only_** - Sets the [shared authentication token for Gitaly](https://docs.gitlab.com/ee/administration/gitaly/#configure-authentication). Only used in [Gitaly Sharded](environment_advanced.md#gitaly-sharded) setups.
 - `praefect_external_token` **_Gitaly Cluster only_** - Sets the [external access token for Gitaly Cluster and Praefect](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#secrets).
 - `praefect_internal_token` **_Gitaly Cluster only_** - Sets the [internal access token for Gitaly Cluster and Praefect](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#secrets).
 - `praefect_postgres_password` **_Gitaly Cluster only_** - Sets the [password for Praefect's database user](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#secrets).
+- `gitaly_token` **_Gitaly Sharded only_** - Sets the [shared authentication token for Gitaly](https://docs.gitlab.com/ee/administration/gitaly/#configure-authentication). Only used in [Gitaly Sharded](environment_advanced.md#gitaly-setups---cluster-or-sharded) setups.
 
 #### Notable Optional Config
 
@@ -385,7 +385,7 @@ There are [various variables available](#full-config-list-and-further-examples) 
 
 ##### GitLab Version
 
-By default the Toolkit will deploy the latest [GitLab EE package](https://packages.gitlab.com/gitlab/gitlab-ee) via its repo.
+By default, the Toolkit will deploy the latest [GitLab EE package](https://packages.gitlab.com/gitlab/gitlab-ee) via its repo.
 
 However, the [standard GitLab Upgrade rules still apply](https://docs.gitlab.com/ee/update/#upgrade-paths) when upgrading across multiple GitLab versions. You should refer to the docs to ensure the intended upgrade can be performed directly or if you need to upgrade to a certain version first.
 
@@ -398,7 +398,7 @@ The Toolkit can install other GitLab versions from `13.2.0` onwards through two 
   - If the package needs to be downloaded from the specific URL you can specify this via the `gitlab_deb_download_url` inventory variable.
     - If the URL to download the deb file requires authorization or other headers you can pass these in a Hash format via the `gitlab_deb_download_url_headers` inventory variable.
   - If the package needs to be uploaded from the local host where Ansible is running, add the `gitlab_deb_host_path` inventory variable that should be set to the local path where the file is located.
-  - An additional variable, `gitlab_deb_target_path` configures where Ansible should copy the Debian file onto the targets before installing but this is set to `/tmp` by default and doesn't need to be changed.
+  - An additional variable, `gitlab_deb_target_path` configures where Ansible should copy the Debian file onto the targets before installing, but this is set to `/tmp` by default and doesn't need to be changed.
 
 ##### Object Storage Prefix
 
@@ -454,7 +454,7 @@ Note that region is required here but since you've already configured it earlier
 
 ## 3. Run the GitLab Environment Toolkit's Docker container (optional)
 
-Before running the [Docker container](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/container_registry/2697240) you will need to setup your environment files by following [2. Setup the Environment's Inventory and Config](#2-setup-the-environments-inventory-and-config). The container can be started once the files have been configured. When starting the container it is important to pass in your environment files and keys, as well as set any authentication based environment variables.
+Before running the [Docker container](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/container_registry/2697240) you will need to set up your environment files by following [2. Set up the Environment's Inventory and Config](#2-set-up-the-environments-inventory-and-config). The container can be started once the files have been configured. When starting the container it is important to pass in your environment files and keys, as well as set any authentication based environment variables.
 
 Below is an example of how to run the container when using a GCP service account:
 
@@ -466,7 +466,7 @@ docker run -it \
   registry.gitlab.com/gitlab-org/gitlab-environment-toolkit:latest
 ```
 
-You can also use a simplified command if you store your environment outside of the toolkit. Using the folder structure below you're able to store multiple environments alongside each other and when using the Toolkit's container you can simply pass in a single folder and still have access to all your different environments.
+You can also use a simplified command if you store your environment outside the toolkit. Using the folder structure below you're able to store multiple environments alongside each other and when using the Toolkit's container you can simply pass in a single folder and still have access to all your different environments.
 
 ```sh
 get_environments
@@ -491,7 +491,7 @@ docker run -it \
 
 ## 4. Configure
 
-After the config has been setup you're now ready to configure the environment. This is done as follows:
+After the config has been set up you're now ready to configure the environment. This is done as follows:
 
 1. `cd` to the `ansible/` directory if not already there.
 1. (Optional) Run `ansible` module `ping` with the intended environment's inventory to list hosts which have been selected.
