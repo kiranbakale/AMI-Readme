@@ -85,10 +85,11 @@ gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
 consul['enable'] = true
 consul['configuration'] = {
   bind_addr: '{{ ansible_default_ipv4.address }}',
-  retry_join: %w({{ (consul_int_addrs if 'consul' in groups else gitlab_rails_int_addrs) | join(' ') }}),
-{% if 'consul' not in groups and 'gitlab_rails_primary' in group_names %}
+{% if 'consul' not in groups and consul_single_server_target_group in group_names %}
   server: true,
-  bootstrap_expect: 1    # Non HA leader
+  bootstrap_expect: 1    # Non HA leader (Monitoring only)
+{% else %}
+  retry_join: %w({{ (consul_int_addrs | join(' ')) if 'consul' in groups else consul_single_server_int_addr }})
 {% endif -%}
 }
 consul['monitoring_service_discovery'] = true

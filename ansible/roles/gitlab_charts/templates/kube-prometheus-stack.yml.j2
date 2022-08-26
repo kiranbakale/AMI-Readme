@@ -34,7 +34,7 @@ prometheus:
             services:
               - gitaly
 {% endif %}
-{% if 'redis' in groups %}
+{% if groups | select('match', 'redis.*') | length > 0 %}
       - job_name: redis
         consul_sd_configs:
           - server: "gitlab-consul.{{ consul_charts_namespace }}.svc.cluster.local:8500"
@@ -85,8 +85,18 @@ prometheus:
             - "{{ haproxy_internal_int_addr }}:1936"
 {% endif %}
 
+kube-state-metrics:
+  nodeSelector:
+    workload: support
+
+prometheusOperator:
+  nodeSelector:
+    workload: support
+
 grafana:
   enabled: true
+  nodeSelector:
+    workload: support
   admin:
     existingSecret: gitlab-grafana-initial-password
     userKey: username

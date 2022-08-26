@@ -82,7 +82,7 @@
             datacenter: gitlab_consul
           client:
             enabled: true
-            join: "{{ consul_int_addrs }}"
+            join: "{{ consul_int_addrs if 'consul' in groups else [consul_single_server_int_addr] }}"
             nodeSelector: |
               workload: support
 
@@ -102,7 +102,6 @@
             selector:
               app: consul
               release: gitlab-consul
-  when: "'consul' in groups"
 
 - name: Setup kube-prometheus-stack chart
   block:
