@@ -483,7 +483,7 @@ Providing custom secrets for the Charts is done as follows:
 1. Create a standard Ansible Tasks yaml file with the tasks you wish to run.
     - The file must be in a format that can be run in Ansible's [`include_tasks`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_tasks_module.html) module.
     - You can add the tag `custom_tasks` to your tasks if you wish to run the tasks in isolation.
-1. By default the Toolkit looks for Custom Tasks files in the [environment's](environment_configure.md#2-setup-the-environments-inventory-and-config) `files/gitlab_tasks` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_tasks/gitlab_charts_secrets.yml`. Save your file in this location with the same name.
+1. By default, the Toolkit looks for Custom Tasks files in the [environment's](environment_configure.md#2-set-up-the-environments-inventory-and-config) `files/gitlab_tasks` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_tasks/gitlab_charts_secrets.yml`. Save your file in this location with the same name.
     - If you wish to store your file in a different location or use a different name the full path that Ansible should use can be set via a variable for each different component e.g. `gitlab_charts_secrets_tasks_file`.
 
 With the above done, the file will be run before the Helm Charts deployment to add the new secrets.

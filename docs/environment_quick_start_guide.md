@@ -16,7 +16,7 @@
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 - [GitLab Environment Toolkit - Troubleshooting](environment_troubleshooting.md)
 
-On this page you'll find a Quick Start Guide where we go through the steps with examples on how to setup a GitLab environment required with the Toolkit.
+On this page you'll find a Quick Start Guide where we go through the steps with examples on how to set up a GitLab environment required with the Toolkit.
 
 For the purpose of this guide we'll go through the steps required for one of the more common setups - An [Omnibus 10k Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html) on Amazon Web Services (AWS).
 
@@ -32,7 +32,7 @@ Before starting the quick guide there are some prerequisites you should go throu
 
 ### Select an Environment Name
 
-The Toolkit needs an appropriate environment name for it to name all of the infrastructure accordingly. This should be something short and unique.
+The Toolkit needs an appropriate environment name for it to name all the infrastructure accordingly. This should be something short and unique.
 
 :information_source:&nbsp; **This will be referred to as `<ENV_NAME>` later in this guide.**
 
@@ -79,9 +79,9 @@ Generating the key itself is as normal and covered in the main [GitLab docs](htt
 
 ### 1c. Terraform State Storage
 
-Next we need a place to save the Terraform State file. It's recommended this is in a remote location so all users ensure they're on the same state.
+Next we need a place to save the Terraform State file. It's recommended this is in a remote location as this allows all users ensure they're on the same state.
 
-With AWS this is straightforward as we can store the file on S3 object storage. Create a standard [AWS storage bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html) for this using all of the default options in the same region you intend to deploy the environment.
+With AWS this is straightforward as we can store the file on S3 object storage. Create a standard [AWS storage bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html) for this using all the default options in the same region you intend to deploy the environment.
 
 This can be named as desired, but note that **AWS requires the name to be globally unique across all users**. _Avoid_ using `<ENV_NAME>-terraform-state` as Toolkit will create a bucket with this naming format for the [Terraform Module Registry](https://docs.gitlab.com/ee/user/packages/terraform_module_registry/) feature.
 
@@ -89,7 +89,7 @@ This can be named as desired, but note that **AWS requires the name to be global
 
 ### 1d. Static External IP
 
-Finally the last bit of prep we need is a Static External IP that the environment will use as its address.
+Finally, the last bit of prep we need is a Static External IP that the environment will use as its address.
 
 Follow [AWS's docs on how to do this](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html#using-instance-addressing-eips-allocating), selecting the default options **making sure to create the IP in the same region as you selected earlier**.
 
@@ -99,7 +99,7 @@ Once created you'll be given an allocation ID and IP address. Keep a note of thi
 
 ## 2. Provisioning the environment with Terraform
 
-With the prep done [we're now ready to setup the config for Terraform to provision](environment_provision.md) the environment's infrastructure on AWS. This involves installing Terraform, setting up the config and then running Terraform.
+With the prep done [we're now ready to set up the config for Terraform to provision](environment_provision.md) the environment's infrastructure on AWS. This involves installing Terraform, setting up the config and then running Terraform.
 
 Let's go through the steps for each.
 
@@ -109,7 +109,7 @@ Config is recommended to be placed in a new folder named after the environment u
 
 ### 2a. Installing Terraform with `asdf`
 
-First we need to install Terraform. To easily switch between Terraform versions we recommend to install via [`asdf`](https://asdf-vm.com/#/) as follows:
+First we need to install Terraform. To easily switch between Terraform versions we recommend installing with [`asdf`](https://asdf-vm.com/#/) as follows:
 
 1. Install `asdf` as per its [documentation](https://asdf-vm.com/#/core-manage-asdf?id=install)
 1. Add the Terraform asdf plugin - `asdf plugin add terraform`
@@ -120,7 +120,7 @@ Terraform should now be installed and ready on your `PATH`.
 
 ### 2b. Setup Config
 
-Now we'll setup the Terraform config for the environment. There are 3 config files to configure - Variables (`variables.tf`), Main (`main.tf`) and Environment (`environment.tf`) - as follows:
+Now we'll set up the Terraform config for the environment. There are 3 config files to configure - Variables (`variables.tf`), Main (`main.tf`) and Environment (`environment.tf`) - as follows:
 
 First is the Variables file, which contains some variables to be used by Terraform for connecting to AWS as well as setting some environment basics such as the AWS Region:
 
@@ -146,7 +146,7 @@ variable "external_ip_allocation" {
 
 </details>
 
-Next is the Main file, which configures Terraform how to authenticate against AWS and where to save it's state:
+Next is the Main file, which configures Terraform how to authenticate against AWS and where to save its state:
 
 <details><summary>Main - <code>gitlab-environment-toolkit/terraform/environments/&#60;ENV_NAME&#62;/main.tf</code></summary>
 
@@ -172,7 +172,7 @@ provider "aws" {
 
 </details>
 
-Finally we have the Environment file, which configures the Toolkit's modules on how to actually build the environment:
+Finally, we have the Environment file, which configures the Toolkit's modules on how to actually build the environment:
 
 <details><summary>Environment - <code>gitlab-environment-toolkit/terraform/environments/&#60;ENV_NAME&#62;/environment.tf</code></summary>
 
@@ -251,7 +251,7 @@ After Terraform has finished running, the machines and other infrastructure will
 
 ## 3. Configuring the environment with Ansible
 
-With the machines and infrastructure provisioned, we're now ready to [setup Ansible to configure GitLab](environment_configure.md). This involves installing Ansible, setting up the config and then running Ansible.
+With the machines and infrastructure provisioned, we're now ready to [set up Ansible to configure GitLab](environment_configure.md). This involves installing Ansible, setting up the config and then running Ansible.
 
 Let's go through the steps for each.
 
@@ -269,11 +269,11 @@ First we need to install Ansible. There are various ways to install Ansible, we 
 1. Install Python packages - `pip3 install -r ansible/requirements/requirements.txt`.
 1. Install Ansible Galaxy Collections and Roles - `ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml`.
 1. Install OpenSSH Client if not already installed as per your OS.
-1. Note that if you're on a Mac OS machine you also need to install `gnu-tar` - `brew install gnu-tar`.
+1. Note that if you're on a macOS machine you also need to install `gnu-tar` - `brew install gnu-tar`.
 
 ### 3b. Setup Config
 
-Now we'll setup the Ansible config for the environment. There are 2 config files to configure - Dynamic Inventory (`<ENV_NAME>.aws_ec2.yml`) and Environment (`vars.yml`) - as follows:
+Now we'll set up the Ansible config for the environment. There are 2 config files to configure - Dynamic Inventory (`<ENV_NAME>.aws_ec2.yml`) and Environment (`vars.yml`) - as follows:
 
 :information_source:&nbsp; Note that some of the config we set here matches config set in Terraform.
 
