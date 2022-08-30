@@ -1,4 +1,4 @@
-{% if ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names)) %}
+{% if geo_secondary_site_group_name not in group_names and ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names)) %}
 gitlab_rails['auto_migrate'] = true
 
 gitlab_rails['db_host'] = '{{ internal_lb_host }}'
