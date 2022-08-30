@@ -5,7 +5,7 @@
 
 - name: Run post-deployment migrations
   import_tasks: post-deployment-migrations.yml
-  when: ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
+  when: geo_secondary_site_group_name not in group_names and ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
 
 - name: Remove zero downtime config from all nodes
   block:
