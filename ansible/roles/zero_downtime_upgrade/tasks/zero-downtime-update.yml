@@ -100,5 +100,5 @@
   command: gitlab-ctl restart geo-logcursor
   throttle: 1
   when:
-    - ('sidekiq' in group_names)
+    - ('gitlab_rails' in group_names)
     - ('gitlab_rails_secondary' in group_names)
