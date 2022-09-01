@@ -39,6 +39,10 @@
     release_state: absent
     release_namespace: "{{ gitlab_charts_release_namespace }}"
     wait: true
+  register: result
+  retries: 1
+  delay: 5
+  until: result is success
   when: geo_recovery is not defined or not geo_recovery
 
 - name: Redeploy Secondary Charts - Set gitlab_values
