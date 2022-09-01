@@ -299,6 +299,10 @@ kube_prometheus_stack_charts_storage_size: 100Gi
 kube_prometheus_stack_charts_storage_class: ""
 kube_prometheus_stack_charts_app_version: "0.57.0"
 
+kube_prometheus_stack_charts_custom_dashboards_path: "{{ inventory_path }}/../files/grafana"
+kube_prometheus_stack_charts_custom_dashboards: []
+kube_prometheus_stack_charts_custom_scrape_config: []
+
 consul_charts_namespace: consul
 consul_charts_app_version: "1.12.3"
 

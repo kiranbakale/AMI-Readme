@@ -63,37 +63,6 @@ By default, as given by Omnibus, Grafana will be configured with no authenticati
 
 Once completed, Grafana will be available at the address `<ENVIRONMENT_URL>/-/grafana`.
 
-### Custom Grafana Dashboards
-
-The Toolkit allows for you to pass in custom dashboards to be used in Grafana.
-
-By default, we recommend storing any custom dashboards alongside your Ansible inventory in `environments/<inventory name>/files/grafana/<collection name>/<dashboard files>`. You can create multiple folders to store different dashboards or store everything in a single folder. If you want to store your custom dashboards in a folder other than `environments/<inventory name>/files/grafana/` then you can set the variable `monitor_custom_dashboards_path` to point to your custom location.
-
-Once the dashboards are in place you can add the `monitor_custom_dashboards` variable into your [`vars.yml`](environment_configure.md#environment-config-varsyml) file.
-
-```yaml
-monitor_custom_dashboards: [{ display_name: 'Sidekiq Dashboards', folder: "my_sidekiq_dashboards" }, { display_name: 'Gitaly Dashboards', folder: "my_gitaly_dashboards" }]
-```
-
-- `display_name`: This is how the collection will appear in the Grafana UI and the name of the folder the dashboards will be stored in on the Grafana server.
-- `folder`: This is the name of the folder in `monitor_custom_dashboards_path` that holds your collection of dashboards.
-
-### Custom Prometheus Scrape configs
-
-The Toolkit allows for configure custom [Prometheus scape configs](https://docs.gitlab.com/ee/administration/monitoring/prometheus/#adding-custom-scrape-configurations) via the `monitor_custom_prometheus_scrape_config` variable to your [`vars.yml`](environment_configure.md#environment-config-varsyml) file.
-
-This setting should be a JSON string element, which the Toolkit will then merge with the rest. For example if you wanted to scrape a separate InfluxDB instance that has [its exporter](https://github.com/prometheus/influxdb_exporter) enabled:
-
-```yml
-monitor_custom_prometheus_scrape_config: |
-  {
-    'job_name': 'influxdb',
-    'static_configs' => [
-      'targets' => ["<INFLUXDB_URL>:9122"],
-    ],
-  },
-```
-
 ## Cloud Native Hybrid
 
 In Cloud Native Hybrid environments the Toolkit utilises the [`kube-prometheus-stack`](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack) and [`consul`](https://artifacthub.io/packages/helm/hashicorp/consul) Helm Charts to provide monitoring.
@@ -121,7 +90,96 @@ all:
 
     cloud_native_hybrid_environment: true
     cloud_native_hybrid_monitoring_setup: true
-    kubeconfig_setup: true
 ```
 
 Once completed, Grafana will be available at the address `<ENVIRONMENT_URL>/-/grafana`.
+
+## Custom Grafana Dashboards
+
+The Toolkit allows for you to pass in custom dashboards to be used in Grafana for either the Omnibus or Cloud Native Hybrid setups described above.
+
+By default, the Toolkit will look for Dashboards under the `environments/<env_name>/files/grafana` folder. In Grafana, Dashboards are typically organised under folders, so the same is expected here. As such, Dashboards should be placed in their own folder in this path, for example `environments/<env_name>/files/grafana/<dashboards folder name>/<dashboard files>`. You can create multiple folders to store different dashboards or store everything in a single folder. You can also store the dashboards in a different location other than `environments/<env_name>/files/grafana/` for each setup.
+
+Once the dashboards are in place you can then configure the Toolkit to set these up accordingly. This is done by configuring the Toolkit to know what sub-folders of dashboards to transfer over as well as configuring how they are displayed in the Grafana UI.
+
+For details on how to do this for each setup, refer to the applicable section below.
+
+### Omnibus
+
+For Omnibus, the following variables are used to configure custom dashboards:
+
+- `monitor_custom_dashboards_path` - Path the Toolkit will look under for any Dashboards. Default is `environments/<env_name>/files/grafana`.
+- `monitor_custom_dashboards` - List of Dashboard folders under `monitor_custom_dashboards_path` the Toolkit should transfer. Each entry requires a couple of variables to be set in dict format: For each a dict should be set with the following sub-variables:
+  - `folder` - The folder under `monitor_custom_dashboards_path` to transfer over
+  - `display_name` - Display name of Folder to be shown in the Grafana UI.
+  
+An example of how you would configure this for several folders in the default location would be as follows:
+
+```yaml
+monitor_custom_dashboards:
+  - folder: 'my_sidekiq_dashboards'
+    display_name: 'Sidekiq Dashboards'
+  - folder: 'my_gitaly_dashboards'
+    display_name: 'Gitaly Dashboards'
+```
+
+### Cloud Native Hybrid
+
+For Cloud Native Hybrid, the following variables are used to configure custom dashboards:
+
+- `kube_prometheus_stack_charts_custom_dashboards_path` - Path the Toolkit will look under for any Dashboards. Default is `environments/<env_name>/files/grafana`.
+- `kube_prometheus_stack_charts_custom_dashboards` - List of Dashboard folders under `kube_prometheus_stack_charts_custom_dashboards_path` the Toolkit should transfer. Each entry requires a couple of variables to be set in dict format: For each a dict should be set with the following sub-variables:
+  - `folder` - The folder under `kube_prometheus_stack_charts_custom_dashboards_path` to transfer over
+  - `display_name` - Display name of Folder to be shown in the Grafana UI.
+
+An example of how you would configure this for several folders in the default location would be as follows:
+
+```yaml
+kube_prometheus_stack_charts_custom_dashboards:
+  - folder: 'my_sidekiq_dashboards'
+    display_name: 'Sidekiq Dashboards'
+  - folder: 'my_gitaly_dashboards'
+    display_name: 'Gitaly Dashboards'
+```
+
+## Custom Prometheus Scrape configs
+
+The Toolkit allows for you to configure custom [Prometheus scape configs](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/additional-scrape-config.md) for either the Omnibus or Cloud Native Hybrid setups described above.
+
+For both setups this is done by passing in the configs for each setup's specific format in the Ansible [`vars.yml`](environment_configure.md#environment-config-varsyml) file.
+
+For details on how to do this for each setup, refer to the applicable section below.
+
+### Omnibus
+
+For Omnibus, [scrape configs are passed in a JSON dictionary format](https://docs.gitlab.com/ee/administration/monitoring/prometheus/#adding-custom-scrape-configurations). This is done via the following variable:
+
+- `monitor_custom_prometheus_scrape_config` - A list of custom scrape configs to configure in JSON dictionary format.
+
+An example of how you would configure this, in this case for an Influx DB [with exporter enabled](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#static_config), in the Ansible [`vars.yml`](environment_configure.md#environment-config-varsyml) file would be as follows:
+
+```yml
+monitor_custom_prometheus_scrape_config: |
+  {
+    'job_name': 'influxdb',
+    'static_configs' => [
+      'targets' => ["<INFLUXDB_URL>:9122"],
+    ],
+  },
+```
+
+### Cloud Native Hybrid
+
+For Cloud Native Hybrid, [scrape configs are passed in a YAML dictionary format](https://prometheus.io/docs/prometheus/latest/configuration/configuration). This is done via the following variable:
+
+- `kube_prometheus_stack_charts_custom_scrape_config` - A list of custom scrape configs to configure in YAML dictionary format.
+
+An example of how you would configure this, in this case for an Influx DB [with exporter enabled](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#static_config), in the Ansible [`vars.yml`](environment_configure.md#environment-config-varsyml) file would be as follows:
+
+```yml
+kube_prometheus_stack_charts_custom_scrape_config:
+  - job_name: influxdb
+    static_configs:
+      - targets:
+        - "<INFLUXDB_URL>:9122"
+```

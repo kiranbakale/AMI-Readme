@@ -135,8 +135,6 @@ ansible
         └── inventory
 ```
 
-:information_source:&nbsp; Previously we suggested a different folder structure under the `inventories` folder. While this will continue to work we recommend moving to the above structure moving forward.
-
 With the above structure in place we can now look at the files to be configured. The rest of this guide will assume this structure is being used.
 
 ### Config Examples

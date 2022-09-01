@@ -84,6 +84,9 @@ prometheus:
           - targets:
             - "{{ haproxy_internal_int_addr }}:1936"
 {% endif %}
+{% for custom in kube_prometheus_stack_charts_custom_scrape_config %}
+      - {{ custom }}
+{% endfor %}
 
 kube-state-metrics:
   nodeSelector:

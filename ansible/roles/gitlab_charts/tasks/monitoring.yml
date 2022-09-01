@@ -25,7 +25,7 @@
       diff: false
       when: grafana_password is defined
 
-    - name: Configure Grafana Dashboard ConfigMaps
+    - name: Configure Built-in Grafana Dashboard ConfigMaps
       kubernetes.core.k8s:
         state: present
         definition:
@@ -39,9 +39,32 @@
               gitlab_grafana_folder: "GitLab Environment Toolkit"
           data:
             server-performance.json: |
-              {{ lookup('file', 'server-performance.json') | from_yaml | to_json(indent=2) }}
+              {{ lookup('file', 'grafana_dashboards/server-performance.json') | from_yaml | to_json(indent=2) }}
         force: true
       diff: false
+
+    - name: Configure Custom Grafana Dashboard ConfigMaps
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          kind: ConfigMap
+          metadata:
+            name: "{{ 'gitlab-grafana-dashboard-' + (item.display_name | lower | replace(' ', '-')) }}"
+            namespace: "{{ kube_prometheus_stack_charts_namespace }}"
+            labels:
+              gitlab_grafana_dashboard: "true"
+            annotations:
+              gitlab_grafana_folder: "{{ item.display_name }}"
+          data: |
+            {
+              {% for dashboard in lookup('ansible.builtin.fileglob', kube_prometheus_stack_charts_custom_dashboards_path + '/' + item.folder + '/*.json', wantlist=True) %}
+              '{{ dashboard | basename }}': {{ lookup('file', dashboard) | to_json }},
+              {% endfor %}
+            }
+        force: true
+      loop: "{{ kube_prometheus_stack_charts_custom_dashboards }}"
+      diff: false
+      when: kube_prometheus_stack_charts_custom_dashboards != []
 
 - name: Setup Consul agent
   block:
@@ -154,6 +177,11 @@
     - name: Show kube-prometheus-stack charts version
       debug:
         msg: "kube-prometheus-stack charts version for {{ kube_prometheus_stack_charts_app_version }} is {{ kube_prometheus_stack_charts_version }}"
+
+    - name: Show charts values if configured
+      debug:
+        msg: "{{ lookup('template', 'templates/kube-prometheus-stack.yml.j2') | from_yaml }}"
+      when: gitlab_charts_show_values
 
     - name: Install kube-prometheus-stack chart
       kubernetes.core.helm:
