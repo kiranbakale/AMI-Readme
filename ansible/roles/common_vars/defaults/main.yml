@@ -367,7 +367,9 @@ monitor_custom_files_paths: []
 maintenance_mode_message: "GitLab is undergoing maintenance"
 
 geo_primary_external_url: "{{ external_url }}"
+geo_primary_internal_url: "{{ geo_primary_external_url | default('') }}"
 geo_secondary_external_url: "{{ secondary_external_url if secondary_external_url is defined }}"
+geo_secondary_internal_url: "{{ geo_secondary_external_url | default('') }}"
 
 geo_primary_site_group_name: "geo_primary_site"
 geo_secondary_site_group_name: "geo_secondary_site"
