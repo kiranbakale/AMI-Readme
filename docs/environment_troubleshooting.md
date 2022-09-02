@@ -205,6 +205,14 @@ For some background, GKE / EKS will set up VMs to be the Nodes in the Kubernetes
 
 From GitLab Environment Toolkit version `2.4.0` onwards this warning is disabled by default as it's expected.
 
+### Data missing in environment after successful deploy
+
+After deployment if there appears to be data missing, such as missing Users, this is likely due to [Database Migrations](https://docs.gitlab.com/charts/charts/gitlab/migrations/) not completing successfully.
+
+In the Charts this is done via a specific Job named `migrations`. If it's failing it's likely due to it not being able to access the database correctly.
+
+[The debugging steps in this section of the Chart's documentation](https://docs.gitlab.com/charts/troubleshooting/#application-containers-constantly-initializing) can be followed to debug further.
+
 ## Other
 
 ### macOS - Python package install failure - `fatal error: 'openssl/opensslv.h' file not found`

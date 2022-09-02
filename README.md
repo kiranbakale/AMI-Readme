@@ -6,7 +6,7 @@ Released under the [GitLab EE license](LICENSE).
 
 GET configures a base GitLab environment based on the Reference Architectures that can be built upon accordingly.
 
-Customers are very welcome to trial and evaluate GET today. However it's recommended that you do independently review the Toolkit to ensure it meets your requirements, especially around [security](docs/environment_post_considerations.md#security), while also being aware of any current [key limitations](#missing-features-to-be-aware-of). For production environments [further manual setup](docs/environment_post_considerations.md) will be required based on your specific requirements.
+Customers are very welcome to trial and evaluate GET today. However, it's recommended that you do independently review the Toolkit to ensure it meets your requirements, especially around [security](docs/environment_post_considerations.md#security), while also being aware of any current [key limitations](#missing-features-to-be-aware-of). For production environments [further manual setup](docs/environment_post_considerations.md) will be required based on your specific requirements.
 >>>
 
 ![alt text](https://assets.gitlab-static.net/uploads/-/system/project/avatar/14292404/tanuki-blueprint.png "GitLab Environment Toolkit")
@@ -23,7 +23,7 @@ Created and maintained by the GitLab Quality Engineering Enablement team, the To
 - Advanced search with Elasticsearch
 - Geo support
 - Zero Downtime Upgrades support
-- Built in Load Balancing and Monitoring (Prometheus, Grafana) setup
+- Built in optional Load Balancing and Monitoring (Prometheus, Grafana) setup
 - SSL / TLS support (either direct or via hooks)
 - Alternative sources (Cloud Services, Custom Servers) for select components (Load Balancers, PostgreSQL, Redis)
 - On Prem Support (Ansible)
@@ -36,11 +36,10 @@ Note that the Toolkit currently has the following requirements (with related iss
 
 - GitLab version: `13.2.0` (Omnibus) / `13.6.0` (Cloud Native Hybrid) and upwards.
 - OS: Ubuntu 18.04+, RHEL 8, Amazon Linux 2
-  - At this time the Toolkit only supports clean OS installations. It may work with existing installations but this is not currently being tested.
+  - At this time the Toolkit only supports clean OS installations. It may work with existing installations, but this is not currently being tested.
   - Admin access to the OS is also required by GET to install various dependencies
 - Types of environment: The Toolkit is designed to deploy the official GitLab [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) (Standard or Cloud Native Hybrid) as environments.
-  - The Toolkit requires NFS to propagate certain files. This can be on a dedicated node or it will dynamically set this up on other nodes as required.
-  - Advanced usage is possible where users can make tweaks to the environments as desired, such as increasing the number of nodes or their specs, but this is generally unrecommended.
+  - The Toolkit requires NFS to propagate certain files. This can be on a dedicated node, or it will dynamically set this up on other nodes as required.
 
 ## Documentation
 
@@ -78,7 +77,7 @@ Refer to the docs above for full instructions on each.
 At a high level the Toolkit is designed to be as straightforward as possible. A high level overview of how it works is as follows:
 
 - Machines and associated infrastructure are _provisioned_ as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) with Terraform. Part of this provisioning includes adding specific labels / tags to each machine for Ansible to then use to identify.
-- Machines are _configured_ with Ansible. Through identifying each machine by its Labels, Ansible will intelligently go through them in the correct install order. On each it will install and configure Omnibus to setup the intended component as required. The Ansible scripts have been designed to handle certain dynamic setups depending on what machines have been provisioned (e.g. an environment without Elasticsearch, or a 2k environment with a smaller amount of nodes). Additional tasks are also performed as required such as setting GitLab config through Rails or Load Balancer / Monitoring setup.
+- Machines are _configured_ with Ansible. Through identifying each machine by its Labels, Ansible will intelligently go through them in the correct installation order. On each it will install and configure Omnibus to set up the intended component as required. The Ansible scripts have been designed to handle certain dynamic setups depending on what machines have been provisioned (e.g. an environment without Elasticsearch, or a 2k environment with a smaller amount of nodes). Additional tasks are also performed as required such as setting GitLab config through Rails or Load Balancer / Monitoring setup.
 
 ```plantuml
 @startuml 10k
@@ -115,8 +114,8 @@ card aws #ffffff [
   EC2
   EKS
   S3
-  Networking (VPCs, Subnets,
-  Gateways, IPs, etc...)
+  Networking (For example VPCs, Subnets,
+  Gateways or IPs)
   ELBs
   RDS
   ElastiCache
@@ -133,8 +132,8 @@ card gcp #ffffff [
   Compute Engine
   Kubernetes Engine
   Cloud Storage
-  Networking (VPCs, Subnets,
-  Gateways, IPs, etc...)
+  Networking (For example VPCs, Subnets,
+  Gateways or IPs)
   Cloud Load Balancing (Planned)
   Cloud SQL (Planned)
   Cloud Memorystore (Planned)
@@ -149,8 +148,8 @@ card azure #ffffff [
 
   Compute
   Blob Storage
-  Networking (VPCs, Subnets,
-  IPs, etc...)
+  Networking (For example VPCs, Subnets
+  or IPs)
 ]
 
 omnibus --> get
@@ -188,7 +187,7 @@ There are a few key features which are not supported yet, which are important to
 - [Some cloud provider services](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/74) such as managed PostgreSQL or Redis. AWS and other currently supported services can be seen on the [relevant docs page](docs/environment_advanced_services.md).
 - [GitLab Registry support](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/212) for Omnibus-only deployments. Cloud Native Hybrid supports the registry.
 
-Our upcoming work, sorted by tentative milestone, can be viewed on [our development board](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/boards). Please note that the issues slated for any upcoming release or milestone are subject to change and may not meet the planned timeframes.
+Our upcoming work, sorted by tentative milestone, can be viewed on [our development board](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/boards). Please note that the issues slated for any upcoming release or milestone are subject to change and may not meet the planned time frames.
 
 ## Issues or Feature Requests
 
