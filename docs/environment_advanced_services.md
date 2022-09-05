@@ -55,7 +55,7 @@ Head to the relevant section(s) below for details on how to provision and/or con
 
 ### Provisioning with Terraform
 
-Provisioning the alternative Load Balancer(s) via cloud services is handled directly by the relevant Toolkit module. As such, it only requires some different config in your Environment's config file (`environment.tf`).
+Provisioning the alternative Load Balancer(s) via cloud services is handled directly by the relevant Toolkit module. As such, it only requires some different config in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`).
 
 Like the main provisioning docs there are sections for each supported provider on how to achieve this. Follow the section for your selected provider and then move onto the next step.
 
@@ -69,7 +69,7 @@ The variable(s) for this service start with the prefix `elb_internal_*` and shou
 
 - `elb_internal_create` - Create the Internal Load Balancer service. Defaults to `false`.
 
-To set up a standard AWS NLB service for the Internal Load Balancer it should look like the following in your `environment.tf` file:
+To set up a standard AWS NLB service for the Internal Load Balancer it should look like the following in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`):
 
 ```tf
 module "gitlab_ref_arch_aws" {
@@ -128,7 +128,7 @@ Head to the relevant section(s) below for details on how to provision and/or con
 
 ### Provisioning with Terraform
 
-Provisioning a PostgreSQL database via a cloud service differs slightly per provider but has been designed in the Toolkit to be as similar as possible to deploying PostgreSQL via Omnibus. As such, it only requires some different config in your Environment's config file (`environment.tf`).
+Provisioning a PostgreSQL database via a cloud service differs slightly per provider but has been designed in the Toolkit to be as similar as possible to deploying PostgreSQL via Omnibus. As such, it only requires some different config in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`).
 
 Like the main provisioning docs there are sections for each supported provider on how to achieve this. Follow the section for your selected provider and then move onto the next step.
 
@@ -157,7 +157,7 @@ The variables for this service start with the prefix `rds_postgres_*` and should
 - [`rds_postgres_delete_automated_backups`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#delete_automated_backups) - Whether automated backups (if taken) will be deleted when the RDS instance is deleted. Optional, default is `true`.
 - [`rds_postgres_maintenance_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#maintenance_window) - The window to perform maintenance in, e.g. `Mon:00:00-Mon:03:00`. Optional, default is `null`. Must not overlap with `rds_postgres_backup_window`.
 
-To set up a standard AWS RDS PostgreSQL service for a 10k environment with the required variables should look like the following in your `environment.tf` file for a 10k environment is:
+To set up a standard AWS RDS PostgreSQL service for a 10k environment with the required variables, it should look like the following in the [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`):
 
 ```tf
 module "gitlab_ref_arch_aws" {
@@ -270,7 +270,7 @@ Head to the relevant section(s) below for details on how to provision and/or con
 
 ### Provisioning with Terraform
 
-Provisioning an alternative Redis store via a cloud service differs slightly per provider but has been designed in the Toolkit to be as similar as possible to deploying Redis via Omnibus. As such, it only requires some different config in your Environment's config file (`environment.tf`).
+Provisioning an alternative Redis store via a cloud service differs slightly per provider but has been designed in the Toolkit to be as similar as possible to deploying Redis via Omnibus. As such, it only requires some different config in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`).
 
 Like the main provisioning docs there are sections for each supported provider on how to achieve this. Follow the section for your selected provider and then move onto the next step.
 
@@ -312,7 +312,7 @@ For optional variables they work in a default like manner. When configuring for 
 
 If deploying a combined Redis setup that contains all queues (5k and lower) the following settings should be set (replacing any previous `redis_*` settings):
 
-As an example, to set up a standard AWS ElastiCache Redis service for a [5k](https://docs.gitlab.com/ee/administration/reference_architectures/5k_users.html) environment with the required variables should look like the following in your `environment.tf` file:
+As an example, to set up a standard AWS ElastiCache Redis service for a [5k](https://docs.gitlab.com/ee/administration/reference_architectures/5k_users.html) environment with the required variables should look like the following in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`):
 
 ```tf
 module "gitlab_ref_arch_aws" {
@@ -378,7 +378,7 @@ Head to the relevant section(s) below for details on how to provision and/or con
 
 ### Provisioning with Terraform
 
-Provisioning an alternative search backend via a cloud service differs slightly but has been designed in the Toolkit to be as similar as possible to deploying Elasticsearch via Omnibus. As such, it only requires some different config in your Environment's config file (environment.tf).
+Provisioning an alternative search backend via a cloud service differs slightly but has been designed in the Toolkit to be as similar as possible to deploying Elasticsearch via Omnibus. As such, it only requires some different config in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`).
 
 Like the main provisioning docs there are sections for each supported provider on how to achieve this. Follow the section for your selected provider and then move onto the next step.
 
@@ -390,7 +390,7 @@ The Toolkit supports provisioning an [AWS OpenSearch](https://aws.amazon.com/ope
 
 :information_source:&nbsp; [AWS OpenSearch](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/what-is.html) specifically only supports 1, 2 or 3 Availability Zones.
 
-The variables for this service start with the prefix `opensearch_*` and should replace any previous `elastic_*` variables. The available variables are as follows:
+The variables for this service start with the prefix `opensearch_*` and should replace any previous `elastic_*` variables in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`). The available variables are as follows:
 
 - `opensearch_node_count` - The number of data nodes for the OpenSearch domain that serve search requests. This should be set to at least `2` or higher and should match the number of intended subnets. **Required**.
 - `opensearch_instance_type`- The [AWS Instance Type](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/supported-instance-types.html) for the OpenSearch domain to use without the `.search` suffix. For example, to use a `c5.4xlarge` OpenSearch instance type, the value of this variable should be `c5.4xlarge`. **Required**.
@@ -402,6 +402,7 @@ The variables for this service start with the prefix `opensearch_*` and should r
 - `opensearch_multi_az` - Specifies if the OpenSearch domain is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`.
 - `opensearch_default_subnet_count` - Specifies the number of default subnets to use when running on the default network. Can be set to either `1`, `2` or `3`. Optional, default is `2`.
 - `opensearch_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt the OpenSearch domain. If not provided `default_kms_key_arm` or the default AWS KMS key will be used in that order. Optional, default is `null`.
+- `opensearch_service_linked_role_create` - Sets if the Toolkit should manage the [OpenSearch service-link role](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/slr.html). Will create or destroy the role when set to `true`. Set to `false` if the role already exists in the AWS account. Refer to the [specific section below](#aws-opensearch-service-linked-iam-role) for more info. Optional, default is `true`.
 
 In addition to the above there are several optional features available in AWS OpenSearch that the Toolkit can also configure via the following variables:
 
@@ -413,6 +414,19 @@ In addition to the above there are several optional features available in AWS Op
 Once the variables are set in your file you can proceed to provision the service as normal. Note that this can take several minutes on AWS's side.
 
 Once provisioned you'll see several new outputs at the end of the process. Key from this is the `opensearch_host` output, which contains the address for the OpenSearch domain that then needs to be passed to Ansible to configure. Take a note of this address for the next step.
+
+#### AWS OpenSearch service-linked IAM role
+
+[AWS OpenSearch requires a service-linked role to be present](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/slr.html) in your AWS account named `AWSServiceRoleForAmazonOpenSearchService`. The Toolkit will look to create this for you.
+
+A key limitation of this service managed role is that **only one can exist in the entire AWS account**. As such, you can't create more than one role or conversely delete it if it's being used.
+
+Due to this limitation you may encounter issues when running the Toolkit if you have more than one environment in the same AWS account, or any other separate OpenSearch domains - Specifically around the creation and deletion of this role.
+
+To assist with this the Toolkit can be configured to **_not_** manage this role for you via the `opensearch_service_linked_role_create` variable in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`). This is set to `true` by default but you should set this to `false` in the following scenarios:
+
+- You have another GitLab environment with AWS OpenSearch built with the Toolkit in the _same_ AWS account that already has `opensearch_service_linked_role_create` to `true`.
+- You already have the `AWSServiceRoleForAmazonOpenSearchService` created in the AWS account separately.
 
 ### Configuring with Ansible
 
