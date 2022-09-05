@@ -1238,6 +1238,10 @@ variable "opensearch_kms_key_arn" {
   type    = string
   default = null
 }
+variable "opensearch_service_linked_role_create" {
+  type    = bool
+  default = true
+}
 
 # Networking
 ## Default network

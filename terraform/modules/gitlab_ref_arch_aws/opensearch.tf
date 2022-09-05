@@ -3,7 +3,7 @@ locals {
 }
 
 resource "aws_iam_service_linked_role" "gitlab_opensearch_role" {
-  count = min(var.opensearch_node_count, 1)
+  count = var.opensearch_service_linked_role_create ? min(var.opensearch_node_count, 1) : 0
 
   aws_service_name = "opensearchservice.amazonaws.com"
 }
@@ -11,7 +11,7 @@ resource "aws_iam_service_linked_role" "gitlab_opensearch_role" {
 resource "aws_opensearch_domain" "gitlab" {
   count = min(var.opensearch_node_count, 1)
 
-  domain_name    = var.prefix
+  domain_name    = format("%.28s", var.prefix)
   engine_version = var.opensearch_engine_version
 
   cluster_config {
