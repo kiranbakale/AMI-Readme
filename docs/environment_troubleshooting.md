@@ -34,7 +34,25 @@ This looks to be a race condition issue on Google's end and is [currently being 
 
 This error only happens once and rerunning should succeed without issue.
 
+### External IP not found errors due to region clash
+
+When creating External IPs on Cloud Providers they will typically be set in a specific region.
+
+As such, when creating an environment you should ensure that it's being deployed in the same region as the IP as failing to do so will result in IP not found errors.
+
+### Object Storage Bucket name clashes
+
+Depending on the Cloud Provider, Object Storage bucket names have various limitations.
+
+One key limitation is that names need to be globally unique across the Cloud Provider. As such, depending on the `prefix` or `object_storage_prefix` you have set the generated bucket names may clash with others globally, and you may see an error saying the buckets already exists. If this occurs, change either of the settings to chose different names for the buckets to workaround.
+
 ## Ansible
+
+### Omnibus Reconfigure Errors
+
+On Omnibus environments the Toolkit will be deploying [Omnibus GitLab](https://docs.gitlab.com/omnibus/). The main part of that process is reconfigure (`gitlab-ctl reconfigure`), where Omnibus will set up the configured components. The reconfigure process can be doing a lot and, at times, you may see error(s) being thrown.
+
+Debugging these errors would be the same as if you were setting up Omnibus directly, such as accessing the nodes directly and [examining the logs](https://docs.gitlab.com/omnibus/settings/logs.html).
 
 ### Ansible Install Failure - `No matching distribution found`
 
