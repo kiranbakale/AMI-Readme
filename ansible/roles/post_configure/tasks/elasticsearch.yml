@@ -15,6 +15,10 @@
           delegate_to: "{{ groups['gitlab_rails'][0] }}"
           delegate_facts: true
           become: true
+          register: delete_result
+          failed_when:
+            - delete_result.rc != 0
+            - '"Net::OpenTimeout" not in delete_result.stderr'
           when: "'gitlab_rails' in groups"
 
         - name: Delete old Elasticsearch index for GitLab via GitLab Toolbox pod
@@ -25,6 +29,10 @@
           loop:
             - gitlab-rake gitlab:elastic:delete_index
             - gitlab-rake gitlab:elastic:clear_index_status
+          register: delete_result
+          failed_when:
+            - delete_result.rc != 0
+            - '"Net::OpenTimeout" not in delete_result.stderr'
           when:
             - toolbox_pod is defined
             - "'gitlab_rails' not in groups"
