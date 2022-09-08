@@ -32,11 +32,6 @@ variable "node_count" {
   default = 1
 }
 
-variable "tags" {
-  type    = list(string)
-  default = []
-}
-
 variable "external_ip_names" {
   type    = list(string)
   default = []

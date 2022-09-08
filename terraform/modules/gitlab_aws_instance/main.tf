@@ -27,6 +27,8 @@ resource "aws_instance" "gitlab" {
     encrypted  = var.disk_encrypt
     kms_key_id = var.disk_kms_key_arn
 
+    delete_on_termination = var.disk_delete_on_termination
+
     tags = {
       Name = "${var.prefix}-${var.node_type}-${count.index + 1}-root"
     }

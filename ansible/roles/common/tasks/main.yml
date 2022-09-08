@@ -147,6 +147,9 @@
       when:
         - omnibus_node
         - repo_file_download.changed or (not repo_file.stat.exists)
+        - gitlab_repo_package != ''
+        - gitlab_deb_download_url == '' and gitlab_rpm_download_url == ''
+        - gitlab_deb_host_path == '' and gitlab_rpm_host_path == ''
 
     - name: Unlock GitLab package installs
       command: "{{ 'yum versionlock delete' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark install' }} {{ gitlab_edition }}"

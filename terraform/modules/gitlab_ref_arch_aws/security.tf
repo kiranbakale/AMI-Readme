@@ -11,7 +11,7 @@ resource "aws_security_group" "gitlab_internal_networking" {
   # Allows for machine internal connections as well as outgoing internet access
   # Avoid changes that cause replacement due to EKS Cluster issue
   name   = "${var.prefix}-internal-networking"
-  vpc_id = local.vpc_id
+  vpc_id = data.aws_vpc.selected.id
 
   ingress {
     description = "Open internal networking for VMs"
@@ -49,7 +49,7 @@ resource "aws_security_group" "gitlab_internal_networking" {
 
 resource "aws_security_group" "gitlab_external_ssh" {
   name_prefix = "${var.prefix}-external-ssh-"
-  vpc_id      = local.vpc_id
+  vpc_id      = data.aws_vpc.selected.id
 
   # kics: Terraform AWS - Security groups allow ingress from 0.0.0.0:0, Sensitive Port Is Exposed To Entire Network - False positive, source CIDR is configurable
   # kics-scan ignore-block
@@ -74,7 +74,7 @@ resource "aws_security_group" "gitlab_external_git_ssh" {
   count = min(var.haproxy_external_node_count, 1)
 
   name_prefix = "${var.prefix}-external-git-ssh-"
-  vpc_id      = local.vpc_id
+  vpc_id      = data.aws_vpc.selected.id
 
   # kics: Terraform AWS - Security groups allow ingress from 0.0.0.0:0 - False positive, source CIDR is configurable
   # kics-scan ignore-block
@@ -102,7 +102,7 @@ resource "aws_security_group" "gitlab_external_http_https" {
   count = min(var.haproxy_external_node_count + var.monitor_node_count, 1)
 
   name_prefix = "${var.prefix}-external-http-https-"
-  vpc_id      = local.vpc_id
+  vpc_id      = data.aws_vpc.selected.id
 
   ingress {
     description = "Enable HTTP access for select VMs"
@@ -134,7 +134,7 @@ resource "aws_security_group" "gitlab_opensearch_security_group" {
   count = min(var.opensearch_node_count, 1)
 
   name   = "${var.prefix}-opensearch"
-  vpc_id = local.vpc_id
+  vpc_id = data.aws_vpc.selected.id
 
   ingress {
     description = "Enable internal HTTPS access for OpenSearch"
@@ -142,22 +142,5 @@ resource "aws_security_group" "gitlab_opensearch_security_group" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = [data.aws_vpc.selected.cidr_block]
-  }
-}
-
-# Not used - To be removed next release
-# https://github.com/hashicorp/terraform-provider-aws/issues/2445
-resource "aws_security_group" "gitlab_external_monitor" {
-  count = min(var.monitor_node_count, 1)
-
-  name_prefix = "${var.prefix}-external-monitor-"
-  vpc_id      = local.vpc_id
-
-  tags = {
-    Name = "${var.prefix}-external-monitor"
-  }
-
-  lifecycle {
-    create_before_destroy = true
   }
 }
