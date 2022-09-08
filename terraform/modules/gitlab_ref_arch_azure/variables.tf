@@ -71,11 +71,6 @@ variable "object_storage_prefix" {
   default = null
 }
 
-variable "project" {
-  type    = string
-  default = null
-}
-
 variable "additional_tags" {
   type    = map(any)
   default = {}

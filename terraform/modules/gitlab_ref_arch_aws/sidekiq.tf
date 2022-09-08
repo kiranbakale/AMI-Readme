@@ -19,7 +19,7 @@ module "sidekiq" {
   iam_instance_policy_arns = flatten([
     local.gitlab_s3_policy_arns,
     var.default_iam_instance_policy_arns,
-    var.gitlab_rails_iam_instance_policy_arns
+    var.sidekiq_iam_instance_policy_arns
   ])
   iam_identifier_path          = var.default_iam_identifier_path
   iam_permissions_boundary_arn = var.default_iam_permissions_boundary_arn
