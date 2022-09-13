@@ -112,9 +112,13 @@ Config is recommended to be placed in a new folder named after the environment u
 First we need to install Terraform. To easily switch between Terraform versions we recommend installing with [`asdf`](https://asdf-vm.com/#/) as follows:
 
 1. Install `asdf` as per its [documentation](https://asdf-vm.com/#/core-manage-asdf?id=install)
-1. Add the Terraform asdf plugin - `asdf plugin add terraform`
-1. Install the intended Terraform version - `asdf install terraform 1.1.0`
-1. Set that version to be the main on your PATH - `asdf global terraform 1.1.0`
+1. Add the Terraform asdf plugin, the intended version and set it to be the main on your PATH:
+
+    ```sh
+    asdf plugin add terraform
+    asdf install terraform 1.1.0
+    asdf global terraform 1.1.0
+    ```
 
 Terraform should now be installed and ready on your `PATH`.
 
@@ -242,10 +246,24 @@ With the above config in place we should now be ready to run Terraform.
 
 The machines and infrastructure are now ready to be provisioned with Terraform. This is done via a few commands as follows:
 
-1. Change to the Terraform directory - `cd terraform/environments/<ENV_NAME>` in the `gitlab-environment-toolkit` directory.
-1. Ensure that [Authentication environment variables](#1a-authentication) are set
-1. Run `terraform init` to initialize Terraform and perform required preparation such as downloading required providers. This typically only needs to be run once for the first build or after any notable config changes.
-1. Run `terraform apply` to actually provision the infrastructure, a confirmation prompt will be shown by Terraform before proceeding.
+1. Ensure that [Authentication environment variables](#1a-authentication) are set.
+1. Change to the Terraform directory under the `gitlab-environment-toolkit` directory:
+
+    ```sh
+    cd terraform/environments/<ENV_NAME>
+    ```
+
+1. Run `terraform init` to initialize Terraform and perform required preparation such as downloading required providers. This typically only needs to be run once for the first build or after any notable config changes:
+
+    ```sh
+    terraform init
+    ```
+
+1. Run `terraform apply` to actually provision the infrastructure, a confirmation prompt will be shown by Terraform before proceeding:
+
+    ```sh
+    terraform apply
+    ```
 
 After Terraform has finished running, the machines and other infrastructure will now be provisioned.
 
@@ -263,13 +281,29 @@ Config is recommended to be placed in a new folder named after the environment u
 
 First we need to install Ansible. There are various ways to install Ansible, we recommend using Python in a Virtual Environment. Once installed we also need to install some Python and Ansible packages. The steps for all of this are as follows:
 
-1. Create a virtual environment called `get-python-env` - `python3 -m venv get-python-env` in the `gitlab-environment-toolkit` directory
-1. Activate the new environment - `. ./get-python-env/bin/activate`
-1. Install Ansible - `pip3 install ansible`
-1. Install Python packages - `pip3 install -r ansible/requirements/requirements.txt`.
-1. Install Ansible Galaxy Collections and Roles - `ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml`.
+1. Create a virtual environment called `get-python-env` in the `gitlab-environment-toolkit` directory and activate it:
+
+    ```sh
+    python3 -m venv get-python-env
+    . ./get-python-env/bin/activate
+    ```
+
+1. Install Ansible, and it's required Python packages via pip:
+
+    ```sh
+    pip3 install ansible
+    pip3 install -r ansible/requirements/requirements.txt
+    ```
+
+1. Install Ansible Galaxy Collections and Roles:
+
+    ```sh
+    ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
+    ```
+
 1. Install OpenSSH Client if not already installed as per your OS.
-1. Note that if you're on a macOS machine you also need to install `gnu-tar` - `brew install gnu-tar`.
+
+:information_source:&nbsp; Note that if you're on a macOS machine you'll also need to install `gnu-tar` by running `brew install gnu-tar`
 
 ### 3b. Setup Config
 
@@ -339,7 +373,7 @@ all:
     praefect_postgres_password: '<PRAEFECT_POSTGRES_PASSWORD>'
 ```
 
-:information_source:&nbsp; As mentioned earlier in this guide all `<*_PASSWORD>` and `<*_TOKEN>` entries should be replaced with your own.
+:information_source:&nbsp; [As mentioned earlier in this guide](#select-passwords--tokens) all `<*_PASSWORD>` and `<*_TOKEN>` entries should be replaced with your own.
 
 </details>
 
@@ -357,15 +391,11 @@ After Ansible has finished running, GitLab will now be configured and the enviro
 
 [Full config examples are available for select Reference Architectures](../examples).
 
-## Next Steps
+## Steps after deployment
 
-Depending on your requirements the following might be worth reviewing next:
+With the above steps completed you should now have a running environment. Head to the external address you've configured and try logging in to check.
 
-- [Upgrades (Toolkit, Environment)](environment_upgrades.md)
-- [Adding Geo](environment_advanced_geo.md)
-- [Considerations After Deployment - Backups, Security](environment_post_considerations.md)
-
-You may also want to review the various Advanced setup options in the docs.
+Next you should consider any [advanced setups](environment_advanced.md) you may wish to explore, the notes on [Upgrades](environment_upgrades.md) as well as reading through the [considerations after deployment](environment_post_considerations.md) such as backups and security.
 
 ## Troubleshooting
 

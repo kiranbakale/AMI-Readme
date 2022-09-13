@@ -16,7 +16,7 @@
 - [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](environment_post_considerations.md)
 - [GitLab Environment Toolkit - Troubleshooting](environment_troubleshooting.md)
 
-With [Terraform](https://www.terraform.io/) you can automatically provision machines and associated dependencies on a provider.
+With [Terraform](https://www.terraform.io/), you can automatically provision machines and associated dependencies on a provider.
 
 The Toolkit provides multiple curated [Terraform Modules](../terraform/modules) that will provision the machines for a GitLab environment as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/).
 
@@ -26,7 +26,7 @@ The Toolkit provides multiple curated [Terraform Modules](../terraform/modules) 
 
 For the Toolkit we recommend Terraform `v1.1.0` and higher.
 
-Terraform generally works best when all users for an environment are using the same major version due to its State. Improvements have been made that allow for the easier upgrading and downgrading of state however. As such it's recommended that all users sync on the same version of Terraform when working against the same environment and any Terraform upgrades are done in unison.
+Terraform generally works best when all users for an environment are using the same major version due to its State. As such it's recommended that all users sync on the same version of Terraform when working against the same environment and any Terraform upgrades are done in unison.
 
 ### Using Terraform inside a Docker container
 
@@ -45,9 +45,13 @@ Installing Terraform with a version manager such as `asdf` has several benefits:
 Installing Terraform with `asdf` is done as follows (using `v1.1.0` as an example):
 
 1. Install `asdf` as per its [documentation](https://asdf-vm.com/#/core-manage-asdf?id=install)
-1. Add the Terraform `asdf` plugin - `asdf plugin add terraform`
-1. Install the intended Terraform version - `asdf install terraform 1.1.0`
-1. Set that version to be the main on your PATH - `asdf global terraform 1.1.0`
+1. Add the Terraform asdf plugin, the intended version and set it to be the main on your PATH:
+
+    ```sh
+    asdf plugin add terraform
+    asdf install terraform 1.1.0
+    asdf global terraform 1.1.0
+    ```
 
 With the above completed Terraform should now be available on your command line. You can check this by running `terraform version`.
 
@@ -106,15 +110,15 @@ module "gitlab_ref_arch_gcp" {
 
 Note the `version` setting here [can be changed as desired to any constraint](https://www.terraform.io/language/expressions/version-constraints#version-constraint-syntax) that's `2.0.0` or greater.
 
-## 3. Setup the Environment's config
+## 3. Set up the Environment's config
 
 As mentioned the Toolkit provides several [Terraform Modules](../terraform/modules) that can be used to provision the environment as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/). While there are several modules provided with the Toolkit most of these are under the hood. For most users only one easy to use `ref_arch` module will need to be configured.
 
-The `ref_arch` modules configure not only the VMs required for the environment but also things such as storage buckets, networking, labels for Ansible to use and more. There's one `ref_arch` module per host provider and for each there are 3 config files to setup:
+The `ref_arch` modules configure not only the VMs required for the environment but also things such as storage buckets, networking, labels for Ansible to use and more. There's one `ref_arch` module per host provider and for each there are 3 config files to set up:
 
-- `main.tf` - Contains the main Terraform connection settings such as cloud provider, state backend, etc...
-- `environment.tf` - `ref_arch` module configuration (machine count, sizes, etc...)
-- `variables.tf` - Variable definitions
+- `main.tf` - Contains the main Terraform connection settings such as cloud provider or state backend.
+- `environment.tf` - `ref_arch` module configuration (machine count or sizes for example).
+- `variables.tf` - Variable definitions.
 
 Each of the above files must be set in the same folder for Terraform to merge. Due to relative path requirements in Terraform we recommend you create these in a unique folder for your environment under the provided [`terraform/environments` folder](../terraform/environments), e.g. `terraform/environments/<env_name>`. These docs will assume this is the case from now on.
 
@@ -158,7 +162,7 @@ variable "external_ip" {
 }
 ```
 
-- `prefix` - Used to set the names and labels of the VMs in a consistent way. Once set this should not be changed. An example of what this could be is `gitlab-qa-10k`.
+- `prefix` - Used to set the names and labels of the VMs consistently. Once set this should not be changed. An example of what this could be is `gitlab-qa-10k`.
 - `project` - The [ID](https://support.google.com/googleapi/answer/7014113?hl=en) of the GCP project the environment is to be deployed to.
 - `region` - The GCP region of the project, e.g. `us-east1`.
 - `zone` - The default GCP zone of the project, e.g. `us-east1-c`.
@@ -203,7 +207,7 @@ provider "google" {
 
 #### Configure Module settings (`environment.tf`)
 
-Next to configure is `environment.tf`. This file contains all the config for the `gitlab_ref_arch_gcp` module such as machine counts, machine sizes, external IP, etc...
+Next to configure is `environment.tf`. This file contains all the config for the `gitlab_ref_arch_gcp` module such as machine counts, machine sizes or external IP.
 
 How you configure this file depends on the size of [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/) you want to deploy. Below we show how a [10k](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html) `environment.tf` would be set. If a different size is required all that's required is to tweak the machine counts and sizes to match the desired Reference Architecture as shown in the [docs](https://docs.gitlab.com/ee/administration/reference_architectures/).
 
@@ -294,9 +298,9 @@ In addition to the above, the following optional settings are also available:
 
 ##### Configure Machine OS Image (GCP)
 
-By default the Toolkit will configure machines using Ubuntu 18.04.
+By default, the Toolkit will configure machines using Ubuntu 18.04.
 
-However this can be changed via the `machine_image` in the [module's environment config file](#configure-module-settings-environmenttf) to the [machine image name as given by GCP](https://cloud.google.com/compute/docs/images/os-details), e.g. `ubuntu-1804-lts` or `rhel-8`.
+However, this can be changed via the `machine_image` in the [module's environment config file](#configure-module-settings-environmenttf) to the [machine image name as given by GCP](https://cloud.google.com/compute/docs/images/os-details), e.g. `ubuntu-1804-lts` or `rhel-8`.
 
 :information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+ and RHEL 8 images at this time.
 
@@ -308,7 +312,7 @@ The [Terraform Google provider](https://registry.terraform.io/providers/hashicor
 
 Depending on the provider's version it will typically create buckets in the `US` multi-region by default. The Toolkit follows this design.
 
-To ensure good performance you should select a [location](https://cloud.google.com/storage/docs/locations) that is close to the region you've selected for the environment. We recommend either picking a [Multi-Region](https://cloud.google.com/storage/docs/locations#location-mr) if it's available for built in HA or [Region](https://cloud.google.com/storage/docs/locations#location-r) if the former isn't available. However any location can be chosen as desired based on your requirements.
+To ensure good performance you should select a [location](https://cloud.google.com/storage/docs/locations) that is close to the region you've selected for the environment. We recommend either picking a [Multi-Region](https://cloud.google.com/storage/docs/locations#location-mr) if it's available for built-in HA or [Region](https://cloud.google.com/storage/docs/locations#location-r) if the former isn't available. However, any location can be chosen as desired based on your requirements.
 
 :warning:&nbsp; **{- Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss-}**+
 
@@ -318,7 +322,7 @@ The Toolkit can enable [versioning in Google Cloud Storage buckets](https://clou
 
 ##### Configure Network Setup (GCP)
 
-By default the toolkit sets up the infrastructure on the default network stack as provided by GCP. However, it can also support other advanced setups such as creating a new network or using an existing one. To learn more refer to [Configure network setup (GCP)](environment_advanced_network.md#configure-network-setup-gcp).
+By default, the toolkit sets up the infrastructure on the default network stack as provided by GCP. However, it can also support other advanced setups such as creating a new network or using an existing one. To learn more refer to [Configure network setup (GCP)](environment_advanced_network.md#configure-network-setup-gcp).
 
 ##### Configure Network Zones (GCP)
 
@@ -349,11 +353,11 @@ Note that the default zone configured in `variables.tf` is still required in thi
 
 #### Configure Authentication (GCP)
 
-Finally the last thing to configure is authentication. This is required so Terraform can access GCP (provider) as well as its State Storage Bucket (backend).
+Finally, the last thing to configure is authentication. This is required to allow Terraform to access GCP (provider) as well as its State Storage Bucket (backend).
 
 Terraform provides multiple ways to authenticate with the [provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference#authentication) and [backend](https://www.terraform.io/docs/language/settings/backends/gcs.html#configuration-variables), you can select any method that is desired.
 
-All of the methods given involve the Service Account file you generated previously. We've found the authentication methods that work best with the Toolkit in terms of ease of use are as follows:
+All the methods given involve the Service Account file you generated previously. We've found the authentication methods that work best with the Toolkit in terms of ease of use are as follows:
 
 - `GOOGLE_CREDENTIALS` environment variable - This environment variable is picked up by both the provider and backend, meaning it only needs to be set once. It's particularly useful with CI pipelines. The variable should be set to the path of the Service Account file.
 - `gcloud` login - Authentication can also occur automatically through the [`gcloud`](https://cloud.google.com/sdk/gcloud/reference/auth/application-default) command line tool. Make sure the user that's logged in has access to the Project along with the `editor` role attached.
@@ -388,7 +392,7 @@ variable "external_ip_allocation" {
 }
 ```
 
-- `prefix` - Used to set the names and labels of the VMs in a consistent way. Once set this should not be changed. An example of what this could be is `gitlab-qa-10k`.
+- `prefix` - Used to set the names and labels of the VMs consistently. Once set this should not be changed. An example of what this could be is `gitlab-qa-10k`.
 - `region` - The AWS region of the project.
 - `ssh_public_key_file` - Path to the public SSH key file. Previously created in the [Setup SSH Authentication - AWS](environment_prep.md#2-setup-ssh-authentication-aws) step.
 - `external_ip_allocation` - The Allocation ID for the static external IP the environment will be accessible on. Previously created in the [Create Static External IP - AWS Elastic IP Allocation](environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) step.
@@ -433,7 +437,7 @@ provider "aws" {
 
 #### Configure Module settings (`environment.tf`)
 
-Next to configure is `environment.tf`. This file contains all the config for the `gitlab_ref_arch_aws` module such as instance counts, instance sizes, external IP, etc...
+Next to configure is `environment.tf`. This file contains all the config for the `gitlab_ref_arch_aws` module such as instance counts, instance sizes or external IP.
 
 How you configure this file depends on the size of [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/) you want to deploy. Below we show how a [10k](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html) `environment.tf` would be set. If a different size is required all that's required is to tweak the machine counts and sizes to match the desired Reference Architecture as shown in the [docs](https://docs.gitlab.com/ee/administration/reference_architectures/).
 
@@ -500,7 +504,7 @@ output "gitlab_ref_arch_aws" {
 - `module "gitlab_ref_arch_aws"` - Module config block with name.
   - `source` - The relative path to the `gitlab_ref_arch_aws` module. We assume you're creating config in the `terraform/environments/` folder here but if you're in a different location this setting must be updated to the correct path.
   - `prefix` - The name prefix of the project. Set in `variables.tf`.
-  - `ssh_public_key` - The SSH key value, typically read from a SSH key file set as `ssh_public_key_file` in `variables.tf`.
+  - `ssh_public_key` - The SSH key value, typically read from an SSH key file set as `ssh_public_key_file` in `variables.tf`.
   - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
   - `object_storage_versioning` - Controls whether Object Storage versioning is enabled for the buckets. Refer to the [Object Storage versioning (AWS)](#object-storage-versioning-aws) below for more info.
   - `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :warning:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
@@ -516,9 +520,9 @@ Next in the file are the various machine settings, separated the same as the Ref
 
 ##### Configure Machine OS Image (AWS)
 
-By default the Toolkit will configure machines using the latest Ubuntu 18.04 AMI.
+By default, the Toolkit will configure machines using the latest Ubuntu 18.04 AMI.
 
-However this can be changed via the `ami_id` setting in the [module's environment config file](#configure-module-settings-environmenttf). [Refer to the AWS docs on how to find the specific AMI ID you require](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html).
+However, this can be changed via the `ami_id` setting in the [module's environment config file](#configure-module-settings-environmenttf). [Refer to the AWS docs on how to find the specific AMI ID you require](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html).
 
 :information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+, RHEL 8 and Amazon Linux 2 images at this time.
 
@@ -526,24 +530,24 @@ However this can be changed via the `ami_id` setting in the [module's environmen
 
 ##### Object Storage versioning (AWS)
 
-The Toolkit can enable [versioning in S3 buckets](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html) within AWS by setting the `object_storage_versioning` flag to `true`. This will enable the storing of multiple variants of an object in the same bucket. As this can lead to increased storage costs it is recommended to setup a [storage lifecycle configuration](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html) to remove older versions of stored objects.
+The Toolkit can enable [versioning in S3 buckets](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html) within AWS by setting the `object_storage_versioning` flag to `true`. This will enable the storing of multiple variants of an object in the same bucket. As this can lead to increased storage costs it is recommended to set up a [storage lifecycle configuration](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html) to remove older versions of stored objects.
 
 ##### Configure network setup (AWS)
 
-By default the toolkit sets up the infrastructure on the default network stack as provided by AWS. However, it can also support other advanced setups such as creating a new network or using an existing one. To learn more refer to [Configure network setup (AWS)](environment_advanced_network.md#configure-network-setup-aws).
+By default, the toolkit sets up the infrastructure on the default network stack as provided by AWS. However, it can also support other advanced setups such as creating a new network or using an existing one. To learn more refer to [Configure network setup (AWS)](environment_advanced_network.md#configure-network-setup-aws).
 
 ##### Storage Encryption (AWS)
 
-By default AWS doesn't encrypt storages such as disks or object storage buckets.
+By default, AWS doesn't encrypt storages such as disks or object storage buckets.
 
-The Toolkit will aim to encrypt these by default where possible utilizing the built in AWS [default KMS keys](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#kms_keys) or creating ones where that isn't possible. It also allows for you to pass in your own KMS key(s) as desired in a flexible manner.
+The Toolkit will aim to encrypt these by default where possible utilizing the built-in AWS [default KMS keys](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#kms_keys) or creating ones where that isn't possible. It also allows for you to pass in your own KMS key(s) as desired in a flexible manner.
 
 An overview of how the Toolkit handles this encryption is as follows:
 
-- By default it will aim to encrypt all storages and services with AWS managed KMS keys.
+- By default, it will aim to encrypt all storages and services with AWS managed KMS keys.
   - If an AWS managed KMS key isn't available for that particular service the Toolkit will create one.
 - A custom KMS key ARN (one that's available in AWS KMS) can be configured for use instead for all storages and services.
-- Additionally it's possible to pass custom KMS key(s) for individual storages and services as desired.
+- Additionally, it's possible to pass custom KMS key(s) for individual storages and services as desired.
 
 The above is also the precedence of how the Toolkit will handle this. For example if you provided a custom KMS key for a specific storage only the Toolkit will use it as configured but then use the default key for the rest.
 
@@ -571,11 +575,11 @@ Note that these keys must be [available in AWS KMS](https://docs.aws.amazon.com/
 
 #### Configure Authentication (AWS)
 
-Finally the last thing to configure is authentication. This is required so Terraform can access AWS (provider) as well as its State Storage Bucket (backend).
+Finally, the last thing to configure is authentication. This is required to allow Terraform to access AWS (provider) as well as its State Storage Bucket (backend).
 
 Terraform provides multiple ways to authenticate with the [provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication) and [backend](https://www.terraform.io/docs/language/settings/backends/s3.html#configuration), you can select any method that is desired.
 
-All of the methods given involve the AWS Access Key you generated previously. We've found that the easiest and secure way to do this is with the official [environment variables](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#environment-variables):
+All the methods given involve the AWS Access Key you generated previously. We've found that the easiest and secure way to do this is with the official [environment variables](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#environment-variables):
 
 - `AWS_ACCESS_KEY_ID` - Set to the AWS Access Key.
 - `AWS_SECRET_ACCESS_KEY` - Set to the AWS Secret Key.
@@ -625,7 +629,7 @@ variable "external_ip_name" {
 
 ```
 
-- `prefix` - Used to set the names and labels of the VMs in a consistent way. Once set this should not be changed. An example of what this could be is `gitlab-qa-10k`.
+- `prefix` - Used to set the names and labels of the VMs consistently. Once set this should not be changed. An example of what this could be is `gitlab-qa-10k`.
 - `resource_group_name` - The name of the resource group previously created in the [Create Azure Resource Group](environment_prep.md#1-create-azure-resource-group) step.
 - `location` - The Azure location of the resource group.
 - `vm_admin_username` - The username of the local administrator that will be used for the virtual machines. Previously created in the [Setup SSH Authentication - Azure](environment_prep.md#3-setup-ssh-authentication-azure) step.
@@ -669,11 +673,11 @@ provider "azurerm" {
   - `required_providers` - Config block for the required provider(s) Terraform needs to download and use.
     - `azurerm` - Config block for the Azure provider. Sets where to source the provider and what version to download and use.
 - `provider "azurerm"` - Config block for the [Azure provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs).
-  - `features` - Used to [customize the behavior](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#features) of certain Azure Provider resources.
+  - `features` - Used to [customize the behaviour](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#features) of certain Azure Provider resources.
 
 #### Configure Module settings (`environment.tf`)
 
-Next to configure is `environment.tf`. This file contains all the config for the `gitlab_ref_arch_azure` module such as instance counts, instance sizes, external IP, etc...
+Next to configure is `environment.tf`. This file contains all the config for the `gitlab_ref_arch_azure` module such as instance counts, instance sizes or external IP.
 
 How you configure this file depends on the size of [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/) you want to deploy. Below we show how a [10k](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html) `environment.tf` would be set. If a different size is required all that's required is to tweak the machine counts and sizes to match the desired Reference Architecture as shown in the [docs](https://docs.gitlab.com/ee/administration/reference_architectures/).
 
@@ -749,8 +753,8 @@ output "gitlab_ref_arch_azure" {
   - `location` - The location of the resource group. Set in `variables.tf`.
   - `storage_account_name` - The name of the storage account. Set in `variables.tf`.
   - `vm_admin_username` - The username of the administrator for the virtual machines. Set in `variables.tf`.
-  - `ssh_public_key` - The SSH key value, typically read from a SSH key file set as `ssh_public_key_file` in `variables.tf`.
-  - `external_ip_type` - [The type of Public IP](https://docs.microsoft.com/en-us/azure/virtual-network/ip-services/public-ip-addresses) that will be created for each VM. Can be either `Standard` (recommended) or `Basic`. Default is `Basic` for backwards compatability.
+  - `ssh_public_key` - The SSH key value, typically read from an SSH key file set as `ssh_public_key_file` in `variables.tf`.
+  - `external_ip_type` - [The type of Public IP](https://docs.microsoft.com/en-us/azure/virtual-network/ip-services/public-ip-addresses) that will be created for each VM. Can be either `Standard` (recommended) or `Basic`. Default is `Basic` for backwards compatibility.
   - `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :warning:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
@@ -763,9 +767,9 @@ Next in the file are the various machine settings, separated the same as the Ref
 
 ##### Configure Machine OS Image (Azure)
 
-By default the Toolkit will configure machines using the latest Ubuntu 18.04 AMI.
+By default, the Toolkit will configure machines using the latest Ubuntu 18.04 AMI.
 
-However this can be changed via the `source_image_reference` dictionary setting in the [module's environment config file](#configure-module-settings-environmenttf). [Refer to the Azure docs on how to find the specific source image details you require](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage).
+However, this can be changed via the `source_image_reference` dictionary setting in the [module's environment config file](#configure-module-settings-environmenttf). [Refer to the Azure docs on how to find the specific source image details you require](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage).
 
 When the image has been selected the setting will need the `publisher`, `offer`, `sku` and `version` fields set. For example:
 
@@ -794,11 +798,11 @@ The module for Azure will handle the networking by default by setting up the inf
 
 #### Configure Authentication (Azure)
 
-Finally the last thing to configure is authentication. This is required so Terraform can access Azure (provider) as well as its State Storage Bucket (backend).
+Finally, the last thing to configure is authentication. This is required to allow Terraform to access Azure (provider) as well as its State Storage Bucket (backend).
 
 Terraform provides multiple ways to authenticate with the [provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure) and [backend](https://www.terraform.io/docs/language/settings/backends/azurerm.html), you can select any method that is desired.
 
-If you are planning to run the toolkit locally it'll be easier to use [Azure CLI](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli) authentication method. Otherwise you can use either a Service Principal or Managed Service Identity when running Terraform non-interactively, please refer to [Authenticating to Azure](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure) documentation for details. Once you have selected the authentication method and obtained the credentials you may export them as Environment Variables following the Terraform instructions for the specific authentication type to fully authenticate for both the provider and backend.
+If you are planning to run the toolkit locally it'll be easier to use [Azure CLI](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli) authentication method. Otherwise, you can use either a Service Principal or Managed Service Identity when running Terraform non-interactively, please refer to [Authenticating to Azure](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure) documentation for details. Once you have selected the authentication method and obtained the credentials you may export them as Environment Variables following the Terraform instructions for the specific authentication type to fully authenticate for both the provider and backend.
 
 ### Sensitive variable handling in Terraform
 
@@ -814,7 +818,7 @@ Below are some examples of select sources that are well suited to this.
 
 [Terraform can read any Environment Variable on the machine running it](https://www.terraform.io/docs/cli/config/environment-variables.html#tf_var_name) with the prefix `TF_VAR_*`.
 
-Terraform will treat all `TF_VAR_*` environment variables as variables and you can set those in your config as desired. This is ideal for sensitive variables and in CI for overriding any variables as desired.
+Terraform will treat all `TF_VAR_*` environment variables as variables, and you can set those in your config as desired. This is ideal for sensitive variables and in CI for overriding any variables as desired.
 
 As an example, on an AWS environment, if you wanted to set the `ssh_public_key_file` variable via an Environment Variable you would just set `TF_VAR_ssh_public_key_file` and run as normal.
 
@@ -840,11 +844,11 @@ module "gitlab_ref_arch_aws" {
 }
 ```
 
-Any Terraform Data Source can be used in a similar way. Refer to the specific Data Source docs for more info.
+Any Terraform Data Source can be used similarly. Refer to the specific Data Source docs for more info.
 
 ## 4. Run the GitLab Environment Toolkit's Docker container (optional)
 
-Before running the [Docker container](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/container_registry/2697240) you will need to setup your environment config files by following [# 2. Setup the Environment's config](#3-setup-the-environments-config). The container can be started once the Terraform config has been setup. When starting the container it is important to pass in your config files and keys, as well as set any authentication based environment variables.
+Before running the [Docker container](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/container_registry/2697240) you will need to set up your environment config files by following [# 2. Set up the Environment's config](#3-set-up-the-environments-config). The container can be started once the Terraform config has been set up. When starting the container it is important to pass in your config files and keys, as well as set any authentication based environment variables.
 
 Below is an example of how to run the container when using a GCP service account:
 
@@ -856,7 +860,7 @@ docker run -it \
   registry.gitlab.com/gitlab-org/gitlab-environment-toolkit:latest
 ```
 
-You can also use a simplified command if you store your config outside of the toolkit. Using the folder structure below you're able to store multiple environments alongside each other and when using the Toolkits container you can simply pass in a single folder and still have access to all your different environments.
+You can also use a simplified command if you store your config outside the toolkit. Using the folder structure below you're able to store multiple environments alongside each other and when using the Toolkit's container you can simply pass in a single folder and still have access to all your different environments.
 
 ```sh
 get_environments
@@ -879,14 +883,25 @@ docker run -it \
 
 ## 5. Provision
 
-After the config has been setup you're now ready to provision the environment. This is done as follows:
+After the config has been set up you're now ready to provision the environment. This is done as follows:
 
-1. `cd` to the environment's directory under `terraform/environments` if not already there.
-1. First run `terraform init` to initialize Terraform and perform required preparation such as downloading required providers, etc...
-    - `terraform init --reconfigure` may need to be run sometimes if the config has changed, such as a new module path or provider version.
-1. You can next optionally run `terraform plan` to view the current state of the environment and what will be changed if you proceed to apply.
-1. To apply any changes run `terraform apply` and select yes
-    - **Warning - running this command will likely apply changes to shared infrastructure. Only run this command if you have permission to do so.**
+1. Change to the Terraform directory under the `gitlab-environment-toolkit` directory:
+
+    ```sh
+    cd terraform/environments/<ENV_NAME>
+    ```
+
+1. Run `terraform init` to initialize Terraform and perform required preparation such as downloading required providers. This typically only needs to be run once for the first build or after any notable config changes:
+
+    ```sh
+    terraform init
+    ```
+
+1. Run `terraform apply` to actually provision the infrastructure, a confirmation prompt will be shown by Terraform before proceeding:
+
+    ```sh
+    terraform apply
+    ```
 
 :information_source:&nbsp; If you ever want to deprovision resources created, you can do so by running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html).
 

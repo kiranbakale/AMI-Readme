@@ -423,7 +423,7 @@ A key limitation of this service managed role is that **only one can exist in th
 
 Due to this limitation you may encounter issues when running the Toolkit if you have more than one environment in the same AWS account, or any other separate OpenSearch domains - Specifically around the creation and deletion of this role.
 
-To assist with this the Toolkit can be configured to **_not_** manage this role for you via the `opensearch_service_linked_role_create` variable in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`). This is set to `true` by default but you should set this to `false` in the following scenarios:
+To assist with this the Toolkit can be configured to **_not_** manage this role for you via the `opensearch_service_linked_role_create` variable in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`). This is set to `true` by default, but you should set this to `false` in the following scenarios:
 
 - You have another GitLab environment with AWS OpenSearch built with the Toolkit in the _same_ AWS account that already has `opensearch_service_linked_role_create` to `true`.
 - You already have the `AWSServiceRoleForAmazonOpenSearchService` created in the AWS account separately.

@@ -231,6 +231,23 @@ In the Charts this is done via a specific Job named `migrations`. If it's failin
 
 [The debugging steps in this section of the Chart's documentation](https://docs.gitlab.com/charts/troubleshooting/#application-containers-constantly-initializing) can be followed to debug further.
 
+### Cluster Autoscaler not scaling down nodes due to pod blocks (AWS EKS)
+
+At times when using Cluster Autoscaler with AWS EKS, you may see it failing to scale down nodes.
+
+When this is happening this is likely due to some EKS Addons deploying pods that are preventing eviction, specifically [CoreDNS and EBS CSI](https://github.com/aws/containers-roadmap/issues/1679) that both use local storage.
+
+This is unfortunately a limitation on AWS's side and, at this time, isn't directly addressable on the service.
+
+As a workaround however you can directly mark the offending pods as evictable with the following commands:
+
+```sh
+kubectl annotate pod -n kube-system -l eks.amazonaws.com/component=coredns "cluster-autoscaler.kubernetes.io/safe-to-evict=true"
+kubectl annotate pod -n kube-system -l app.kubernetes.io/component=ebs-csi-controller "cluster-autoscaler.kubernetes.io/safe-to-evict=true"
+```
+
+After running the above commands you should see Autoscaler correctly scaling down nodes soon after.
+
 ## Other
 
 ### macOS - Python package install failure - `fatal error: 'openssl/opensslv.h' file not found`
