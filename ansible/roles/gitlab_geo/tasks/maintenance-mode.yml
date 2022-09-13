@@ -5,7 +5,9 @@
     - gitlab_rails_primary:gitlab_rails_secondary:{{ site_group_name }}
   delegate_to: "{{ item }}"
   register: result
-  when: (result.rc | default(1)) != 0 # Keep going until the command is successful on any node
+  when:
+    - (result.rc | default(1)) != 0 # Keep going until the command is successful on any node
+    - not cloud_native_hybrid_geo
   run_once: true
 
 - name: Maintenance mode - Enable Maintenance Mode and Set Message for Cloud Native Hybrid environments
