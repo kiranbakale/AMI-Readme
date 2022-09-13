@@ -82,29 +82,31 @@ With Docker the only prerequisite is installation, the [Toolkit's image](https:/
 
 ### Installing Ansible with a Virtual Environment
 
-If installing Ansible locally, we recommend using this approach as your local environment will be isolated from other python packages that you install on your machine. Additionally, your local environment will match the environment used for testing, validation, and building docker images, so there is less chance of package changes affecting the ansible environment you are running locally.
+If installing Ansible locally, we recommend using this approach as your local environment will be isolated from other python packages that you install on your machine. Additionally, your local environment will match the environment used for testing, validation, and building docker images, so there is less chance of package changes affecting the ansible environment you are running locally. The steps for all of this are as follows:
 
-To set up the Python virtual environment the first time, run:
+1. Create a virtual environment called `get-python-env` in the `gitlab-environment-toolkit` directory and activate it:
 
-```shell
-# Create a virtual environment called `get-python-env`
-python3 -m venv get-python-env
+    ```sh
+    python3 -m venv get-python-env
+    . ./get-python-env/bin/activate
+    ```
 
-# Activate the new environment
-. ./get-python-env/bin/activate
+1. Install Ansible, and it's required Python packages via pip:
 
-# Install python dependencies
-pip install -r ansible/requirements/requirements.txt
+    ```sh
+    pip3 install ansible
+    pip3 install -r ansible/requirements/requirements.txt
+    ```
 
-# Install galaxy requirements
-ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
+1. Install Ansible Galaxy Collections and Roles:
 
-# Ensure OpenSSH client is installed for Ansible (Ubuntu example shown)
-apt-get install openssh-client
+    ```sh
+    ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
+    ```
 
-# Install gnu-tar if running from macOS
-brew install gnu-tar
-```
+1. Install OpenSSH Client if not already installed as per your OS.
+
+:information_source:&nbsp; Note that if you're on a macOS machine you'll also need to install `gnu-tar` by running `brew install gnu-tar`
 
 ### Bring-Your-Own Ansible
 
@@ -116,10 +118,21 @@ Once you've installed Ansible, install the required dependencies. You'll need to
 
 To do this you only have to run the following before proceeding:
 
-1. First install the Python packages via `pip3 install -r ansible/requirements/requirements.txt`.
-1. Next, run the following command to install the roles - `ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml`.
-1. Ensure OpenSSH client is installed on the machine for Ansible (Ubuntu example shown) - `apt-get install openssh-client`.
-1. Note that if you're on a macOS machine you also need to install `gnu-tar` - `brew install gnu-tar`.
+1. Install Ansible's required Python packages via pip:
+
+    ```sh
+    pip3 install -r ansible/requirements/requirements.txt
+    ```
+
+1. Install Ansible Galaxy Collections and Roles:
+
+    ```sh
+    ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
+    ```
+
+1. Install OpenSSH Client if not already installed as per your OS.
+
+:information_source:&nbsp; Note that if you're on a macOS machine you'll also need to install `gnu-tar` by running `brew install gnu-tar`
 
 ## 2. Set up the Environment's Inventory and Config
 
@@ -539,12 +552,8 @@ ansible-playbook -i environments/50k/inventory gitlab.gitlab_environment_toolkit
 
 An alternative way to run the playbooks is with the [`ansible-deployer`](https://gitlab.com/gitlab-org/quality/get-ansible-deployer) script. This script will run multiple playbooks in parallel where possible while maintaining the required run order.
 
-## Next Steps
+## Steps after deployment
 
-With the above steps completed you should now have a running environment. Head to the external address you've configured to check.
-
-Along with the main environment there are several other services that should be automatically accessible:
-
-- Grafana - `http://<external_ip_or_url>/-/grafana`
+With the above steps completed you should now have a running environment. Head to the external address you've configured and try logging in to check.
 
 Next you should consider any [advanced setups](environment_advanced.md) you may wish to explore, the notes on [Upgrades](environment_upgrades.md) as well as reading through the [considerations after deployment](environment_post_considerations.md) such as backups and security.

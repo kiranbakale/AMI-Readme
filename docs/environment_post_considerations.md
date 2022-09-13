@@ -16,7 +16,7 @@
 - [**GitLab Environment Toolkit - Considerations After Deployment - Backups, Security**](environment_post_considerations.md)
 - [GitLab Environment Toolkit - Troubleshooting](environment_troubleshooting.md)
 
-The Toolkit deploys a _base_ GitLab environment based on the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/). This is by design as the Toolkit is _one for all_ and it wouldn't be possible to cover every user's specific requirements with a general toolkit.
+The Toolkit deploys a _base_ GitLab environment based on the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/). This is by design as the Toolkit is _one for all_, and it wouldn't be possible to cover every user's specific requirements with a general toolkit.
 
 The goal rather is for the Toolkit to give you a good base to tweak as desired per your requirements. On this page we'll call out common considerations you may want to explore.
 
@@ -29,7 +29,7 @@ The Toolkit doesn't configure any automated backups for the various pieces of da
 For setting up backups in general we recommend implementing a strategy as per your requirements. Please refer to the [main GitLab documentation](https://docs.gitlab.com/ee/raketasks/backup_restore.html) on this subject and how to implement. The following however should also be noted:
 
 - The Toolkit _does_ create a `backups` Object Storage bucket and configures GitLab to use it by default as a convenience with its Rake task. Automated backups aren't configured however so if using this Object Storage as the backup source the actual backup Rake process [should be configured as desired](https://docs.gitlab.com/ee/raketasks/backup_restore.html#configuring-cron-to-make-daily-backups).
-- Object Storage buckets such as `uploads`, etc... are **not** backed up with the GitLab provided Rake tasks. It's recommended to enable backups for these buckets as per the object storage provider used.
+- Object Storage buckets such as `uploads` are **not** backed up with the GitLab provided Rake tasks. It's recommended to enable backups for these buckets as per the object storage provider used.
 
 :information_source:&nbsp; If using Terraform from the Toolkit it must be noted that a `terraform destroy` command will **destroy all data and lead to data loss**. Issuing this command in any situation must be considered fully.
 
@@ -37,7 +37,7 @@ For setting up backups in general we recommend implementing a strategy as per yo
 
 Security is a significant area and typically is very dependent on your specific requirements.
 
-As a general rule the Toolkit will look to use reasonable setup practices in relation to security but it's **strongly** recommended that you undertake a full review of the environment's setup to ensure it meets your requirements.
+As a general rule the Toolkit will look to use reasonable setup practices in relation to security, but it's **strongly** recommended that you undertake a full review of the environment's setup to ensure it meets your requirements.
 
 In addition to this we have [further documentation on various practices that apply to any GitLab environment that you may also want to consider](https://docs.gitlab.com/ee/security/index.html#securing-your-gitlab-installation).
 
