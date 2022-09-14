@@ -123,6 +123,7 @@ gitlab_object_storage_registry_bucket: "{{ gitlab_object_storage_prefix }}-regis
 
 # Consul
 consul_int_addrs: "{{ (groups['consul'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'consul' in groups else [] }}"
+consul_additional_config: ''
 
 ## Non HA (Monitoring only)
 consul_single_server_target_group: "{{ groups.keys() | select('match', 'gitaly_primary|gitlab_rails_primary') | first }}"
