@@ -231,7 +231,7 @@ In the Charts this is done via a specific Job named `migrations`. If it's failin
 
 [The debugging steps in this section of the Chart's documentation](https://docs.gitlab.com/charts/troubleshooting/#application-containers-constantly-initializing) can be followed to debug further.
 
-### Cluster Autoscaler not scaling down nodes due to pod blocks (AWS EKS)
+### AWS EKS - Cluster Autoscaler not scaling down nodes due to pod blocks
 
 At times when using Cluster Autoscaler with AWS EKS, you may see it failing to scale down nodes.
 
@@ -247,6 +247,30 @@ kubectl annotate pod -n kube-system -l app.kubernetes.io/component=ebs-csi-contr
 ```
 
 After running the above commands you should see Autoscaler correctly scaling down nodes soon after.
+
+### AWS EKS - Pods not deploying due to Cluster Autoscaler and EBS Persistent Volume zone mismatch
+
+[Due to a limitation with AWS EKS and Cluster Autoscaler](https://github.com/kubernetes/autoscaler/issues/4772), deployments across multiple availability zones may sometimes result in a pod deployment clash if it's attached to an EBS backed Persistent Volume (PV).
+
+In AWS EKS, EBS backed Persistent Volumes are deployed in a specific zone. Due to this if the future nodes available for the pod are not in the specific zone given the pod will fail to deploy.
+
+It's worth noting the risk of this is low as Cluster Autoscaler itself shouldn't remove a node when this pod is deployed, but it can occur in other situations such as a manual Node Pool upgrade.
+
+When this occurs the easiest solution is to [scale up the node pool manually](https://docs.aws.amazon.com/eks/latest/userguide/update-managed-node-group.html#mng-edit) to the same number as zones (subnets) and then back down again. The pod will deploy on the new node in the correct zone in this scenario and then Cluster Autoscaler will correctly evict and remove the others.
+
+Another solution suggested is to deploy [Karpenter](https://karpenter.sh/) manually instead of Cluster Autoscaler as [it has more permissions to handle this solution directly](https://karpenter.sh/v0.7.3/tasks/scheduling/#persistent-volume-topology).
+
+### AWS EKS - Unable to adjust Node Pool sizes due to Minimum / Desired Size limitations after deployment
+
+[Due to limitations with AWS EKS](https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1568) there are times when attempting to adjust Node Pool sizes may fail due to limitations with Desired Size. Specifically if the adjustment has the Minimum Size higher than the current Desired Size it will fail as follows:
+
+```tf
+Error: error updating EKS Node Group (<REDACTED>:gitlab_supporting_pool_20220721011642956500000011) config: InvalidParameterException: Minimum capacity 3 can't be greater than desired size 2
+```
+
+As Desired Size is likely to be adjusted outside of Terraform, either manually or via autoscaling, there's no solution that can be done automatically to address this.
+
+As such, if this issue is occurring you would need to first [adjust the Desired Size manually](https://docs.aws.amazon.com/eks/latest/userguide/update-managed-node-group.html#mng-edit) to be equal to or greater than the target Minimum Size and then run Terraform again.
 
 ## Other
 
