@@ -3,9 +3,11 @@
   include_role:
     name: common
     tasks_from: secrets
+  when: gitlab_secrets_setup
   tags:
     - reconfigure
     - secrets
+    - gitlab-secrets
 
 - name: Copy over any Custom Files
   copy:
@@ -147,9 +149,11 @@
     tasks_from: secrets
   vars:
     gitlab_secrets_reconfigure: true
+  when: gitlab_secrets_setup
   tags:
     - reconfigure
     - secrets
+    - gitlab-secrets
 
 - name: Restart all Praefects
   command: gitlab-ctl restart

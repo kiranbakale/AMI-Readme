@@ -29,15 +29,20 @@
       service:
         name: "{{ 'sshd' if ansible_facts['os_family'] == 'RedHat' else 'ssh' }}"
         state: reloaded
-  tags: ssh_keys
+  when: gitlab_secrets_setup
+  tags:
+    - secrets
+    - ssh_keys
 
 - name: Propagate Secrets if existing
   include_role:
     name: common
     tasks_from: secrets
+  when: gitlab_secrets_setup
   tags:
     - reconfigure
     - secrets
+    - gitlab-secrets
 
 - name: Copy GCP service account file
   copy:
@@ -212,9 +217,11 @@
     tasks_from: secrets
   vars:
     gitlab_secrets_reconfigure: true
+  when: gitlab_secrets_setup
   tags:
     - reconfigure
     - secrets
+    - gitlab-secrets
 
 - name: Restart GitLab
   shell: gitlab-ctl stop && gitlab-ctl start

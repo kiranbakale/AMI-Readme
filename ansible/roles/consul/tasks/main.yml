@@ -33,9 +33,11 @@
   include_role:
     name: common
     tasks_from: secrets
+  when: gitlab_secrets_setup
   tags:
     - reconfigure
     - secrets
+    - gitlab-secrets
 
 - name: Clear old Consul data if Nightly
   block:
@@ -62,9 +64,11 @@
     tasks_from: secrets
   vars:
     gitlab_secrets_reconfigure: true
+  when: gitlab_secrets_setup
   tags:
     - reconfigure
     - secrets
+    - gitlab-secrets
 
 - name: Restart Consul
   command: gitlab-ctl restart

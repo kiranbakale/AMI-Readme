@@ -60,9 +60,11 @@
   include_role:
     name: common
     tasks_from: secrets
+  when: gitlab_secrets_setup
   tags:
     - reconfigure
     - secrets
+    - gitlab-secrets
 
 - name: Reconfigure Gitaly
   command: gitlab-ctl reconfigure
@@ -96,9 +98,11 @@
     tasks_from: secrets
   vars:
     gitlab_secrets_reconfigure: true
+  when: gitlab_secrets_setup
   tags:
     - reconfigure
     - secrets
+    - gitlab-secrets
 
 - name: Create skip-auto-reconfigure file
   file:
