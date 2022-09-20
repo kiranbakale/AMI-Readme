@@ -16,7 +16,10 @@
 
 - name: Copy gitlab-secrets from primary site to secondary
   import_tasks: copy-secrets.yml
+  when: gitlab_secrets_setup
   tags:
+    - secrets
+    - gitlab-secrets
     - copy-secrets
     - secondary
 

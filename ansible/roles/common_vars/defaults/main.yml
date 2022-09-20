@@ -102,6 +102,8 @@ gitlab_admin_email: "admin@example.com"
 
 gitlab_shell_ssh_port: "2222"
 
+gitlab_secrets_setup: true
+
 # Object Storage Settings
 gitlab_object_storage_type: "object_storage"  # object_storage or nfs
 

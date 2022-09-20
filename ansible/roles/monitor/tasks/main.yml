@@ -3,9 +3,11 @@
   include_role:
     name: common
     tasks_from: secrets
+  when: gitlab_secrets_setup
   tags:
     - reconfigure
     - secrets
+    - gitlab-secrets
 
 - name: Import GitLab Grafana dashboards
   include_tasks: dashboard_import.yml
@@ -64,9 +66,11 @@
     tasks_from: secrets
   vars:
     gitlab_secrets_reconfigure: true
+  when: gitlab_secrets_setup
   tags:
     - reconfigure
     - secrets
+    - gitlab-secrets
 
 - name: Restart Monitor
   shell: |

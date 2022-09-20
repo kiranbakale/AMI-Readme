@@ -13,6 +13,7 @@
   tags:
     - reconfigure
     - charts
+    - secrets
 
 - name: Run secrets chart tasks
   block:
@@ -27,6 +28,7 @@
   tags:
     - reconfigure
     - charts
+    - secrets
 
 - name: Gather facts for Omnibus Postgres cluster
   block:
