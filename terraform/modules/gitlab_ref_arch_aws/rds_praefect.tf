@@ -78,6 +78,7 @@ resource "aws_db_instance" "gitlab_praefect" {
   maintenance_window      = var.rds_praefect_postgres_maintenance_window
 
   allow_major_version_upgrade = true
+  auto_minor_version_upgrade  = var.rds_praefect_postgres_auto_minor_version_upgrade
 
   skip_final_snapshot = true
 

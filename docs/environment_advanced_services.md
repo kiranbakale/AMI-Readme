@@ -156,6 +156,7 @@ The variables for this service start with the prefix `rds_postgres_*` and should
 - [`rds_postgres_backup_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#backup_window) - The daily time range where backups will be taken, e.g. `09:46-10:16`. Optional, default is `null`.
 - [`rds_postgres_delete_automated_backups`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#delete_automated_backups) - Whether automated backups (if taken) will be deleted when the RDS instance is deleted. Optional, default is `true`.
 - [`rds_postgres_maintenance_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#maintenance_window) - The window to perform maintenance in, e.g. `Mon:00:00-Mon:03:00`. Optional, default is `null`. Must not overlap with `rds_postgres_backup_window`.
+- [`rds_postgres_auto_minor_version_upgrade`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#auto_minor_version_upgrade) - Whether automated upgrades to AWS selected minor versions should occur during the maintenance window. This is disabled by default and is not recommended being enabled as it can lead to clashes with Terraform's state. Optional, default is `false`.
 
 To set up a standard AWS RDS PostgreSQL service for a 10k environment with the required variables, it should look like the following in the [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`):
 
@@ -415,7 +416,7 @@ Once the variables are set in your file you can proceed to provision the service
 
 Once provisioned you'll see several new outputs at the end of the process. Key from this is the `opensearch_host` output, which contains the address for the OpenSearch domain that then needs to be passed to Ansible to configure. Take a note of this address for the next step.
 
-#### AWS OpenSearch service-linked IAM role
+##### AWS OpenSearch service-linked IAM role
 
 [AWS OpenSearch requires a service-linked role to be present](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/slr.html) in your AWS account named `AWSServiceRoleForAmazonOpenSearchService`. The Toolkit will look to create this for you.
 
