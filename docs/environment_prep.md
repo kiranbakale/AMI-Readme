@@ -99,12 +99,12 @@ for the account to enable SSH access to the created VMs on GCP, which is require
 1. [Generate an SSH key pair](https://docs.gitlab.com/ee/ssh/#generate-an-ssh-key-pair) (ED25519 recommended) and store it in the [`keys`](../keys) directory.
 1. With the `gcloud` command set it to point at your intended project
 
+   :information_source:&nbsp; You need the project's [ID](https://support.google.com/googleapi/answer/7014113?hl=en) here and not the name. You can find it in project's dashboard in GCP Console.
+
    ```terminal
    gcloud config set project <project-id>
    ```
 
-   :information_source:&nbsp; You need the project's [ID](https://support.google.com/googleapi/answer/7014113?hl=en) here and not the name.
-   You can find it in project's dashboard in GCP Console.
 1. Login as the Service Account user via its key created in the last step
 
    ```terminal
@@ -113,11 +113,11 @@ for the account to enable SSH access to the created VMs on GCP, which is require
 
 1. Add the project's public SSH key to the account
 
+   :information_source:&nbsp; **This command will output the SSH Username for the Service Account, typically in the format of `sa_<ID>`. Take a note of this username as later, it will be used in the Ansible [Environment config - vars.yml](environment_configure.md#environment-config-varsyml) section.**
+
    ```terminal
    gcloud compute os-login ssh-keys add --key-file=<SSH key>.pub
    ```
-
-1. :information_source:&nbsp; **This command will output the SSH Username for the Service Account, typically in the format of `sa_<ID>`. Take a note of this username as later, it will be used in the Ansible [Environment config - vars.yml](environment_configure.md#environment-config-varsyml) section.**
 
 1. Switch back your logged in account in `gcloud` to your regular account using your email address.
 

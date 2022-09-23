@@ -160,6 +160,8 @@ The variables for this service start with the prefix `rds_postgres_*` and should
 
 To set up a standard AWS RDS PostgreSQL service for a 10k environment with the required variables, it should look like the following in the [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`):
 
+:information_source:&nbsp; If a separate Database Instance for Praefect is desired then this can be done with the same settings below but with the `rds_praefect_postgres_*` prefix instead.
+
 ```tf
 module "gitlab_ref_arch_aws" {
   source = "../../modules/gitlab_ref_arch_aws"
@@ -170,8 +172,6 @@ module "gitlab_ref_arch_aws" {
   rds_postgres_password = "<postgres_password>"
 }
 ```
-
-:information_source:&nbsp; If a separate Database Instance for Praefect is desired then this can be done with the same settings above but with the `rds_praefect_postgres_*` prefix instead.
 
 Once the variables are set in your file you can proceed to provision the service as normal. Note that this can take several minutes on AWS's side.
 

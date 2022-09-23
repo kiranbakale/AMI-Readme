@@ -289,7 +289,7 @@ In addition to the above, the following optional settings are also available:
 - `object_storage_location` - The [GCS Location](https://cloud.google.com/storage/docs/locations) buckets are created in. Refer to the [Object Storage Location (GCP)](#object-storage-location-gcp) below for more info.
 - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
 - `object_storage_labels` - Labels to apply to object storage buckets.
-- `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :warning:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
+- `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :exclamation:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
 - `allow_stopping_for_update` - Controls whether Terraform can restart VMs when making changes if required. Should only be disabled for additional resilience. Defaults to `true`.
 
 :information_source:&nbsp; Redis prefixes depend on the target Reference Architecture - set `redis_*` for combined Redis, `redis_cache_*` and `redis_persistent_*` for separated Redis setup.
@@ -304,7 +304,7 @@ However, this can be changed via the `machine_image` in the [module's environmen
 
 :information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+ and RHEL 8 images at this time.
 
-:warning:&nbsp; After deployment, this value shouldn't be changed as this would trigger a full rebuild (as it's treated as the base disk) and lead to data loss. Upgrading the OS should be done directly on the machines via their standard process.
+:exclamation:&nbsp; **{-After deployment, this value shouldn't be changed as this would trigger a full rebuild (as it's treated as the base disk) and lead to data loss-}**. [Upgrading the OS should be done directly on the machines via their standard process](environment_upgrades.md#avoid-changing-machine-os-image).
 
 ##### Object Storage Location (GCP)
 
@@ -314,7 +314,7 @@ Depending on the provider's version it will typically create buckets in the `US`
 
 To ensure good performance you should select a [location](https://cloud.google.com/storage/docs/locations) that is close to the region you've selected for the environment. We recommend either picking a [Multi-Region](https://cloud.google.com/storage/docs/locations#location-mr) if it's available for built-in HA or [Region](https://cloud.google.com/storage/docs/locations#location-r) if the former isn't available. However, any location can be chosen as desired based on your requirements.
 
-:warning:&nbsp; **{- Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss-}**+
+:exclamation:&nbsp; **{-Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss-}**
 
 ##### Object Storage versioning (GCP)
 
@@ -507,7 +507,7 @@ output "gitlab_ref_arch_aws" {
   - `ssh_public_key` - The SSH key value, typically read from an SSH key file set as `ssh_public_key_file` in `variables.tf`.
   - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
   - `object_storage_versioning` - Controls whether Object Storage versioning is enabled for the buckets. Refer to the [Object Storage versioning (AWS)](#object-storage-versioning-aws) below for more info.
-  - `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :warning:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
+  - `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :exclamation:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
 
@@ -526,7 +526,7 @@ However, this can be changed via the `ami_id` setting in the [module's environme
 
 :information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+, RHEL 8 and Amazon Linux 2 images at this time.
 
-:warning:&nbsp; After deployment, this value shouldn't be changed as this would trigger a full rebuild (as it's treated as the base disk) and lead to data loss. Upgrading the OS should be done directly on the machines via their standard process.
+:exclamation:&nbsp; **{-After deployment, this value shouldn't be changed as this would trigger a full rebuild (as it's treated as the base disk) and lead to data loss-}**. [Upgrading the OS should be done directly on the machines via their standard process](environment_upgrades.md#avoid-changing-machine-os-image).
 
 ##### Object Storage versioning (AWS)
 
@@ -553,7 +553,7 @@ The above is also the precedence of how the Toolkit will handle this. For exampl
 
 There are several variables available to configure in the [module's environment config file](#configure-module-settings-environmenttf) for the encryption strategy desired. To cover the scenarios above we'll split each into its own section and how to configure blow.
 
-:warning:&nbsp; **{- Changing encryption settings setup on an existing environment must be treated with the utmost caution-}**. **Doing so is typically considered a significant change and will trigger the recreation of the affected storages and services leading to data loss**.
+:exclamation:&nbsp; **{- Changing encryption settings setup on an existing environment must be treated with the utmost caution-}**. **Doing so is typically considered a significant change and will trigger the recreation of the affected storages and services leading to data loss**.
 
 ###### Default Encryption
 
@@ -755,7 +755,7 @@ output "gitlab_ref_arch_azure" {
   - `vm_admin_username` - The username of the administrator for the virtual machines. Set in `variables.tf`.
   - `ssh_public_key` - The SSH key value, typically read from an SSH key file set as `ssh_public_key_file` in `variables.tf`.
   - `external_ip_type` - [The type of Public IP](https://docs.microsoft.com/en-us/azure/virtual-network/ip-services/public-ip-addresses) that will be created for each VM. Can be either `Standard` (recommended) or `Basic`. Default is `Basic` for backwards compatibility.
-  - `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :warning:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
+  - `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :exclamation:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.
 
 Next in the file are the various machine settings, separated the same as the Reference Architectures. To avoid repetition we'll describe each setting once:
 
@@ -773,6 +773,10 @@ However, this can be changed via the `source_image_reference` dictionary setting
 
 When the image has been selected the setting will need the `publisher`, `offer`, `sku` and `version` fields set. For example:
 
+:information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+ and RHEL 8 images at this time.
+
+:exclamation:&nbsp; **{-After deployment, this value shouldn't be changed as this would trigger a full rebuild (as it's treated as the base disk) and lead to data loss-}**. [Upgrading the OS should be done directly on the machines via their standard process](environment_upgrades.md#avoid-changing-machine-os-image).
+
 ```tf
 module "gitlab_ref_arch_azure" {
   source = "../../modules/gitlab_ref_arch_azure"
@@ -787,10 +791,6 @@ module "gitlab_ref_arch_azure" {
   [...]
 }
 ```
-
-:information_source:&nbsp; The Toolkit currently supports Ubuntu 18.04+ and RHEL 8 images at this time.
-
-:warning:&nbsp; After deployment, this value shouldn't be changed as this would trigger a full rebuild (as it's treated as the base disk) and lead to data loss. Upgrading the OS should be done directly on the machines via their standard process.
 
 ##### Configure network setup (Azure)
 

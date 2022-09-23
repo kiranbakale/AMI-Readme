@@ -20,7 +20,7 @@ By default, the Toolkit will configure network setup using the default cloud pro
 
 On this page we'll detail all of the supported advanced setups you can do with the Toolkit. We recommend you only do these setups if you have a good working knowledge of both the Toolkit and what the specific setups involve.
 
-:warning:&nbsp; **{- Changing network setup on an existing environment must be treated with the utmost caution-}**. **Doing so can be considered a significant change and may trigger the recreation of the entire environment leading to data loss**.
+:exclamation:&nbsp; **{- Changing network setup on an existing environment must be treated with the utmost caution-}**. **Doing so can be considered a significant change and may trigger the recreation of the entire environment leading to data loss**.
 
 [[_TOC_]]
 
@@ -34,7 +34,7 @@ The module for GCP can configure the [network stack](https://cloud.google.com/vp
 
 In this section you will find the config required to set up each depending on your requirements.
 
-:warning:&nbsp; **{- Changing network setup on an existing environment must be treated with the utmost caution-}**. **Doing so can be considered a significant change in GCP and may trigger the recreation of the entire environment leading to data loss**.
+:exclamation:&nbsp; **{- Changing network setup on an existing environment must be treated with the utmost caution-}**. **Doing so can be considered a significant change in GCP and may trigger the recreation of the entire environment leading to data loss**.
 
 ### Default (GCP)
 
@@ -121,7 +121,7 @@ Additionally for the Created and Existing network types above you can configure 
 
 In this section you will find the config required to set up each depending on your requirements.
 
-:warning:&nbsp; **{- Changing network setup on an existing environment must be avoided-}**. **Doing so is considered a significant change in AWS and will essentially trigger the recreation of the entire environment leading to data loss**.
+:exclamation:&nbsp; **{- Changing network setup on an existing environment must be avoided-}**. **Doing so is considered a significant change in AWS and will essentially trigger the recreation of the entire environment leading to data loss**.
 
 ### Default (AWS)
 
@@ -253,7 +253,7 @@ To lock down external network access to particular CIDR blocks these _optional_ 
   - `external_ssh_allowed_ingress_cidr_blocks`- A list of CIDR blocks that configures the IP ranges that will be able to access the network over SSH.
   - `icmp_allowed_ingress_cidr_blocks`- **GCP and Azure only** - A list of CIDR blocks that configures the IP ranges that will be able to access the network over ICMP.
 
-:warning:&nbsp; **{- Changing network setup on an existing environment must be treated with the utmost caution-}**. **Doing so can be considered a significant change in GCP and may trigger the recreation of the entire environment leading to data loss**.
+:exclamation:&nbsp; **{- Changing network setup on an existing environment must be treated with the utmost caution-}**. **Doing so can be considered a significant change in GCP and may trigger the recreation of the entire environment leading to data loss**.
 
 ### Internal (Ansible)
 
