@@ -25,7 +25,7 @@ On this page we'll detail all of the supported advanced setups you can do with t
 
 The Toolkit allows for providing custom GitLab config that will be used when setting up components via Omnibus or Helm charts.
 
-:warning:&nbsp; **This is an advanced feature and it must be used with caution**. Any custom config passed will always take precedence and may lead to various unintended consequences or broken environments if not used carefully.
+:exclamation:&nbsp; **This is an advanced feature and it must be used with caution**. Any custom config passed will always take precedence and may lead to various unintended consequences or broken environments if not used carefully.
 
 Custom config should only be used in advanced scenarios where you are fully aware of the intended effects or for areas that the Toolkit doesn't support natively due to potential permutations such as:
 
@@ -72,7 +72,7 @@ The Toolkit has hooks to allow tasks to be run at the following points during th
 - Post Configure - Tasks to run against the environment **after** setup from the Ansible runner.
 - Uninstall - Tasks to run as part of the uninstall process such as uninstalling any additional tools.
 
-:warning:&nbsp; **This is an advanced feature and it must be used with caution**. Running custom tasks may lead to various unintended consequences or broken environments if not used carefully.
+:exclamation:&nbsp; **This is an advanced feature and it must be used with caution**. Running custom tasks may lead to various unintended consequences or broken environments if not used carefully.
 
 Setting up common tasks is done in the same manner for each hook as follows:
 
@@ -97,7 +97,7 @@ Any task within the [Ansible library](https://docs.ansible.com/ansible/2.9/modul
 
 The Toolkit allows for copying files or folders to component node groups as desired. This can be useful when additional files are required for setup such as SSL certificates.
 
-:warning:&nbsp; **This is an advanced feature and it must be used with caution**. Adding custom files may lead to various unintended consequences or broken environments if not used carefully.
+:exclamation:&nbsp; **This is an advanced feature and it must be used with caution**. Adding custom files may lead to various unintended consequences or broken environments if not used carefully.
 
 Setting up common files is straightforward. All that's required is for you to have the files ready in a location that's reachable by Ansible on the machine it's running on and then configuring Ansible to copy the files or folder from that location to a specified one on the node group as follows:
 
@@ -510,7 +510,7 @@ Passing in your policies is done in Terraform via the following variables in you
 
 The Toolkit also allows for there to be a [Permissions Boundary](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html) to be set for all IAM Roles it creates.
 
-:warning:&nbsp; **This is an advanced feature and it must be used with caution**. Boundaries must allow for all Policies the Toolkit uses to be allowed or your environment will become unstable. [The latest list of policies used by the Toolkit is shown here](https://gitlab.com/search?search=2012-10-17&nav_source=navbar&project_id=14292404&group_id=9970&search_code=true&repository_ref=main).
+:exclamation:&nbsp; **This is an advanced feature and it must be used with caution**. Boundaries must allow for all Policies the Toolkit uses to be allowed or your environment will become unstable. [The latest list of policies used by the Toolkit is shown here](https://gitlab.com/search?search=2012-10-17&nav_source=navbar&project_id=14292404&group_id=9970&search_code=true&repository_ref=main).
 
 While the Toolkit will be designed in line with least privilege and ensuring all such IAM entities only have the access they require to do their role you may have a general policy to always apply a "global" permissions boundary as an additional security measure.
 

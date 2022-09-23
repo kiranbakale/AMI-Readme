@@ -536,11 +536,11 @@ To use this method all that's required is to install the Collection from this re
 
 First, installing the Collection is done as standard via the `ansible-galaxy` command from this repo:
 
+:information_source:&nbsp; The Collection can only be installed from this repo as shown below and isn't available from Ansible Galaxy due to license compliance.
+
 ```shell
 ansible-galaxy collection install git+https://gitlab.com/gitlab-org/gitlab-environment-toolkit.git#/ansible/
 ```
-
-:information_source:&nbsp; The Collection can only be installed from this repo as shown above and isn't available from Ansible Galaxy due to license compliance.
 
 Once installed you can then run the Collection in [several possible ways](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#using-collections-in-a-playbook). As an example you can run the `all` playbook directly via the collection name as follows:
 

@@ -73,6 +73,10 @@ Next you need to add 2 new labels that helps to identify the machines as belongi
 
 The recommended way to do this is to first set them in the `variables.tf` file, for example:
 
+:information_source:&nbsp; The configurations below are needed on all geo sites.
+
+:information_source:&nbsp; When using repmgr on the secondary site the `node_count` in `postgres.tf` should be set to 1 for the secondary site's config. When using Patroni, this can be left at its original value.
+
 ```tf
 variable "geo_site" {
     default = "geo-site-london"
@@ -94,10 +98,6 @@ module "gitlab_ref_arch_*" {
 
   [...]
 ```
-
-:information_source:&nbsp; The configurations above are needed on all geo sites.
-
-:information_source:&nbsp; When using repmgr on the secondary site the `node_count` in `postgres.tf` should be set to 1 for the secondary sites config. When using Patroni, this can be left at its original value.
 
 Once each site is configured we can run the `terraform apply` command against each project. You can run this command against all sites at the same time.
 
@@ -157,6 +157,8 @@ Using this output, add the below values to the primaries `environment.tf` file. 
 
 - `object_storage_destination_buckets` - A map of each destination buckets name and ARN. For example:
 
+:exclamation:&nbsp; You must ensure you have copied over all the settings listed above in full. Failure to do so will cause Geo Replication to fail.
+
 ```yml
 object_storage_destination_buckets = tomap({
     "artifacts"        = "<artifacts_bucket_arn>"
@@ -172,8 +174,6 @@ object_storage_destination_buckets = tomap({
 ```
 
 - `object_storage_replica_kms_key_id` - The ARN used to encrypt the secondaries object storage buckets.
-
-:warning:&nbsp; You must ensure you have copied over all of the settings listed above in full. Failure to do so will cause Geo Replication to fail.
 
 Once the settings have been added you will need to rerun `terraform apply` for the primary site. This will create the replication rules from the primaries source buckets to the secondaries. Finally, be sure to add `geo_enable_object_storage_replication: false` into your primary sites ansible inventory. This will prevent Ansible from enabling Geo managed object storage replication.
 

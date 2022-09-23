@@ -315,6 +315,8 @@ First is the Dynamic Inventory file, which configures Ansible to retrieve the ma
 
 <details><summary>Dynamic Inventory - <code>gitlab-environment-toolkit/ansible/environments/&#60;ENV_NAME&#62;/inventory/ENV_NAME.aws_ec2.yml</code></summary>
 
+:information_source:&nbsp; Only values in `<>` brackets should be changed in this file and the rest should match. It also must be saved with the suffix `aws_ec2.yml`.
+
 ```yaml
 plugin: aws_ec2
 regions:
@@ -335,13 +337,13 @@ compose:
   ansible_host: public_ip_address
 ```
 
-:information_source:&nbsp; Only values in `<>` brackets should be changed in this file and the rest should match. It also must be saved with the suffix `aws_ec2.yml`.
-
 </details>
 
 Next is the Environment config file that contains all the config for configuring GitLab:
 
 <details><summary>Environment - <code>gitlab-environment-toolkit/ansible/environments/&#60;ENV_NAME&#62;/inventory/vars.yml</code></summary>
+
+:information_source:&nbsp; [As mentioned earlier in this guide](#select-passwords--tokens) all `<*_PASSWORD>` and `<*_TOKEN>` entries should be replaced with your own.
 
 ```yaml
 all:
@@ -372,8 +374,6 @@ all:
     praefect_internal_token: '<PRAEFECT_INTERNAL_TOKEN>'
     praefect_postgres_password: '<PRAEFECT_POSTGRES_PASSWORD>'
 ```
-
-:information_source:&nbsp; [As mentioned earlier in this guide](#select-passwords--tokens) all `<*_PASSWORD>` and `<*_TOKEN>` entries should be replaced with your own.
 
 </details>
 
