@@ -862,6 +862,10 @@ variable "rds_postgres_version" {
   type    = string
   default = "12"
 }
+variable "rds_postgres_auto_minor_version_upgrade" {
+  type    = bool
+  default = false
+}
 variable "rds_postgres_allocated_storage" {
   type    = number
   default = 100
@@ -936,6 +940,10 @@ variable "rds_praefect_postgres_version" {
   type    = string
   default = "12"
 }
+variable "rds_praefect_postgres_auto_minor_version_upgrade" {
+  type    = bool
+  default = false
+}
 variable "rds_praefect_postgres_allocated_storage" {
   type    = number
   default = 100
@@ -1005,6 +1013,10 @@ variable "rds_geo_tracking_postgres_database_name" {
 variable "rds_geo_tracking_postgres_version" {
   type    = string
   default = "12"
+}
+variable "rds_geo_tracking_postgres_auto_minor_version_upgrade" {
+  type    = bool
+  default = false
 }
 variable "rds_geo_tracking_postgres_allocated_storage" {
   type    = number
