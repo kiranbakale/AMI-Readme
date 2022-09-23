@@ -4,7 +4,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 2.9"
+      version = "~> 3.24"
     }
   }
 }
@@ -28,6 +28,15 @@ resource "azurerm_public_ip" "gitlab" {
   location            = var.location
   allocation_method   = "Static"
   sku                 = var.external_ip_type
+
+  lifecycle {
+    # Ignore changes in the Zones which force recreation of the resource. This
+    # avoids accidental deletion of IPs after AzureRM v3.0 upgrade
+    # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/3.0-upgrade-guide#resource-azurerm_public_ip
+    ignore_changes = [
+      zones
+    ]
+  }
 }
 
 resource "azurerm_network_interface" "gitlab" {

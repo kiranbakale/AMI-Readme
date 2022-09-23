@@ -22,6 +22,15 @@ resource "azurerm_public_ip" "nat_gateway_public_ip" {
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
   sku                 = "Standard"
+
+  lifecycle {
+    # Ignore changes in the Zones which force recreation of the resource. This
+    # avoids accidental deletion of IPs after AzureRM v3.0 upgrade
+    # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/3.0-upgrade-guide#resource-azurerm_public_ip
+    ignore_changes = [
+      zones
+    ]
+  }
 }
 
 resource "azurerm_nat_gateway" "nat_gateway" {
