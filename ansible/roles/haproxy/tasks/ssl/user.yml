@@ -30,3 +30,5 @@
   loop:
     - { hostfile: "{{ external_ssl_files_host_certificate_file }}", targetfile: "/opt/haproxy/{{ external_host }}.pem" }
     - { hostfile: "{{ external_ssl_files_host_key_file }}", targetfile: "/opt/haproxy/{{ external_host }}.pem.key" }
+    - { hostfile: "{{ external_ssl_files_host_certificate_file }}", targetfile: "{{ gitlab_nfs_path }}/{{ external_host }}.pem" }
+    - { hostfile: "{{ external_ssl_files_host_key_file }}", targetfile: "{{ gitlab_nfs_path }}/{{ external_host }}.pem.key" }

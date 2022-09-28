@@ -28,6 +28,8 @@
   loop:
     - { hostfile: "/etc/letsencrypt/live/{{ external_host }}/fullchain.pem", targetfile: "/opt/haproxy/{{ external_host }}.pem" }
     - { hostfile: "/etc/letsencrypt/live/{{ external_host }}/privkey.pem", targetfile: "/opt/haproxy/{{ external_host }}.pem.key" }
+    - { hostfile: "/etc/letsencrypt/live/{{ external_host }}/fullchain.pem", targetfile: "{{ gitlab_nfs_path }}/{{ external_host }}.pem" }
+    - { hostfile: "/etc/letsencrypt/live/{{ external_host }}/privkey.pem", targetfile: "{{ gitlab_nfs_path }}/{{ external_host }}.pem.key" }
 
 - name: Setup certbot renew haproxy pre hook script
   blockinfile:
