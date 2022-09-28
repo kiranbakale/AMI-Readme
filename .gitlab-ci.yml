@@ -101,6 +101,7 @@ check:ansible-lint:
     - chmod 700 ansible
     - cd ansible
     - ansible-galaxy install -r requirements/ansible-galaxy-requirements.yml
+    - pip install jmespath
     - ansible-lint
   only:
     - main

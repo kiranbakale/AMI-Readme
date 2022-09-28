@@ -35,7 +35,7 @@ variable "project" {
 # Object Storage
 variable "object_storage_buckets" {
   type    = list(string)
-  default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads"]
+  default = ["artifacts", "backups", "dependency-proxy", "lfs", "mr-diffs", "packages", "terraform-state", "uploads", "registry"]
 }
 variable "object_storage_prefix" {
   type    = string
@@ -524,6 +524,19 @@ variable "external_ssh_allowed_ingress_cidr_blocks" {
 }
 
 variable "icmp_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
+variable "enable_container_registry" {
+  type    = bool
+  default = true
+}
+variable "container_registry_port" {
+  type    = number
+  default = 5050
+}
+variable "container_registry_allowed_ingress_cidr_blocks" {
   type    = list(any)
   default = []
 }

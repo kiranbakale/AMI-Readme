@@ -1281,6 +1281,19 @@ variable "external_ssh_allowed_ingress_cidr_blocks" {
   default = []
 }
 
+variable "enable_container_registry" {
+  type    = bool
+  default = true
+}
+variable "container_registry_port" {
+  type    = number
+  default = 5050
+}
+variable "container_registry_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
 ## Create new network
 variable "create_network" {
   type    = bool

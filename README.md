@@ -106,7 +106,7 @@ card get #ffffff [
 
 card aws #ffffff [
   <img:https://iili.io/MdYo0B.png{scale=0.5}>
-  
+
   AWS
 
   ---
@@ -124,7 +124,7 @@ card aws #ffffff [
 
 card gcp #ffffff [
   <img:https://iili.io/Md7sHX.png{scale=0.15}>
-  
+
   GCP
 
   ---
@@ -141,7 +141,7 @@ card gcp #ffffff [
 
 card azure #ffffff [
   <img:https://iili.io/Md52r7.md.png{scale=0.4}>
-  
+
   Azure
 
   ---
@@ -185,7 +185,6 @@ Currently, we do not plan to include:
 There are a few key features which are not supported yet, which are important to keep in mind.
 
 - [Some cloud provider services](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/74) such as managed PostgreSQL or Redis. AWS and other currently supported services can be seen on the [relevant docs page](docs/environment_advanced_services.md).
-- [GitLab Registry support](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/212) for Omnibus-only deployments. Cloud Native Hybrid supports the registry.
 
 Our upcoming work, sorted by tentative milestone, can be viewed on [our development board](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/boards). Please note that the issues slated for any upcoming release or milestone are subject to change and may not meet the planned time frames.
 
