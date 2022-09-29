@@ -160,6 +160,10 @@ sudo su - gitlab-psql -c '/opt/gitlab/embedded/bin/pg_resetwal -f /var/opt/gitla
 
 This wipes the records from the specific server and will unblock it to start replicating again. This should **only** be run on the specific Secondary server that is failing and no others as this would lead to data loss.
 
+### Worker thread was found in dead state
+
+[This is due to an issue with certain Python plugins](https://github.com/ansible/ansible/issues/32554#issuecomment-642896861) on your system. You can work around this by running `export no_proxy="*"` before running the `ansible-playbook` commands.
+
 ## Cloud Native Hybrid
 
 In this section are troubleshooting steps for some common Cloud Native Hybrid environment issues.
