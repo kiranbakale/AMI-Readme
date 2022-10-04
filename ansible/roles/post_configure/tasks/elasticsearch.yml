@@ -76,7 +76,8 @@
 - name: Get and save Environment Settings
   block:
     - name: Get and save Environment Settings via GitLab Rails
-      command: "gitlab-rails runner 'print ApplicationSetting.last.attributes.to_json'"
+      command: |
+        gitlab-rails runner 'print ApplicationSetting.last.attributes.select {|k,v| !k.include?("encrypted") }.to_json'
       delegate_to: "{{ groups['gitlab_rails'][0] }}"
       delegate_facts: true
       become: true
@@ -92,7 +93,8 @@
       kubernetes.core.k8s_exec:
         pod: "{{ toolbox_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
-        command: "gitlab-rails runner 'print ApplicationSetting.last.attributes.to_json'"
+        command: |
+          gitlab-rails runner 'print ApplicationSetting.last.attributes.select {|k,v| !k.include?("encrypted") }.to_json'
       register: env_settings_response_pod
       when:
         - toolbox_pod is defined
@@ -217,7 +219,8 @@
 - name: Get and save Environment Settings
   block:
     - name: Get and save Environment Settings via GitLab Rails
-      command: "gitlab-rails runner 'print ApplicationSetting.last.attributes.to_json'"
+      command: |
+        gitlab-rails runner 'print ApplicationSetting.last.attributes.select {|k,v| !k.include?("encrypted") }.to_json'
       delegate_to: "{{ groups['gitlab_rails'][0] }}"
       delegate_facts: true
       become: true
@@ -233,7 +236,8 @@
       kubernetes.core.k8s_exec:
         pod: "{{ toolbox_pod }}"
         namespace: "{{ gitlab_charts_release_namespace }}"
-        command: "gitlab-rails runner 'print ApplicationSetting.last.attributes.to_json'"
+        command: |
+          gitlab-rails runner 'print ApplicationSetting.last.attributes.select {|k,v| !k.include?("encrypted") }.to_json'
       register: env_settings_response_pod
       when:
         - toolbox_pod is defined
