@@ -1,3 +1,16 @@
+- name: Ensure zero downtime config doesn't exist on nodes before upgrade
+  block:
+    - name: Remove zero downtime config before upgrade
+      file:
+        path: "/etc/gitlab/gitlab.{{ gitlab_node_type }}.zero-downtime.rb"
+        state: absent
+      register: remove_zdu_config
+
+    - name: Run gitlab-ctl reconfigure
+      command: gitlab-ctl reconfigure
+      when: remove_zdu_config.changed
+  when: omnibus_node
+
 - name: Run Zero Downtime Updates
   import_tasks: zero-downtime-update.yml
   when:

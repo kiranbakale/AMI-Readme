@@ -28,7 +28,7 @@ frontend internal-praefect-tcp-in
     default_backend praefect
 {% endif %}
 
-{% if postgres_replication_manager == 'patroni' %}
+{% if postgres_replication_manager == 'patroni' and not postgres_external %}
 frontend internal-patroni-leader
     bind *:5432
     mode tcp
@@ -71,7 +71,7 @@ backend praefect
 {% endfor %}
 {% endif %}
 
-{% if postgres_replication_manager == 'patroni' %}
+{% if postgres_replication_manager == 'patroni' and not postgres_external %}
 backend patroni-leader
     mode tcp
     option httpchk
