@@ -3,11 +3,14 @@
   command: gitlab-ctl cleanse
 
 - name: Unlock GitLab package installs
-  command: "{{ 'yum versionlock delete' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark install' }} {{ gitlab_edition }}"
-  register: result
+  command: "{{ 'yum versionlock delete' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark unhold' }} {{ gitlab_edition }}"
   retries: 5
   delay: 5
-  until: result is success
+  register: result
+  failed_when:
+    - result.rc != 0
+    - ('no matches' not in result.stderr)
+    - ('Unable to locate package' not in result.stderr)
 
 - name: Uninstall GitLab repo package
   package:

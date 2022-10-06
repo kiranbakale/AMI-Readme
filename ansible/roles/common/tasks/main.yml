@@ -12,31 +12,33 @@
         - ansible_hostname != inventory_hostname
       tags: hostname
 
-    - name: Add GitLab repository GPG key (Ubuntu)
-      apt_key:
-        url: https://packages.gitlab.com/gpg.key
-        state: present
-      register: result
-      retries: 2
-      delay: 3
-      until: result is success
-      when:
-        - omnibus_node
-        - ansible_facts['os_family'] == "Debian"
-      tags: gpg
+    - name: Add GitLab repository GPG key
+      block:
+        - name: Add GitLab repository GPG key (Ubuntu)
+          apt_key:
+            url: https://packages.gitlab.com/gpg.key
+            state: present
+          register: result
+          retries: 2
+          delay: 3
+          until: result is success
+          when: ansible_facts['os_family'] == "Debian"
 
-    - name: Add GitLab repository GPG key (RHEL)
-      rpm_key:
-        key: https://packages.gitlab.com/gpg.key
-        state: present
-      register: result
-      retries: 2
-      delay: 3
-      until: result is success
+        - name: Add GitLab repository GPG key (RHEL)
+          rpm_key:
+            key: https://packages.gitlab.com/gpg.key
+            state: present
+          register: result
+          retries: 2
+          delay: 3
+          until: result is success
+          when: ansible_facts['os_family'] == 'RedHat'
+      tags: gpg
       when:
         - omnibus_node
-        - ansible_facts['os_family'] == 'RedHat'
-      tags: gpg
+        - gitlab_repo_package != ''
+        - gitlab_deb_download_url == '' and gitlab_rpm_download_url == ''
+        - gitlab_deb_host_path == '' and gitlab_rpm_host_path == ''
 
     - name: Setup Packages
       import_tasks: packages_setup.yml
@@ -72,17 +74,6 @@
     - name: Setup NFS
       import_tasks: nfs.yml
       tags: nfs
-
-    # Removes the official release repo if it's present as we typically want to stick with Nightly
-    # Prevents apt from switching to the release channel (when an official release is younger than nightly)
-    - name: Ensure only GitLab Nightly apt repo is installed unless specified otherwise (Ubuntu)
-      file:
-        path: '/etc/apt/sources.list.d/gitlab_{{ gitlab_edition }}.list'
-        state: absent
-      when:
-        - omnibus_node
-        - gitlab_repo_script_url == "https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh"
-        - ansible_facts['os_family'] == "Debian"
 
     # Create select GitLab folders if missing. Allows for setup before reconfigure.
     - name: Create select GitLab dirs if missing
@@ -122,54 +113,62 @@
         - gitlab_json_config_file.stat.size < 500
       tags: reconfigure
 
-    - name: Download GitLab repository installation script
-      get_url:
-        url: "{{ gitlab_repo_script_url }}"
-        dest: "{{ gitlab_repo_script_path }}"
-        force: true
-      register: repo_file_download
-      retries: 20
-      delay: 30
-      when: omnibus_node
-
-    - name: Check if repo list file exists
-      stat:
-        path: "{{ gitlab_repo_list_path }}"
-      register: repo_file
-      when: omnibus_node
-
-    - name: Install GitLab repository
-      command: "bash {{ gitlab_repo_script_path }}"
-      register: result
-      retries: 2
-      delay: 10
-      until: result is success
-      when:
-        - omnibus_node
-        - repo_file_download.changed or (not repo_file.stat.exists)
-        - gitlab_repo_package != ''
-        - gitlab_deb_download_url == '' and gitlab_rpm_download_url == ''
-        - gitlab_deb_host_path == '' and gitlab_rpm_host_path == ''
-
     - name: Unlock GitLab package installs
-      command: "{{ 'yum versionlock delete' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark install' }} {{ gitlab_edition }}"
-      register: result
-      failed_when: "result.rc != 0 and 'no matches' not in result.stderr"
-      retries: 12
+      command: "{{ 'yum versionlock delete' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark unhold' }} {{ gitlab_edition }}"
+      retries: 5
       delay: 5
-      until: result is success
+      register: result
+      failed_when:
+        - result.rc != 0
+        - ('no matches' not in result.stderr)
+        - ('Unable to locate package' not in result.stderr)
       when: omnibus_node
 
-    # Install GitLab Package via repo. State of latest means always run apt install
-    # If gitlab_version is passed then this will always install that version
-    - name: Install GitLab repo package
-      package:
-        name: "{{ gitlab_repo_package }}"
-        state: "{{ 'present' if gitlab_version != '' else 'latest' }}"
-      register: result
-      retries: 2
-      delay: 3
-      until: result is success
+    - name: Install GitLab package via repo if configured
+      block:
+        # Removes the official release repo if it's present as we typically want to stick with Nightly
+        # Prevents apt from switching to the release channel (when an official release is younger than nightly)
+        - name: Ensure only GitLab Nightly apt repo is installed unless specified otherwise (Ubuntu)
+          file:
+            path: '/etc/apt/sources.list.d/gitlab_{{ gitlab_edition }}.list'
+            state: absent
+          when:
+            - omnibus_node
+            - gitlab_repo_script_url == "https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh"
+            - ansible_facts['os_family'] == "Debian"
+
+        - name: Download GitLab repository installation script
+          get_url:
+            url: "{{ gitlab_repo_script_url }}"
+            dest: "{{ gitlab_repo_script_path }}"
+            force: true
+          register: repo_file_download
+          retries: 20
+          delay: 30
+
+        - name: Check if repo list file exists
+          stat:
+            path: "{{ gitlab_repo_list_path }}"
+          register: repo_file
+
+        - name: Install GitLab repository
+          command: "bash {{ gitlab_repo_script_path }}"
+          register: result
+          retries: 2
+          delay: 10
+          until: result is success
+          when: repo_file_download.changed or (not repo_file.stat.exists)
+
+        # Install GitLab Package via repo. State of latest means always run apt install
+        # If gitlab_version is passed then this will always install that version
+        - name: Install GitLab repo package
+          package:
+            name: "{{ gitlab_repo_package }}"
+            state: "{{ 'present' if gitlab_version != '' else 'latest' }}"
+          register: result
+          retries: 2
+          delay: 3
+          until: result is success
       when:
         - omnibus_node
         - gitlab_repo_package != ''
@@ -239,7 +238,7 @@
       when: ansible_facts['os_family'] == 'RedHat'
 
     - name: Lock GitLab package updates
-      command: "{{ 'yum versionlock' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark install' }} {{ gitlab_edition }}"
+      command: "{{ 'yum versionlock' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark hold' }} {{ gitlab_edition }}"
       register: result
       retries: 2
       delay: 10
