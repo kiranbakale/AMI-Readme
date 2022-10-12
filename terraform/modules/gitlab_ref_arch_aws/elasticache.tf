@@ -25,7 +25,7 @@ resource "aws_elasticache_replication_group" "gitlab_redis" {
   engine_version             = var.elasticache_redis_engine_version
   port                       = var.elasticache_redis_port
   multi_az_enabled           = var.elasticache_redis_multi_az
-  automatic_failover_enabled = true
+  automatic_failover_enabled = var.elasticache_redis_node_count > 1 ? true : false
   at_rest_encryption_enabled = true
   transit_encryption_enabled = true
   kms_key_id                 = var.elasticache_redis_kms_key_arn != null ? var.elasticache_redis_kms_key_arn : var.default_kms_key_arn
@@ -94,8 +94,7 @@ resource "aws_elasticache_replication_group" "gitlab_redis_cache" {
   engine_version             = local.elasticache_redis_cache_engine_version
   port                       = local.elasticache_redis_cache_port
   multi_az_enabled           = local.elasticache_redis_cache_multi_az
-  automatic_failover_enabled = true
-
+  automatic_failover_enabled = var.elasticache_redis_cache_node_count > 1 ? true : false
   at_rest_encryption_enabled = true
   transit_encryption_enabled = true
   kms_key_id                 = local.elasticache_redis_cache_kms_key_arn != null ? local.elasticache_redis_cache_kms_key_arn : var.default_kms_key_arn
@@ -146,7 +145,7 @@ resource "aws_elasticache_replication_group" "gitlab_redis_persistent" {
   engine_version             = local.elasticache_redis_persistent_engine_version
   port                       = local.elasticache_redis_persistent_port
   multi_az_enabled           = local.elasticache_redis_persistent_multi_az
-  automatic_failover_enabled = true
+  automatic_failover_enabled = var.elasticache_redis_cache_node_count > 1 ? true : false
   at_rest_encryption_enabled = true
   transit_encryption_enabled = true
   kms_key_id                 = local.elasticache_redis_persistent_kms_key_arn != null ? local.elasticache_redis_persistent_kms_key_arn : var.default_kms_key_arn
