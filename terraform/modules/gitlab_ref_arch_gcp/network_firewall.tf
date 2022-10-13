@@ -48,7 +48,7 @@ resource "google_compute_firewall" "ssh" {
 }
 
 resource "google_compute_firewall" "gitlab_container_registry" {
-  count = (var.gitlab_rails_node_count > 0 && var.enable_container_registry) ? 1 : 0
+  count = (var.gitlab_rails_node_count > 0 && var.container_registry_enable) ? 1 : 0
 
   name    = "${var.prefix}-gitlab-rails-container-registry"
   network = local.vpc_name

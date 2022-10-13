@@ -2,7 +2,7 @@ roles ['application_role']
 
 external_url '{{ external_url_sanitised }}'
 
-{% if enable_container_registry %}
+{% if container_registry_enable %}
 registry['enable'] = true
 registry_external_url "{{ external_url_sanitised }}:{{ container_registry_port }}"
 registry_nginx['ssl_certificate'] = "{{ gitlab_nfs_path }}/{{ external_host }}.pem"
@@ -77,7 +77,7 @@ gitlab_rails['object_store']['objects']['packages']['bucket'] = "{{ gitlab_objec
 gitlab_rails['object_store']['objects']['terraform_state']['bucket'] = "{{ gitlab_object_storage_terraform_state_bucket }}"
 gitlab_rails['object_store']['objects']['uploads']['bucket'] = "{{ gitlab_object_storage_uploads_bucket }}"
 
-{% if enable_container_registry %}
+{% if container_registry_enable %}
 registry['storage'] = {
   {{ lookup('template', 'registry.' + cloud_provider + '.rb.j2') | indent(width=2) }}
 }
