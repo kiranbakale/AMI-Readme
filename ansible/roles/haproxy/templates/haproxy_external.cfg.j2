@@ -23,7 +23,7 @@ frontend gitlab-ssh-in
 
     default_backend gitlab-rails-ssh
 
-{% if enable_container_registry %}
+{% if container_registry_enable %}
 frontend gitlab-registry-in
     bind *:{{ container_registry_port }} ssl crt /usr/local/etc/haproxy/{{ external_host }}.pem
     option forwardfor
@@ -56,7 +56,7 @@ backend grafana
     server grafana {{ monitor_int_addr }}:80 check
 {% endif %}
 
-{% if enable_container_registry %}
+{% if container_registry_enable %}
 backend gitlab-registry
 {% for ip in gitlab_rails_int_addrs %}
     server gitlab-rails{{loop.index}} {{ ip }}:{{ container_registry_port }} ssl verify none

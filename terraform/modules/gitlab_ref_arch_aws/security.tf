@@ -130,7 +130,7 @@ resource "aws_security_group" "gitlab_external_http_https" {
 }
 
 resource "aws_security_group" "gitlab_external_container_registry" {
-  count = (var.gitlab_rails_node_count > 0 && var.enable_container_registry) ? 1 : 0
+  count = (var.gitlab_rails_node_count > 0 && var.container_registry_enable) ? 1 : 0
 
   name_prefix = "${var.prefix}-external-container-registry-"
   vpc_id      = data.aws_vpc.selected.id

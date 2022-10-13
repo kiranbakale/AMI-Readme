@@ -34,7 +34,7 @@ gitlab:
         serviceMonitor:
           enabled: true
 # Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
-{% if not enable_container_registry %}
+{% if not container_registry_enable %}
     registry:
       enabled: false
 {% endif %}
@@ -62,7 +62,7 @@ gitlab:
     nodeSelector:
       workload: sidekiq
 # Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
-{% if not enable_container_registry %}
+{% if not container_registry_enable %}
     registry:
       enabled: false
 {% endif %}
@@ -73,7 +73,7 @@ gitlab:
         {{ lookup('template', 'object_storage/task_runner_backups_object_storage.' + cloud_provider + '.yml.j2') | indent(width=8) }}
 {% endif %}
 # Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
-{% if not enable_container_registry %}
+{% if not container_registry_enable %}
     registry:
       enabled: false
 {% endif %}
@@ -347,7 +347,7 @@ certmanager:
 redis:
   install: false
 registry:
-{% if enable_container_registry %}
+{% if container_registry_enable %}
   storage:
     secret: gitlab-container-registry-object-storage-key
     key: config

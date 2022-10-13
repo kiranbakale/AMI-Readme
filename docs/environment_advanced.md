@@ -534,7 +534,7 @@ The Toolkit will then apply the path on the next `terraform apply` run.
 
 Container Registry is enabled by default if you're deploying an environment configured with external SSL via GET. By default, the container registry is setup to use an object storage bucket and will be available on port `5050` for Omnibus installs or `registry.<external_url>` for Cloud Native Hybrid installs. The below settings are configurable via the listed parameters:
 
-- `enable_container_registry` - Should the container registry be enabled. Will be enabled by default when using SSL on either AWS or GCP. Must be set in both Terraform and Ansible environment configs.
+- `container_registry_enable` - Should the container registry be enabled. Will be enabled by default when using SSL on either AWS or GCP. Must be set in both Terraform and Ansible environment configs.
 - `container_registry_port` - Port number for the container registry to be available on in Omnibus environments. Must be set in both Terraform and Ansible environment configs. Defaults to `5050`.
 - `container_registry_allowed_ingress_cidr_blocks` - A list of CIDR blocks that configures the IP ranges that will be able to access the container registry externally. Default is `["0.0.0.0/0"]`.
 

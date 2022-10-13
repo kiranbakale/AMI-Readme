@@ -1281,7 +1281,7 @@ variable "external_ssh_allowed_ingress_cidr_blocks" {
   default = []
 }
 
-variable "enable_container_registry" {
+variable "container_registry_enable" {
   type    = bool
   default = true
 }
