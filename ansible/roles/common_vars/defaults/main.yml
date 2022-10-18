@@ -237,7 +237,7 @@ redis_persistent_port: "{{ redis_port }}"
 redis_persistent_external: "{{ 'redis_persistent' not in groups and redis_persistent_host != '' }}"
 
 redis_sentinel_port: 26379
-redis_external_ssl: true
+redis_external_ssl: "{{ cloud_provider == 'aws' }}"
 
 # Sidekiq
 sidekiq_max_concurrency: 10

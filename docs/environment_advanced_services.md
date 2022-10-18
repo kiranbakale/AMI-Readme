@@ -346,6 +346,86 @@ Once the variables are set in your file you can proceed to provision the service
 
 Once provisioned you'll see several new outputs at the end of the process. Key from this is the `elasticache_redis*_host` output, which contains the address for the Redis instance that then needs to be passed to Ansible to configure. Take a note of this address for the next step.
 
+#### GCP Memorystore
+
+The Toolkit supports provisioning a GCP Memorystore Redis service instance with everything GitLab requires or recommends such as built in HA support and encryption.
+
+:information_source:&nbsp; Ensure that [Memorystore for Redis API](https://console.cloud.google.com/apis/library/redis.googleapis.com) is enabled on your target GCP project. Please follow [GCP instructions](https://cloud.google.com/memorystore/docs/redis/create-instance-terraform) how to enable it.
+
+There are different variables to be set depending on the target architecture size and if it requires separate Redis instances (10k and up). First we'll detail the general settings that apply to all Redis setups:
+
+The variables to set are dependent on if the setup is to have combined or separated Redis queues depending on the target Reference Architecture. For the latter, some variables will have a different prefix depending on what Redis instances you're provisioning - `memorystore_redis_*`, `memorystore_redis_cache_*` and `memorystore_redis_persistent_*`, each replacing any applicable existing `redis_*`, `redis_cache_*` or `redis_persistent_*` variables respectively. These will be called out below.
+
+For required variables they need to be set for each Redis service you are provisioning:
+
+- `memorystore_redis_memory_size_gb` - The memory size in GiB of the Redis instance to use. Note that this is [how the service's machine specs are decided](https://cloud.google.com/memorystore/docs/redis/scaling-instances). Should be an integer. **Required**.
+  - `memorystore_redis_cache_memory_size_gb` or `memorystore_redis_persistent_memory_size_gb` when setting up separate services.
+- `memorystore_redis_node_count` - The number of replicas of the Redis instance to have for failover purposes. This should be set to at least `2` or higher for HA and `1` if this isn't a requirement. **Required**.
+  - `memorystore_redis_cache_node_count` or `memorystore_redis_persistent_node_count` when setting up separate services.
+
+For optional variables they work in a default like manner. When configuring for any Redis types the main `memorystore_redis_*` variable can be set once and this will apply to all but you can also additionally override this behaviour with specific variables as follows:
+
+- `memorystore_redis_version` - The version of the Redis instance. Should only be changed to versions [that are supported by GitLab](https://docs.gitlab.com/ee/install/requirements.html#redis-versions). Optional, default is `6.x`.
+  - Optionally `memorystore_redis_cache_version` or `memorystore_redis_persistent_version` can be used to override for separate services.
+- `memorystore_redis_transit_encryption_mode` - The [TLS mode of the Redis](https://cloud.google.com/memorystore/docs/redis/reference/rest/v1/projects.locations.instances#tlscertificate) instance for the [In-transit encryption](https://cloud.google.com/memorystore/docs/redis/in-transit-encryption). Optional, default is `DISABLED`. To enable set to `SERVER_AUTHENTICATION`.
+  - Optionally `memorystore_redis_cache_transit_encryption_mode` or `memorystore_redis_persistent_transit_encryption_mode` can be used to override for separate services.
+  - If you would like to enable TLS, you need to follow guidance on [how to configure internal SSL](environment_advanced_ssl.md#configuring-internal-ssl-via-custom-files-secrets-and-custom-config) after environment is provisioned.
+  - :information_source:&nbsp; Note that the service will generate its own CA certificate and [you will need to download it from GCP directly](https://cloud.google.com/memorystore/docs/redis/enabling-in-transit-encryption#downloading_the_certificate_authority).
+- [`memorystore_redis_weekly_maintenance_window_day`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/redis_instance#day) - The day of week that maintenance updates occur, e.g. `MONDAY`. Optional, default is `null`.
+  - Optionally `memorystore_redis_cache_weekly_maintenance_window_day` or `memorystore_redis_persistent_weekly_maintenance_window_day` can be used to override for separate services.
+- [`memorystore_redis_weekly_maintenance_window_start_time`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/redis_instance#start_time) - Start time when maintenance updates occur. Optional, default is `null`.
+  - Optionally `memorystore_redis_cache_weekly_maintenance_window_start_time` or `memorystore_redis_persistent_weekly_maintenance_window_start_time` can be used to override for separate services.
+  - <details><summary>Example value</summary>
+
+      ```tf
+      memorystore_redis_cache_weekly_maintenance_window_start_time = [ {
+          hours = 0
+          minutes = 30
+          seconds = 0
+          nanos = 0
+        }
+      ]
+     ```
+
+    </details>
+
+:information_source:&nbsp; Note that due to the service's design, you can't set the AUTH string (or password) directly. It's set on GCP's side during creation and you have to then [retrieve it accordingly](https://cloud.google.com/memorystore/docs/redis/managing-auth#getting_the_auth_string).
+
+If deploying a combined Redis setup that contains all queues (5k and lower) the following settings should be set (replacing any previous `redis_*` settings):
+
+As an example, to set up a standard GCP Memorystore Redis service for a [5k](https://docs.gitlab.com/ee/administration/reference_architectures/5k_users.html) environment with the required variables should look like the following in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`):
+
+```tf
+module "gitlab_ref_arch_aws" {
+  source = "../../modules/gitlab_ref_arch_aws"
+
+  [...]
+
+  memorystore_redis_node_count     = 3
+  memorystore_redis_memory_size_gb = 7
+}
+```
+
+And for a larger environment, such as a [10k](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html), where Redis is separated:
+
+```tf
+module "gitlab_ref_arch_aws" {
+  source = "../../modules/gitlab_ref_arch_aws"
+
+  [...]
+
+  memorystore_redis_cache_node_count     = 3
+  memorystore_redis_cache_memory_size_gb = 15
+
+  memorystore_redis_persistent_node_count     = 3
+  memorystore_redis_persistent_memory_size_gb = 15
+}
+```
+
+Once all the above is done, you can proceed to provision the service as normal. Note that this can take several minutes on GCP's side.
+
+Once provisioned you'll see several new outputs at the end of the process. Keys from this are the `memorystore_redis*_host` and `memorystore_redis*_port` outputs, which contains the address and port for the Redis instance that then needs to be passed to Ansible to configure. Take a note of these values for the next step.
+
 ### Configuring with Ansible
 
 Configuring GitLab to use alternative Redis store(s) with Ansible is the same regardless of its origin. All that's required is a few tweaks to your [Environment config file](environment_configure.md#environment-config-varsyml) (`vars.yml`) to point the Toolkit at the Redis instance(s).
@@ -355,11 +435,21 @@ Configuring GitLab to use alternative Redis store(s) with Ansible is the same re
 The variables to set are dependent on if the setup is to have combined or separated Redis queues depending on the target Reference Architecture. The only difference is that the prefix of the variables change depending on what Redis instances you're provisioning - `redis_*`, `redis_cache_*` and `redis_persistent_*` respectively. All the variables are the same for each instance type and are described once below:
 
 - `redis_password` - The password for the instance. **Required**.
+  - Becomes `redis_cache_password` and `redis_persistent_password` when setting up separate stores.
+  - **GCP only** - Password for the Redis instances should be copied from the Google Cloud console following [Getting the AUTH string](https://cloud.google.com/memorystore/docs/redis/managing-auth#getting_the_auth_string) guidance.
 - `redis_host` - The hostname of the Redis instance. Provided in Terraform outputs if provisioned earlier. **Required**.
   - Becomes `redis_cache_host` or `redis_persistent_host` when setting up separate stores.
-- `redis_port` - The port of the Redis instance. Should only be changed if required. Optional, default is `6379`.
+  - **GCP only** - With this service this will typically be an internal IP. This can be retrieved directly via the GCP console.
+- `redis_port` - The port of the Redis instance. Default is `6379`
   - Becomes `redis_cache_port` or `redis_persistent_port` when setting up separate stores. Will default to `redis_port` if not specified.
-- `redis_external_ssl` - Sets GitLab to use SSL connections to the Redis store. Redis stores provisioned by the Toolkit will always use SSL. Should only be changed when using a custom Redis store that doesn't have SSL configured. Optional, default is `true`.
+  - **GCP only** - Note that while typically the port on this service is `6379`, it may differ at times. This can be checked directly via the GCP console.
+  - **AWS only** - No changes are needed. Optional parameter. Should only be changed when custom port was specified during provisioning.
+  - **GCP only** - Provided in Terraform outputs if provisioned earlier.
+- `redis_external_ssl` - Sets GitLab to use SSL connections to the Redis store.
+  - **AWS only** - Default is `true`. Should only be changed when Redis store doesn't have SSL configured. ElastiCache stores provisioned by the Toolkit will always use SSL.
+  - **GCP only** - Default is `false`. Should only be changed when Memorystore have SSL configured.
+    - If TLS encryption was enabled via `memorystore_redis*_transit_encryption_mode`, follow guidance on [how to configure internal SSL](environment_advanced_ssl.md#configuring-internal-ssl-via-custom-files-secrets-and-custom-config) for Redis.
+      - :information_source:&nbsp; Note that the service will generate its own CA certificate and [you will need to download it from GCP directly](https://cloud.google.com/memorystore/docs/redis/enabling-in-transit-encryption#downloading_the_certificate_authority).
 
 Once set, Ansible can then be run as normal. During the run it will configure the various GitLab components to use the database as well as any additional tasks such as setting up a separate database in the same instance for Praefect.
 

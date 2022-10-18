@@ -136,7 +136,7 @@ card gcp #ffffff [
   Gateways or IPs)
   Cloud Load Balancing (Planned)
   Cloud SQL (Planned)
-  Cloud Memorystore (Planned)
+  Cloud Memorystore
 ]
 
 card azure #ffffff [
