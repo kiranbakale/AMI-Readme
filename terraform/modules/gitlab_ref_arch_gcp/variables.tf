@@ -472,6 +472,86 @@ variable "supporting_node_pool_disk_size" {
   type    = string
   default = null
 }
+
+## Redis
+### Combined \ Defaults
+variable "memorystore_redis_node_count" {
+  type    = number
+  default = 0
+}
+variable "memorystore_redis_memory_size_gb" {
+  type    = number
+  default = null
+}
+variable "memorystore_redis_version" {
+  type    = string
+  default = "REDIS_6_X"
+}
+variable "memorystore_redis_transit_encryption_mode" {
+  type    = string
+  default = "DISABLED"
+}
+variable "memorystore_redis_weekly_maintenance_window_day" {
+  type    = string
+  default = null
+}
+variable "memorystore_redis_weekly_maintenance_window_start_time" {
+  type    = any
+  default = []
+}
+
+### Separate - Cache
+variable "memorystore_redis_cache_node_count" {
+  type    = number
+  default = 0
+}
+variable "memorystore_redis_cache_memory_size_gb" {
+  type    = number
+  default = null
+}
+variable "memorystore_redis_cache_version" {
+  type    = string
+  default = null
+}
+variable "memorystore_redis_cache_transit_encryption_mode" {
+  type    = string
+  default = null
+}
+variable "memorystore_redis_cache_weekly_maintenance_window_day" {
+  type    = string
+  default = null
+}
+variable "memorystore_redis_cache_weekly_maintenance_window_start_time" {
+  type    = any
+  default = []
+}
+
+### Separate - Persistent
+variable "memorystore_redis_persistent_node_count" {
+  type    = number
+  default = 0
+}
+variable "memorystore_redis_persistent_memory_size_gb" {
+  type    = number
+  default = null
+}
+variable "memorystore_redis_persistent_version" {
+  type    = string
+  default = null
+}
+variable "memorystore_redis_persistent_transit_encryption_mode" {
+  type    = string
+  default = null
+}
+variable "memorystore_redis_persistent_weekly_maintenance_window_day" {
+  type    = string
+  default = null
+}
+variable "memorystore_redis_persistent_weekly_maintenance_window_start_time" {
+  type    = any
+  default = []
+}
+
 ## Cluster Autoscaling (Optional)
 variable "supporting_node_pool_max_count" {
   type    = number
