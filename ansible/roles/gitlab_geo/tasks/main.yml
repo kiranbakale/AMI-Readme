@@ -82,13 +82,12 @@
     - secondary
   when: geo_enable_object_storage_replication
 
-- name: Restart gitlab-workhorse on single node instances
-  command: gitlab-ctl restart gitlab-workhorse
+- name: Restart GitLab rails on secondary site
+  command: gitlab-ctl restart
   tags:
     - secondary
     - workhorse
   when:
-    - not geo_multi_node
     - ('gitlab_rails' in group_names)
     - geo_secondary_site_group_name in group_names
 
