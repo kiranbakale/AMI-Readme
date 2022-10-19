@@ -5,8 +5,8 @@ external_url '{{ external_url_sanitised }}'
 {% if container_registry_enable %}
 registry['enable'] = true
 registry_external_url "{{ external_url_sanitised }}:{{ container_registry_port }}"
-registry_nginx['ssl_certificate'] = "{{ gitlab_nfs_path }}/{{ external_host }}.pem"
-registry_nginx['ssl_certificate_key'] = "{{ gitlab_nfs_path }}/{{ external_host }}.pem.key"
+registry_nginx['ssl_certificate'] = "/etc/gitlab/ssl/{{ external_host }}.pem"
+registry_nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/{{ external_host }}.pem.key"
 {% else %}
 registry['enable'] = false
 {% endif %}
