@@ -166,8 +166,8 @@
             name: "{{ gitlab_repo_package }}"
             state: "{{ 'present' if gitlab_version != '' else 'latest' }}"
           register: result
-          retries: 2
-          delay: 3
+          retries: 12
+          delay: 5
           until: result is success
       when:
         - omnibus_node
