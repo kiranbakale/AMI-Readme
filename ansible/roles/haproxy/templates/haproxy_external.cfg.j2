@@ -34,6 +34,7 @@ frontend gitlab-registry-in
 
 backend gitlab-rails
     option httpchk GET /-/readiness
+    option forwardfor
 
 {% for ip in gitlab_rails_int_addrs %}
     server gitlab-rails{{loop.index}} {{ ip }}:80 check inter 3s fall 1
@@ -52,12 +53,15 @@ backend gitlab-rails-ssh
 {% if 'monitor' in groups %}
 backend grafana
     option httpchk GET /-/grafana/api/health
+    option forwardfor
 
     server grafana {{ monitor_int_addr }}:80 check
 {% endif %}
 
 {% if container_registry_enable %}
 backend gitlab-registry
+    option forwardfor
+
 {% for ip in gitlab_rails_int_addrs %}
     server gitlab-rails{{loop.index}} {{ ip }}:{{ container_registry_port }} ssl verify none
 {% endfor %}
