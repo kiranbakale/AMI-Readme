@@ -46,6 +46,21 @@ nginx['status']['options'] = {
 {% endif -%}
 }
 
+### Read X-Forwarded-For Header of HAProxy
+# other real_ip config options
+nginx['real_ip_header'] = 'X-Forwarded-For'
+nginx['real_ip_recursive'] = 'on'
+# Each address is added to the the NGINX config as 'set_real_ip_from <address>;'
+nginx['real_ip_trusted_addresses'] = [
+  '127.0.0.0/8',
+{% if 'haproxy_external' in groups %}
+  '{{ haproxy_external_int_addr }}/32',
+{% endif %}
+{% if 'haproxy_internal' in groups %}
+  '{{ haproxy_internal_int_addr }}/32'
+{% endif %}
+] + {{ gitlab_rails_nginx_additional_proxy_ips }}
+
 {% if external_url_ssl %}
 nginx['listen_port'] = 80
 nginx['listen_https'] = false
