@@ -39,10 +39,12 @@
         - gitlab_repo_package != ''
         - gitlab_deb_download_url == '' and gitlab_rpm_download_url == ''
         - gitlab_deb_host_path == '' and gitlab_rpm_host_path == ''
+        - not offline_setup
 
     - name: Setup Packages
       import_tasks: packages_setup.yml
       tags: packages
+      when: not offline_setup
 
     # https://about.gitlab.com/blog/2019/11/15/tracking-down-missing-tcp-keepalives/
     - name: Configure TCP keepalive settings
@@ -174,6 +176,7 @@
         - gitlab_repo_package != ''
         - gitlab_deb_download_url == '' and gitlab_rpm_download_url == ''
         - gitlab_deb_host_path == '' and gitlab_rpm_host_path == ''
+        - not offline_setup
 
     - name: Install GitLab deb package if given
       block:
@@ -265,6 +268,7 @@
     - name: Upgrade Packages
       import_tasks: packages_upgrade.yml
       tags: packages
+      when: not offline_setup
 
     - name: Run Custom Tasks
       block:

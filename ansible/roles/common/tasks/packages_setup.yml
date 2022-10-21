@@ -32,12 +32,14 @@
   when:
     - ansible_facts['os_family'] == 'RedHat'
     - ansible_facts['distribution_major_version'] == '8'
+    - not offline_setup
 
 - name: Setup EPEL Repo (RHEL - Amazon Linux 2)
   command: amazon-linux-extras install epel -y
   when:
     - ansible_facts['distribution'] == 'Amazon'
     - ansible_facts['distribution_major_version'] == '2'
+    - not offline_setup
 
 # For more recent PG Client Libraries on Amazon Linux 2 only. Version doesn't need to match PG Server.
 - name: Enable PostgreSQL Client Repo (RHEL - Amazon Linux 2)
@@ -45,6 +47,7 @@
   when:
     - ansible_facts['distribution'] == 'Amazon'
     - ansible_facts['distribution_major_version'] == '2'
+    - not offline_setup
 
 - name: Install system packages (RHEL)
   yum:
@@ -60,71 +63,3 @@
 - name: Install python packages
   pip:
     name: "{{ python_packages }}"
-
-# Automated Security Upgrades
-- name: Configure Automatic Security Upgrades (Ubuntu)
-  block:
-    - name: Install unattended-upgrades package
-      package:
-        name: unattended-upgrades
-        state: present
-  when:
-    - system_packages_auto_security_upgrade
-    - ansible_facts['os_family'] == "Debian"
-
-- name: Configure Automatic Security Upgrades (RHEL 8)
-  block:
-    - name: Install dnf-automatic package
-      package:
-        name: dnf-automatic
-        state: present
-
-    - name: Configure dnf-automatic package
-      replace:
-        path: /etc/dnf/automatic.conf
-        regexp: "{{ item.search }}"
-        replace: "{{ item.replace }}"
-      loop:
-        - { search: 'apply_updates = \w+$', replace: 'apply_updates = yes' }
-        - { search: 'upgrade_type = \w+$', replace: 'upgrade_type = security' }
-
-    - name: Disable old dnf-automatic service if enabled
-      service:
-        name: dnf-automatic-install.timer
-        enabled: false
-
-    - name: Enable and start dnf-automatic service
-      service:
-        name: dnf-automatic.timer
-        enabled: true
-        state: started
-  when:
-    - system_packages_auto_security_upgrade
-    - ansible_facts['os_family'] == 'RedHat'
-    - ansible_facts['distribution_major_version'] == '8'
-
-- name: Configure Automatic Security Upgrades (RHEL - Amazon Linux 2)
-  block:
-    - name: Install yum-cron package
-      package:
-        name: yum-cron
-        state: present
-
-    - name: Configure yum-cron package
-      replace:
-        path: /etc/yum/yum-cron.conf
-        regexp: "{{ item.search }}"
-        replace: "{{ item.replace }}"
-      loop:
-        - { search: 'apply_updates = \w+$', replace: 'apply_updates = yes' }
-        - { search: 'update_cmd = \w+$', replace: 'update_cmd = security' }
-
-    - name: Enable and start yum-cron service
-      service:
-        name: yum-cron
-        enabled: true
-        state: started
-  when:
-    - system_packages_auto_security_upgrade
-    - ansible_facts['distribution'] == 'Amazon'
-    - ansible_facts['distribution_major_version'] == '2'

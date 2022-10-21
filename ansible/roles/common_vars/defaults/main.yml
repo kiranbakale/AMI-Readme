@@ -60,6 +60,9 @@ haproxy_external_int_addr: "{{ (groups['haproxy_external'] | sort | map('extract
 ### Internal Load Balancer
 internal_lb_host: "{{ haproxy_internal_int_addr }}"
 
+## Offline setup
+offline_setup: false
+
 ################################################################################
 ## GitLab Install Settings
 ################################################################################
