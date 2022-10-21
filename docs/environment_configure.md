@@ -394,22 +394,35 @@ Passwords and Secrets settings are what they suggest - all the various passwords
 
 There are [various variables available](#full-config-list-and-further-examples) that optionally control how Ansible configures the environment. In this section though we'll call out some notable ones.
 
-##### GitLab Version
+##### GitLab Omnibus Installation Options
 
-By default, the Toolkit will deploy the latest [GitLab EE package](https://packages.gitlab.com/gitlab/gitlab-ee) via its repo.
+By default, the Toolkit will deploy the latest [GitLab EE Omnibus package](https://packages.gitlab.com/gitlab/gitlab-ee) via the official repo. However, there are other methods with options available.
 
-However, the [standard GitLab Upgrade rules still apply](https://docs.gitlab.com/ee/update/#upgrade-paths) when upgrading across multiple GitLab versions. You should refer to the docs to ensure the intended upgrade can be performed directly or if you need to upgrade to a certain version first.
+:information_source:&nbsp; Note that the [standard GitLab Upgrade rules still apply](https://docs.gitlab.com/ee/update/#upgrade-paths) when upgrading across multiple GitLab versions. You should refer to the docs to ensure the intended upgrade can be performed directly or if you need to upgrade to a certain version first.
 
-The Toolkit can install other GitLab versions from `13.2.0` onwards through two different methods:
+The package can be installed via two different methods - Repository or Direct. Below we detail each and the options available:
 
-- The Toolkit can be configured to install a specific GitLab version via the `gitlab_version` inventory variable. This should be set to the full semantic version, e.g. `14.0.0`. If left unset (the default) the Toolkit will look to install the latest version.
-  - The Toolkit can also be configured to install a different edition of GitLab, i.e. CE or EE, via the `gitlab_edition` inventory variable. If left unset the Toolkit will look to install the EE edition as recommended for the Reference Architectures.
-- Repo - A different repo and package can be specified via the two inventory variables `gitlab_repo_script_url` and `gitlab_repo_package` respectively. The Toolkit will first install the repo via the script provided and then install the package.
-- Deb file - The Toolkit can install a Debian file directly in several ways:
-  - If the package needs to be downloaded from the specific URL you can specify this via the `gitlab_deb_download_url` inventory variable.
-    - If the URL to download the deb file requires authorization or other headers you can pass these in a Hash format via the `gitlab_deb_download_url_headers` inventory variable.
-  - If the package needs to be uploaded from the local host where Ansible is running, add the `gitlab_deb_host_path` inventory variable that should be set to the local path where the file is located.
-  - An additional variable, `gitlab_deb_target_path` configures where Ansible should copy the Debian file onto the targets before installing, but this is set to `/tmp` by default and doesn't need to be changed.
+###### Repository
+
+The main method for installing the GitLab Omnibus package is from the [official repository](https://packages.gitlab.com/gitlab/gitlab-ee). This is the default method the Toolkit will look to use to both install and upgrade the package on subsequent runs.
+
+This method can be customised in several ways via the following variables in your [`vars.yml`](#environment-config---varsyml) file as follows:
+
+- `gitlab_version` - Sets the GitLab version to be installed from the repo. This should be set to the full semantic version, e.g. `14.0.0`. If left unset the Toolkit will look to install the latest version. Optional, default is `''`.
+- `gitlab_edition` - Sets the GitLab edition to install, i.e. CE or EE. If left unset the Toolkit will look to install the EE edition as recommended for the Reference Architectures. Optional, default is `gitlab-ee`.
+- `gitlab_repo_script_url` - The URL of the installation script to use to set up the repo. Should only be changed if a custom repo is to be used. Optional, defaults to the official GitLab repository installation script for the selected `gitlab_edition` and OS. Can also be specified via the environment variable `GITLAB_REPO_SCRIPT_URL`.
+- `gitlab_repo_package` - The full name of the GitLab package to be installed from the repo. Should only be changed if a custom package is to be used. Optional, defaults to the official package name for the selected `gitlab_edition` and `gitlab_version` (if specified). Can also be specified via the environment variable `GITLAB_REPO_PACKAGE`.
+
+###### Direct
+
+The GitLab Omnibus package can also be installed directly, for example a `.deb` or `.rpm` file. This is an alternative method for installing GitLab when access to a repo isn't desired. In this setup the file must be provided to the Toolkit locally or from a reachable URL.
+
+This method can be customised in several ways via the following variables in your [`vars.yml`](#environment-config---varsyml) file as follows:
+
+- `gitlab_deb_host_path` / `gitlab_rpm_host_path` - The local path of the installation file the Toolkit should use. Should not be used if file is to be downloaded from a URL via `gitlab_*_download_url`. Optional, default is `''`. Can also be specified via the environment variable `GITLAB_HOST_DEB_PATH` / `GITLAB_HOST_RPM_PATH`.
+- `gitlab_deb_download_url` / `gitlab_rpm_download_url` - The remote URL of the installation file the Toolkit should use. Should not be used if the file is to be copied locally via `gitlab_*_host_path`. Optional, default is `''`. Can also be specified via the environment variable `GITLAB_DEB_DOWNLOAD_URL` / `GITLAB_RPM_DOWNLOAD_URL`.
+  - `gitlab_deb_download_url_headers` / `gitlab_rpm_download_url_headers` - Additional headers to use when downloading the installation file from the remote URL set via `gitlab_*_download_url`, such as authorization. Optional, default is `''`. Can also be specified via the environment variable `GITLAB_DEB_DOWNLOAD_URL_HEADERS` / `GITLAB_RPM_DOWNLOAD_URL_HEADERS`.
+- `gitlab_deb_target_path` / `gitlab_rpm_target_path` - The path where to store the installation file on the target machine. Optional, default is `tmp/gitlab_deb_package.deb` / `/tmp/gitlab_rpm_package.rpm`. Can also be specified via the environment variable `GITLAB_TARGET_DEB_PATH` / `GITLAB_TARGET_RPM_PATH`.
 
 ##### Object Storage Prefix
 
@@ -440,8 +453,7 @@ There are numerous available [Lookup plugins](https://docs.ansible.com/ansible/l
 
 It's possible to set your passwords as Environment Variables and then configure the Toolkit to pull these in at runtime via the [`env lookup` plugin](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/env_lookup.html).
 
-For example if you set an environment variable containing the GitLab Rails password named `GITLAB_RAILS_PASSWORD` Ansible can be configured to use this as follows in your
-`vars.yml` file:
+For example if you set an environment variable containing the GitLab Rails password named `GITLAB_RAILS_PASSWORD` Ansible can be configured to use this as follows in your [`vars.yml`](#environment-config---varsyml) file:
 
 ```yaml
 gitlab_rails_password: "{{ lookup('env', 'GITLAB_RAILS_PASSWORD') }}"
