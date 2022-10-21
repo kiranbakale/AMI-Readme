@@ -143,7 +143,6 @@ The variables for this service start with the prefix `rds_postgres_*` and should
 - `rds_postgres_username` - The username for the instance. Optional, default is `gitlab`.
 - `rds_postgres_database_name` - The name of the main database in the instance for use by GitLab. Optional, default is `gitlabhq_production`.
 - `rds_postgres_port` - The password for the instance. Should only be changed if desired. Optional, default is `5432`.
-- `rds_postgres_version` - The version of the PostgreSQL instance. Should only be changed to versions that are supported by GitLab. Optional, default is `12`.
 - `rds_postgres_allocated_storage` - The initial disk size for the instance. Optional, default is `100`.
 - `rds_postgres_max_allocated_storage` - The max disk size for the instance. Optional, default is `1000`.
 - `rds_postgres_multi_az` - Specifies if the RDS instance is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`.
@@ -156,11 +155,10 @@ The variables for this service start with the prefix `rds_postgres_*` and should
 - [`rds_postgres_backup_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#backup_window) - The daily time range where backups will be taken, e.g. `09:46-10:16`. Optional, default is `null`.
 - [`rds_postgres_delete_automated_backups`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#delete_automated_backups) - Whether automated backups (if taken) will be deleted when the RDS instance is deleted. Optional, default is `true`.
 - [`rds_postgres_maintenance_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#maintenance_window) - The window to perform maintenance in, e.g. `Mon:00:00-Mon:03:00`. Optional, default is `null`. Must not overlap with `rds_postgres_backup_window`.
-- [`rds_postgres_auto_minor_version_upgrade`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#auto_minor_version_upgrade) - Whether automated upgrades to AWS selected minor versions should occur during the maintenance window. This is disabled by default and is not recommended being enabled as it can lead to clashes with Terraform's state. Optional, default is `false`.
 
 To set up a standard AWS RDS PostgreSQL service for a 10k environment with the required variables, it should look like the following in the [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`):
 
-:information_source:&nbsp; If a separate Database Instance for Praefect is desired then this can be done with the same settings below but with the `rds_praefect_postgres_*` prefix instead.
+:information_source:&nbsp; If a separate Database Instance for Praefect is desired then this can be done with the same settings above but with the `rds_praefect_postgres_*` prefix instead.
 
 ```tf
 module "gitlab_ref_arch_aws" {
@@ -176,6 +174,27 @@ module "gitlab_ref_arch_aws" {
 Once the variables are set in your file you can proceed to provision the service as normal. Note that this can take several minutes on AWS's side.
 
 Once provisioned you'll see several new outputs at the end of the process. Key from this is the `rds_host` output, which contains the address for the database instance that then needs to be passed to Ansible to configure. Take a note of this address for the next step.
+
+##### AWS RDS Version
+
+When it comes to the version of PostgreSQL being deployed in AWS RDS, it's first worth noting that [AWS has several rules in place that can impact this on the server side](https://aws.amazon.com/rds/faqs/#Database_Engine_Versions), such as removing minor versions after a year or enabling minor upgrades by default. These rules can in turn can cause issues with Terraform, and its state as they happen automatically.
+
+Due to the above as well as ensuring that major upgrades don't happen unexpectedly, the Toolkit handles RDS version as follows:
+
+- The Toolkit will ask AWS RDS to deploy the current recommended version of PostgreSQL `12` as chosen by AWS.
+  - Conversely, if AWS decide to change the recommended version at a later date, Terraform will instruct AWS to upgrade the database to that version on the next run.
+- The Toolkit disables any auto upgrade behaviour (`auto_minor_version_upgrade`) for the RDS instance to avoid any Terraform clashes.
+
+While the above is the default behaviour it's recommended that you manage the version yourself in almost all cases by configuring the [recommended PostgreSQL version specifically for the version of GitLab you are deploying](https://docs.gitlab.com/ee/administration/package_information/postgresql_versions.html) and then changing that as required to do an upgrade.
+
+:information_source:&nbsp; If the specific recommended version for GitLab isn't available on AWS RDS, then the latest minor version is expected to work instead.
+
+Configuring how RDS version is selected in the Toolkit is done via the following variables:
+
+- `rds_postgres_version` - The version of the PostgreSQL instance to set up. This should be set to the [recommended version for the version of GitLab being deployed](https://docs.gitlab.com/ee/administration/package_information/postgresql_versions.html) or latest minor version if not available. Changing this value to a newer version will trigger an upgrade during the next run. Optional, default is `12`.
+- [`rds_postgres_auto_minor_version_upgrade`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#auto_minor_version_upgrade) - Whether automated upgrades to AWS selected minor versions should occur during the maintenance window. This is disabled by default and is not recommended being enabled as it can lead to clashes with Terraform's state. Optional, default is `false`.
+
+:information_source:&nbsp; If a separate Database Instance for Praefect is desired then this can be done with the same settings above but with the `rds_praefect_postgres_*` prefix instead.
 
 ##### Geo
 
