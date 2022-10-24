@@ -50,16 +50,19 @@ nginx['status']['options'] = {
 # other real_ip config options
 nginx['real_ip_header'] = 'X-Forwarded-For'
 nginx['real_ip_recursive'] = 'on'
-# Each address is added to the the NGINX config as 'set_real_ip_from <address>;'
+# Each address is added to NGINX config as 'set_real_ip_from <address>;'
 nginx['real_ip_trusted_addresses'] = [
   '127.0.0.0/8',
 {% if 'haproxy_external' in groups %}
   '{{ haproxy_external_int_addr }}/32',
 {% endif %}
 {% if 'haproxy_internal' in groups %}
-  '{{ haproxy_internal_int_addr }}/32'
+  '{{ haproxy_internal_int_addr }}/32',
 {% endif %}
-] + {{ gitlab_rails_nginx_additional_proxy_ips }}
+{% for cidr_block in gitlab_rails_nginx_real_ip_trusted_cidr_blocks %}
+  "{{ cidr_block }}",
+{% endfor %}
+]
 
 {% if external_url_ssl %}
 nginx['listen_port'] = 80
@@ -125,8 +128,13 @@ consul['configuration'] = {
 consul['monitoring_service_discovery'] = true
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
-gitlab_rails['monitoring_whitelist'] = {{ gitlab_rails_monitoring_cidr_blocks }}
 gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'
+gitlab_rails['monitoring_whitelist'] = [
+  '127.0.0.0/8',
+{% for cidr_block in gitlab_rails_monitoring_cidr_blocks %}
+  "{{ cidr_block }}",
+{% endfor %}
+]
 
 # Components Config
 # Redis
