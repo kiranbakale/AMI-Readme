@@ -140,7 +140,7 @@ consul_single_server_int_addr: "{{ groups[consul_single_server_target_group] | m
 # GitLab Rails (Application nodes)
 gitlab_rails_int_addrs: "{{ (groups['gitlab_rails'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'gitlab_rails_primary' in groups else [] }}"
 gitlab_rails_monitoring_cidr_blocks: ['0.0.0.0/0']
-gitlab_rails_nginx_additional_proxy_ips: []
+gitlab_rails_nginx_real_ip_trusted_cidr_blocks: []
 
 # GitLab Postgres / PGBouncer
 postgres_primary_int_addr: "{{ (groups['postgres_primary'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'postgres_primary' in groups else '' }}"
