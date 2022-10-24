@@ -18,16 +18,16 @@
 
 The Toolkit by default will deploy the latest version of the selected [Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/). However, it can also support deploying our alternative [Cloud Native Hybrid Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) where select stateless components are deployed in Kubernetes via our [Helm charts](https://docs.gitlab.com/charts/) instead of static compute VMs. To achieve this the Toolkit can provision the Kubernetes cluster via Terraform and then configure the Helm Chart via Ansible.
 
-While the Toolkit can deploy such an architecture for you it should be noted that this is an advanced setup as running services in Kubernetes is well known to be complex. **This setup is only recommended** if
+While the Toolkit can deploy such an architecture it should be noted that this is an advanced setup as running services in Kubernetes is well known to be complex. **This setup is only recommended** if
 you have strong working knowledge and experience in Kubernetes. For most users a standard Reference Architecture on static compute VMs typically will suffice, Hybrid architectures should only be used if the specific benefits of Kubernetes are desired.
 
-On this page we'll detail how to deploy a Cloud Native Hybrid Reference Architecture with the Toolkit. **It's worth noting this guide is supplementary to the rest of the docs and it will assume this throughout.**
+On this page we'll detail how to deploy a Cloud Native Hybrid Reference Architecture with the Toolkit. **It's worth noting this guide is supplementary to the rest of the docs, and it will assume this throughout.**
 
 [[_TOC_]]
 
 ## Overview
 
-As detailed in the docs, a Cloud Native Hybrid Reference Architecture is an alternative approach where select stateless components are deployed in Kubernetes via Helm Charts. This primarily includes running the equivalent of GitLab Rails and Sidekiq nodes, named Webservice and Sidekiq respectively, along with some supporting services such as NGINX, Prometheus, etc...
+As detailed in the docs, a Cloud Native Hybrid Reference Architecture is an alternative approach where select stateless components are deployed in Kubernetes via Helm Charts. This primarily includes running the equivalent of GitLab Rails and Sidekiq nodes, named Webservice and Sidekiq respectively, along with some supporting services such as NGINX and Prometheus.
 
 To achieve this with the Toolkit it can provision the Kubernetes cluster via Terraform and then configure the Helm Chart via Ansible.
 
@@ -50,9 +50,9 @@ Provisioning the required Kubernetes cluster with a cloud provider only requires
 
 By design, the `environment.tf` file is similar to the one used in a [standard environment](environment_provision.md#configure-module-settings-environmenttf) with the following differences:
 
-- `gitlab_rails_x` entries are replaced with `webservice_node_pool_x`. In the charts we run Puma, etc... in Webservice pods.
+- `gitlab_rails_x` entries are replaced with `webservice_node_pool_x`. In the charts we run Puma and Workhorse in Webservice pods.
 - `sidekiq_x` entries are replaced with `sidekiq_node_pool_x`
-- `supporting_node_pool_x` entries are added for several additional supporting services needed when running components in Helm Charts, e.g. NGINX, etc...
+- `supporting_node_pool_x` entries are added for several additional supporting services needed when running components in Helm Charts, e.g. NGINX.
 - `haproxy_external_x` entries are removed as the Chart deployment handles external load balancing.
 
 Each node pool setting configures the following. To avoid repetition we'll describe each setting once:
@@ -62,7 +62,7 @@ Each node pool setting configures the following. To avoid repetition we'll descr
 - `*_node_pool_machine_type` - **GCP only** The [GCP Machine Type](https://cloud.google.com/compute/docs/machine-types) (size) for each machine in the node pool
 - `*_node_pool_instance_type` - **AWS only** The [AWS Instance Type](https://aws.amazon.com/ec2/instance-types/) (size) for each machine in the node pool
 
-Below are examples for an `environment.tf` file with all config for each cloud provider based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) with additional Cloud Specific guidances as required:
+Below are examples for a `environment.tf` file with all config for each cloud provider based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) with additional Cloud Specific guidances as required:
 
 ### Google Cloud Platform (GCP)
 
@@ -134,7 +134,7 @@ In addition to the above there are some optional settings that can configure the
 
 As detailed in the earlier [Configuring network setup (GCP)](environment_provision.md#configure-network-setup-gcp) section the same networking options apply for Hybrid environments on GCP.
 
-However there are some additional networking considerations below that you should be aware of before building the environment.
+However, there are some additional networking considerations below that you should be aware of before building the environment.
 
 ##### Zones
 
@@ -142,7 +142,7 @@ When you optionally configure Zones for GCP resources to be spread across for Ku
 
 In this setup however it would deploy the target count of nodes in _every_ zone. So for example if you set up a Node Pool with a Node count of 4 but then also give it 2 Zones to spread across it would proceed to deploy 8 Nodes.
 
-The Toolkit will attempt to manage this for you and try to honor the target node count you have given in config. However if the number of Zones and Node Counts given are different in terms of parity (e.g. when the number of Zones is even and Node Count is odd) it will result in additional nodes being deployed and costing extra. To help with this it's possible to specifically set Zones for the Kubernetes cluster to use as follows:
+The Toolkit will attempt to manage this for you and try to honour the target node count you have given in config. However, if the number of Zones and Node Counts given are different in terms of parity (e.g. when the number of Zones is even and Node Count is odd) it will result in additional nodes being deployed and costing extra. To help with this it's possible to specifically set Zones for the Kubernetes cluster to use as follows:
 
 - `kubernetes_zones` - A list of Zone names inside the target region that any Kubernetes resources should be spread across. This will override what's given in the `zones` variable to allow for additional flexibility. If unset it will follow the former. Default is the same as `zones` (`null`). Optional.
 
@@ -216,40 +216,37 @@ output "gitlab_ref_arch_aws" {
 
 #### EKS Version and Upgrades
 
-By default the Toolkit will leave it up to [AWS to manage the Kubernetes version for the cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_cluster#version).
+By default, the Toolkit will leave it up to [AWS to manage the Kubernetes version for the cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_cluster#version).
 
-However you can also specify the version as well as control upgrades if desired in Terraform via the following setting in your [`environment.tf`](environment_provision.md#configure-module-settings-environmenttf) file:
+However, you can also specify the version as well as control upgrades if desired in Terraform via the following setting in your [`environment.tf`](environment_provision.md#configure-module-settings-environmenttf) file:
 
 - `eks_version` - The Kubernetes version that the cluster should use if direct control is desired. Increase this value to perform an upgrade directly. Note that when set this also upgrades the Node Group VM's to use the latest AMI version for the cluster (see below for more info). Default is `null`.
 
-##### EKS Node Group Version Management
+##### EKS Component Version Management - Node Group AMI / Addons
 
-Like EKS Version, AWS won't automatically upgrade the Cluster's Node Group VMs.
+When AWS releases a new version of EKS Node Group [AMIs](https://docs.aws.amazon.com/eks/latest/userguide/eks-linux-ami-versions.html) (OS Version) or Addons for the EKS Cluster version, it doesn't automatically upgrade them. To help with this the Toolkit can manage these upgrades for you.
 
-However if `eks_version` has been specified above Terraform will then default to upgrading the VMs to the latest available [AMI version](https://docs.aws.amazon.com/eks/latest/userguide/eks-linux-ami-versions.html) that's available to the Cluster.
+:information_source:&nbsp; Note that it isn't the same as EKS Cluster version (although a new Cluster version will typically come with new versions for its dependents) as AWS may still release versions of these components for the current Cluster.
 
-As an additional layer of configuration, you can also specify a specific AMI release version directly to be used for the Node Group VMs via the following Terraform setting in your [`environment.tf`](environment_provision.md#configure-module-settings-environmenttf) file:
+It's recommended to manage these versions via the Toolkit to ensure Terraform is aware of them in its state to avoid any issues. As such, there are variables available for each to control what version they run on along with the option to just select whatever is the latest with the following caveats:
 
-- `eks_node_group_ami_release_version` - The [AMI release version](https://docs.aws.amazon.com/eks/latest/userguide/eks-linux-ami-versions.html) to use for the EKS Node Group VMs. Version, if given, must be compatible with the EKS version. Recommended to only be set when there's a known issue, etc... with the latest version. Refer to the AWS docs for more info. Defaults to `null`.
+- Setting the variables to `latest` will instruct Terraform to retrieve whatever the latest version is for each and upgrade them to it.
+- Upgrades will only occur when Terraform is run.
+- When using specific versions you should take care to make sure they are compatible with the EKS version. If upgrading the EKS version it's likely that the AMI and addon versions will change as well.
 
-##### EKS Addons Version Management
+The variables to configure each can be set in Terraform as follows in your [`environment.tf`](environment_provision.md#configure-module-settings-environmenttf) file:
 
-When AWS releases a new version of EKS Addons, the Toolkit will update these automatically on its next run by default.
-
-Note that this isn't the same as EKS Cluster version (although a new Cluster version will typically come with new versions for its dependents) as AWS may still release versions of these components for the current Cluster.
-
-The Addon versions can also be controlled directly if desired via Terraform with the following settings in your [`environment.tf`](environment_provision.md#configure-module-settings-environmenttf) file:
-
-- `eks_kube_proxy_version` - Version to use for the [EKS Kube Proxy addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-kube-proxy.html). Defaults to `""`.
-- `eks_coredns_version` - Version to use for the [EKS CoreDNS addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-coredns.html). Defaults to `""`.
-- `eks_vpc_cni_version` - Version to use for the [EKS VPC CNI addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html). Defaults to `""`.
-- `eks_ebs_csi_driver_version` - Version to use for the [EBS CSI Driver addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html). Defaults to `""`.
+- `eks_node_group_ami_release_version` - The [AMI release version](https://docs.aws.amazon.com/eks/latest/userguide/eks-linux-ami-versions.html) to use for the EKS Node Group VMs. Can either be set to a specific version or just `latest` for the most up-to-date version. Defaults to `null`.
+- `eks_kube_proxy_version` - Version to use for the [EKS Kube Proxy addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-kube-proxy.html). Can either be set to a specific version or just `latest` for the most up-to-date version. Defaults to `null`.
+- `eks_coredns_version` - Version to use for the [EKS CoreDNS addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-coredns.html). Can either be set to a specific version or just `latest` for the most up-to-date version. Defaults to `null`.
+- `eks_vpc_cni_version` - Version to use for the [EKS VPC CNI addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html). Can either be set to a specific version or just `latest` for the most up-to-date version. Defaults to `null`.
+- `eks_ebs_csi_driver_version` - Version to use for the [EBS CSI Driver addon](https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html). Can either be set to a specific version or just `latest` for the most up-to-date version. Defaults to `null`.
 
 #### EKS Endpoint Setup
 
-[EKS Clusters have an endpoint](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html) that is used in several ways including inter-node communication as well as giving access to tools such as the Toolkit, `kubectl`, etc... This endpoint can be configured to be Public, Private or both.
+[EKS Clusters have an endpoint](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html) that is used in several ways including internode communication as well as giving access to tools such as the Toolkit and `kubectl`. This endpoint can be configured to be Public, Private or both.
 
-The Toolkit will configure this endpoint to be both Public and Private by default. In this setup the Kubernetes nodes will default to the Private endpoint and keep their connections internal but there's still an authenticated Public endpoint that the Toolkit uses to configure the cluster as well as be available for any debugging via `kubectl`.
+The Toolkit will configure this endpoint to be both Public and Private by default. In this setup the Kubernetes nodes will default to the Private endpoint and keep their connections internal, but there's still an authenticated Public endpoint that the Toolkit uses to configure the cluster as well as be available for any debugging via `kubectl`.
 
 In some cases you may prefer to restrict who can connect to the Public endpoint or disable it entirely. This is configurable in the Toolkit via Terraform with the following settings in your [`environment.tf`](environment_provision.md#configure-module-settings-environmenttf) file:
 
@@ -281,7 +278,7 @@ Enabling the feature is controlled via the following variables:
 
 As detailed in the earlier [Configuring network setup (AWS)](environment_provision.md#configure-network-setup-aws) section the same networking options apply for Hybrid environments on AWS.
 
-However there are some additional networking considerations below that you should be aware of before building the environment.
+However, there are some additional networking considerations below that you should be aware of before building the environment.
 
 ##### Zones
 
@@ -293,7 +290,7 @@ For EKS a [Cluster is required to be spread across at least 2 Availability Zones
 
 #### Defining AWS Auth Roles with `aws_auth_roles`
 
-By default EKS automatically grants the IAM entity user or role that creates the cluster `system:masters` permissions in the cluster's RBAC configuration in the control plane. All other IAM users or roles require explicit access. This is defined through the `kube-system/aws-auth` config map. More details are available in the EKS documentation on [Managing users or IAM roles for your cluster](https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html), while full details of the expected format of the `aws-auth` configmap can be found in the [`aws-iam-authenticator` source code repository](https://github.com/kubernetes-sigs/aws-iam-authenticator#full-configuration-format).
+By default, EKS automatically grants the IAM entity user or role that creates the cluster `system:masters` permissions in the cluster's RBAC configuration in the control plane. All other IAM users or roles require explicit access. This is defined through the `kube-system/aws-auth` config map. More details are available in the EKS documentation on [Managing users or IAM roles for your cluster](https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html), while full details of the expected format of the `aws-auth` configmap can be found in the [`aws-iam-authenticator` source code repository](https://github.com/kubernetes-sigs/aws-iam-authenticator#full-configuration-format).
 
 This approach means that the IAM user or role that was used to provisioning GET will have exclusive access to the EKS cluster. No other users or roles will have access.
 
@@ -308,7 +305,7 @@ kubectl edit -n kube-system configmap/aws-auth
 
 #### Deprovisioning
 
-If you ever want to deprovision resources created, with a Cloud Native Hybrid on AWS **you must run [helm uninstall gitlab](https://helm.sh/docs/helm/helm_uninstall/)** before running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html). This ensure all resources are correctly removed.
+If you ever want to deprovision resources created, with a Cloud Native Hybrid on AWS **you must run [helm uninstall gitlab](https://helm.sh/docs/helm/helm_uninstall/)** before running [terraform destroy](https://www.terraform.io/docs/cli/commands/destroy.html). This ensures all resources are correctly removed.
 
 ### Cluster Autoscaling
 
@@ -323,7 +320,7 @@ Enabling this feature on either cloud provider is done via the following setting
 - `*_node_pool_max_count` - The maximum number of machines for the component's node pool
 - `*_node_pool_min_count` - The minimum number of machines for the component's node pool
 
-The counts to use should be based around the target Reference Architecture but the actual values should be set based on your expected requirements. As a general guidance we recommend the Reference Architecture's node count as the maximum and at least `2` as the minimum to ensure HA.
+The counts to use should be based around the target Reference Architecture, but the actual values should be set based on your expected requirements. As a general guidance we recommend the Reference Architecture's node count as the maximum and at least `2` as the minimum to ensure HA.
 
 :information_source:&nbsp; [Cluster Autoscaler isn't deployed by default in AWS EKS](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html). This either needs to be done manually or can be done with the Toolkit via an additional setting in Ansible - `cloud_native_hybrid_cluster_autoscaler_setup`. Refer to the [Additional Config Settings](#additional-config-settings) for more detail.
 
@@ -331,14 +328,14 @@ The counts to use should be based around the target Reference Architecture but t
 
 Authenticating with Kubernetes is different compared to other services, and can be [considered a challenge](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/using_gke_with_terraform#interacting-with-kubernetes) in terms of automation.
 
-In a nutshell authentication must be setup for the `kubectl` command on the machine running the Toolkit. The Toolkit requires the command to be authenticated and the intended cluster selected as the current context in its `~/.kubeconfig` file.
+In a nutshell authentication must be setup for the `kubectl` command on the machine running the Toolkit. The Toolkit requires the command to be authenticated, and the intended cluster selected as the current context in its `~/.kubeconfig` file.
 
 The easiest way to do this is via the selected cloud providers tooling after the cluster has been provisioned:
 
 - Google Cloud Platform (GCP) can be setup and selected via the `gcloud get-credentials` command, e.g. `gcloud container clusters get-credentials <CLUSTER NAME> --project <GCP PROJECT NAME> --zone <GCP ZONE NAME>`. Where `<CLUSTER NAME>` will be the same as the `prefix` variable set in Terraform.
 - Amazon Web Services (AWS) can be setup and selected via the `aws update-kubeconfig` command, e.g. `aws eks --region <AWS REGION NAME> update-kubeconfig --name <CLUSTER NAME>`. Where `<CLUSTER NAME>` will be the same as the `prefix` variable set in Terraform.
 
-As a convenience, the Toolkit can automatically run these commands for you in its configuration stage when the variable `kubeconfig_setup` is set to `true` but it expects that you have configured authentication beforehand. This will be detailed more in the next section.
+As a convenience, the Toolkit can automatically run these commands for you in its configuration stage when the variable `kubeconfig_setup` is set to `true`, but it expects that you have configured authentication beforehand. This will be detailed more in the next section.
 
 ## 4. Configuring the Helm Charts deployment with Ansible
 
@@ -350,9 +347,9 @@ First let's detail the general settings that apply to any Cloud Provider:
 
 - `cloud_native_hybrid_environment` - Tells Ansible it's configuring a Cloud Native Hybrid Reference Architecture environment. **Required.**
 - `kubeconfig_setup` - When true, will attempt to automatically configure the `.kubeconfig` file entry for the provisioned Kubernetes cluster. **Recommended unless kubeconfig is to be setup separately.**
-- `external_url` - A URL for the environment (Note - Not just an IP). You will need to use an `A` type DNS entry (for example `http://gitlab.somecompany.com`). **Required.**
+- `external_url` - A URL for the environment (Note - Not just an IP). You will need to use a `A` type DNS entry (for example `http://gitlab.somecompany.com`). **Required.**
   - :information_source:&nbsp; - On AWS this address should be resolving to _one_ of the Elastic IPs created in the [Create Static External IP - AWS Elastic IP Allocation](environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) step. 
-  - Services such as [`nip.io`](https://nip.io/) can provide hostnames without needing to configure DNS but note that this wouldn't be recommend for production environments.
+  - Services such as [`nip.io`](https://nip.io/) can provide hostnames without needing to configure DNS but note that this wouldn't be recommended for production environments.
 
 Next are specific Cloud Provider examples that will also detail any specific settings for each provider along with a section on various other additional settings that may be used. 
 
@@ -360,7 +357,7 @@ Next are specific Cloud Provider examples that will also detail any specific set
 
 For environments using GKE the following additional settings are available:
 
-- `external_ip` - External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid installs. **Required.**
+- `external_ip` - External IP the environment will run on. Required along with `external_url` for Cloud Native Hybrid setups. **Required.**
 - `gcp_zone` - Zone name the GCP Kubernetes cluster is in. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
 
 A full `vars.yml` file config example for GKE based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) is as follows:
@@ -410,7 +407,7 @@ For environments using EKS the following additional settings are available:
 
 - `aws_region` - Name of the region where the EKS cluster is located. Only required for Cloud Native Hybrid installs when `kubeconfig_setup` is set to true.
 - `aws_allocation_ids` - A comma separated list of Elastic IP allocation IDs, that will be assigned to the AWS load balancer. **Required.**
-  - With AWS you **must have an [Elastic IP](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/docs/environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) for each subnet being used**. For example using a VPC with 3 subnets will require the creation of 3 Elastic IPs and their individual allocation IDs will need to be stored in this list.
+  - With AWS, you **must have an [Elastic IP](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/docs/environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) for each subnet being used**. For example using a VPC with 3 subnets will require the creation of 3 Elastic IPs and their individual allocation IDs will need to be stored in this list.
 - `cloud_native_hybrid_cluster_autoscaler_setup` - When `true` will deploy the [Cluster Autoscaler](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html) onto the AWS EKS Kubernetes cluster to enable node autoscaling. Set to `false` by default.
 
 A full `vars.yml` file config example for ELS based on a [10k Cloud Native Hybrid Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#cloud-native-hybrid-reference-architecture-with-helm-charts-alternative) is as follows:
@@ -457,15 +454,15 @@ all:
 The Toolkit provides several other settings that can customize a Cloud Native Hybrid setup further as follows:
 
 - `gitlab_version` - Sets the GitLab version to be installed. The Toolkit finds and selects the equivalent Helm Chart version if configured. This should be set to the full semantic version, e.g. `14.0.0`. If left unset the Toolkit will look to install the latest version. Optional, default is `''`.
-- `gitlab_charts_release_namespace`: Kubernetes namespace the Helm chart will be deployed to. This should only be changed when the namespace is known to be different than the typical default of `default`. Set to `default` by default.
+- `gitlab_charts_release_namespace`: Kubernetes namespace the Helm chart will be deployed to. This should only be changed when the namespace is known to be different from the typical default of `default`. Set to `default` by default.
 - `gitlab_charts_webservice_requests_memory_gb`: Memory [request](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits) for each Webservice pod in GB. Set to `5` by default.
-- `gitlab_charts_webservice_limits_memory_gb`: Memory [limit](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits) for each Webservice pod in GB. Set to `5.25` by default.
+- `gitlab_charts_webservice_limits_memory_gb`: Memory [limits](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits) for each Webservice pod in GB. Set to `5.25` by default.
 - `gitlab_charts_webservice_requests_cpu`: CPU [request](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits) for Webservice pods in GB. Changing this will affect pod sizing count as well as number of Puma workers and should only be done so for specific reasons. Set to `4` by default.
 - `gitlab_charts_webservice_min_replicas_scaler`: Sets the scalar value (`0.0` - `1.0`) to scale minimum pod replicas against the automatically calculated maximum value. Setting this value may affect the performance of the environment and should only be done so for specific reasons. If pod count is overridden directly by `gitlab_charts_webservice_min_replicas` this value will have no effect. Set to `0.75` by default.
 - `gitlab_charts_webservice_max_replicas`: Override for the number of max Webservice replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
 - `gitlab_charts_webservice_min_replicas`: Override for the number of min Webservice replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
 - `gitlab_charts_sidekiq_requests_memory_gb`: Memory [request](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits) for each Sidekiq pod in GB. Set to `2` by default.
-- `gitlab_charts_sidekiq_limits_memory_gb`: Memory [limit](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits) for each Sidekiq pod in GB. Set to `4` by default.
+- `gitlab_charts_sidekiq_limits_memory_gb`: Memory [limits](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits) for each Sidekiq pod in GB. Set to `4` by default.
 - `gitlab_charts_sidekiq_requests_cpu`: CPU [request](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits) for Webservice pods in GB. Changing this will affect pod sizing and should only be done so for specific reasons. Set to `1` by default.
 - `gitlab_charts_sidekiq_min_replicas_scaler`: Sets the scalar value (`0.0` - `1.0`) to scale minimum pod replicas against the automatically calculated maximum value. Setting this value may affect the performance of the environment and should only be done so for specific reasons. If pod count is overridden directly by `gitlab_charts_sidekiq_min_replicas` this value will have no effect. Set to `0.75` by default.
 - `gitlab_charts_sidekiq_max_replicas`: Override for the number of max Sidekiq replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
@@ -475,7 +472,7 @@ Once your config file is in place as desired you can proceed to [configure as no
 
 ### Custom Secrets (via Custom Tasks)
 
-If you require to add additional Kubernetes Secrets for your deployment the Toolkit does provide a hook to do this via a tasks list.
+The Toolkit supports adding additional Kubernetes Secrets for your deployment the Toolkit does provide a hook to do this via a tasks list.
 
 Through this you can provide a custom Ansible tasks file that can run [`kubernetes.core.k8s`](https://github.com/ansible-collections/kubernetes.core/blob/main/docs/kubernetes.core.k8s_module.rst) tasks that in turn can contain standard secrets definitions.
 
