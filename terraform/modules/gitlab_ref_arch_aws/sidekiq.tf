@@ -24,10 +24,10 @@ module "sidekiq" {
   iam_identifier_path          = var.default_iam_identifier_path
   iam_permissions_boundary_arn = var.default_iam_permissions_boundary_arn
 
-  ssh_key_name = aws_key_pair.ssh_key.key_name
+  ssh_key_name = try(aws_key_pair.ssh_key[0].key_name, null)
   security_group_ids = [
     aws_security_group.gitlab_internal_networking.id,
-    aws_security_group.gitlab_external_ssh.id
+    try(aws_security_group.gitlab_external_ssh[0].id, null)
   ]
 
   geo_site       = var.geo_site

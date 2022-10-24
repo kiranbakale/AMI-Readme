@@ -394,7 +394,7 @@ variable "external_ip_allocation" {
 
 - `prefix` - Used to set the names and labels of the VMs consistently. Once set this should not be changed. An example of what this could be is `gitlab-qa-10k`.
 - `region` - The AWS region of the project.
-- `ssh_public_key_file` - Path to the public SSH key file. Previously created in the [Setup SSH Authentication - AWS](environment_prep.md#2-setup-ssh-authentication-aws) step.
+- `ssh_public_key_file` - Path to the public SSH key file. Previously created in the [Setup SSH Authentication - AWS](environment_prep.md#2-setup-ssh-authentication-aws) step. Not required if another connection method is being used.
 - `external_ip_allocation` - The Allocation ID for the static external IP the environment will be accessible on. Previously created in the [Create Static External IP - AWS Elastic IP Allocation](environment_prep.md#4-create-static-external-ip-aws-elastic-ip-allocation) step.
 
 :information_source:&nbsp; The prefix must be unique to this environment and cannot match any other environments stored within your Cloud Provider. When provisioning your environment, if you get errors due to naming conflicts then the most likely cause will be due to other resources having the same prefix as in some cases names are global on Cloud Providers.
@@ -504,7 +504,7 @@ output "gitlab_ref_arch_aws" {
 - `module "gitlab_ref_arch_aws"` - Module config block with name.
   - `source` - The relative path to the `gitlab_ref_arch_aws` module. We assume you're creating config in the `terraform/environments/` folder here but if you're in a different location this setting must be updated to the correct path.
   - `prefix` - The name prefix of the project. Set in `variables.tf`.
-  - `ssh_public_key` - The SSH key value, typically read from an SSH key file set as `ssh_public_key_file` in `variables.tf`.
+  - `ssh_public_key` - The SSH key value, typically read from an SSH key file set as `ssh_public_key_file` in `variables.tf`. Not required if another connection method is being used.
   - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
   - `object_storage_versioning` - Controls whether Object Storage versioning is enabled for the buckets. Refer to the [Object Storage versioning (AWS)](#object-storage-versioning-aws) below for more info.
   - `object_storage_prefix` - An optional prefix to use for the bucket names instead of `prefix`. Can be used to ensure unique names for buckets. :exclamation:&nbsp; **Changing this setting on an existing environment must be treated with the utmost caution as it will destroy the previous bucket(s) and lead to data loss**.

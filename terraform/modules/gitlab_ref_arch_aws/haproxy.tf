@@ -26,10 +26,10 @@ module "haproxy_external" {
   subnet_ids                = local.frontend_subnet_ids
   elastic_ip_allocation_ids = var.haproxy_external_elastic_ip_allocation_ids
 
-  ssh_key_name = aws_key_pair.ssh_key.key_name
+  ssh_key_name = try(aws_key_pair.ssh_key[0].key_name, null)
   security_group_ids = [
     aws_security_group.gitlab_internal_networking.id,
-    aws_security_group.gitlab_external_ssh.id,
+    try(aws_security_group.gitlab_external_ssh[0].id, null),
     try(aws_security_group.gitlab_external_container_registry[0].id, null),
     try(aws_security_group.gitlab_external_git_ssh[0].id, null),
     try(aws_security_group.gitlab_external_http_https[0].id, null)
@@ -68,10 +68,10 @@ module "haproxy_internal" {
   iam_identifier_path          = var.default_iam_identifier_path
   iam_permissions_boundary_arn = var.default_iam_permissions_boundary_arn
 
-  ssh_key_name = aws_key_pair.ssh_key.key_name
+  ssh_key_name = try(aws_key_pair.ssh_key[0].key_name, null)
   security_group_ids = [
     aws_security_group.gitlab_internal_networking.id,
-    aws_security_group.gitlab_external_ssh.id
+    try(aws_security_group.gitlab_external_ssh[0].id, null)
   ]
 
   geo_site       = var.geo_site
