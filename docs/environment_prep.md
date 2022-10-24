@@ -166,6 +166,8 @@ To create an access key for your user follow [the official docs](https://docs.aw
 
 ### 2. Setup SSH Authentication - AWS
 
+:information_source:&nbsp; If you intend to use an alternative method for connecting to machines, for example AWS SSM, you can skip this step.
+
 SSH authentication for the created machines on AWS will require an SSH key.
 
 This is straightforward with AWS. All that's required is for a key to be created and then for this to be accessible for the Toolkit to handle the rest:
