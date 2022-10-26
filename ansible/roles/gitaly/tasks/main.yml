@@ -8,21 +8,28 @@
   until: result is success
   tags: reconfigure
 
-- name: Check if custom config exists
-  stat:
-    path: "{{ gitaly_custom_config_file }}"
-  delegate_to: localhost
-  become: false
-  tags: reconfigure
-  register: gitaly_custom_config_file_path
+- name: Configure Custom Config
+  block:
+    - name: Check if custom config exists
+      stat:
+        path: "{{ gitaly_custom_config_file }}"
+      delegate_to: localhost
+      become: false
+      register: gitaly_custom_config_file_path
 
-- name: Setup Custom Config
-  template:
-    src: "{{ gitaly_custom_config_file }}"
-    dest: "/etc/gitlab/gitlab.gitaly.custom.rb"
-    mode: 0644
+    - name: Setup Custom Config
+      template:
+        src: "{{ gitaly_custom_config_file }}"
+        dest: "/etc/gitlab/gitlab.gitaly.custom.rb"
+        mode: 0644
+      when: gitaly_custom_config_file_path.stat.exists
+
+    - name: Remove old Custom Config if not configured
+      file:
+        path: "/etc/gitlab/gitlab.gitaly.custom.rb"
+        state: absent
+      when: not gitaly_custom_config_file_path.stat.exists
   tags: reconfigure
-  when: gitaly_custom_config_file_path.stat.exists
 
 - name: Copy over any Custom Files
   copy:

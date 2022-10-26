@@ -23,7 +23,7 @@
 
 - name: Get details for running GitLab Charts Toolbox Pod
   block:
-    - name: kubeconfig - Configure local kubeconfig to point to correct cluster
+    - name: Configure local kubeconfig to point to correct cluster
       include_role:
         name: gitlab_charts
         tasks_from: kubeconfig
