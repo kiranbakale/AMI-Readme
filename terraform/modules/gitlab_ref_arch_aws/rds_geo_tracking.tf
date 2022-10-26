@@ -84,6 +84,9 @@ resource "aws_db_instance" "gitlab_geo_tracking" {
 
   delete_automated_backups = var.rds_geo_tracking_postgres_delete_automated_backups
 
+  copy_tags_to_snapshot = true
+  tags                  = var.rds_geo_tracking_postgres_tags
+
   lifecycle {
     ignore_changes = [
       username
