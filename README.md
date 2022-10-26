@@ -4,6 +4,8 @@
 Requires [GitLab Premium](https://about.gitlab.com/pricing/) or above.
 Released under the [GitLab EE license](LICENSE).
 
+[Technical support](https://about.gitlab.com/support/) for troubleshooting GET usage issues is only available for GET's current major version.
+
 GET configures a base GitLab environment based on the Reference Architectures that can be built upon accordingly.
 
 Customers are very welcome to trial and evaluate GET today. However, it's recommended that you do independently review the Toolkit to ensure it meets your requirements, especially around [security](docs/environment_post_considerations.md#security), while also being aware of any current [key limitations](#missing-features-to-be-aware-of). For production environments [further manual setup](docs/environment_post_considerations.md) will be required based on your specific requirements.
