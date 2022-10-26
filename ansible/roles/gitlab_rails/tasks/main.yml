@@ -219,8 +219,15 @@
     src: "{{ gitlab_rails_custom_config_file }}"
     dest: "/etc/gitlab/gitlab.gitlab_rails.custom.rb"
     mode: 0644
-  tags: reconfigure
   when: gitlab_rails_custom_config_file_path.stat.exists
+  tags: reconfigure
+
+- name: Remove old Custom Config if not configured
+  file:
+    path: "/etc/gitlab/gitlab.gitlab_rails.custom.rb"
+    state: absent
+  when: not gitlab_rails_custom_config_file_path.stat.exists
+  tags: reconfigure
 
 - name: Reconfigure all GitLab Rails
   command: gitlab-ctl reconfigure

@@ -5,21 +5,28 @@
     dest: /etc/gitlab/gitlab.rb
   tags: reconfigure
 
-- name: Check if custom config exists
-  stat:
-    path: "{{ praefect_postgres_custom_config_file }}"
-  delegate_to: localhost
-  become: false
-  tags: reconfigure
-  register: praefect_postgres_custom_config_file_path
+- name: Configure Custom Config
+  block:
+    - name: Check if Custom Config exists
+      stat:
+        path: "{{ praefect_postgres_custom_config_file }}"
+      delegate_to: localhost
+      become: false
+      register: praefect_postgres_custom_config_file_path
 
-- name: Setup Custom Config
-  template:
-    src: "{{ praefect_postgres_custom_config_file }}"
-    dest: "/etc/gitlab/gitlab.praefect_postgres.custom.rb"
-    mode: 0644
+    - name: Setup Custom Config
+      template:
+        src: "{{ praefect_postgres_custom_config_file }}"
+        dest: "/etc/gitlab/gitlab.praefect_postgres.custom.rb"
+        mode: 0644
+      when: praefect_postgres_custom_config_file_path.stat.exists
+
+    - name: Remove old Custom Config if not configured
+      file:
+        path: "/etc/gitlab/gitlab.praefect_postgres.custom.rb"
+        state: absent
+      when: not praefect_postgres_custom_config_file_path.stat.exists
   tags: reconfigure
-  when: praefect_postgres_custom_config_file_path.stat.exists
 
 - name: Copy over any Custom Files
   copy:
