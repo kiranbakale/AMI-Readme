@@ -138,7 +138,7 @@ variable "consul_disk_kms_key_arn" {
   default = null
 }
 variable "consul_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "consul_iam_instance_policy_arns" {
@@ -175,7 +175,7 @@ variable "elastic_disk_kms_key_arn" {
   default = null
 }
 variable "elastic_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "elastic_iam_instance_policy_arns" {
@@ -249,7 +249,7 @@ variable "gitlab_nfs_disk_kms_key_arn" {
   default = null
 }
 variable "gitlab_nfs_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "gitlab_nfs_iam_instance_policy_arns" {
@@ -286,7 +286,7 @@ variable "gitlab_rails_disk_kms_key_arn" {
   default = null
 }
 variable "gitlab_rails_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "gitlab_rails_iam_instance_policy_arns" {
@@ -323,7 +323,7 @@ variable "haproxy_external_disk_kms_key_arn" {
   default = null
 }
 variable "haproxy_external_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "haproxy_external_elastic_ip_allocation_ids" {
@@ -364,7 +364,7 @@ variable "haproxy_internal_disk_kms_key_arn" {
   default = null
 }
 variable "haproxy_internal_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "haproxy_internal_iam_instance_policy_arns" {
@@ -401,7 +401,7 @@ variable "monitor_disk_kms_key_arn" {
   default = null
 }
 variable "monitor_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "monitor_iam_instance_policy_arns" {
@@ -438,7 +438,7 @@ variable "pgbouncer_disk_kms_key_arn" {
   default = null
 }
 variable "pgbouncer_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "pgbouncer_iam_instance_policy_arns" {
@@ -475,7 +475,7 @@ variable "postgres_disk_kms_key_arn" {
   default = null
 }
 variable "postgres_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "postgres_iam_instance_policy_arns" {
@@ -512,7 +512,7 @@ variable "praefect_disk_kms_key_arn" {
   default = null
 }
 variable "praefect_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "praefect_iam_instance_policy_arns" {
@@ -549,7 +549,7 @@ variable "praefect_postgres_disk_kms_key_arn" {
   default = null
 }
 variable "praefect_postgres_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "praefect_postgres_iam_instance_policy_arns" {
@@ -586,7 +586,7 @@ variable "redis_disk_kms_key_arn" {
   default = null
 }
 variable "redis_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "redis_iam_instance_policy_arns" {
@@ -623,7 +623,7 @@ variable "redis_cache_disk_kms_key_arn" {
   default = null
 }
 variable "redis_cache_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "redis_cache_iam_instance_policy_arns" {
@@ -660,7 +660,7 @@ variable "redis_persistent_disk_kms_key_arn" {
   default = null
 }
 variable "redis_persistent_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "redis_persistent_iam_instance_policy_arns" {
@@ -697,7 +697,7 @@ variable "sidekiq_disk_kms_key_arn" {
   default = null
 }
 variable "sidekiq_data_disks" {
-  type    = list(any)
+  type    = any
   default = []
 }
 variable "sidekiq_iam_instance_policy_arns" {

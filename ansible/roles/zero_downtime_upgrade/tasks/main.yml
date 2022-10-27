@@ -1,9 +1,18 @@
 - name: Ensure zero downtime config doesn't exist on nodes before upgrade
   block:
-    - name: Remove zero downtime config before upgrade
+    - name: Find any old zero downtime config files
+      find:
+        paths: "/etc/gitlab/"
+        patterns: 'gitlab.*.zero-downtime.rb'
+      register: old_zero_downtime_config
+
+    - name: Remove any old zero downtime config before upgrade
       file:
-        path: "/etc/gitlab/gitlab.{{ gitlab_node_type }}.zero-downtime.rb"
+        path: "{{ item.path }}"
         state: absent
+      loop: "{{ old_zero_downtime_config.files | flatten(levels=1) }}"
+      loop_control:
+        label: "{{ item.path }}"
       register: remove_zdu_config
 
     - name: Run gitlab-ctl reconfigure
