@@ -497,7 +497,7 @@ Like the main provisioning docs there are sections for each supported provider o
 
 The Toolkit supports provisioning an [AWS OpenSearch](https://aws.amazon.com/opensearch-service/) service domain (instance) with everything GitLab requires or recommends such as built in HA support over AZs and encryption.
 
-:information_source:&nbsp; [AWS OpenSearch is the replacement for AWS Elasticsearch](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/rename.html) and supports both Elasticsearch and OpenSearch as backends.
+:information_source:&nbsp; [AWS OpenSearch requires a service-linked role to be present](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/slr.html) in the AWS account before setup. [Refer to the specific section below for more info](#aws-opensearch-service-linked-iam-role).
 
 :information_source:&nbsp; [AWS OpenSearch](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/what-is.html) specifically only supports 1, 2 or 3 Availability Zones.
 
@@ -513,7 +513,7 @@ The variables for this service start with the prefix `opensearch_*` and should r
 - `opensearch_multi_az` - Specifies if the OpenSearch domain is multi-AZ. Should only be disabled when HA isn't required. Optional, default is `true`.
 - `opensearch_default_subnet_count` - Specifies the number of default subnets to use when running on the default network. Can be set to either `1`, `2` or `3`. Optional, default is `2`.
 - `opensearch_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt the OpenSearch domain. If not provided `default_kms_key_arm` or the default AWS KMS key will be used in that order. Optional, default is `null`.
-- `opensearch_service_linked_role_create` - Sets if the Toolkit should manage the [OpenSearch service-link role](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/slr.html). Will create or destroy the role when set to `true`. Set to `false` if the role already exists in the AWS account. Refer to the [specific section below](#aws-opensearch-service-linked-iam-role) for more info. Optional, default is `true`.
+- `opensearch_service_linked_role_create` - Sets if the Toolkit should manage the [OpenSearch service-link role](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/slr.html). Will create or destroy the role when set to `true`. Set to `false` if the role already exists in the AWS account. Refer to the [specific section below](#aws-opensearch-service-linked-iam-role) for more info. Optional, default is `false`.
 
 In addition to the above there are several optional features available in AWS OpenSearch that the Toolkit can also configure via the following variables:
 
@@ -528,16 +528,13 @@ Once provisioned you'll see several new outputs at the end of the process. Key f
 
 ##### AWS OpenSearch service-linked IAM role
 
-[AWS OpenSearch requires a service-linked role to be present](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/slr.html) in your AWS account named `AWSServiceRoleForAmazonOpenSearchService`. The Toolkit will look to create this for you.
+[AWS OpenSearch requires a service-linked role to be present](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/slr.html) in your AWS account named `AWSServiceRoleForAmazonOpenSearchService`.
 
 A key limitation of this service managed role is that **only one can exist in the entire AWS account**. As such, you can't create more than one role or conversely delete it if it's being used.
 
-Due to this limitation you may encounter issues when running the Toolkit if you have more than one environment in the same AWS account, or any other separate OpenSearch domains - Specifically around the creation and deletion of this role.
+Due to this limitation the Toolkit will _not_ attempt to create this role for you due to the likelihood of clashes and it's strongly recommended that this role is created separately beforehand.
 
-To assist with this the Toolkit can be configured to **_not_** manage this role for you via the `opensearch_service_linked_role_create` variable in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`). This is set to `true` by default, but you should set this to `false` in the following scenarios:
-
-- You have another GitLab environment with AWS OpenSearch built with the Toolkit in the _same_ AWS account that already has `opensearch_service_linked_role_create` to `true`.
-- You already have the `AWSServiceRoleForAmazonOpenSearchService` created in the AWS account separately.
+However, the Toolkit can be configured to manage this role for you via the `opensearch_service_linked_role_create` variable in your [Environment config file](environment_provision.md#configure-module-settings-environmenttf) (`environment.tf`). This should only be set to `true` if you are confident that there won't be any other OpenSearch domains being created in this account.
 
 ### Configuring with Ansible
 

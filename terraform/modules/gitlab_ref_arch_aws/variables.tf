@@ -1267,7 +1267,7 @@ variable "opensearch_kms_key_arn" {
 }
 variable "opensearch_service_linked_role_create" {
   type    = bool
-  default = true
+  default = false
 }
 
 # Networking
