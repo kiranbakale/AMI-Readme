@@ -532,8 +532,12 @@ The Toolkit will then apply the path on the next `terraform apply` run.
 
 ## Container Registry (GCP, AWS)
 
-Container Registry is enabled by default if you're deploying an environment configured with external SSL via GET. By default, the container registry is setup to use an object storage bucket and will be available on port `5050` for Omnibus installs or `registry.<external_url>` for Cloud Native Hybrid installs. The below settings are configurable via the listed parameters:
+[Container Registry](https://docs.gitlab.com/ee/user/packages/container_registry/) is enabled by default in GitLab when you're deploying an environment configured with external SSL. The Toolkit follows this design and will configure the registry and any dependencies by default such as object storage bucket and networking.
 
-- `container_registry_enable` - Should the container registry be enabled. Will be enabled by default when using SSL on either AWS or GCP. Must be set in both Terraform and Ansible environment configs.
+Additionally, by default, the service is configured differently depending on setup type. For Omnibus setups it will be available on the same URL via `5050`, for Cloud Native Hybrid it will be available on the URL `registry.<external_url>`.
+
+For all setups, the below settings configure how the service and dependents are set up:
+
+- `container_registry_enable` - Controls whether the container registry and dependents are enabled. Will be enabled by default when using SSL on either AWS or GCP. Must be set in both Terraform and Ansible environment configs.
 - `container_registry_port` - Port number for the container registry to be available on in Omnibus environments. Must be set in both Terraform and Ansible environment configs. Defaults to `5050`.
 - `container_registry_allowed_ingress_cidr_blocks` - A list of CIDR blocks that configures the IP ranges that will be able to access the container registry externally. Default is `["0.0.0.0/0"]`.
