@@ -48,13 +48,6 @@ container_scanning:
   rules:
     - !reference [.on_merge_request_to_main_and_merged_events, rules]
 
-container_scanning_release:
-  extends: container_scanning
-  variables:
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
-  rules:
-    - if: '$CI_COMMIT_TAG'
-
 kics-iac-sast:
   rules:
     - !reference [.on_merge_request_and_merged_events, rules]
