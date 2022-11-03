@@ -16,7 +16,7 @@ danger-review:
     GITLAB_DANGERFILES_VERSION: "~> 3.0"
 
 #################################
-##            SAST             ##
+##           EVENTS            ##
 #################################
 
 .on_merge_request_and_merged_events:
@@ -26,6 +26,24 @@ danger-review:
 .on_merge_request_to_main_and_merged_events:
   rules:
     - if: '$CI_BUILD_REF_NAME == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH'
+
+.on_merge_request_and_merged_events_except_schedule_and_tag:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" || $CI_COMMIT_TAG'
+      when: never
+    - !reference [.on_merge_request_and_merged_events, rules]
+
+.on_default_branch:
+  rules:
+    - if: '$CI_BUILD_REF_NAME == $CI_DEFAULT_BRANCH'
+
+.on_tag_events:
+  rules:
+    - if: '$CI_COMMIT_TAG'
+
+#################################
+##            SAST             ##
+#################################
 
 gemnasium-dependency_scanning:
   rules:
@@ -66,12 +84,8 @@ check:terraform-fmt:
     - terraform version
   script:
     - terraform fmt -check -recursive -diff .
-  only:
-    - main
-    - merge_requests
-  except:
-    - schedules
-    - tags
+  rules:
+    - !reference [.on_merge_request_and_merged_events_except_schedule_and_tag, rules]
 
 check:tflint:
   stage: test
@@ -80,12 +94,8 @@ check:tflint:
     entrypoint: [""]
   script:
     - find terraform/modules/* -type d -prune -not -path templates -print0 | xargs -0 -n1 -I % sh -c "printf '\n%\n' && tflint -c .tflint.hcl %"
-  only:
-    - main
-    - merge_requests
-  except:
-    - schedules
-    - tags
+  rules:
+    - !reference [.on_merge_request_and_merged_events_except_schedule_and_tag, rules]
 
 check:ansible-lint:
   stage: test
@@ -96,12 +106,8 @@ check:ansible-lint:
     - ansible-galaxy install -r requirements/ansible-galaxy-requirements.yml
     - pip install jmespath
     - ansible-lint
-  only:
-    - main
-    - merge_requests
-  except:
-    - schedules
-    - tags
+  rules:
+    - !reference [.on_merge_request_and_merged_events_except_schedule_and_tag, rules]
 
 check:markdownlint:
   stage: test
@@ -111,12 +117,8 @@ check:markdownlint:
   script:
     - npm add -g markdownlint markdownlint-cli
     - markdownlint *.md docs/*.md
-  only:
-    - main
-    - merge_requests
-  except:
-    - schedules
-    - tags
+  rules:
+    - !reference [.on_merge_request_and_merged_events_except_schedule_and_tag, rules]
 
 check:markdown-link-check:
   stage: test
@@ -125,12 +127,8 @@ check:markdown-link-check:
     entrypoint: [""]
   script:
     - find *.md docs/*.md -print0 | xargs -0 -n1 /src/markdown-link-check
-  only:
-    - main
-    - merge_requests
-  except:
-    - schedules
-    - tags
+  rules:
+    - !reference [.on_merge_request_and_merged_events_except_schedule_and_tag, rules]
   retry: 2
 
 # Does the requirements.txt install?
@@ -159,8 +157,8 @@ upload-terraform-module:
     - cd terraform
     - tar -czf gitlab_environment_toolkit.tgz modules
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file gitlab_environment_toolkit.tgz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/terraform/modules/gitlab-environment-toolkit/gitlab/${CI_COMMIT_TAG}/file"'
-  only:
-    - tags
+  rules:
+    - !reference [.on_tag_events, rules]
 
 .upload-docker-image-base:
   stage: upload
@@ -181,8 +179,8 @@ upload-docker-image-dev:
   script:
     - docker build -t $CI_REGISTRY_IMAGE:dev .
     - docker push $CI_REGISTRY_IMAGE:dev
-  only:
-    - main
+  rules:
+    - !reference [.on_default_branch, rules]
 
 upload-docker-image-release:
   extends: .upload-docker-image-base
@@ -194,5 +192,5 @@ upload-docker-image-release:
         docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG $CI_REGISTRY_IMAGE:latest
         docker push $CI_REGISTRY_IMAGE:latest
       fi
-  only:
-    - tags
+  rules:
+    - !reference [.on_tag_events, rules]
