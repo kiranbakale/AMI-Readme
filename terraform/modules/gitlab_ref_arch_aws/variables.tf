@@ -107,6 +107,10 @@ variable "object_storage_kms_key_arn" {
   type    = string
   default = null
 }
+variable "object_storage_block_public_access" {
+  type    = bool
+  default = true
+}
 
 # Machines
 variable "consul_node_count" {
