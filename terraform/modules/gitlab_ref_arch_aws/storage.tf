@@ -36,6 +36,17 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "gitlab_object_sto
   }
 }
 
+resource "aws_s3_bucket_public_access_block" "gitlab_object_storage_buckets" {
+  for_each = var.object_storage_block_public_access ? aws_s3_bucket.gitlab_object_storage_buckets : tomap({})
+
+  bucket = each.value.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 # IAM Policies
 locals {
   gitlab_s3_policy_create          = length(var.object_storage_buckets) > 0
