@@ -10,22 +10,19 @@ include:
 stages:
   - test
   - upload
+  - container_scan
 
 danger-review:
   variables:
     GITLAB_DANGERFILES_VERSION: "~> 3.0"
 
 #################################
-##           EVENTS            ##
+##            RULES            ##
 #################################
 
 .on_merge_request_and_merged_events:
   rules:
-    - if: '$CI_BUILD_REF_NAME == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "merge_request_event"'
-
-.on_merge_request_to_main_and_merged_events:
-  rules:
-    - if: '$CI_BUILD_REF_NAME == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_PIPELINE_SOURCE == "merge_request_event"'
 
 .on_merge_request_and_merged_events_except_schedule_and_tag:
   rules:
@@ -35,7 +32,7 @@ danger-review:
 
 .on_default_branch:
   rules:
-    - if: '$CI_BUILD_REF_NAME == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
 
 .on_tag_events:
   rules:
@@ -61,10 +58,12 @@ secret_detection:
   allow_failure: false
 
 container_scanning:
+  stage: container_scan
   variables:
     DOCKER_IMAGE: $CI_REGISTRY_IMAGE:dev
+    GIT_STRATEGY: fetch
   rules:
-    - !reference [.on_merge_request_to_main_and_merged_events, rules]
+    - !reference [.on_default_branch, rules]
 
 kics-iac-sast:
   rules:
