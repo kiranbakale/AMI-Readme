@@ -20,6 +20,7 @@ pip install -r ansible-python-packages.txt
   echo "###########################################"
   echo "# Do not update manually"
   echo "# Run bin/freeze-dependencies.sh to update"
+  echo "# Packages must target Python 3.8"
   echo "###########################################"
   pip freeze
 )>requirements.txt
