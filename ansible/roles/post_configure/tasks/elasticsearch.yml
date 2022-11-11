@@ -18,6 +18,7 @@
           register: delete_result
           failed_when:
             - delete_result.rc != 0
+            - '"no address" not in delete_result.stderr'
             - '"Net::OpenTimeout" not in delete_result.stderr'
           when: "'gitlab_rails' in groups"
 
@@ -32,6 +33,7 @@
           register: delete_result
           failed_when:
             - delete_result.rc != 0
+            - '"no address" not in delete_result.stderr'
             - '"Net::OpenTimeout" not in delete_result.stderr'
           when:
             - toolbox_pod is defined
