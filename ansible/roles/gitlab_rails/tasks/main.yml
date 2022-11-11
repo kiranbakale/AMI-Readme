@@ -60,7 +60,9 @@
         - { hostfile: "{{ gitlab_nfs_path }}/{{ external_host }}.pem", targetfile: "/etc/gitlab/ssl/{{ external_host }}.pem" }
         - { hostfile: "{{ gitlab_nfs_path }}/{{ external_host }}.pem.key", targetfile: "/etc/gitlab/ssl/{{ external_host }}.pem.key" }
       when: nfs_ssl_certificates.stat.exists
-  tags: ssl
+  tags:
+    - reconfigure
+    - ssl
 
 - name: Copy GCP service account file
   copy:

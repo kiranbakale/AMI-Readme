@@ -15,7 +15,9 @@ skip_list:
   - yaml[line-length]
   - braces
   - package-latest
-  - fqcn-builtins
+  - fqcn-builtins # Use full names - Optional in Ansible
+  - fqcn[action] # Use full names - Optional in Ansible
   - var-spacing  # https://github.com/ansible/ansible-lint/issues/2209
   - no-handler # Tasks that run when changed should likely be handlers
   - name[play] # All plays should be named.
+  - name[template] # Jinja templates should only be end at name

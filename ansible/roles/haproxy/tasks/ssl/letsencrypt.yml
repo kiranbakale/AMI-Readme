@@ -31,15 +31,6 @@
     - { hostfile: "/etc/letsencrypt/live/{{ external_host }}/fullchain.pem", targetfile: "{{ gitlab_nfs_path }}/{{ external_host }}.pem" }
     - { hostfile: "/etc/letsencrypt/live/{{ external_host }}/privkey.pem", targetfile: "{{ gitlab_nfs_path }}/{{ external_host }}.pem.key" }
 
-- name: Setup certbot renew haproxy pre hook script
-  blockinfile:
-    path: /etc/letsencrypt/renewal-hooks/pre/haproxy.sh
-    block: |
-      #!/bin/sh
-      docker stop haproxy
-    create: true
-    mode: 0755
-
 - name: Setup certbot renew haproxy post hook script
   blockinfile:
     path: /etc/letsencrypt/renewal-hooks/post/haproxy.sh
@@ -47,6 +38,13 @@
       #!/bin/sh
       cp -u /etc/letsencrypt/live/{{ external_host }}/fullchain.pem /opt/haproxy/{{ external_host }}.pem
       cp -u /etc/letsencrypt/live/{{ external_host }}/privkey.pem /opt/haproxy/{{ external_host }}.pem.key
-      docker start haproxy
+
+      # Reload HAProxy docker container
+      docker kill -s HUP haproxy
     create: true
     mode: 0755
+
+- name: Remove any previous certbot pre hook scripts
+  file:
+    path: /etc/letsencrypt/renewal-hooks/pre/haproxy.sh
+    state: absent
