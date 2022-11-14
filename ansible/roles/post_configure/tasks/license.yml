@@ -13,6 +13,7 @@
       delegate_to: "{{ groups['gitlab_rails'][0] }}"
       delegate_facts: true
       become: true
+      no_log: true
       diff: false
       register: configure_license_response
 
@@ -37,6 +38,7 @@
 
             print License.current.plan
           "
+      no_log: true
       diff: false
       register: configure_license_response
 
