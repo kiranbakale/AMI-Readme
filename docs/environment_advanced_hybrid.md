@@ -474,7 +474,23 @@ Once your config file is in place as desired you can proceed to [configure as no
 
 The Toolkit supports adding additional Kubernetes Secrets for your deployment the Toolkit does provide a hook to do this via a tasks list.
 
-Through this you can provide a custom Ansible tasks file that can run [`kubernetes.core.k8s`](https://github.com/ansible-collections/kubernetes.core/blob/main/docs/kubernetes.core.k8s_module.rst) tasks that in turn can contain standard secrets definitions.
+Through this you can provide a custom Ansible tasks file that can run [`kubernetes.core.k8s`](https://github.com/ansible-collections/kubernetes.core/blob/main/docs/kubernetes.core.k8s_module.rst) tasks that in turn can contain standard secrets definitions. For example:
+
+```yml
+- name: Configure AWS RDS Internal SSL CA secrets
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: Secret
+      type: Opaque
+      metadata:
+        name: "rds-postgres-ca"
+        namespace: "{{ gitlab_charts_release_namespace }}" # This should stay the same
+      stringData:
+        rds_postgres_ca.pem: |
+          {{ lookup('file', <local_path_to_postgres_ca_file>) }}
+  diff: false
+```
 
 Providing custom secrets for the Charts is done as follows:
 

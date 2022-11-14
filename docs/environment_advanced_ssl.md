@@ -23,9 +23,9 @@ Encryption is an involved area that can become complex with various ways to conf
 - External SSL - Where external connections to the main URL are encrypted. Also called External SSL Termination.
 - Internal SSL - Where internal connections between GitLab components are encrypted.
 
-With the exception of the Let's Encrypt option for External SSL termination - User provided certificates are required to enable encryption with the recommendation that these are signed certificates.
+Except for the Let's Encrypt option for External SSL termination - User provided certificates are required to enable encryption with the recommendation that these are signed certificates.
 
-On this page we'll detail how you can configure each type of encryption with the Toolkit. **It's worth noting this guide is supplementary to the rest of the docs and it will assume this throughout. It also assumes a working level knowledge of SSL in general.**
+On this page we'll detail how you can configure each type of encryption with the Toolkit. **It's worth noting this guide is supplementary to the rest of the docs, and it will assume this throughout. It also assumes a working level knowledge of SSL in general.**
 
 :information_source:&nbsp; Please note that recommendations about what specific encryption strategy to use is outwith the scope of this guide. It's recommended you review GitLab independently to determine the strategy as per your security requirements.
 
@@ -45,11 +45,11 @@ At a high level the Toolkit will simply take the certificate and key files and u
 
 #### Setup user provided certificates for Toolkit use
 
-The first step is to provide the certificates themselves for the Toolkit to use. By default the Toolkit expects the following:
+The first step is to provide the certificates themselves for the Toolkit to use. By default, the Toolkit expects the following:
 
 - That certificate and key files are located in the `ansible/environments/<env_name>/files/certificates` folder
 - That certificate and key files are named in the formats `<hostname>.pem` and `<hostname>.key` respectively.
-  - `pem` is used here by default as this is now the typically used standard across various tools such as HAProxy / Let's Encrypt, etc...
+  - `pem` is used here by default as this is now the typically used standard across various tools such as HAProxy or Let's Encrypt.
 - That the certificate file contains the [full chain](https://www.digicert.com/kb/ssl-support/pem-ssl-creation.htm)
 
 You can optionally store your SSL files in a different location as well as use different names if desired with additional configuration. This will be detailed further in the next section.
@@ -62,7 +62,7 @@ After the SSL certificate and key are in place you then need to configure the To
 
 There are two main variables to set in the Inventory Variables [`vars.yml`](environment_configure.md#environment-config-varsyml) file that configures the Toolkit to use External SSL termination with user provided certificates:
 
-- `external_url` - Set [previously](environment_configure.md) this is the main URL the environment is expected to be reached on. For External SSL termination this should be changed to a url that starts with `https://`.
+- `external_url` - Set [previously](environment_configure.md) this is the main URL the environment is expected to be reached on. For External SSL termination this should be changed to a URL that starts with `https://`.
 - `external_ssl_source` - Sets what source is being used for the External SSL certificates. In this setup it should be set to `user`.
 
 When the certificates are configured as the Toolkit expects then, as detailed in the previous section, an example of how the config would look is as follows:
@@ -94,9 +94,9 @@ As the certificates are generated automatically via Let's Encrypt the Toolkit on
 
 There are three main variables to set in the Inventory Variables [`vars.yml`](environment_configure.md#environment-config-varsyml) file that configures the Toolkit to use External SSL termination with Let's Encrypt certificate:
 
-- `external_url` - Set [previously](environment_configure.md) this is the main URL the environment is expected to be reached on. For External SSL termination this should be changed to a url that starts with `https://`.
+- `external_url` - Set [previously](environment_configure.md) this is the main URL the environment is expected to be reached on. For External SSL termination this should be changed to a URL that starts with `https://`.
 - `external_ssl_source` - Sets what source is being used for the External SSL certificates. In this setup it should be set to `letsencrypt`.
-- `external_ssl_letsencrypt_issuer_email` - Email to use with Let's Encrypt as recommended to associate with certificates for renewal and recovery. This should be set to an email of an administrator of the GitLab environment to manage certificates.
+- `external_ssl_letsencrypt_issuer_email` - Email to use with Let's Encrypt for renewal and recovery of certificates. This should be set to an email of an administrator of the GitLab environment.
 
 An example of how the config would look is as follows:
 
@@ -124,7 +124,7 @@ As an alternative you can also just reconfigure the specific nodes, depending on
 
 Unlike External SSL, Internal SSL is typically more involved. This is due to both servers and clients needing to be configured as well as each GitLab component, some being third party, each having their own implementations and options.
 
-Due to this, how the Toolkit approaches Internal SSL varies depending on the component and it's implementation as follows:
+Due to this, how the Toolkit approaches Internal SSL varies depending on the component, and it's implementation as follows:
 
 - [Custom Files](environment_advanced.md#custom-files) / [Secrets](environment_advanced_hybrid.md#custom-secrets-via-custom-tasks) and [Custom Config](environment_advanced.md#custom-config) (Cloud Native Hybrid) - Where setup is best handled with full control via Custom Files and Custom Config to ensure the encryption meets your requirements. This applies to most components.
 - Direct - Where the Toolkit handles setup directly for components that have one approach to encryption and / or if it needs to manage additional configuration in areas such as network setup. At the time of writing this only applies to Gitaly / Gitaly Cluster.
@@ -141,8 +141,8 @@ When preparing the certificates the following conditions should be met:
 
 - Certificates and Keys are in `.pem` format.
 - Certificates must contain a Subject Alternative Name (SAN) as Common Name (CN) use only is deprecated.
-- Certificates will be copied to each component node group. As such the SAN entries should either match each node group machine's specific hostname or be an appropriate wildcard.
-  - :information_source:&nbsp; The Toolkit by default uses IPs for internal connections. [However this can be switched to use internal hostnames as discovered by Ansible](environment_advanced_network.md#configuring-internal-connection-type-ips--hostnames) which is generally preferred for Internal SSL.
+- The files will be copied to each component node group. As such the SAN entries should either match each node group machine's specific hostname or be an appropriate wildcard.
+  - :information_source:&nbsp; The Toolkit by default uses IPs for internal connections. [However, this can be switched to use internal hostnames as discovered by Ansible](environment_advanced_network.md#configuring-internal-connection-type-ips--hostnames) which is generally preferred for Internal SSL.
   - :information_source:&nbsp; Terraform output contains the Hostnames / IPs for you to configure your certificates with.
 - For GitLab components to verify each certificate you will need either the CA file for your certificates or to upload the certificate itself to client components. Further guidance on this is given later.
 
@@ -170,14 +170,14 @@ For each component the general steps to configure Internal SSL encryption is as 
   - Certificates and Keys should be uploaded to `/etc/gitlab/ssl` and CA files to `/etc/gitlab/trusted-certs` in mode `644` on every client. The Toolkit will create these folders as a convenience.
   - Set the desired config for each component and client node groups via [Custom Config](environment_advanced.md#omnibus).
 - **For Cloud Native Hybrid components** - Upload your certificates as [Custom Secrets](environment_advanced_hybrid.md#custom-secrets-via-custom-tasks).
-  - Typically in this setup all that will be required is to upload [CA files](https://docs.gitlab.com/charts/charts/globals.html#custom-certificate-authorities). These can be with any name but then these must match in the config.
+  - Typically, in this setup all that will be required is to upload [CA files](https://docs.gitlab.com/charts/charts/globals.html#custom-certificate-authorities) as [Kubernetes secrets](https://kubernetes.io/docs/concepts/configuration/secret/). These can be with any name, but then these must match in the config. You can also choose to do this directly via `kubectl` if desired after initial deployment.
   - Set the desired [config](https://docs.gitlab.com/charts/charts/globals.html#custom-certificate-authorities
 ) via [Custom Config](environment_advanced.md#helm).
 - Run Ansible as normal to configure.
 
 ### Configuring Internal SSL directly for select components
 
-As mentioned above, the Toolkit needs to handle encryption directly for select components that require additional setup such as networking. At the time of writing this applies only to Gitaly / Gitaly Cluster but this may expand in the future.
+As mentioned above, the Toolkit needs to handle encryption directly for select components that require additional setup such as networking. At the time of writing this applies only to Gitaly / Gitaly Cluster, but this may expand in the future.
 
 Refer to the relevant section below on how to configure encryption directly for the component.
 
@@ -211,9 +211,9 @@ In addition to the above there are some other settings you may need to set depen
 
 ###### ELB Port Config (AWS)
 
-If the environment is on AWS and [using ELB (NLB) for it's internal load balancer](environment_advanced_services.md#internal-nlb) one additional piece of configuration is required when switching to use Internal SSL for Gitaly Cluster to set the correct port for load balancing as this is managed by Terraform.
+If the environment is on AWS and [using ELB (NLB) for its internal load balancer](environment_advanced_services.md#internal-nlb) one additional piece of configuration is required when switching to use Internal SSL for Gitaly Cluster to set the correct port for load balancing as this is managed by Terraform.
 
-In this scenario you must set the `elb_internal_praefect_port` variable to the same port being used by Praefect for SSL connections in the Terraform [Environment config file](environment_provision.md#configure-module-settings-environmenttf) file. This would be `3035` in most cases and would look as follows:
+In this scenario you must set the `elb_internal_praefect_port` variable to the same port being used by Praefect for SSL connections in the Terraform [Environment config file](environment_provision.md#configure-module-settings-environmenttf). This would be `3035` in most cases and would look as follows:
 
 ```tf
 module "gitlab_ref_arch_aws" {
@@ -246,10 +246,10 @@ global:
 
 Cloud Providers do also offer various encryption options, by default in some cases:
 
-- Encryption at Rest - The Toolkit was always look to enable any standard Encryption at Rest that's available from the Cloud Providers. Although as stated above it's recommend that you review this independently to ensure it meets your requirements.
+- Encryption at Rest - The Toolkit was always looks to enable any standard Encryption at Rest that's available from the Cloud Providers. Although as stated above it's recommend that you review this independently to ensure it meets your requirements.
 - Encryption in Transit - The Cloud Providers offer Encryption in Transit by default. Details for each can be found below:
   - [AWS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/data-protection.html#encryption-transit)
   - [GCP](https://cloud.google.com/docs/security/encryption-in-transit#encryption-all-regions)
   - [Azure](https://docs.microsoft.com/en-us/azure/security/fundamentals/encryption-overview#data-link-layer-encryption-in-azure)
 
-You may consider this enough for your needs but this should be reviewed independently.
+You may consider this enough for your needs, but this should be reviewed independently.
