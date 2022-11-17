@@ -330,6 +330,7 @@ For optional variables they work in a default like manner. When configuring for 
 - [`elasticache_redis_snapshot_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group#snapshot_window) - The daily time range where backups will be taken, e.g. `09:46-10:16`. Optional, default is `null`.
   - Optionally `elasticache_redis_cache_snapshot_window` or `elasticache_redis_persistent_snapshot_window` can be used to override for separate services.
 - `elasticache_redis_default_subnet_count` - Specifies the number of default subnets to use when running on the default network. Optional, default is `2`.
+- [`elasticache_redis_tags`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_replication_group#tags) - A map of [tags](https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html) to assign to ElastiCache instance. Optional, default is `{}`.
 
 If deploying a combined Redis setup that contains all queues (5k and lower) the following settings should be set (replacing any previous `redis_*` settings):
 
@@ -514,6 +515,7 @@ The variables for this service start with the prefix `opensearch_*` and should r
 - `opensearch_default_subnet_count` - Specifies the number of default subnets to use when running on the default network. Can be set to either `1`, `2` or `3`. Optional, default is `2`.
 - `opensearch_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt the OpenSearch domain. If not provided `default_kms_key_arm` or the default AWS KMS key will be used in that order. Optional, default is `null`.
 - `opensearch_service_linked_role_create` - Sets if the Toolkit should manage the [OpenSearch service-link role](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/slr.html). Will create or destroy the role when set to `true`. Set to `false` if the role already exists in the AWS account. Refer to the [specific section below](#aws-opensearch-service-linked-iam-role) for more info. Optional, default is `false`.
+- `opensearch_tags` - A map of additional [tags](https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html) to assign to OpenSearch domain. Optional, default is `{}`.
 
 In addition to the above there are several optional features available in AWS OpenSearch that the Toolkit can also configure via the following variables:
 
