@@ -41,6 +41,8 @@ resource "aws_elasticache_replication_group" "gitlab_redis" {
   security_group_ids = [
     aws_security_group.gitlab_internal_networking.id
   ]
+
+  tags = var.elasticache_redis_tags
 }
 
 output "elasticache_redis_connection" {
@@ -110,6 +112,8 @@ resource "aws_elasticache_replication_group" "gitlab_redis_cache" {
   security_group_ids = [
     aws_security_group.gitlab_internal_networking.id
   ]
+
+  tags = var.elasticache_redis_cache_tags
 }
 
 output "elasticache_redis_cache_connection" {
@@ -161,6 +165,8 @@ resource "aws_elasticache_replication_group" "gitlab_redis_persistent" {
   security_group_ids = [
     aws_security_group.gitlab_internal_networking.id
   ]
+
+  tags = var.elasticache_redis_persistent_tags
 }
 
 output "elasticache_redis_persistent_connection" {

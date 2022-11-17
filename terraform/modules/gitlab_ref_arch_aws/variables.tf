@@ -1129,6 +1129,11 @@ variable "elasticache_redis_default_subnet_count" {
   type    = number
   default = 2
 }
+variable "elasticache_redis_tags" {
+  description = "Tags to apply to ElastiCache Redis"
+  type        = map(any)
+  default     = {}
+}
 
 ### Separate - Cache
 variable "elasticache_redis_cache_node_count" {
@@ -1172,6 +1177,11 @@ variable "elasticache_redis_cache_snapshot_window" {
   type    = string
   default = null
 }
+variable "elasticache_redis_cache_tags" {
+  description = "Tags to apply to ElastiCache Redis Cache"
+  type        = map(any)
+  default     = {}
+}
 
 ### Separate - Persistent
 variable "elasticache_redis_persistent_node_count" {
@@ -1214,6 +1224,11 @@ variable "elasticache_redis_persistent_snapshot_retention_limit" {
 variable "elasticache_redis_persistent_snapshot_window" {
   type    = string
   default = null
+}
+variable "elasticache_redis_persistent_tags" {
+  description = "Tags to apply to ElastiCache Redis Persistent"
+  type        = map(any)
+  default     = {}
 }
 
 ## OpenSearch (AWS Service)
@@ -1272,6 +1287,11 @@ variable "opensearch_kms_key_arn" {
 variable "opensearch_service_linked_role_create" {
   type    = bool
   default = false
+}
+variable "opensearch_tags" {
+  description = "Tags to apply to OpenSearch"
+  type        = map(any)
+  default     = {}
 }
 
 # Networking

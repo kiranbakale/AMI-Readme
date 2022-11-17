@@ -59,9 +59,9 @@ resource "aws_opensearch_domain" "gitlab" {
     enabled = true
   }
 
-  tags = {
+  tags = merge({
     Domain = var.prefix
-  }
+  }, var.opensearch_tags)
 
   depends_on = [aws_iam_service_linked_role.gitlab_opensearch_role[0]]
 }
