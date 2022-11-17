@@ -63,6 +63,6 @@ backend gitlab-registry
     option forwardfor
 
 {% for ip in gitlab_rails_int_addrs %}
-    server gitlab-rails{{loop.index}} {{ ip }}:{{ container_registry_port }} ssl verify none
+    server gitlab-rails{{loop.index}} {{ ip }}:{{ container_registry_port }}
 {% endfor %}
 {% endif %}

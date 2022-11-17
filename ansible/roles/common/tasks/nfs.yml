@@ -78,4 +78,4 @@
     path: "{{ gitlab_nfs_path }}"
   when:
     - not (gitlab_nfs_int_addr == ansible_default_ipv4.address or gitlab_nfs_int_addr == ansible_fqdn)
-    - omnibus_node or 'haproxy_external' in group_names
+    - omnibus_node

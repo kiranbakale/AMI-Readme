@@ -44,26 +44,6 @@
     - secrets
     - gitlab-secrets
 
-- name: Fetch SSL certificate
-  block:
-    - name: Check if SSL certificates exist on NFS
-      stat:
-        path: "{{ gitlab_nfs_path }}/{{ external_host }}.pem"
-      register: nfs_ssl_certificates
-
-    - name: Copy SSL files from NFS
-      copy:
-        src: "{{ item.hostfile }}"
-        dest: "{{ item.targetfile }}"
-        remote_src: true
-      loop:
-        - { hostfile: "{{ gitlab_nfs_path }}/{{ external_host }}.pem", targetfile: "/etc/gitlab/ssl/{{ external_host }}.pem" }
-        - { hostfile: "{{ gitlab_nfs_path }}/{{ external_host }}.pem.key", targetfile: "/etc/gitlab/ssl/{{ external_host }}.pem.key" }
-      when: nfs_ssl_certificates.stat.exists
-  tags:
-    - reconfigure
-    - ssl
-
 - name: Copy GCP service account file
   copy:
     src: "{{ gcp_service_account_host_file }}"
