@@ -2,15 +2,6 @@ roles ['application_role']
 
 external_url '{{ external_url_sanitised }}'
 
-{% if container_registry_enable %}
-registry['enable'] = true
-registry_external_url "{{ external_url_sanitised }}:{{ container_registry_port }}"
-registry_nginx['ssl_certificate'] = "/etc/gitlab/ssl/{{ external_host }}.pem"
-registry_nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/{{ external_host }}.pem.key"
-{% else %}
-registry['enable'] = false
-{% endif %}
-
 {% if gitlab_rails_webserver == 'puma' %}
 unicorn['enable'] = false
 puma['enable'] = true
@@ -72,6 +63,15 @@ nginx['hsts_max_age'] = 0
 letsencrypt['enable'] = false
 {% endif %}
 
+{% if container_registry_enable %}
+registry['enable'] = true
+registry_external_url "{{ external_url_sanitised }}:{{ container_registry_port }}"
+
+registry_nginx['listen_https'] = false
+{% else %}
+registry['enable'] = false
+{% endif %}
+
 ### External merge request diffs - store outdated diffs in object storage
 gitlab_rails['external_diffs_when'] = 'outdated'
 
@@ -97,7 +97,7 @@ gitlab_rails['object_store']['objects']['uploads']['bucket'] = "{{ gitlab_object
 
 {% if container_registry_enable %}
 registry['storage'] = {
-  {{ lookup('template', 'registry.' + cloud_provider + '.rb.j2') | indent(width=2) }}
+  {{ lookup('template', 'registry.object_storage.' + cloud_provider + '.rb.j2') | indent(width=2) }}
 }
 {% endif %}
 
