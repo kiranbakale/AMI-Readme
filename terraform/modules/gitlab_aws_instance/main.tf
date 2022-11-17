@@ -29,9 +29,9 @@ resource "aws_instance" "gitlab" {
 
     delete_on_termination = var.disk_delete_on_termination
 
-    tags = {
+    tags = merge({
       Name = "${var.prefix}-${var.node_type}-${count.index + 1}-root"
-    }
+    }, var.additional_tags)
   }
 
   tags = merge({
