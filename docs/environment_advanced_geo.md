@@ -127,7 +127,7 @@ Using this output, add the below values to the secondaries `environment.tf` file
 
 :information_source:&nbsp; When setting up VPC peering, the CIDR used for each VPC must be different and cannot overlap.
 
-Now run `terraform apply` for the secondary sites, once this completes the `vpc_connection_details` will be output similar to the primary, this time take the `peering_id` and `vpc_cidr_block` and add them into the primary sites `environment.tf`:
+Now run `terraform apply` for the secondary sites, once this completes the VPC connection details will be output in `network`, similar to the primary, this time take the `peering_id` and `vpc_cidr_block` and add them into the primary sites `environment.tf`:
 
 - `peer_connection_id` - The ID of the peer connection created as part of the secondaries `terraform apply`
 - `peer_vpc_cidr` - The CIDR used for the internal network as part of the VPC on the secondary site.
