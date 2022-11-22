@@ -24,6 +24,10 @@
     fstype: ext4
     dev: "{{ disk_device_prefix[cloud_provider] + item.device_name if '/' not in item.device_name else item.device_name }}"
     opts: "{{ mkfs_opts }}"
+  register: result
+  retries: 2
+  delay: 10
+  until: result is success
   loop: "{{ group_data_disks }}"
 
 # Device names may change on reboot so it is always best to use
