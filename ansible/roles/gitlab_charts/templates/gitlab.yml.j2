@@ -186,6 +186,8 @@ global:
     https: {{ external_url_ssl | lower }}
     gitlab:
       name: "{{ external_host }}"
+    registry:
+      name: "{{ container_registry_external_host }}"
   ingress:
 {% if external_url_ssl and external_ssl_source == 'letsencrypt' %}
     configureCertmanager: true

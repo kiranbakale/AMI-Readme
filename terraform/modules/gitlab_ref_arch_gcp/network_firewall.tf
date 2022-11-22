@@ -47,23 +47,6 @@ resource "google_compute_firewall" "ssh" {
   target_tags   = [var.prefix]
 }
 
-resource "google_compute_firewall" "gitlab_container_registry" {
-  count = (var.gitlab_rails_node_count > 0 && var.container_registry_enable) ? 1 : 0
-
-  name    = "${var.prefix}-gitlab-rails-container-registry"
-  network = local.vpc_name
-
-  description = "Allow access to GitLab Container Registry via external load balancer for GitLab environment '${var.prefix}' on the ${local.vpc_name} network"
-
-  allow {
-    protocol = "tcp"
-    ports    = [var.container_registry_port]
-  }
-
-  source_ranges = coalescelist(var.container_registry_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
-  target_tags   = ["${var.prefix}-web"]
-}
-
 resource "google_compute_firewall" "icmp" {
   name    = "${var.prefix}-icmp"
   network = local.vpc_name
