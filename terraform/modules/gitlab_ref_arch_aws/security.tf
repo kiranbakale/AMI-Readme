@@ -21,7 +21,6 @@ resource "aws_security_group" "gitlab_internal_networking" {
     to_port     = 0
     protocol    = "-1"
     self        = true
-    cidr_blocks = [data.aws_vpc.selected.cidr_block]
   }
 
   dynamic "ingress" {
