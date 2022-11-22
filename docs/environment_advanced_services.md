@@ -91,6 +91,8 @@ Configuring GitLab to use alternative Load Balancer(s) with Ansible is the same 
 
 :information_source:&nbsp; This config is the same for custom Load Balancers. Although please note, in this setup it's expected that all required balancing rules are in place and the URL to connect to the Balancer(s) never change. For the latest balancer rules you need to configure you should refer to the HAProxy config files provided as part of the Toolkit - [External](../ansible/roles/haproxy/templates/haproxy_external.cfg.j2), [Internal](../ansible/roles/haproxy/templates/haproxy_internal.cfg.j2).
 
+:information_source:&nbsp; For Omnibus environments on AWS you may need to configure additional [Security Groups](environment_advanced_network.md#custom-security-groups) to allow connections.
+
 The available variables in Ansible for this are as follows:
 
 - `external_url` - The external load balancer URL. This is expected to be the same as the main URL that the environment is to be accessed on.
