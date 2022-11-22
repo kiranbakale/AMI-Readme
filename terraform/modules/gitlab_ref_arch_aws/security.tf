@@ -132,31 +132,6 @@ resource "aws_security_group" "gitlab_external_http_https" {
   }
 }
 
-resource "aws_security_group" "gitlab_external_container_registry" {
-  count = (var.gitlab_rails_node_count > 0 && var.container_registry_enable) ? 1 : 0
-
-  name_prefix = "${var.prefix}-external-container-registry-"
-  vpc_id      = data.aws_vpc.selected.id
-
-  # kics: Terraform AWS - Security groups allow ingress from 0.0.0.0:0, Sensitive Port Is Exposed To Entire Network - False positive, source CIDR is configurable
-  # kics-scan ignore-block
-  ingress {
-    description = "Enable external access for the GitLab container registry"
-    from_port   = var.container_registry_port
-    to_port     = var.container_registry_port
-    protocol    = "tcp"
-    cidr_blocks = coalescelist(var.container_registry_allowed_ingress_cidr_blocks, var.default_allowed_ingress_cidr_blocks)
-  }
-
-  tags = {
-    Name = "${var.prefix}-external-container-registry"
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 # AWS OpenSearch Process
 resource "aws_security_group" "gitlab_opensearch_security_group" {
   count = min(var.opensearch_node_count, 1)

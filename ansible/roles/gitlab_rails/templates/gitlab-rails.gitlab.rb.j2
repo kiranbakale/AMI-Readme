@@ -45,10 +45,10 @@ nginx['real_ip_recursive'] = 'on'
 nginx['real_ip_trusted_addresses'] = [
   '127.0.0.0/8',
 {% if 'haproxy_external' in groups %}
-  '{{ haproxy_external_int_addr }}/32',
+  '{{ haproxy_external_int_addr }}',
 {% endif %}
 {% if 'haproxy_internal' in groups %}
-  '{{ haproxy_internal_int_addr }}/32',
+  '{{ haproxy_internal_int_addr }}',
 {% endif %}
 {% for cidr_block in gitlab_rails_nginx_real_ip_trusted_cidr_blocks %}
   "{{ cidr_block }}",
@@ -65,8 +65,9 @@ letsencrypt['enable'] = false
 
 {% if container_registry_enable %}
 registry['enable'] = true
-registry_external_url "{{ external_url_sanitised }}:{{ container_registry_port }}"
+registry_external_url "{{ container_registry_external_url }}"
 
+registry_nginx['listen_port'] = 80
 registry_nginx['listen_https'] = false
 {% else %}
 registry['enable'] = false

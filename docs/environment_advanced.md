@@ -4,7 +4,7 @@
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
-- [**GitLab Environment Toolkit - Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search and more**](environment_advanced.md)
+- [**GitLab Environment Toolkit - Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search, Container Registry and more**](environment_advanced.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - SSL](environment_advanced_ssl.md)
@@ -245,6 +245,19 @@ Enabling Advanced Search on your environment is designed to be as easy possible 
   - At the time of writing the Elasticsearch version deployed is `7.6.2`. To deploy a different version you can set the `elastic_version`.
 - The Toolkit will also setup a Kibana Docker container on the Primary Elasticsearch node for administration and debugging purposes. Kibana will be accessible on your external IP / URL and port `5602` by default, e.g. `http://<external_ip_or_url>:5602`.
 - Ansible will then configure the GitLab environment near the end of its run to enable Advanced Search against those nodes and perform the first index.
+
+## Container Registry (GCP, AWS)
+
+The Toolkit configures the [GitLab Container Registry](https://docs.gitlab.com/ee/user/packages/container_registry/) by default on GCP and AWS environments when [External SSL](environment_advanced_ssl.md#external-ssl) is enabled in a best practice fashion, including the management of Object Storage.
+
+With both Omnibus and Cloud Native Hybrid setups the registry is configured to run on the subdomain `registry.<external_host>` by default, where `external_host` is the hostname configured via the `external_url` setting. For example, if an environment was configured with `external_url` set to `https://gitlab.test.com` the registry will be made available on `https://registry.gitlab.test.com`.
+
+For all setups, the below settings configure how the service and dependents are set up:
+
+- `container_registry_enable` - Controls whether the container registry and dependents are enabled. Optional, default is `true` when using [External SSL](environment_advanced_ssl.md#external-ssl) on AWS or GCP.
+- `container_registry_external_url` - The URL registry will be available on. Optional, default is `https://registry.<external_host>`.
+
+:information_source:&nbsp; When configuring [External SSL with user provided certificates](environment_advanced_ssl.md#user-provided-certificates) the URL configured via `container_registry_external_url` must be included as a Subject Alternative Name (SAN) name.
 
 ## Custom Servers (On Prem)
 
@@ -494,7 +507,11 @@ Typically this is set up on port `22` but this differs slightly with Toolkit bui
 
 You can configure either environment type to serve the service on a different external port via the `gitlab_shell_ssh_port` Ansible setting in your [`vars.yml`](environment_configure.md#environment-config-varsyml) file. Changing this setting also changes required firewall rules ports to match.
 
-## Custom IAM Instance Policies (AWS)
+## Custom IAM options (AWS)
+
+The Toolkit provides several customization options for configuring AWS IAM.
+
+### Custom IAM Instance Policies (AWS)
 
 [In AWS you can attach IAM Instance Profiles / Roles to EC2 Instances](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html). These Roles can then contain [Policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html) (AKA permissions) that are attached to the instance to allow it to perform actions against AWS APIs, e.g. accessing Object Storage.
 
@@ -507,7 +524,7 @@ Passing in your policies is done in Terraform via the following variables in you
 - `default_iam_instance_policy_arns` - List of IAM Policy [ARNs](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) to attach on all Instances, for example `["arn:aws:iam::aws:policy/AmazonS3FullAccess"]`. Defaults to `[]`.
 - `*_iam_instance_policy_arns` - List of IAM Policy [ARNs](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) to attach on all Instances. For example if `gitaly_iam_instance_policy_arns` was set to `["arn:aws:iam::aws:policy/AmazonS3FullAccess"]` then this Policy would be applied to all Gitaly instances via a new Role. Defaults to `[]`.
 
-## Custom IAM Permissions Boundary (AWS)
+### Custom IAM Permissions Boundary (AWS)
 
 The Toolkit also allows for there to be a [Permissions Boundary](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html) to be set for all IAM Roles it creates.
 
@@ -521,7 +538,7 @@ To do this you first create the boundary policy separately in AWS and take note 
 
 The Toolkit will then apply this boundary on the next `terraform apply` run.
 
-## Custom IAM Path (AWS)
+### Custom IAM Path (AWS)
 
 The Toolkit allows to configure a custom [Path](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html) for all IAM Roles and Policies it creates. As detailed in the AWS documentation, you can use a single path, or nest multiple paths as a folder structure. This allows to match your company organizational structure.
 
@@ -530,15 +547,3 @@ To configure custom Path add the following variable in the Terraform [Environmen
 - `default_iam_identifier_path` - The IAM [Path](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html) to be applied to all IAM Policies and Roles the Toolkit creates. Defaults to `null` which in turn results in `/` default path in AWS.
 
 The Toolkit will then apply the path on the next `terraform apply` run.
-
-## Container Registry (GCP, AWS)
-
-[Container Registry](https://docs.gitlab.com/ee/user/packages/container_registry/) is enabled by default in GitLab when you're deploying an environment configured with external SSL. The Toolkit follows this design and will configure the registry and any dependencies by default such as object storage bucket and networking.
-
-Additionally, by default, the service is configured differently depending on setup type. For Omnibus setups it will be available on the same URL via `5050`, for Cloud Native Hybrid it will be available on the URL `registry.<external_url>`.
-
-For all setups, the below settings configure how the service and dependents are set up:
-
-- `container_registry_enable` - Controls whether the container registry and dependents are enabled. Will be enabled by default when using SSL on either AWS or GCP. Must be set in both Terraform and Ansible environment configs.
-- `container_registry_port` - Port number for the container registry to be available on in Omnibus environments. Must be set in both Terraform and Ansible environment configs. Defaults to `5050`.
-- `container_registry_allowed_ingress_cidr_blocks` - A list of CIDR blocks that configures the IP ranges that will be able to access the container registry externally. Default is `["0.0.0.0/0"]`.

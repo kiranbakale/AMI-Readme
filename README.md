@@ -24,6 +24,7 @@ Created and maintained by the GitLab Quality Engineering Enablement team, the To
 - Release and nightly Omnibus builds support
 - Advanced search with Elasticsearch
 - Geo support
+- Container Registry support
 - Zero Downtime Upgrades support
 - Built in optional Load Balancing and Monitoring (Prometheus, Grafana) setup
 - SSL / TLS support (either direct or via hooks)
@@ -49,7 +50,7 @@ Note that the Toolkit currently has the following requirements (with related iss
 - [GitLab Environment Toolkit - Preparing the environment](docs/environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](docs/environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](docs/environment_configure.md)
-- [GitLab Environment Toolkit - Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search and more](docs/environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search, Container Registry and more](docs/environment_advanced.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](docs/environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](docs/environment_advanced_services.md)
 - [GitLab Environment Toolkit - Advanced - SSL](docs/environment_advanced_ssl.md)

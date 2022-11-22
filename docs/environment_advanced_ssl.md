@@ -4,7 +4,7 @@
 - [GitLab Environment Toolkit - Preparing the environment](environment_prep.md)
 - [GitLab Environment Toolkit - Provisioning the environment with Terraform](environment_provision.md)
 - [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md)
-- [GitLab Environment Toolkit - Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search and more](environment_advanced.md)
+- [GitLab Environment Toolkit - Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search, Container Registry and more](environment_advanced.md)
 - [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](environment_advanced_hybrid.md)
 - [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](environment_advanced_services.md)
 - [**GitLab Environment Toolkit - Advanced - SSL**](environment_advanced_ssl.md)
@@ -45,12 +45,13 @@ At a high level the Toolkit will simply take the certificate and key files and u
 
 #### Setup user provided certificates for Toolkit use
 
-The first step is to provide the certificates themselves for the Toolkit to use. By default, the Toolkit expects the following:
+The first step is to provide the certificates themselves for the Toolkit to use. By default, the certificates should meet the following conditions:
 
-- That certificate and key files are located in the `ansible/environments/<env_name>/files/certificates` folder
-- That certificate and key files are named in the formats `<hostname>.pem` and `<hostname>.key` respectively.
-  - `pem` is used here by default as this is now the typically used standard across various tools such as HAProxy or Let's Encrypt.
-- That the certificate file contains the [full chain](https://www.digicert.com/kb/ssl-support/pem-ssl-creation.htm)
+- Certificate and key files are named in the formats `<hostname>.pem` and `<hostname>.key` respectively
+- Certificates must contain [Subject Alternative Name(s) (SAN)](https://support.dnsimple.com/articles/what-is-ssl-san) as Common Name (CN) use only is deprecated.
+  - SAN entries should cover any additional hostnames that are expected to be used with the environment. This includes additional features such as the [Container Registry](environment_advanced.md#container-registry-gcp-aws) (`registry.<external_host>`).
+- Certificate and key files are located in the `ansible/environments/<env_name>/files/certificates` folder
+- Certificate file contains the [full chain](https://www.digicert.com/kb/ssl-support/pem-ssl-creation.htm).
 
 You can optionally store your SSL files in a different location as well as use different names if desired with additional configuration. This will be detailed further in the next section.
 
@@ -139,7 +140,7 @@ The first step is to prepare your certificates via whatever your chosen method i
 
 When preparing the certificates the following conditions should be met:
 
-- Certificates and Keys are in `.pem` format.
+- Certificates are in the `.pem` format and Keys in the `.pem` or `.key` format.
 - Certificates must contain a Subject Alternative Name (SAN) as Common Name (CN) use only is deprecated.
 - The files will be copied to each component node group. As such the SAN entries should either match each node group machine's specific hostname or be an appropriate wildcard.
   - :information_source:&nbsp; The Toolkit by default uses IPs for internal connections. [However, this can be switched to use internal hostnames as discovered by Ansible](environment_advanced_network.md#configuring-internal-connection-type-ips--hostnames) which is generally preferred for Internal SSL.

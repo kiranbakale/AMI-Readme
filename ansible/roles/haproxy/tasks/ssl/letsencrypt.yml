@@ -17,7 +17,7 @@
 
 - name: Run certbot to generate certs
   command:
-    cmd: certbot certonly -n --standalone --keep --agree-tos --email {{ external_ssl_letsencrypt_issuer_email }} --cert-name {{ external_host }} -d {{ external_host }}
+    cmd: certbot certonly -n --standalone --keep --agree-tos --email {{ external_ssl_letsencrypt_issuer_email }} --cert-name {{ external_host }} -d {{ external_host }}{{ ',' + container_registry_external_host if container_registry_enable else '' }}
     creates: /etc/letsencrypt/live/{{ external_host }}/*.pem
 
 - name: Copy over HAProxy SSL files
