@@ -94,14 +94,50 @@ resource "aws_db_instance" "gitlab_geo_tracking" {
   }
 }
 
+resource "aws_db_instance" "gitlab_geo_tracking_read_replica" {
+  count = local.rds_geo_tracking_postgres_create ? var.rds_geo_tracking_postgres_read_replica_count : 0
+
+  identifier     = "${format("%.34s", var.prefix)}-rds-geo-tracking-read-rep-${count.index + 1}"
+  instance_class = aws_db_instance.gitlab_geo_tracking[0].instance_class
+  iops           = aws_db_instance.gitlab_geo_tracking[0].iops
+  storage_type   = aws_db_instance.gitlab_geo_tracking[0].storage_type
+
+  port     = var.rds_geo_tracking_postgres_read_replica_port
+  multi_az = var.rds_geo_tracking_postgres_read_replica_multi_az
+
+  db_subnet_group_name = aws_db_subnet_group.gitlab_geo[0].name
+  vpc_security_group_ids = [
+    aws_security_group.gitlab_internal_networking.id
+  ]
+
+  parameter_group_name = aws_db_parameter_group.gitlab_geo_tracking[0].name
+  replicate_source_db  = aws_db_instance.gitlab_geo_tracking[0].arn
+  apply_immediately    = true
+
+  allocated_storage     = aws_db_instance.gitlab_geo_tracking[0].allocated_storage
+  max_allocated_storage = aws_db_instance.gitlab_geo_tracking[0].max_allocated_storage
+  storage_encrypted     = true
+  kms_key_id            = aws_db_instance.gitlab_geo_tracking[0].kms_key_id
+
+  allow_major_version_upgrade = aws_db_instance.gitlab_geo_tracking[0].allow_major_version_upgrade
+  auto_minor_version_upgrade  = aws_db_instance.gitlab_geo_tracking[0].auto_minor_version_upgrade
+
+  skip_final_snapshot     = true
+  copy_tags_to_snapshot   = true
+  backup_retention_period = 0
+
+  tags = var.rds_geo_tracking_postgres_tags
+}
+
 output "rds_geo_tracking_postgres_connection" {
   value = {
-    "rds_geo_host"              = try(aws_db_instance.gitlab_geo_tracking[0].address, "")
-    "rds_geo_port"              = try(aws_db_instance.gitlab_geo_tracking[0].port, "")
-    "rds_geo_database_name"     = try(aws_db_instance.gitlab_geo_tracking[0].db_name, "")
-    "rds_geo_database_username" = try(aws_db_instance.gitlab_geo_tracking[0].username, "")
-    "rds_geo_database_arn"      = try(aws_db_instance.gitlab_geo_tracking[0].arn, "")
-    "rds_geo_kms_key_arn"       = try(aws_db_instance.gitlab_geo_tracking[0].kms_key_id, "")
-    "rds_geo_version"           = try(aws_db_instance.gitlab_geo_tracking[0].engine_version_actual, "")
+    "rds_geo_host"               = try(aws_db_instance.gitlab_geo_tracking[0].address, "")
+    "rds_geo_port"               = try(aws_db_instance.gitlab_geo_tracking[0].port, "")
+    "rds_geo_database_name"      = try(aws_db_instance.gitlab_geo_tracking[0].db_name, "")
+    "rds_geo_database_username"  = try(aws_db_instance.gitlab_geo_tracking[0].username, "")
+    "rds_geo_database_arn"       = try(aws_db_instance.gitlab_geo_tracking[0].arn, "")
+    "rds_geo_kms_key_arn"        = try(aws_db_instance.gitlab_geo_tracking[0].kms_key_id, "")
+    "rds_geo_version"            = try(aws_db_instance.gitlab_geo_tracking[0].engine_version_actual, "")
+    "rds_geo_read_replica_hosts" = try(aws_db_instance.gitlab_geo_tracking_read_replica[*].address, "")
   }
 }

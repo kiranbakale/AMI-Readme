@@ -929,6 +929,19 @@ variable "rds_postgres_tags" {
   default     = {}
 }
 
+variable "rds_postgres_read_replica_count" {
+  type    = number
+  default = 0
+}
+variable "rds_postgres_read_replica_port" {
+  type    = number
+  default = 5432
+}
+variable "rds_postgres_read_replica_multi_az" {
+  type    = bool
+  default = false
+}
+
 ## Praefect PostgreSQL
 variable "rds_praefect_postgres_instance_type" {
   type    = string
@@ -1008,6 +1021,19 @@ variable "rds_praefect_postgres_tags" {
   default     = {}
 }
 
+variable "rds_praefect_postgres_read_replica_count" {
+  type    = number
+  default = 0
+}
+variable "rds_praefect_postgres_read_replica_port" {
+  type    = number
+  default = 5432
+}
+variable "rds_praefect_postgres_read_replica_multi_az" {
+  type    = bool
+  default = false
+}
+
 ## Geo Tracking PostgreSQL
 variable "rds_geo_tracking_postgres_instance_type" {
   type    = string
@@ -1085,6 +1111,19 @@ variable "rds_geo_tracking_postgres_tags" {
   description = "Tags to apply to RDS Geo Tracking Postgres"
   type        = map(any)
   default     = {}
+}
+
+variable "rds_geo_tracking_postgres_read_replica_count" {
+  type    = number
+  default = 0
+}
+variable "rds_geo_tracking_postgres_read_replica_port" {
+  type    = number
+  default = 5432
+}
+variable "rds_geo_tracking_postgres_read_replica_multi_az" {
+  type    = bool
+  default = false
 }
 
 ## Redis

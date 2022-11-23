@@ -136,7 +136,7 @@ Like the main provisioning docs there are sections for each supported provider o
 
 #### AWS RDS
 
-The Toolkit supports provisioning an AWS RDS PostgreSQL service instance with everything GitLab requires or recommends such as built in HA support over AZs and encryption.
+The Toolkit supports provisioning an [AWS RDS PostgreSQL service](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html) instance with everything GitLab requires or recommends such as built in HA support over AZs and encryption.
 
 The variables for this service start with the prefix `rds_postgres_*` and should replace any previous `postgres_*`, `pgbouncer_*` and `praefect_postgres_*` settings. The available variables are as follows:
 
@@ -153,7 +153,7 @@ The variables for this service start with the prefix `rds_postgres_*` and should
 - `rds_postgres_storage_type` - The type of storage to use. Optional, default is `io1`.
 - `rds_postgres_kms_key_arn` - The ARN for an existing [AWS KMS Key](https://aws.amazon.com/kms/) to be used to encrypt the database instance. If not provided `default_kms_key_arm` or the default AWS KMS key will be used in that order. Optional, default is `null`.
   - **Warning** Changing this value after the initial creation will result in the database being recreated and will lead to **data loss**.
-- [`rds_postgres_backup_retention_period`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#backup_retention_period) - The number of days to retain backups for. Must be between 0 and 35. Must be greater than 0 for Geo primary instances. Optional, default is `null`.
+- [`rds_postgres_backup_retention_period`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#backup_retention_period) - The number of days to retain backups for. Must be between 0 and 35. Must be greater than 0 when Read Replicas are to be used (Including Geo primary instances). Optional, default is `null`.
 - [`rds_postgres_backup_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#backup_window) - The daily time range where backups will be taken, e.g. `09:46-10:16`. Optional, default is `null`.
 - [`rds_postgres_delete_automated_backups`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#delete_automated_backups) - Whether automated backups (if taken) will be deleted when the RDS instance is deleted. Optional, default is `true`.
 - [`rds_postgres_maintenance_window`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#maintenance_window) - The window to perform maintenance in, e.g. `Mon:00:00-Mon:03:00`. Optional, default is `null`. Must not overlap with `rds_postgres_backup_window`.
@@ -198,6 +198,24 @@ Configuring how RDS version is selected in the Toolkit is done via the following
 - [`rds_postgres_auto_minor_version_upgrade`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance#auto_minor_version_upgrade) - Whether automated upgrades to AWS selected minor versions should occur during the maintenance window. This is disabled by default and is not recommended being enabled as it can lead to clashes with Terraform's state. Optional, default is `false`.
 
 :information_source:&nbsp; If a separate Database Instance for Praefect is desired then this can be done with the same settings above but with the `rds_praefect_postgres_*` prefix instead.
+
+##### AWS RDS Read Replicas
+
+The standard setup above will deploy an [RDS instance with a standby replica](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZSingleStandby.html) in a different Availability Zone to provide HA in case of a failure. This replica is only used for HA though and can't be reached.
+
+As an additional feature RDS also offers the ability to spin up separate [Read Replicas](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html) that can be reached and serve read requests. With GitLab this feature can be used to enable [Database Load Balancing](https://docs.gitlab.com/ee/administration/postgresql/database_load_balancing.html) for additional performance and stability - As such, the Toolkit supports provisioning 1 or more read replicas per database.
+
+Read Replicas, as implied, mimic their main database in most ways, so the number of options here is lower. Configuring Read Replicas is done via the following variables:
+
+- `rds_postgres_read_replica_count` - The number of read replicas to configure for the RDS database of the PostgreSQL instance to set up. Optional, default is `0`.
+- `rds_postgres_read_replica_port` - The port read replicas will run on. Optional, default is `5432`.
+- `rds_postgres_read_replica_multi_az` - Whether each replica should itself have a standby replica to provide HA. Optional, default is `false`.
+ 
+:information_source:&nbsp; AWS requires that the main RDS database for which Read Replicas are being configured for must have its Backup Retention Period value (e.g. `rds_postgres_backup_retention_period`) set to 1 or higher.
+
+:information_source:&nbsp; Read replicas for Praefect or Geo Tracking RDS databases can also be done with the same settings above but with the `rds_praefect_postgres_*` or `rds_geo_tracking_postgres_*` prefixes respectively instead.
+
+Once provisioned you'll see a new output added at the end of the Terraform process. Of note is the output from this is the `rds_read_replica_hosts` output (also `rds_praefect_read_replica_hosts` / `rds_geo_read_replica_hosts`), which contains the addresses of the read replicas that in turn can be used for [Database Load Balancing configuration later](#configuring-with-ansible-1).
 
 ##### Geo
 
