@@ -17,7 +17,7 @@ cloud_provider_labels_name: "{{ 'labels' if cloud_provider == 'gcp' else 'tags' 
 
 internal_addr_use_hostnames: false
 internal_ip_lookup: {gcp: ['networkInterfaces', 0, 'networkIP'], azure: ['private_ipv4_addresses', 0], aws: ['private_ip_address'], none: ['ansible_default_ipv4', 'address']}
-internal_addr_lookup: "{{ ['ansible_fqdn'] if internal_addr_use_hostnames else internal_ip_lookup[cloud_provider] }}"
+internal_addr_lookup: "{{ ['ansible_facts', 'fqdn'] if internal_addr_use_hostnames else internal_ip_lookup[cloud_provider] }}"
 
 ## GCP
 gcp_service_account_host_file: "{{ service_account_file | default('', true) }}"
