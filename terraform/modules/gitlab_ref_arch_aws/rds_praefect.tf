@@ -88,14 +88,50 @@ resource "aws_db_instance" "gitlab_praefect" {
   tags                  = var.rds_praefect_postgres_tags
 }
 
+resource "aws_db_instance" "gitlab_praefect_read_replica" {
+  count = local.rds_praefect_postgres_create ? var.rds_praefect_postgres_read_replica_count : 0
+
+  identifier     = "${format("%.38s", var.prefix)}-rds-praefect-read-rep-${count.index + 1}"
+  instance_class = aws_db_instance.gitlab_praefect[0].instance_class
+  iops           = aws_db_instance.gitlab_praefect[0].iops
+  storage_type   = aws_db_instance.gitlab_praefect[0].storage_type
+
+  port     = var.rds_praefect_postgres_read_replica_port
+  multi_az = var.rds_praefect_postgres_read_replica_multi_az
+
+  db_subnet_group_name = aws_db_subnet_group.gitlab_praefect[0].name
+  vpc_security_group_ids = [
+    aws_security_group.gitlab_internal_networking.id
+  ]
+
+  parameter_group_name = aws_db_parameter_group.gitlab_praefect[0].name
+  replicate_source_db  = aws_db_instance.gitlab_praefect[0].arn
+  apply_immediately    = true
+
+  allocated_storage     = aws_db_instance.gitlab_praefect[0].allocated_storage
+  max_allocated_storage = aws_db_instance.gitlab_praefect[0].max_allocated_storage
+  storage_encrypted     = true
+  kms_key_id            = aws_db_instance.gitlab_praefect[0].kms_key_id
+
+  allow_major_version_upgrade = aws_db_instance.gitlab_praefect[0].allow_major_version_upgrade
+  auto_minor_version_upgrade  = aws_db_instance.gitlab_praefect[0].auto_minor_version_upgrade
+
+  skip_final_snapshot     = true
+  copy_tags_to_snapshot   = true
+  backup_retention_period = 0
+
+  tags = var.rds_praefect_postgres_tags
+}
+
 output "rds_praefect_postgres_connection" {
   value = {
-    "rds_praefect_host"              = try(aws_db_instance.gitlab_praefect[0].address, "")
-    "rds_praefect_port"              = try(aws_db_instance.gitlab_praefect[0].port, "")
-    "rds_praefect_database_name"     = try(aws_db_instance.gitlab_praefect[0].db_name, "")
-    "rds_praefect_database_username" = try(aws_db_instance.gitlab_praefect[0].username, "")
-    "rds_praefect_database_arn"      = try(aws_db_instance.gitlab_praefect[0].arn, "")
-    "rds_praefect_kms_key_arn"       = try(aws_db_instance.gitlab_praefect[0].kms_key_id, "")
-    "rds_praefect_version"           = try(aws_db_instance.gitlab_praefect[0].engine_version_actual, "")
+    "rds_praefect_host"               = try(aws_db_instance.gitlab_praefect[0].address, "")
+    "rds_praefect_port"               = try(aws_db_instance.gitlab_praefect[0].port, "")
+    "rds_praefect_database_name"      = try(aws_db_instance.gitlab_praefect[0].db_name, "")
+    "rds_praefect_database_username"  = try(aws_db_instance.gitlab_praefect[0].username, "")
+    "rds_praefect_database_arn"       = try(aws_db_instance.gitlab_praefect[0].arn, "")
+    "rds_praefect_kms_key_arn"        = try(aws_db_instance.gitlab_praefect[0].kms_key_id, "")
+    "rds_praefect_version"            = try(aws_db_instance.gitlab_praefect[0].engine_version_actual, "")
+    "rds_praefect_read_replica_hosts" = try(aws_db_instance.gitlab_praefect_read_replica[*].address, "")
   }
 }
