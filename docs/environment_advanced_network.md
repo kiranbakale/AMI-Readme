@@ -247,7 +247,7 @@ module "gitlab_ref_arch_aws" {
 
 When providing an existing network to the Toolkit it also supports the passthrough of public / private subnets.
 
-There are several possible combinations supported. The Toolkit will dynamically configure each based on what's been configured via the `subnet_pub_ids` and `subnet_priv_ids` settings as follows:
+There are several possible combinations supported. The Toolkit will dynamically configure each based on what's been configured via the  `subnet_pub_ids` and `subnet_priv_ids` settings as follows:
 
 - Public Subnets - The default. All resources are placed in public subnets and have public IPs.
   - When `subnet_pub_ids` is higher than `0` and `subnet_priv_ids` is `0`.
@@ -258,14 +258,6 @@ There are several possible combinations supported. The Toolkit will dynamically 
   - When `subnet_pub_ids` is `0` and `subnet_priv_ids` is higher than `0`.
 
 :information_source:&nbsp; When Private subnets are being used most VMs won't have a public IP address. As such, when running Ansible it should be run from within the network [with its Dynamic Inventory configured to connect via private IPs](environment_configure.md#amazon-web-services-aws) (`compose.ansible_host` set to `private_ip_address`).
-
-### Custom Security Groups
-
-The Toolkit manages all the [Security Groups](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html) required for the environment. However, there may be select cases where additional security groups may be required to enable connections to external components such as a custom External Load Balancer.
-
-The below settings can be used to add additional security groups to select components in [module's environment config file](environment_provision.md#configure-module-settings-environmenttf):
-
-- `gitlab_rails_security_group_ids` - A list of additional Security Groups IDs to add the GitLab Rails machines to. Optional, default is `[]`.
 
 ## Disable External IPs (Azure)
 
