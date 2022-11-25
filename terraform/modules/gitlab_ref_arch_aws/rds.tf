@@ -64,7 +64,7 @@ resource "aws_db_instance" "gitlab" {
 
   db_subnet_group_name = aws_db_subnet_group.gitlab[0].name
   vpc_security_group_ids = [
-    aws_security_group.gitlab_internal_networking.id
+    aws_security_group.gitlab_rds[0].id
   ]
 
   parameter_group_name = aws_db_parameter_group.gitlab[0].name
@@ -104,7 +104,7 @@ resource "aws_db_instance" "gitlab_read_replica" {
 
   db_subnet_group_name = aws_db_subnet_group.gitlab[0].name
   vpc_security_group_ids = [
-    aws_security_group.gitlab_internal_networking.id
+    aws_security_group.gitlab_rds[0].id
   ]
 
   parameter_group_name = aws_db_parameter_group.gitlab[0].name

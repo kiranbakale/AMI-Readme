@@ -62,7 +62,7 @@ resource "aws_db_instance" "gitlab_praefect" {
 
   db_subnet_group_name = aws_db_subnet_group.gitlab_praefect[0].name
   vpc_security_group_ids = [
-    aws_security_group.gitlab_internal_networking.id
+    aws_security_group.gitlab_rds_praefect[0].id
   ]
 
   parameter_group_name = aws_db_parameter_group.gitlab_praefect[0].name
@@ -101,7 +101,7 @@ resource "aws_db_instance" "gitlab_praefect_read_replica" {
 
   db_subnet_group_name = aws_db_subnet_group.gitlab_praefect[0].name
   vpc_security_group_ids = [
-    aws_security_group.gitlab_internal_networking.id
+    aws_security_group.gitlab_rds_praefect[0].id
   ]
 
   parameter_group_name = aws_db_parameter_group.gitlab_praefect[0].name
