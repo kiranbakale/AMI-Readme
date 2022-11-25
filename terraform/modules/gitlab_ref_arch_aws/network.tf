@@ -3,6 +3,8 @@ locals {
   create_network   = var.create_network && !local.existing_network
   default_network  = !local.create_network && !local.existing_network
 
+  create_network_routes = local.create_network && var.create_network_routes
+
   create_peering     = local.create_network && var.peer_vpc_id != null
   enable_peering     = var.peer_connection_id != null && var.peer_vpc_cidr != null
   peer_connection_id = var.peer_connection_id != null ? var.peer_connection_id : try(aws_vpc_peering_connection.gitlab_vpc_peering_requester[0].id, "")
@@ -75,35 +77,39 @@ resource "aws_internet_gateway" "gitlab_vpc_gw" {
   }
 }
 
-resource "aws_route_table" "gitlab_vpc_rt_pub" {
-  count = local.create_network ? min(var.subnet_pub_count, 1) : 0
+resource "aws_route_table" "gitlab_vpc_route_table_pub" {
+  count = local.create_network_routes ? min(var.subnet_pub_count, 1) : 0
 
   vpc_id = aws_vpc.gitlab_vpc[0].id
-
-  route {
-    cidr_block = "0.0.0.0/0" # Internet Access
-    gateway_id = aws_internet_gateway.gitlab_vpc_gw[0].id
-  }
-
-  dynamic "route" {
-    for_each = range(local.create_peering || local.enable_peering ? 1 : 0)
-
-    content {
-      cidr_block                = var.peer_vpc_cidr
-      vpc_peering_connection_id = local.peer_connection_id
-    }
-  }
 
   tags = {
     Name = "${var.prefix}-pub-rt"
   }
 }
 
-resource "aws_route_table_association" "gitlab_vpc_rt_pub_rta" {
-  count = local.create_network ? var.subnet_pub_count : 0
+# The default internet route via Internet Gateway
+resource "aws_route" "gitlab_vpc_route_pub_igw" {
+  count = local.create_network_routes ? min(var.subnet_pub_count, 1) : 0
+
+  route_table_id         = aws_route_table.gitlab_vpc_route_table_pub[0].id
+  destination_cidr_block = "0.0.0.0/0" # Internet Access
+  gateway_id             = aws_internet_gateway.gitlab_vpc_gw[0].id
+}
+
+# Route to VPC peer
+resource "aws_route" "gitlab_vpc_route_peering" {
+  count = local.create_network_routes && (local.create_peering || local.enable_peering) ? 1 : 0
+
+  route_table_id            = aws_route_table.gitlab_vpc_route_table_pub[0].id
+  destination_cidr_block    = var.peer_vpc_cidr
+  vpc_peering_connection_id = local.peer_connection_id
+}
+
+resource "aws_route_table_association" "gitlab_vpc_route_table_association_pub" {
+  count = local.create_network_routes ? var.subnet_pub_count : 0
 
   subnet_id      = aws_subnet.gitlab_vpc_sn_pub[count.index].id
-  route_table_id = aws_route_table.gitlab_vpc_rt_pub[0].id
+  route_table_id = aws_route_table.gitlab_vpc_route_table_pub[0].id
 }
 
 ## Private Subnet(s)
@@ -141,26 +147,30 @@ resource "aws_nat_gateway" "gitlab_vpc_sn_priv_ng" {
   }
 }
 
-resource "aws_route_table" "gitlab_vpc_rt_priv" {
-  count = local.create_network ? min(var.subnet_pub_count, var.subnet_priv_count) : 0
+resource "aws_route_table" "gitlab_vpc_route_table_priv" {
+  count = local.create_network_routes ? min(var.subnet_pub_count, var.subnet_priv_count) : 0
 
   vpc_id = aws_vpc.gitlab_vpc[0].id
-
-  route {
-    cidr_block     = "0.0.0.0/0" # Internet Access
-    nat_gateway_id = aws_nat_gateway.gitlab_vpc_sn_priv_ng[count.index].id
-  }
 
   tags = {
     Name = "${var.prefix}-sub-priv-rt-${count.index}"
   }
 }
 
-resource "aws_route_table_association" "gitlab_vpc_rt_priv_rta" {
-  count = local.create_network ? min(var.subnet_pub_count, var.subnet_priv_count) : 0
+# The default internet route via NAT Gateway
+resource "aws_route" "gitlab_vpc_route_priv_nat" {
+  count = local.create_network_routes ? min(var.subnet_pub_count, var.subnet_priv_count) : 0
+
+  route_table_id         = aws_route_table.gitlab_vpc_route_table_priv[count.index].id
+  destination_cidr_block = "0.0.0.0/0" # Internet Access
+  nat_gateway_id         = aws_nat_gateway.gitlab_vpc_sn_priv_ng[count.index].id
+}
+
+resource "aws_route_table_association" "gitlab_vpc_route_table_association_priv" {
+  count = local.create_network_routes ? min(var.subnet_pub_count, var.subnet_priv_count) : 0
 
   subnet_id      = aws_subnet.gitlab_vpc_sn_priv[count.index].id
-  route_table_id = aws_route_table.gitlab_vpc_rt_priv[count.index].id
+  route_table_id = aws_route_table.gitlab_vpc_route_table_priv[count.index].id
 }
 
 # Setup network peering for Geo
@@ -196,10 +206,12 @@ locals {
 
 output "network" {
   value = {
-    "vpc_id"              = local.default_network ? local.default_vpc_id : local.vpc_id
-    "vpc_subnet_pub_ids"  = local.subnet_pub_ids
-    "vpc_subnet_priv_ids" = local.subnet_priv_ids
-    "vpc_cidr_block"      = var.vpc_cidr_block
-    "peer_connection_id"  = try(aws_vpc_peering_connection.gitlab_vpc_peering_requester[0].id, "")
+    "vpc_id"                   = local.default_network ? local.default_vpc_id : local.vpc_id
+    "vpc_subnet_pub_ids"       = local.subnet_pub_ids
+    "vpc_subnet_priv_ids"      = local.subnet_priv_ids
+    "vpc_cidr_block"           = var.vpc_cidr_block
+    "vpc_route_table_pub_ids"  = aws_route_table.gitlab_vpc_route_table_pub[*].id
+    "vpc_route_table_priv_ids" = aws_route_table.gitlab_vpc_route_table_priv[*].id
+    "peer_connection_id"       = try(aws_vpc_peering_connection.gitlab_vpc_peering_requester[0].id, "")
   }
 }
