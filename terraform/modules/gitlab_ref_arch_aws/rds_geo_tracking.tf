@@ -62,7 +62,7 @@ resource "aws_db_instance" "gitlab_geo_tracking" {
 
   db_subnet_group_name = aws_db_subnet_group.gitlab_geo[0].name
   vpc_security_group_ids = [
-    aws_security_group.gitlab_internal_networking.id
+    aws_security_group.gitlab_rds_geo_tracking[0].id
   ]
 
   parameter_group_name = aws_db_parameter_group.gitlab_geo_tracking[0].name
@@ -107,7 +107,7 @@ resource "aws_db_instance" "gitlab_geo_tracking_read_replica" {
 
   db_subnet_group_name = aws_db_subnet_group.gitlab_geo[0].name
   vpc_security_group_ids = [
-    aws_security_group.gitlab_internal_networking.id
+    aws_security_group.gitlab_rds_geo_tracking[0].id
   ]
 
   parameter_group_name = aws_db_parameter_group.gitlab_geo_tracking[0].name

@@ -35,7 +35,7 @@ resource "aws_opensearch_domain" "gitlab" {
   vpc_options {
     subnet_ids = local.opensearch_subnet_ids
 
-    security_group_ids = [aws_security_group.gitlab_opensearch_security_group[0].id]
+    security_group_ids = [aws_security_group.gitlab_opensearch[0].id]
   }
 
   ebs_options {
