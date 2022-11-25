@@ -1369,6 +1369,10 @@ variable "create_network" {
   type    = bool
   default = false
 }
+variable "create_network_routes" {
+  type    = bool
+  default = true
+}
 variable "vpc_cidr_block" {
   type    = string
   default = "172.31.0.0/16"
