@@ -1,4 +1,7 @@
+data "aws_partition" "current" {}
+
 locals {
+  aws_partition  = data.aws_partition.current.partition
   eks_custom_ami = var.eks_ami_id != null
   eks_ami_type   = local.eks_custom_ami ? "CUSTOM" : "AL2_x86_64"
 
@@ -359,25 +362,25 @@ resource "aws_iam_role" "gitlab_eks_node_role" {
 
 resource "aws_iam_role_policy_attachment" "amazon_eks_cluster_policy" {
   count      = min(local.total_node_pool_count, 1)
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  policy_arn = "arn:${local.aws_partition}:iam::aws:policy/AmazonEKSClusterPolicy"
   role       = aws_iam_role.gitlab_eks_role[0].name
 }
 
 resource "aws_iam_role_policy_attachment" "amazon_eks_vpc_resource_controller" {
   count      = min(local.total_node_pool_count, 1)
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
+  policy_arn = "arn:${local.aws_partition}:iam::aws:policy/AmazonEKSVPCResourceController"
   role       = aws_iam_role.gitlab_eks_role[0].name
 }
 
 resource "aws_iam_role_policy_attachment" "amazon_eks_worker_node_policy" {
   count      = min(local.total_node_pool_count, 1)
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  policy_arn = "arn:${local.aws_partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.gitlab_eks_node_role[0].name
 }
 
 resource "aws_iam_role_policy_attachment" "amazon_ec2_container_registry_read_only" {
   count      = min(local.total_node_pool_count, 1)
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  policy_arn = "arn:${local.aws_partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.gitlab_eks_node_role[0].name
 }
 
@@ -516,7 +519,7 @@ resource "aws_iam_role" "gitlab_addon_vpc_cni_role" {
 resource "aws_iam_role_policy_attachment" "gitlab_addon_vpc_cni_policy" {
   count = min(local.total_node_pool_count, 1)
 
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  policy_arn = "arn:${local.aws_partition}:iam::aws:policy/AmazonEKS_CNI_Policy"
   role       = aws_iam_role.gitlab_addon_vpc_cni_role[count.index].name
 }
 
@@ -572,7 +575,7 @@ resource "aws_iam_role" "gitlab_addon_ebs_csi_driver_role" {
 resource "aws_iam_role_policy_attachment" "gitlab_addon_ebs_csi_driver_policy" {
   count = min(local.total_node_pool_count, 1)
 
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+  policy_arn = "arn:${local.aws_partition}:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
   role       = aws_iam_role.gitlab_addon_ebs_csi_driver_role[count.index].name
 }
 

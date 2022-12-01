@@ -262,7 +262,7 @@ It's worth noting the risk of this is low as Cluster Autoscaler itself shouldn't
 
 When this occurs the easiest solution is to [scale up the node pool manually](https://docs.aws.amazon.com/eks/latest/userguide/update-managed-node-group.html#mng-edit) to the same number as zones (subnets) and then back down again. The pod will deploy on the new node in the correct zone in this scenario and then Cluster Autoscaler will correctly evict and remove the others.
 
-Another solution suggested is to deploy [Karpenter](https://karpenter.sh/) manually instead of Cluster Autoscaler as [it has more permissions to handle this solution directly](https://karpenter.sh/v0.7.3/tasks/scheduling/#persistent-volume-topology).
+Another solution suggested is to deploy [Karpenter](https://karpenter.sh/) manually instead of Cluster Autoscaler as [it has more permissions to handle this solution directly](https://karpenter.sh/v0.19.2/tasks/scheduling/#persistent-volume-topology).
 
 ### AWS EKS - Unable to adjust Node Pool sizes due to Minimum / Desired Size limitations after deployment
 
