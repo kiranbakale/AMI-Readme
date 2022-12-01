@@ -1,5 +1,8 @@
 # Data Disks
+data "aws_partition" "current" {}
+
 locals {
+  aws_partition = data.aws_partition.current.partition
   node_data_disks = flatten([
     for i in range(var.node_count) :
     [
@@ -109,7 +112,7 @@ resource "aws_iam_role_policy" "gitlab_dlm" {
           "ec2:CreateTags"
         ]
         Effect    = "Allow"
-        Resource  = "arn:aws:ec2:*::snapshot/*"
+        Resource  = "arn:${local.aws_partition}:ec2:*::snapshot/*"
         Condition = { "StringLike" = { "aws:RequestTag/gitlab_node_data_disk_role" = "${var.prefix}-${var.node_type}-*" } }
       },
       {
@@ -117,7 +120,7 @@ resource "aws_iam_role_policy" "gitlab_dlm" {
           "ec2:DeleteSnapshot"
         ]
         Effect    = "Allow"
-        Resource  = "arn:aws:ec2:*::snapshot/*"
+        Resource  = "arn:${local.aws_partition}:ec2:*::snapshot/*"
         Condition = { "StringLike" = { "aws:ResourceTag/gitlab_node_data_disk_role" = "${var.prefix}-${var.node_type}-*" } }
       },
       {
@@ -125,7 +128,7 @@ resource "aws_iam_role_policy" "gitlab_dlm" {
           "ec2:CreateSnapshots",
         ]
         Effect    = "Allow"
-        Resource  = "arn:aws:ec2:*:*:instance/*"
+        Resource  = "arn:${local.aws_partition}:ec2:*:*:instance/*"
         Condition = { "StringEquals" = { "aws:ResourceTag/gitlab_node_prefix" = var.prefix, "aws:ResourceTag/gitlab_node_type" = var.node_type } }
       },
       {
@@ -134,7 +137,7 @@ resource "aws_iam_role_policy" "gitlab_dlm" {
           "ec2:CreateSnapshots"
         ]
         Effect    = "Allow"
-        Resource  = "arn:aws:ec2:*:*:volume/*"
+        Resource  = "arn:${local.aws_partition}:ec2:*:*:volume/*"
         Condition = { "StringLike" = { "aws:ResourceTag/gitlab_node_data_disk_role" = "${var.prefix}-${var.node_type}-*" } }
       }
     ]
