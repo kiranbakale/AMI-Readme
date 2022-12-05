@@ -57,6 +57,9 @@
         - name: Get all GitLab Charts versions
           command: helm search repo gitlab/gitlab -l -o json
           register: gitlab_charts_versions
+          become: false
+          delegate_to: localhost
+          run_once: true
 
         - name: Match GitLab Charts version to App version
           set_fact:
