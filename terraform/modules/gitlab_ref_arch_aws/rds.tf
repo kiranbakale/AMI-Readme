@@ -3,6 +3,8 @@ locals {
 
   rds_postgres_subnet_ids    = local.backend_subnet_ids != null ? local.backend_subnet_ids : slice(tolist(local.default_subnet_ids), 0, var.rds_postgres_default_subnet_count)
   rds_postgres_major_version = floor(var.rds_postgres_version)
+
+  rds_postgres_is_primary = var.rds_postgres_replication_database_arn == null
 }
 
 resource "aws_db_subnet_group" "gitlab" {
@@ -47,18 +49,22 @@ resource "aws_db_parameter_group" "gitlab" {
 resource "aws_db_instance" "gitlab" {
   count = local.rds_postgres_create ? 1 : 0
 
-  identifier     = "${var.prefix}-rds"
-  engine         = "postgres"
-  engine_version = var.rds_postgres_version
+  identifier = "${var.prefix}-rds"
+
+  # Required unless replicate_source_db is provided
+  engine         = local.rds_postgres_is_primary ? "postgres" : null
+  engine_version = local.rds_postgres_is_primary ? var.rds_postgres_version : null
+
   instance_class = "db.${var.rds_postgres_instance_type}"
   multi_az       = var.rds_postgres_multi_az
   iops           = var.rds_postgres_iops
   storage_type   = var.rds_postgres_storage_type
 
-  db_name  = var.rds_postgres_database_name
-  port     = var.rds_postgres_port
-  username = var.rds_postgres_username
-  password = var.rds_postgres_password
+  port = var.rds_postgres_port
+
+  db_name  = local.rds_postgres_is_primary ? var.rds_postgres_database_name : null
+  username = local.rds_postgres_is_primary ? var.rds_postgres_username : null
+  password = local.rds_postgres_is_primary ? var.rds_postgres_password : null
 
   iam_database_authentication_enabled = true
 
@@ -76,8 +82,8 @@ resource "aws_db_instance" "gitlab" {
   storage_encrypted     = true
   kms_key_id            = coalesce(var.rds_postgres_kms_key_arn, var.default_kms_key_arn, try(data.aws_kms_key.aws_rds[0].arn, null))
 
-  backup_window           = var.rds_postgres_backup_window
-  backup_retention_period = var.rds_postgres_backup_retention_period
+  backup_window           = local.rds_postgres_is_primary ? var.rds_postgres_backup_window : null
+  backup_retention_period = local.rds_postgres_is_primary ? var.rds_postgres_backup_retention_period : null
   maintenance_window      = var.rds_postgres_maintenance_window
 
   allow_major_version_upgrade = true
@@ -85,7 +91,7 @@ resource "aws_db_instance" "gitlab" {
 
   skip_final_snapshot = true
 
-  delete_automated_backups = var.rds_postgres_delete_automated_backups
+  delete_automated_backups = local.rds_postgres_is_primary ? var.rds_postgres_delete_automated_backups : null
 
   copy_tags_to_snapshot = true
   tags                  = var.rds_postgres_tags
