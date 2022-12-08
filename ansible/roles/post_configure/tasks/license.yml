@@ -4,7 +4,7 @@
       command: |
         gitlab-rails runner "
           if License.current&.plan == nil
-            license = License.new(data: '{{ lookup('file', gitlab_license_file) }}')
+            license = License.new(data: '{{ gitlab_license_text }}')
             license.save
           end
 
@@ -32,7 +32,7 @@
         command: |
           gitlab-rails runner "
             if License.current&.plan == nil
-              license = License.new(data: '{{ lookup('file', gitlab_license_file) }}')
+              license = License.new(data: '{{ gitlab_license_text }}')
               license.save
             end
 
