@@ -100,7 +100,7 @@ grafana['dashboards'] = [
     'disableDeletion' => true,
     'updateIntervalSeconds' => 600,
     'options' => {
-      'path' => '/opt/GitLab Environment Toolkit/dashboards',
+      'path' => '/opt/gitlab_environment_toolkit/dashboards',
     }
   },
 {% for item in monitor_custom_dashboards %}
@@ -112,7 +112,7 @@ grafana['dashboards'] = [
     'disableDeletion' => true,
     'updateIntervalSeconds' => 600,
     'options' => {
-      'path' => '/opt/{{ item.display_name }}/dashboards',
+      'path' => "/opt/{{ item.display_name | lower | replace(' ', '_') }}/dashboards",
     }
   },
 {% endfor %}
