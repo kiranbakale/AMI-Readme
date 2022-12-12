@@ -199,7 +199,7 @@ For Omnibus environments the site folders are treated the same as non Geo enviro
 
 - `geo_primary_site_group_name`/`geo_secondary_site_group_name` - These should match the `geo_site` that was set in terraform for the site you want to use as a primary/secondary, any `-` should be replaced with `_` as the names are altered when pulled from the cloud provider. Each setting only needs to go into the site that corresponds to its role i.e. primary or secondary.
 
-You can also remove the GitLab license from the sites that will not be set as the primary before running the `ansible-playbook` command. To remove the license from the secondary site you can just remove the `gitlab_license_file` setting from the secondary `vars.yml` file.
+You can also remove the GitLab license from the sites that will not be set as the primary before running the `ansible-playbook` command. To remove the license from the secondary site you can just remove the `gitlab_license_file` or `gitlab_subscription_activation_code` setting from the secondary `vars.yml` file.
 
 Once the new settings are added the steps for [GitLab Environment Toolkit - Configuring the environment with Ansible](environment_configure.md) should be followed for each site.
 
