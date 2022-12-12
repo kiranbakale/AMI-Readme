@@ -247,7 +247,7 @@ redis_sentinel_port: 26379
 redis_external_ssl: "{{ cloud_provider == 'aws' }}"
 
 # Sidekiq
-sidekiq_max_concurrency: 10
+sidekiq_max_concurrency: 20
 
 ################################################################################
 ## GitLab Component Settings (Non-Omnibus)
