@@ -374,10 +374,12 @@ sidekiq_custom_files_paths: []
 monitor_custom_files_paths: []
 
 ################################################################################
-## License
+## Subscription / License
 ################################################################################
+gitlab_subscription_activation_code: ""
+
 gitlab_license_file: ""
-gitlab_license_text: "{{ lookup('file', gitlab_license_file) if gitlab_license_file else ''}}"
+gitlab_license_text: "{{ lookup('file', gitlab_license_file) if gitlab_license_file else '' }}"
 
 ################################################################################
 ## GitLab Geo Settings
