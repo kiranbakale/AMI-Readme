@@ -164,6 +164,20 @@ This wipes the records from the specific server and will unblock it to start rep
 
 [This is due to an issue with certain Python plugins](https://github.com/ansible/ansible/issues/32554#issuecomment-642896861) on your system. You can work around this by running `export no_proxy="*"` before running the `ansible-playbook` commands.
 
+### Amazon Linux 2 install issue due to repository change after 2022-08-22
+
+[Dedicated Omnibus GitLab packages were made available for Amazon Linux 2](https://about.gitlab.com/blog/2022/05/02/amazon-linux-2-support-and-distro-specific-packages/) from version `14.9.0`. To support this the official package repositories were further changed from `15.3.0` onwards.
+
+As a result, for existing setups before the release of `15.3.0` (August 22, 2022) the package repository on the machines will be changed over.
+
+This changeover will cause failures until the repository cache is reset as a one off as detailed in the above linked blog post:
+
+```sh
+if yum list installed gitlab-runner; then yum clean all ; yum makecache; fi
+```
+
+After the cache is reset the setup should work again as normal.
+
 ## Cloud Native Hybrid
 
 In this section are troubleshooting steps for some common Cloud Native Hybrid environment issues.
