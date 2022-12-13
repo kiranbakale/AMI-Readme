@@ -407,6 +407,8 @@ geo_secondary_site_postgres_int_ip: "{{ (groups[geo_secondary_site_postgres_grou
 geo_secondary_postgres_host: ""
 geo_secondary_praefect_postgres_host: ""
 
+geo_secondary_skip_hybrid_redeploy: false
+
 geo_primary_gitlab_nfs_target_group: "{{ (geo_primary_site_group_name + '_gitlab_nfs' if geo_primary_site_group_name + '_gitlab_nfs' in groups else (groups.keys() | select('match', geo_primary_site_group_name + '(_gitaly_primary|_gitlab_rails_primary)') | first)) if geo_primary_site_group_name in group_names else '' }}"
 geo_primary_gitlab_nfs_int_ip: "{{ groups[geo_primary_gitlab_nfs_target_group] | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('') if geo_primary_site_group_name in group_names else '' }}"
 geo_secondary_gitlab_nfs_target_group: "{{ (geo_secondary_site_group_name + '_gitlab_nfs' if geo_secondary_site_group_name + '_gitlab_nfs' in groups else (groups.keys() | select('match', geo_secondary_site_group_name + '(_gitaly_primary|_gitlab_rails_primary)') | first)) if geo_secondary_site_group_name in group_names else '' }}"
