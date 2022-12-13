@@ -220,7 +220,7 @@ sidekiq['max_concurrency'] = {{ sidekiq_max_concurrency }}
 ### Sidekiq - Scale up workers dynamically to 1/4 of CPUS unless single node
 {% if 'gitaly' in groups %}
 sidekiq['queue_groups'] = [
-{% for cpu in range((ansible_processor_vcpus / 4) | int) %}
+{% for cpu in range([(ansible_processor_vcpus / 4) | int, 1] | max) %}
   "*",
 {% endfor %}
 ]
