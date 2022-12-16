@@ -39,7 +39,7 @@
     - read-only-replica
     - secondary
   when:
-    - ('postgres_primary' in group_names) or ('gitlab_rails' in group_names and postgres_external)
+    - ('postgres_primary' in group_names) or ('gitlab_rails' in group_names and postgres_external) or ('sidekiq' in group_names and postgres_external)
     - (geo_secondary_site_group_name in group_names)
 
 - name: Configure the tracking database for the secondary site
@@ -48,7 +48,7 @@
     - tracking-database
     - secondary
   when:
-    - ('postgres_primary' in group_names)
+    - ('postgres_primary' in group_names) or postgres_external
 
 - name: Configure the frontend app servers on the secondary site
   import_tasks: secondary-frontend-app-servers.yml

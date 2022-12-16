@@ -148,7 +148,9 @@
         name: "{{ item }}"
         db: "{{ postgres_database_name }}"
       loop: ['pg_trgm', 'btree_gist', 'plpgsql', 'pg_stat_statements']
-  when: postgres_external
+  when:
+    - postgres_external
+    - geo_secondary_site_group_name not in groups
   tags:
     - reconfigure
     - db_migrate
