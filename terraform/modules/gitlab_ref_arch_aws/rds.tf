@@ -113,8 +113,10 @@ resource "aws_db_instance" "gitlab_read_replica" {
     aws_security_group.gitlab_rds[0].id
   ]
 
+  iam_database_authentication_enabled = aws_db_instance.gitlab[0].iam_database_authentication_enabled
+
   parameter_group_name = aws_db_parameter_group.gitlab[0].name
-  replicate_source_db  = aws_db_instance.gitlab[0].arn
+  replicate_source_db  = aws_db_instance.gitlab[0].identifier
   apply_immediately    = true
 
   allocated_storage     = aws_db_instance.gitlab[0].allocated_storage
