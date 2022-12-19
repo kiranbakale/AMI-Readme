@@ -101,7 +101,7 @@ If installing Ansible locally, we recommend using this approach as your local en
 1. Install Ansible Galaxy Collections and Roles:
 
     ```sh
-    ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
+    ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml --force
     ```
 
 1. Install OpenSSH Client if not already installed as per your OS.
@@ -127,7 +127,7 @@ To do this you only have to run the following before proceeding:
 1. Install Ansible Galaxy Collections and Roles:
 
     ```sh
-    ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
+    ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml --force
     ```
 
 1. Install OpenSSH Client if not already installed as per your OS.
