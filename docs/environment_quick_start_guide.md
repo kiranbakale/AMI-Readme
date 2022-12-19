@@ -298,7 +298,7 @@ First we need to install Ansible. There are various ways to install Ansible, we 
 1. Install Ansible Galaxy Collections and Roles:
 
     ```sh
-    ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml
+    ansible-galaxy install -r ansible/requirements/ansible-galaxy-requirements.yml --force
     ```
 
 1. Install OpenSSH Client if not already installed as per your OS.
