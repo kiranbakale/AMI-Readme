@@ -1,6 +1,6 @@
 namespace: "gitlab"
 name: "gitlab_environment_toolkit"
-version: "2.6.0"
+version: "2.6.1"
 readme: "../README.md"
 description: |
   The GitLab Environment Toolkit (GET) is a collection of tools to deploy and operate production
@@ -10,10 +10,10 @@ issues: "https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues"
 authors:
     - "GitLab Quality Enablement Team"
 dependencies:
-    "google.cloud": ">=1.0"
+    "google.cloud": "==1.0.2"
     "azure.azcollection": ">=1.10"
     "kubernetes.core": ">=2.0"
-    "community.postgresql": ">=1.6"
+    "community.postgresql": ">=2.0"
 license_file: '../LICENSE'
 tags:
     - gitlab
