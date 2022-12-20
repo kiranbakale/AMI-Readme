@@ -105,6 +105,12 @@ for the account to enable SSH access to the created VMs on GCP, which is require
    gcloud config set project <project-id>
    ```
 
+1. Enable OS Login by setting the metadata `enable-oslogin=TRUE`. This can either be set [project-wide](https://cloud.google.com/compute/docs/metadata/setting-custom-metadata#set-projectwide) or [per instance](https://cloud.google.com/compute/docs/metadata/setting-custom-metadata#set-custom), once the instances have been provisioned by Terraform. To set the metadata project-wide, run the following command:
+
+   ```terminal
+   gcloud compute project-info add-metadata --metadata enable-oslogin=TRUE
+   ```
+
 1. Login as the Service Account user via its key created in the last step
 
    ```terminal
