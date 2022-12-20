@@ -105,7 +105,6 @@ resource "aws_db_instance" "gitlab_geo_tracking_read_replica" {
   port     = var.rds_geo_tracking_postgres_read_replica_port
   multi_az = var.rds_geo_tracking_postgres_read_replica_multi_az
 
-  db_subnet_group_name = aws_db_subnet_group.gitlab_geo[0].name
   vpc_security_group_ids = [
     aws_security_group.gitlab_rds_geo_tracking[0].id
   ]
@@ -116,7 +115,6 @@ resource "aws_db_instance" "gitlab_geo_tracking_read_replica" {
   replicate_source_db  = aws_db_instance.gitlab_geo_tracking[0].identifier
   apply_immediately    = true
 
-  allocated_storage     = aws_db_instance.gitlab_geo_tracking[0].allocated_storage
   max_allocated_storage = aws_db_instance.gitlab_geo_tracking[0].max_allocated_storage
   storage_encrypted     = true
   kms_key_id            = aws_db_instance.gitlab_geo_tracking[0].kms_key_id
