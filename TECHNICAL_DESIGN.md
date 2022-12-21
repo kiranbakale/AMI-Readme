@@ -198,6 +198,16 @@ The following rules apply for Toolkit releases and support between them:
 - We aim to support Backwards Compatibility between minor releases. Although some small breaking changes may be added with adequate notice if the need is justified.
 - Backwards Compatibility is not guaranteed for in development code on the main branch.
 
+#### Prefer Custom Config for GitLab variables
+
+As a general rule we prefer [Custom Config](docs/environment_advanced.md#custom-config) over encapsulating individual GitLab variables for the following reasons:
+
+- Every variable we encapsulate is one we take on and have to maintain. Over time this will accrue and increase brittleness as variables can change between versions.
+- To reduce confusion of what should be set in GET vs GitLab directly.
+- To reduce clashes with Custom Config when it's used that can be hard to debug.
+
+In other words we should only be handling variables in GET that are needed strictly to achieve deployment of GitLab at scale to stay lean and reduce maintenance burden. Variables not fitting this description should only be encapsulated when there's a strong enough reason to do so, for example if the variable requires to be set across multiple components.
+
 #### Secrets and Keys
 
 Any Secrets and/or Keys for use with the Toolkit are expressly forbidden to be committed in the repo.
