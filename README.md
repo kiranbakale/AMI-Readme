@@ -30,6 +30,7 @@ Created and maintained by the GitLab Quality Engineering Enablement team, the To
 - SSL / TLS support (either direct or via hooks)
 - Alternative sources (Cloud Services, Custom Servers) for select components (Load Balancers, PostgreSQL, Redis)
 - On Prem Support (Ansible)
+- Custom Config / Tasks / Files support
 
 By design the Toolkit is meant to be **_one for all_** and aims to deploy a production GitLab environment that will be a good base that can be customized further depending on your requirements.
 
