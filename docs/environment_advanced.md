@@ -314,7 +314,7 @@ all:
     gitlab_rails:
       hosts:
         <GITLAB-RAILS-1-ADDRESS>:
-        <GITLAB-RAILS-3-ADDRESS>:
+        <GITLAB-RAILS-2-ADDRESS>:
         <GITLAB-RAILS-3-ADDRESS>:
     gitlab_rails_primary:
       hosts:
