@@ -1334,32 +1334,7 @@ variable "opensearch_tags" {
 }
 
 # Networking
-## Default network
-variable "default_allowed_ingress_cidr_blocks" {
-  type    = list(string)
-  default = ["0.0.0.0/0"]
-}
-
-variable "http_allowed_ingress_cidr_blocks" {
-  type    = list(any)
-  default = []
-}
-
-variable "ssh_allowed_ingress_cidr_blocks" {
-  type    = list(any)
-  default = []
-}
-
-variable "external_ssh_port" {
-  type    = number
-  default = 2222
-}
-variable "external_ssh_allowed_ingress_cidr_blocks" {
-  type    = list(any)
-  default = []
-}
-
-## Create new network
+## Created
 variable "create_network" {
   type    = bool
   default = false
@@ -1397,7 +1372,7 @@ variable "availability_zones" {
   default = []
 }
 
-## Existing network
+## Existing
 variable "vpc_id" {
   type    = string
   default = null
@@ -1431,6 +1406,62 @@ variable "peer_vpc_cidr" {
   description = "CIDR for the VPC network to create a peering connection with"
   type        = string
   default     = null
+}
+
+## Security Groups
+variable "default_allowed_ingress_cidr_blocks" {
+  type    = list(string)
+  default = ["0.0.0.0/0"]
+}
+
+variable "http_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+variable "external_ssh_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
+variable "ssh_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+variable "external_ssh_port" {
+  type    = number
+  default = 2222
+}
+
+### Services (Internal)
+variable "rds_postgres_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+variable "rds_praefect_postgres_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+variable "rds_geo_tracking_postgres_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
+variable "elasticache_redis_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+variable "elasticache_redis_cache_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+variable "elasticache_redis_persistent_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
+}
+
+variable "opensearch_allowed_ingress_cidr_blocks" {
+  type    = list(any)
+  default = []
 }
 
 # AWS Load Balancers

@@ -161,7 +161,7 @@ resource "aws_security_group_rule" "gitlab_rds" {
   from_port   = var.rds_postgres_port
   to_port     = var.rds_postgres_port
   protocol    = "tcp"
-  cidr_blocks = [data.aws_vpc.selected.cidr_block]
+  cidr_blocks = coalescelist(var.rds_postgres_allowed_ingress_cidr_blocks, [data.aws_vpc.selected.cidr_block])
 }
 
 ### Praefect
@@ -190,7 +190,7 @@ resource "aws_security_group_rule" "gitlab_rds_praefect" {
   from_port   = var.rds_praefect_postgres_port
   to_port     = var.rds_praefect_postgres_port
   protocol    = "tcp"
-  cidr_blocks = [data.aws_vpc.selected.cidr_block]
+  cidr_blocks = coalescelist(var.rds_praefect_postgres_allowed_ingress_cidr_blocks, [data.aws_vpc.selected.cidr_block])
 }
 
 ### Geo Tracking
@@ -219,7 +219,7 @@ resource "aws_security_group_rule" "gitlab_rds_geo_tracking" {
   from_port   = var.rds_geo_tracking_postgres_port
   to_port     = var.rds_geo_tracking_postgres_port
   protocol    = "tcp"
-  cidr_blocks = [data.aws_vpc.selected.cidr_block]
+  cidr_blocks = coalescelist(var.rds_geo_tracking_postgres_allowed_ingress_cidr_blocks, [data.aws_vpc.selected.cidr_block])
 }
 
 ## AWS Elasticache
@@ -249,7 +249,7 @@ resource "aws_security_group_rule" "gitlab_elasticache_redis" {
   from_port   = var.elasticache_redis_port
   to_port     = var.elasticache_redis_port
   protocol    = "tcp"
-  cidr_blocks = [data.aws_vpc.selected.cidr_block]
+  cidr_blocks = coalescelist(var.elasticache_redis_allowed_ingress_cidr_blocks, [data.aws_vpc.selected.cidr_block])
 }
 
 ### Redis Cache
@@ -278,7 +278,7 @@ resource "aws_security_group_rule" "gitlab_elasticache_redis_cache" {
   from_port   = local.elasticache_redis_cache_port
   to_port     = local.elasticache_redis_cache_port
   protocol    = "tcp"
-  cidr_blocks = [data.aws_vpc.selected.cidr_block]
+  cidr_blocks = coalescelist(var.elasticache_redis_cache_allowed_ingress_cidr_blocks, var.elasticache_redis_allowed_ingress_cidr_blocks, [data.aws_vpc.selected.cidr_block])
 }
 
 ### Redis Persistent
@@ -307,7 +307,7 @@ resource "aws_security_group_rule" "gitlab_elasticache_redis_persistent" {
   from_port   = local.elasticache_redis_persistent_port
   to_port     = local.elasticache_redis_persistent_port
   protocol    = "tcp"
-  cidr_blocks = [data.aws_vpc.selected.cidr_block]
+  cidr_blocks = coalescelist(var.elasticache_redis_persistent_allowed_ingress_cidr_blocks, var.elasticache_redis_allowed_ingress_cidr_blocks, [data.aws_vpc.selected.cidr_block])
 }
 
 ## AWS OpenSearch
@@ -336,7 +336,7 @@ resource "aws_security_group_rule" "gitlab_opensearch" {
   from_port   = 443
   to_port     = 443
   protocol    = "tcp"
-  cidr_blocks = [data.aws_vpc.selected.cidr_block]
+  cidr_blocks = coalescelist(var.opensearch_allowed_ingress_cidr_blocks, [data.aws_vpc.selected.cidr_block])
 }
 
 # Ensure correct order for OpenSearch security group switch
