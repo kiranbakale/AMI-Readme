@@ -12,10 +12,9 @@ locals {
   supporting_node_pool_autoscaling = var.supporting_node_pool_max_count > 0
 
   # Subnet selection
-  eks_default_subnet_ids       = local.default_network ? slice(tolist(local.default_subnet_ids), 0, var.eks_default_subnet_count) : []
-  eks_cluster_subnet_ids       = !local.default_network ? local.all_subnet_ids : local.eks_default_subnet_ids
-  eks_backend_node_subnet_ids  = !local.default_network ? local.backend_subnet_ids : local.eks_default_subnet_ids
-  eks_frontend_node_subnet_ids = !local.default_network ? local.frontend_subnet_ids : local.eks_default_subnet_ids
+  eks_default_subnet_ids      = local.default_network ? slice(tolist(local.default_subnet_ids), 0, var.eks_default_subnet_count) : []
+  eks_cluster_subnet_ids      = !local.default_network ? local.all_subnet_ids : local.eks_default_subnet_ids
+  eks_backend_node_subnet_ids = !local.default_network ? local.backend_subnet_ids : local.eks_default_subnet_ids
 }
 
 # Cluster
@@ -276,7 +275,7 @@ resource "aws_eks_node_group" "gitlab_supporting_pool" {
   # Create a unique name to allow nodepool replacements
   node_group_name_prefix = "gitlab_supporting_pool_"
   node_role_arn          = aws_iam_role.gitlab_eks_node_role[0].arn
-  subnet_ids             = local.eks_frontend_node_subnet_ids # Select Public subnets if configured first as this pool hosts NGinx
+  subnet_ids             = local.eks_backend_node_subnet_ids
   instance_types         = [var.supporting_node_pool_instance_type]
   disk_size              = local.eks_custom_ami ? null : var.supporting_node_pool_disk_size
 
