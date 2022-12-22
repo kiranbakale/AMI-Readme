@@ -6,7 +6,7 @@ roles:
 # Only set minimum versions for collections as ansible package comes with these built in
 collections:
   - name: google.cloud
-    version: 1.0.2
+    version: ">=1.1.2"
   - name: amazon.aws
     version: ">=5.0"
   - name: community.aws

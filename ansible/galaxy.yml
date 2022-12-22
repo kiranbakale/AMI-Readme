@@ -10,7 +10,7 @@ issues: "https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues"
 authors:
     - "GitLab Quality Enablement Team"
 dependencies:
-    "google.cloud": "==1.0.2"
+    "google.cloud": ">=1.1.2"
     "azure.azcollection": ">=1.10"
     "amazon.aws": ">=5.0"
     "community.aws": ">=5.0"
