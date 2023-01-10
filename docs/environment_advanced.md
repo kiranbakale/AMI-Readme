@@ -429,6 +429,25 @@ all:
         <REDIS-3-ADDRESS>:
 ```
 
+For environments with Elasticsearch nodes, static inventory should have Elasticsearch hosts information:
+
+```yml
+all:
+  children:
+    elastic:
+      hosts:
+        <ELASTIC-1-ADDRESS>:
+        <ELASTIC-2-ADDRESS>:
+        <ELASTIC-3-ADDRESS>:
+    elastic_primary:
+      hosts:
+        <ELASTIC-1-ADDRESS>:
+    elastic_secondary:
+      hosts:
+        <ELASTIC-2-ADDRESS>:
+        <ELASTIC-3-ADDRESS>:
+```
+
 ### Environment Config
 
 Configuring the environment config `vars.yml` file is [much the same as it would be normally](environment_configure.md#environment-config-varsyml) with the following differences:
