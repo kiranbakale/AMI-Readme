@@ -299,8 +299,11 @@ all:
     gitaly:
       hosts:
         <GITALY-1-ADDRESS>:
+          gitaly_number: 1
         <GITALY-2-ADDRESS>:
+          gitaly_number: 2
         <GITALY-3-ADDRESS>:
+          gitaly_number: 3
     gitaly_primary:
       hosts:
         <GITALY-1-ADDRESS>:
@@ -407,6 +410,8 @@ all:
         <SIDEKIQ-4-ADDRESS>:
     ungrouped:
 ```
+
+:information_source:&nbsp; Note that Gitaly nodes do require `gitaly_number` to be defined as shown to ensure internally they are numbered correctly for correct data handling.
 
 The above file would be tweaked to suit your target environment and each address above should be replaced accordingly. The structure here, including any `*_primary` / `*_secondary` entries should be maintained as the Toolkit requires this.
 
