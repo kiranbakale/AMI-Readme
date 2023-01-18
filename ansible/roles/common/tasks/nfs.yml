@@ -23,7 +23,7 @@
   block:
     - name: Configure Node Exporter if dedicated NFS server
       include_role:
-        name: cloudalchemy.node_exporter
+        name: geerlingguy.node_exporter
       when: "'gitlab_nfs' in group_names"
 
     - name: Install NFS Server

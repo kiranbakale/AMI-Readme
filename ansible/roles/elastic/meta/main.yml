@@ -1,4 +1,4 @@
 ---
 dependencies:
   - role: common
-  - role: cloudalchemy.node_exporter
+  - role: geerlingguy.node_exporter
