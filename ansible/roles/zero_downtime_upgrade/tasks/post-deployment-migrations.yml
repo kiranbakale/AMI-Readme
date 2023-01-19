@@ -10,12 +10,12 @@
 
 - name: Run DB migrations and verify secondary site
   block:
-  - name: Run migrations on secondary site
-    command: gitlab-rake {{ geo_migration_task }}
+    - name: Run migrations on secondary site
+      command: gitlab-rake {{ geo_migration_task }}
 
-  - name: Run Geo check on secondary site
-    command: gitlab-rake gitlab:geo:check
+    - name: Run Geo check on secondary site
+      command: gitlab-rake gitlab:geo:check
 
-  - name: Verify Geo status
-    command: gitlab-rake geo:status
+    - name: Verify Geo status
+      command: gitlab-rake geo:status
   when: (geo_secondary_site_group_name in group_names)
