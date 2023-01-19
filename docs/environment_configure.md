@@ -66,9 +66,9 @@ Hopefully with this overview its clearer how Ansible in the Toolkit works. Below
 
 ## 1. Install Ansible
 
-The Toolkit requires Ansible to be installed. We recommend [Ansible `6.0` or higher](https://docs.ansible.com/ansible/devel/reference_appendices/release_and_maintenance.html#ansible-community-changelogs) but versions containing [`ansible-core 2.12` upwards](https://docs.ansible.com/ansible/devel/reference_appendices/release_and_maintenance.html#ansible-core-changelogs) should continue to work if desired.
+The Toolkit requires Ansible to be installed. We follow the [Ansible lifecycle](https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-community-changelogs) and aim to support the latest maintained version, in this case Ansible `7.0` or higher (`ansible-core 2.14`).
 
-Whatever version you chose will have a corresponding Python version requirement. For Ansible `6.x`, [Python `3.8` or higher is required](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#control-node-requirements). Refer to the corresponding release notes for Ansible to verify the required Python version.
+:information_source:&nbsp; Ansible itself typically has requirements on what Python version is installed on the control node. Whatever version you chose will have a corresponding Python version requirement. **For Ansible `7.x` (`ansible-core 2.14`), [Python `3.9` or higher is required](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#control-node-requirements)**. Note that this Python requirement also applies to the box actually running Ansible and not for the target boxes - Typically the latest available version from the OS is sufficient for the latter.
 
 When choosing an [Ansible control node](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#control-node-requirements), we recommend that it's in the same or near location as the environment being built to avoid network slowdown. Additionally, if you plan to use a cloud machine as a control node it is _not_ recommended to use [burstable instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html) as they can lead to inconsistent behaviour.
 

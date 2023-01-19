@@ -56,13 +56,13 @@ Debugging these errors would be the same as if you were setting up Omnibus direc
 
 ### Ansible Install Failure - `No matching distribution found`
 
-Ansible `6.x` upwards requires Python `3.8` and higher. Attempting to install this version of Ansible via `pip` on a lower version of Python will fail with the following error:
+Ansible `7.x` upwards requires Python `3.9` and higher. Attempting to install this version of Ansible via `pip` on a lower version of Python will fail with the following error:
 
 ```sh
-ERROR: No matching distribution found for ansible==5.0.1
+ERROR: No matching distribution found for ansible==7.1.0
 ```
 
-Upgrade your Python version to `3.8` or higher and try installing again to fix.
+Upgrade your Python version to `3.9` or higher and try installing again to fix.
 
 ### Ansible can't find any hosts
 
