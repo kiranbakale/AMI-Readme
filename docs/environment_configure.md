@@ -562,10 +562,6 @@ Once installed you can then run the Collection in [several possible ways](https:
 ansible-playbook -i environments/50k/inventory gitlab.gitlab_environment_toolkit.all
 ```
 
-### Running with ansible-deployer (optional)
-
-An alternative way to run the playbooks is with the [`ansible-deployer`](https://gitlab.com/gitlab-org/quality/get-ansible-deployer) script. This script will run multiple playbooks in parallel where possible while maintaining the required run order.
-
 ## Steps after deployment
 
 With the above steps completed you should now have a running environment. Head to the external address you've configured and try logging in to check.
