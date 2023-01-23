@@ -62,6 +62,8 @@ Each environment is recommended to have its own project on GCP for various reaso
 
 Existing projects can also be used, but this should be checked with the Project's stakeholders as this will affect things such as total CPU quotas for example.
 
+:information_source:&nbsp; Ensure that you have the [Service Usage API](https://console.cloud.google.com/apis/api/serviceusage.googleapis.com/overview) and [Compute Engine API](https://console.developers.google.com/apis/api/compute.googleapis.com/overview) enabled.
+
 ### 3. Setup Provider Authentication - GCP Service Account
 
 Authentication with GCP directly is done with a [Service Account](https://cloud.google.com/iam/docs/understanding-service-accounts), which is required by both Terraform and Ansible.
