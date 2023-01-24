@@ -112,7 +112,7 @@ For Omnibus, the following variables are used to configure custom dashboards:
 - `monitor_custom_dashboards` - List of Dashboard folders under `monitor_custom_dashboards_path` the Toolkit should transfer. Each entry requires a couple of variables to be set in dict format: For each a dict should be set with the following sub-variables:
   - `folder` - The folder under `monitor_custom_dashboards_path` to transfer over
   - `display_name` - Display name of Folder to be shown in the Grafana UI.
-  
+
 An example of how you would configure this for several folders in the default location would be as follows:
 
 ```yaml
@@ -182,4 +182,30 @@ kube_prometheus_stack_charts_custom_scrape_config:
     static_configs:
       - targets:
         - "<INFLUXDB_URL>:9122"
+```
+
+## Custom Prometheus rules
+
+The Toolkit allows for you to pass in custom alert/record rules to be used in Prometheus for either the Omnibus or Cloud Native Hybrid setups described above.
+
+By default, the Toolkit will look for rules under the `environments/<env_name>/files/prometheus` folder. In Prometheus, rules are typically organised under group folders, so the same is expected here. As such, rules should be placed in their own group folder in this path, for example `environments/<env_name>/files/prometheus/<rules group folder name>/<rule files>`. You can create multiple folders to store different rule groups or store everything in a single folder. You can also store the rules in a different location other than `environments/<env_name>/files/prometheus/` for each setup.
+
+Once the rules are in place you can then configure the Toolkit to set these up accordingly. This is done by configuring the Toolkit to know what sub-folders of rules to transfer over.
+
+For details on how to do this for each setup, refer to the applicable section below.
+
+### Omnibus
+
+For Omnibus, the following variables are used to configure custom rules:
+
+- `monitor_custom_rules_path` - Path the Toolkit will look under for any rules. Default is `environments/<env_name>/files/prometheus`.
+- `monitor_custom_rules` - List of rule folders under `monitor_custom_rules_path` the Toolkit should transfer. Each entry requires a couple of variables to be set in dict format: For each a dict should be set with the following sub-variables:
+  - `folder` - The folder under `monitor_custom_rules_path` to transfer over
+  
+An example of how you would configure this for several folders in the default location would be as follows:
+
+```yaml
+monitor_custom_rules:
+  - folder: 'my_sidekiq_rules'
+  - folder: 'my_gitaly_rules'
 ```
