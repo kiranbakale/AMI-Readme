@@ -83,12 +83,12 @@
       loop: ['pg_trgm', 'btree_gist', 'plpgsql', 'pg_stat_statements']
   when:
     - praefect_postgres_external
+    - "'praefect_primary' in group_names"
     - (geo_secondary_site_group_name not in groups)
   tags:
     - reconfigure
     - db_migrate
     - postgres_external
-  run_once: true
 
 - name: Perform database migrations
   block:
@@ -117,7 +117,7 @@
   tags:
     - reconfigure
     - db_migrate
-  run_once: true
+  when: "'praefect_primary' in group_names"
 
 - name: Setup GitLab config file
   template:

@@ -1,42 +1,77 @@
-- name: Ensure zero downtime config doesn't exist on nodes before upgrade
-  block:
-    - name: Find any old zero downtime config files
-      find:
-        paths: "/etc/gitlab/"
-        patterns: 'gitlab.*.zero-downtime.rb'
-      register: old_zero_downtime_config
+- name: Update Consul nodes
+  include_tasks: update-gitlab.yml
+  when: inventory_hostname == hostname_result
+  loop: "{{ query('inventory_hostnames', 'consul') | sort }}"
+  loop_control:
+    loop_var: hostname_result
 
-    - name: Remove any old zero downtime config before upgrade
-      file:
-        path: "{{ item.path }}"
-        state: absent
-      loop: "{{ old_zero_downtime_config.files | flatten(levels=1) }}"
-      loop_control:
-        label: "{{ item.path }}"
-      register: remove_zdu_config
+- name: Update Postgres nodes
+  include_tasks: update-gitlab.yml
+  when: inventory_hostname == hostname_result
+  loop: "{{ query('inventory_hostnames', 'postgres') | sort }}"
+  loop_control:
+    loop_var: hostname_result
 
-    - name: Run gitlab-ctl reconfigure
-      command: gitlab-ctl reconfigure
-      when: remove_zdu_config.changed
-  when: omnibus_node
+- name: Update PgBouncer nodes
+  include_tasks: update-gitlab.yml
+  when: inventory_hostname == hostname_result
+  loop: "{{ query('inventory_hostnames', 'pgbouncer') | sort }}"
+  loop_control:
+    loop_var: hostname_result
 
-- name: Run Zero Downtime Updates
-  import_tasks: zero-downtime-update.yml
+- name: Update Redis nodes
+  include_tasks: update-gitlab.yml
+  when: inventory_hostname == hostname_result
+  loop: "{{ query('inventory_hostnames', 'redis:redis_cache:redis_persistent') | sort }}"
+  loop_control:
+    loop_var: hostname_result
+
+- name: Update Gitaly nodes
+  include_tasks: update-gitlab.yml
+  when: inventory_hostname == hostname_result
+  loop: "{{ query('inventory_hostnames', 'gitaly') | sort }}"
+  loop_control:
+    loop_var: hostname_result
+
+- name: Update Praefect deploy node with all migrations
+  include_tasks: update-gitlab.yml
+  when: "'praefect_primary' in group_names"
+
+- name: Update other Praefect nodes
+  include_tasks: update-gitlab.yml
+  when: inventory_hostname == hostname_result
+  loop: "{{ query('inventory_hostnames', 'praefect_secondary') | sort }}"
+  loop_control:
+    loop_var: hostname_result
+
+- name: Update GitLab Rails deploy node with pre migrations
+  include_tasks:
+    file: update-gitlab.yml
+    apply:
+      environment:
+        SKIP_POST_DEPLOYMENT_MIGRATIONS: "true"
+  when: "'gitlab_rails_primary' in group_names"
+
+- name: Update other GitLab Rails nodes
+  include_tasks: update-gitlab.yml
+  when: inventory_hostname == hostname_result
+  loop: "{{ query('inventory_hostnames', 'gitlab_rails_secondary') | sort }}"
+  loop_control:
+    loop_var: hostname_result
+
+- name: Update Sidekiq nodes
+  include_tasks: update-gitlab.yml
+  when: inventory_hostname == hostname_result
+  loop: "{{ query('inventory_hostnames', 'sidekiq') | sort }}"
+  loop_control:
+    loop_var: hostname_result
+
+- name: Restart geo-logcursor on secondary site if present
+  command: gitlab-ctl restart geo-logcursor
   when:
-    - omnibus_node
+    - ('gitlab_rails' in group_names)
+    - (geo_secondary_site_group_name in groups)
 
 - name: Run post-deployment migrations
   import_tasks: post-deployment-migrations.yml
-  when: geo_secondary_site_group_name not in group_names and ('sidekiq_primary' in group_names or ('sidekiq' not in groups and 'gitlab_rails_primary' in group_names))
-
-- name: Remove zero downtime config from all nodes
-  block:
-    - name: Remove zero downtime config
-      file:
-        path: "/etc/gitlab/gitlab.{{ gitlab_node_type }}.zero-downtime.rb"
-        state: absent
-
-    - name: Run gitlab-ctl reconfigure
-      command: gitlab-ctl reconfigure
-      throttle: 1
-  when: omnibus_node
+  when: "'gitlab_rails_primary' in group_names"

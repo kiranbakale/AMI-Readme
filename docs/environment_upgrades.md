@@ -64,11 +64,15 @@ However, the [standard GitLab Upgrade rules still apply](https://docs.gitlab.com
 
 ### Zero Downtime Updates
 
-For Zero Downtime Updates, the toolkit follows the [GitLab documented process](https://docs.gitlab.com/omnibus/update/README.html#zero-downtime-updates) and as such the documentation should be read and understood before proceeding with an update.
-
-:information_source:&nbsp; As with any update process there may rarely be times when a few requests fail when the update is in progress. For example, when updating a primary node it can take up to a few seconds for a new leader to be elected.
+For Zero Downtime Updates, the Toolkit translates the [documented manual process](https://docs.gitlab.com/omnibus/update/README.html#zero-downtime-updates) to achieve the same effect as much as possible.
 
 :information_source:&nbsp; Note that Zero Downtime Updates are **not available** for Cloud Native Hybrid environments as they aren't supported in the [GitLab Charts](https://docs.gitlab.com/charts/installation/upgrade.html).
+
+It should be noted that achieving true Zero Downtime during an update is difficult and involving. There are various ways to approach this, all with pros and cons, and typically in most cases there will always be at least very small moments of downtime depending on that approach.
+
+The Toolkit, being an automative solution, can't perform all the same actions a manual process can do such as removing nodes from load balancers as custom load balancers are supported. It therefore takes the approach of depending on existing automatic mechanisms in the environment setup such as load balancing and failovers to achieve the same effect in practice. In rigorous testing, it's been found this approach has minimal downtime while being faster to achieve.
+
+At a high level the Toolkit aims to run the exact same actions for each component node it does normally but in sequential order. This ensures all supporting actions needed for components, such as OS package handling, are performed as well. It will also avoid components, depending on the environment, that aren't HA by default such as HAProxy, NFS or Praefect Postgres ([which is only supported in a single node setup with Omnibus at this time](https://docs.gitlab.com/ee/administration/reference_architectures/10k_users.html#praefect-postgresql)) as this would cause downtime - These need to be updated separately in a maintenance period.
 
 Running the zero downtime update process with the Toolkit is done in the same way as building the initial environment but with a different playbook instead:
 
@@ -77,15 +81,13 @@ Running the zero downtime update process with the Toolkit is done in the same wa
 
     `ansible-playbook -i environments/10k/inventory playbooks/zero_downtime_update.yml`
 
-1. If you have a Praefect Postgres instance deployed via the Toolkit, you will need to run the following command to update it:
+1. If you have a Praefect Postgres instance deployed via the Toolkit, you will need to run the following command to update it _with_ downtime:
 
     `ansible-playbook -i environments/10k/inventory playbooks/praefect_postgres.yml`
 
-1. If you have HAProxy load balancers deployed via the Toolkit, you will need to run the following command to update them:
+1. If you have HAProxy load balancers deployed via the Toolkit, you will need to run the following command to update them _with_ downtime:
 
     `ansible-playbook -i environments/10k/inventory playbooks/haproxy.yml`
-
-:information_source:&nbsp; Updating either Praefect Postgres or the load balancers in this way will cause downtime. This is due to GET only using a single Praefect Postgres node and the load balancers being a single point of entry to the site. If you want to have a highly available setup, Praefect requires a third-party PostgreSQL database and will need to be updated manually.
 
 The update process can take a couple of hours to complete, and the full runtime will depend on the number of nodes in the deployment.
 

@@ -4,7 +4,7 @@
     - name: Populate service facts
       service_facts:
 
-    - name: Set Hostname if not correct
+    - name: Set Internal Hostname to match inventory
       hostname:
         name: "{{ inventory_hostname }}"
       when:

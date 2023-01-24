@@ -1,5 +1,17 @@
 ---
+# Gather facts on all hosts but only if missing
+- hosts: all:!gitlab_cluster:!ungrouped
+  gather_facts: false
+  tasks:
+    - name: Gather Facts
+      gather_facts:
+      when: ansible_fqdn is not defined
+      tags: always
+
 - hosts: all:!praefect_postgres:!gitlab_nfs:!haproxy_*
+  order: sorted
   roles:
     - zero_downtime_upgrade
   become: true
+
+- import_playbook: post_configure.yml
