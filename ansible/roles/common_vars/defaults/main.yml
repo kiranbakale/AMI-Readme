@@ -75,11 +75,11 @@ gitlab_version: ""
 ## Alternatively set to "gitlab-ce" to install the Community Edition
 gitlab_edition: "gitlab-ee"
 
-gitlab_node_type: "{{ lookup('vars', cloud_provider_labels_name, default = {}).gitlab_node_type | default('', true) | replace('-', '_') }}"
-gitlab_node_role: "{{ (gitlab_node_type if 'redis' not in gitlab_node_type else 'redis') | replace('-', '_') }}"
+gitlab_node_type: "{{ lookup('vars', cloud_provider_labels_name, default = {}).gitlab_node_type | default((group_names | reject('match', '.*_primary|.*_secondary') | first), true) | replace('-', '_') }}"
 
 ## Set to env var, package with version wildcard or just latest
-gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default(gitlab_edition + '=' + gitlab_version + '*' if gitlab_version != '' else gitlab_edition, true) }}"
+gitlab_repo_package_version_syntax: "{{ '-' if ansible_facts['os_family'] == 'RedHat' else '=' }}"
+gitlab_repo_package: "{{ lookup('env','GITLAB_REPO_PACKAGE') | default(gitlab_edition + gitlab_repo_package_version_syntax + gitlab_version + '*' if gitlab_version != '' else gitlab_edition, true) }}"
 ## Select the nightly build by setting GITLAB_REPO_SCRIPT_URL to "https://packages.gitlab.com/install/repositories/gitlab/nightly-builds/script.deb.sh"
 gitlab_repo_script_name: {Debian: 'script.deb.sh', RedHat: 'script.rpm.sh'}
 gitlab_repo_script_url: "{{ lookup('env','GITLAB_REPO_SCRIPT_URL') | default('https://packages.gitlab.com/install/repositories/gitlab/' + gitlab_edition + '/' + gitlab_repo_script_name[ansible_facts['os_family']], true) }}"

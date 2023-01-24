@@ -150,12 +150,12 @@
       loop: ['pg_trgm', 'btree_gist', 'plpgsql', 'pg_stat_statements']
   when:
     - postgres_external
+    - "'gitlab_rails_primary' in group_names"
     - geo_secondary_site_group_name not in groups
   tags:
     - reconfigure
     - db_migrate
     - postgres_external
-  run_once: true
 
 - name: Run Database Migrations
   block:
@@ -187,7 +187,7 @@
       tags:
         - reconfigure
         - db_migrate
-  run_once: true
+  when: "'gitlab_rails_primary' in group_names"
 
 - name: Setup all GitLab Rails config files
   template:
@@ -244,9 +244,9 @@
 # https://docs.gitlab.com/ee/administration/job_logs.html#enable-or-disable-incremental-logging
 - name: Enable Incremental Logging (Object Storage)
   command: "gitlab-rails runner 'Feature.enable(:ci_enable_live_trace)'"
-  run_once: true
   tags: reconfigure
   when:
+    - "'gitlab_rails_primary' in group_names"
     - gitlab_object_storage_type == 'object_storage'
     - geo_secondary_site_group_name not in groups
 

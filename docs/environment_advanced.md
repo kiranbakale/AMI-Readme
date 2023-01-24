@@ -286,152 +286,158 @@ First an [Ansible Static Inventory](https://docs.ansible.com/ansible/latest/user
 
 Using the same recommended structure the Static Inventory file should be saved in the inventory folder, e.g. `environments/<env_name>/inventory` alongside the [Environment `vars.yml` file](environment_configure.md#environment-config-varsyml). Several file formats are supported by Ansible but for consistency we'll use `yml` format.
 
-An example of a 10k environment's static inventory file that's Toolkit compatible would be as follows:
+An example of a 10k environment's static inventory file that's Toolkit compatible is below but note the following:
+
+- All text in `<>` brackets should be replaced accordingly with the IP addresses that Ansible can access
+- Group names (e.g. `gitaly`) and Inventory Hostnames (e.g. `gitlab-gitaly-1`) should not be replaced. These are required internally by Ansible to help correctly identify hosts.
 
 ```yml
 all:
   children:
     consul:
       hosts:
-        <CONSUL-1-ADDRESS>:
-        <CONSUL-2-ADDRESS>:
-        <CONSUL-3-ADDRESS>:
+        gitlab-consul-1:
+          ansible_host: <CONSUL-1-ADDRESS>
+        gitlab-consul-2:
+          ansible_host: <CONSUL-2-ADDRESS>
+        gitlab-consul-3:
+          ansible_host: <CONSUL-3-ADDRESS>
     gitaly:
-      hosts:
-        <GITALY-1-ADDRESS>:
-          gitaly_number: 1
-        <GITALY-2-ADDRESS>:
-          gitaly_number: 2
-        <GITALY-3-ADDRESS>:
-          gitaly_number: 3
-    gitaly_primary:
-      hosts:
-        <GITALY-1-ADDRESS>:
-    gitaly_secondary:
-      hosts:
-        <GITALY-2-ADDRESS>:
-        <GITALY-3-ADDRESS>:
+      children:
+        gitaly_primary:
+          hosts:
+            gitlab-gitaly-1:
+              ansible_host: <GITALY-1-ADDRESS>
+        gitaly_secondary:
+          hosts:
+            gitlab-gitaly-2:
+              ansible_host: <GITALY-2-ADDRESS>
+            gitlab-gitaly-3:
+              ansible_host: <GITALY-3-ADDRESS>
     gitlab_nfs:
       hosts:
-        <GITLAB-NFS-1-ADDRESS>:
+        gitlab-nfs-1:
+          ansible_host: <GITLAB-NFS-1-ADDRESS>
     gitlab_rails:
-      hosts:
-        <GITLAB-RAILS-1-ADDRESS>:
-        <GITLAB-RAILS-2-ADDRESS>:
-        <GITLAB-RAILS-3-ADDRESS>:
-    gitlab_rails_primary:
-      hosts:
-        <GITLAB-RAILS-1-ADDRESS>:
-    gitlab_rails_secondary:
-      hosts:
-        <GITLAB-RAILS-2-ADDRESS>:
-        <GITLAB-RAILS-3-ADDRESS>:
+      children:
+        gitlab_rails_primary:
+          hosts:
+            gitlab-rails-1:
+              ansible_host: <GITLAB-RAILS-1-ADDRESS>
+        gitlab_rails_secondary:
+          hosts:
+            gitlab-rails-2:
+              ansible_host: <GITLAB-RAILS-2-ADDRESS>
+            gitlab-rails-3:
+              ansible_host: <GITLAB-RAILS-3-ADDRESS>
     haproxy_external:
       hosts:
-        <HAPROXY-EXTERNAL-1-ADDRESS>:
+        gitlab-haproxy-external-1:
+          ansible_host: <HAPROXY-EXTERNAL-1-ADDRESS>
     haproxy_internal:
       hosts:
-        <HAPROXY-INTERNAL-1-ADDRESS>:
+        gitlab-haproxy-internal-1:
+          ansible_host: <HAPROXY-INTERNAL-1-ADDRESS>
     monitor:
       hosts:
-        <MONITOR-1-ADDRESS>:
+        gitlab-monitor-1:
+          ansible_host: <MONITOR-1-ADDRESS>
     pgbouncer:
       hosts:
-        <PGBOUNCER-1-ADDRESS>:
-        <PGBOUNCER-2-ADDRESS>:
-        <PGBOUNCER-3-ADDRESS>:
+        gitlab-pgbouncer-1:
+          ansible_host: <PGBOUNCER-1-ADDRESS>
+        gitlab-pgbouncer-2:
+          ansible_host: <PGBOUNCER-2-ADDRESS>
+        gitlab-pgbouncer-3:
+          ansible_host: <PGBOUNCER-3-ADDRESS>
     postgres:
-      hosts:
-        <POSTGRES-1-ADDRESS>:
-        <POSTGRES-2-ADDRESS>:
-        <POSTGRES-3-ADDRESS>:
-    postgres_primary:
-      hosts:
-        <POSTGRES-1-ADDRESS>:
-    postgres_secondary:
-      hosts:
-        <POSTGRES-2-ADDRESS>:
-        <POSTGRES-3-ADDRESS>:
+      children:
+        postgres_primary:
+          hosts:
+            gitlab-postgres-1:
+              ansible_host: <POSTGRES-1-ADDRESS>
+        postgres_secondary:
+          hosts:
+            gitlab-postgres-2:
+              ansible_host: <POSTGRES-2-ADDRESS>
+            gitlab-postgres-3:
+              ansible_host: <POSTGRES-3-ADDRESS>
     praefect:
-      hosts:
-        <PRAEFECT-1-ADDRESS>:
-        <PRAEFECT-2-ADDRESS>:
-        <PRAEFECT-3-ADDRESS>:
-    praefect_primary:
-      hosts:
-        <PRAEFECT-1-ADDRESS>:
-    praefect_secondary:
-      hosts:
-        <PRAEFECT-2-ADDRESS>:
-        <PRAEFECT-3-ADDRESS>:
+      children:
+        praefect_primary:
+          hosts:
+            gitlab-praefect-1:
+              ansible_host: <PRAEFECT-1-ADDRESS>
+        praefect_secondary:
+          hosts:
+            gitlab-praefect-2:
+              ansible_host: <PRAEFECT-2-ADDRESS>
+            gitlab-praefect-3:
+              ansible_host: <PRAEFECT-3-ADDRESS>
     praefect_postgres:
-      hosts:
-        <PRAEFECT-POSTGRES-1-ADDRESS>:
-    praefect_postgres_primary:
-      hosts:
-        <PRAEFECT-POSTGRES-1-ADDRESS>:
+      children:
+        praefect_postgres_primary:
+          hosts:
+            gitlab-praefect-postgres-1:
+              ansible_host: <PRAEFECT-POSTGRES-1-ADDRESS>
     redis_cache:
-      hosts:
-        <REDIS-CACHE-1-ADDRESS>:
-        <REDIS-CACHE-2-ADDRESS>:
-        <REDIS-CACHE-3-ADDRESS>:
-    redis_cache_primary:
-      hosts:
-        <REDIS-CACHE-1-ADDRESS>:
-    redis_cache_secondary:
-      hosts:
-        <REDIS-CACHE-2-ADDRESS>:
-        <REDIS-CACHE-3-ADDRESS>:
+      children:
+        redis_cache_primary:
+          hosts:
+            gitlab-redis-cache-1:
+              ansible_host: <REDIS-CACHE-1-ADDRESS>
+        redis_cache_secondary:
+          hosts:
+            gitlab-redis-cache-2:
+              ansible_host: <REDIS-CACHE-2-ADDRESS>
+            gitlab-redis-cache-3:
+              ansible_host: <REDIS-CACHE-3-ADDRESS>
     redis_persistent:
-      hosts:
-        <REDIS-PERSISTENT-1-ADDRESS>:
-        <REDIS-PERSISTENT-2-ADDRESS>:
-        <REDIS-PERSISTENT-3-ADDRESS>:
-    redis_persistent_primary:
-      hosts:
-        <REDIS-PERSISTENT-1-ADDRESS>:
-    redis_persistent_secondary:
-      hosts:
-        <REDIS-PERSISTENT-2-ADDRESS>:
-        <REDIS-PERSISTENT-3-ADDRESS>:
+      children:
+        redis_persistent_primary:
+          hosts:
+            gitlab-redis-persistent-1:
+              ansible_host: <REDIS-PERSISTENT-1-ADDRESS>
+        redis_persistent_secondary:
+          hosts:
+            gitlab-redis-persistent-2:
+              ansible_host: <REDIS-PERSISTENT-2-ADDRESS>
+            gitlab-redis-persistent-3:
+              ansible_host: <REDIS-PERSISTENT-3-ADDRESS>
     sidekiq:
-      hosts:
-        <SIDEKIQ-1-ADDRESS>:
-        <SIDEKIQ-2-ADDRESS>:
-        <SIDEKIQ-3-ADDRESS>:
-        <SIDEKIQ-4-ADDRESS>:
-    sidekiq_primary:
-      hosts:
-        <SIDEKIQ-1-ADDRESS>:
-    sidekiq_secondary:
-      hosts:
-        <SIDEKIQ-2-ADDRESS>:
-        <SIDEKIQ-3-ADDRESS>:
-        <SIDEKIQ-4-ADDRESS>:
+      children:
+        sidekiq_primary:
+          hosts:
+            gitlab-sidekiq-1:
+              ansible_host: <SIDEKIQ-1-ADDRESS>
+        sidekiq_secondary:
+          hosts:
+            gitlab-sidekiq-2:
+              ansible_host: <SIDEKIQ-2-ADDRESS>
+            gitlab-sidekiq-3:
+              ansible_host: <SIDEKIQ-3-ADDRESS>
+            gitlab-sidekiq-4:
+              ansible_host: <SIDEKIQ-4-ADDRESS>
     ungrouped:
 ```
 
-:information_source:&nbsp; Note that Gitaly nodes do require `gitaly_number` to be defined as shown to ensure internally they are numbered correctly for correct data handling.
-
-The above file would be tweaked to suit your target environment and each address above should be replaced accordingly. The structure here, including any `*_primary` / `*_secondary` entries should be maintained as the Toolkit requires this.
-
-:information_source:&nbsp; For smaller environments where Redis is combined it would look as follows:
+For smaller environments where Redis is combined it would look as follows:
 
 ```yml
 all:
   children:
     redis:
-      hosts:
-        <REDIS-1-ADDRESS>:
-        <REDIS-2-ADDRESS>:
-        <REDIS-3-ADDRESS>:
-    redis_primary:
-      hosts:
-        <REDIS-1-ADDRESS>:
-    redis_secondary:
-      hosts:
-        <REDIS-2-ADDRESS>:
-        <REDIS-3-ADDRESS>:
+      children:
+        redis_primary:
+          hosts:
+            gitlab-redis-1:
+              ansible_host: <REDIS-1-ADDRESS>
+        redis_secondary:
+          hosts:
+            gitlab-redis-2:
+              ansible_host: <REDIS-2-ADDRESS>
+            gitlab-redis-3:
+              ansible_host: <REDIS-3-ADDRESS>
 ```
 
 For environments with Elasticsearch nodes, static inventory should have Elasticsearch hosts information:
@@ -440,17 +446,17 @@ For environments with Elasticsearch nodes, static inventory should have Elastics
 all:
   children:
     elastic:
-      hosts:
-        <ELASTIC-1-ADDRESS>:
-        <ELASTIC-2-ADDRESS>:
-        <ELASTIC-3-ADDRESS>:
-    elastic_primary:
-      hosts:
-        <ELASTIC-1-ADDRESS>:
-    elastic_secondary:
-      hosts:
-        <ELASTIC-2-ADDRESS>:
-        <ELASTIC-3-ADDRESS>:
+      children:
+        elastic_primary:
+          hosts:
+            gitlab-elastic-1:
+              ansible_host: <ELASTIC-1-ADDRESS>
+        elastic_secondary:
+          hosts:
+            gitlab-elastic-2:
+              ansible_host: <ELASTIC-2-ADDRESS>
+            gitlab-elastic-3:
+              ansible_host: <ELASTIC-3-ADDRESS>
 ```
 
 ### Environment Config
