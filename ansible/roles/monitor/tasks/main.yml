@@ -26,6 +26,13 @@
     - reconfigure
     - dashboards
 
+- name: Import custom Prometheus rules
+  include_tasks: rule_import.yml
+  loop: "{{ monitor_custom_rules }}"
+  tags:
+    - reconfigure
+    - rules
+
 - name: Setup GitLab config file
   template:
     src: templates/monitor.gitlab.rb.j2

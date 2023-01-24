@@ -70,6 +70,13 @@ prometheus['scrape_configs'] = [
   {{ monitor_custom_prometheus_scrape_config }}
 ]
 
+prometheus['rules_files'] = [
+  '/var/opt/gitlab/prometheus/rules/*.rules',
+{% for item in monitor_custom_rules %}
+  '/opt/prometheus/rules/{{ item.folder }}/*.rules',
+{% endfor %}
+]
+
 # Grafana
 grafana['env'] = {
   'GF_SERVER_ROOT_URL' => '{{ external_url_sanitised }}/-/grafana'

@@ -214,6 +214,8 @@ monitor_int_ip: "{{ (groups['monitor'] | sort | map('extract', hostvars, interna
 monitor_custom_dashboards: []
 monitor_custom_dashboards_path: "{{ inventory_path }}/../files/grafana"
 monitor_custom_prometheus_scrape_config: ''
+monitor_custom_rules: []
+monitor_custom_rules_path: "{{ inventory_path }}/../files/prometheus"
 
 # GitLab Redis
 ## Combined
