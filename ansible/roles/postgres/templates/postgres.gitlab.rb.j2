@@ -52,7 +52,6 @@ postgresql['version'] = 11
 
 # PostgreSQL configuration
 postgresql['listen_address'] = '0.0.0.0'
-postgresql['max_connections'] = 500
 
 postgresql['pgbouncer_user_password'] = "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
 postgresql['sql_user_password'] = "{{ (postgres_password + 'gitlab') | md5 }}"
