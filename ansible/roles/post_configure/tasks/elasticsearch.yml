@@ -66,14 +66,11 @@
           when:
             - toolbox_pod is defined
             - "'gitlab_rails' not in groups"
-      when: gitlab_license_plan in ['premium', 'ultimate']
 
     - name: Pause for 60 secs for old Elasticsearch index to clear
       wait_for:
         timeout: 60
-  when:
-    - gitlab_license_plan in ['premium', 'ultimate']
-    - elasticsearch_clean_install | bool
+  when: elasticsearch_clean_install | bool
 
 - name: Get and save Environment Settings
   block:
@@ -108,7 +105,6 @@
       when:
         - toolbox_pod is defined
         - "'gitlab_rails' not in groups"
-  when: gitlab_license_plan in ['premium', 'ultimate']
 
 - name: Configure Elasticsearch Indexing and URL setting
   block:
@@ -147,9 +143,7 @@
     - name: Pause for 60 secs to allow Sidekiq caches to be updated
       wait_for:
         timeout: 60
-  when:
-    - gitlab_license_plan in ['premium', 'ultimate']
-    - gitlab_environment_settings.elasticsearch_url != (advanced_search_hosts | join(',')) or not gitlab_environment_settings.elasticsearch_indexing
+  when: gitlab_environment_settings.elasticsearch_url != (advanced_search_hosts | join(',')) or not gitlab_environment_settings.elasticsearch_indexing
 
 - name: Perform Elasticsearch Indexing
   block:
@@ -214,9 +208,7 @@
           when:
             - toolbox_pod is defined
             - "'gitlab_rails' not in groups"
-  when:
-    - gitlab_license_plan in ['premium', 'ultimate']
-    - not gitlab_environment_settings.elasticsearch_indexing
+  when: not gitlab_environment_settings.elasticsearch_indexing
 
 - name: Get and save Environment Settings
   block:
@@ -251,7 +243,6 @@
       when:
         - toolbox_pod is defined
         - "'gitlab_rails' not in groups"
-  when: gitlab_license_plan in ['premium', 'ultimate']
 
 - name: Enable Elasticsearch Search
   block:
@@ -270,6 +261,4 @@
       when:
         - toolbox_pod is defined
         - "'gitlab_rails' not in groups"
-  when:
-    - gitlab_license_plan in ['premium', 'ultimate']
-    - not gitlab_environment_settings.elasticsearch_search
+  when: not gitlab_environment_settings.elasticsearch_search
