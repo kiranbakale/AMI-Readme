@@ -3,7 +3,10 @@
     - name: Configure Subscription or License file if missing via GitLab Rails
       command: |
         gitlab-rails runner "
-          print License.current.plan if License.current&.plan != nil
+          if License.current&.plan != nil
+            print License.current.plan
+            exit
+          end
 
           if '{{ gitlab_subscription_activation_code }}' != ''
             GitlabSubscriptions::ActivateService.new.execute('{{ gitlab_subscription_activation_code }}')
@@ -12,7 +15,7 @@
             license.save
           end
 
-          print License.current.plan
+          print License.current&.plan
         "
       delegate_to: "{{ groups['gitlab_rails'][0] }}"
       delegate_facts: true
@@ -35,7 +38,10 @@
         namespace: "{{ gitlab_charts_release_namespace }}"
         command: |
           gitlab-rails runner "
-            print License.current.plan if License.current&.plan != nil
+            if License.current&.plan != nil
+              print License.current.plan
+              exit
+            end
 
             if '{{ gitlab_subscription_activation_code }}' != ''
               GitlabSubscriptions::ActivateService.new.execute('{{ gitlab_subscription_activation_code }}')
@@ -44,7 +50,7 @@
               license.save
             end
 
-            print License.current.plan
+            print License.current&.plan
           "
       no_log: true
       diff: false
