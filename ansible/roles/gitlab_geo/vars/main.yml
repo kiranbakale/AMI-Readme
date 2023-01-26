@@ -10,3 +10,6 @@ geo_secondary_site_sidekiq_secondary_int_ips: "{{ (groups[geo_secondary_site_gro
 tracking_db_md5_auth: "['{{ geo_secondary_site_rails_primary_int_ip }}/32'{% for ip in geo_secondary_site_rails_secondary_int_ips %}, '{{ ip }}/32'{% endfor %}, '{{ geo_secondary_site_sidekiq_primary_int_ip }}/32'{% for ip in geo_secondary_site_sidekiq_secondary_int_ips %}, '{{ ip }}/32'{% endfor %}]"
 
 local_tmp: "{{ local_tmp_dir if local_tmp_dir is defined else 'tmp/' }}"
+
+gitlab_charts_repo_name: 'gitlab'
+gitlab_charts_repo_url: "https://charts.gitlab.io/"
