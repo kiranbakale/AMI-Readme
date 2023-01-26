@@ -16,6 +16,19 @@ Thank you for your interest in contributing to the GitLab Environment Toolkit! W
 all contributions. By participating in this project, you agree to abide by the
 [code of conduct](#code-of-conduct).
 
+## Areas for contributions
+
+The GitLab Environment Toolkit touches on a lot of areas including Terraform, Ansible, GitLab, Cloud Providers, Networking and more.
+
+As such, making changes or adding features are typically more involved than one may expect and need to be considered
+against [the wider picture that the Toolkit is designed for](#technical-design). This is especially so for new features, which will typically require
+scheduled development time from the maintainers to ensure the feature is correct and follows the design.
+
+Based on this we accept contributions to existing features on a case by case basis.
+
+If you are thinking of contributing we're more than happy to discuss this. It's recommended you first check our open issues to see if there's any in the area
+you wish to contribute to and ask there or to raise a new issue accordingly for us to talk through the design.
+
 ## Technical Design
 
 Before contributing you should read and acknowledge our [Technical Design](TECHNICAL_DESIGN.md) document in full.
