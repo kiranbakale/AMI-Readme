@@ -1,0 +1,23 @@
+---
+
+- name: Maintenance Mode - Configure kubeconfig credentials for Geo primary site
+  become: false
+  delegate_to: localhost
+  run_once: true
+  import_tasks: kubeconfig.yml
+  vars:
+    geo_site_prefix: "{{ item.site_prefix }}"
+    geo_site_gcp_project: "{{ item.site_gcp_project if cloud_provider == 'gcp' else '' }}"
+    geo_site_gcp_zone: "{{ item.site_gcp_zone if cloud_provider == 'gcp' else '' }}"
+    geo_site_aws_region: "{{ item.site_aws_region if cloud_provider == 'aws' else '' }}"
+
+- name: Maintenance Mode - Enable Maintenance Mode for Cloud Native Hybrid environments
+  become: false
+  delegate_to: localhost
+  run_once: true
+  ignore_errors: "{{ maintenance_mode_state | lower }}"
+  kubernetes.core.k8s_exec:
+    pod: "{{ task_runner_pod }}"
+    namespace: "{{ gitlab_charts_release_namespace }}"
+    command: |
+      gitlab-rails runner "::Gitlab::CurrentSettings.update!(maintenance_mode: {{ maintenance_mode_state | lower }}, maintenance_mode_message: \"{{ maintenance_mode_message }}\")"
