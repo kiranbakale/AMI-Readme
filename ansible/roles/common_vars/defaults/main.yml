@@ -269,9 +269,6 @@ elasticsearch_urls: "{{ (elastic_int_addrs | map('regex_replace', '^(.*)$', 'htt
 advanced_search_hosts: "{{ elasticsearch_urls }}"
 advanced_search_external: "{{ 'elastic' not in groups and advanced_search_hosts != [] }}"
 
-# Jaeger Distributed Tracing
-jaeger_int_addr: "{{ (groups['jaeger'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'jaeger' in groups else '' }}"
-
 ################################################################################
 ## GitLab Cloud Native Hybrid Settings (Helm)
 ################################################################################
