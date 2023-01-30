@@ -1,8 +1,8 @@
 include:
-  - template: Security/Dependency-Scanning.gitlab-ci.yml
-  - template: Security/Secret-Detection.gitlab-ci.yml
-  - template: Security/Container-Scanning.gitlab-ci.yml
-  - template: Security/SAST-IaC.latest.gitlab-ci.yml
+  - template: Jobs/Dependency-Scanning.latest.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.latest.gitlab-ci.yml
+  - template: Jobs/Container-Scanning.latest.gitlab-ci.yml
+  - template: Jobs/SAST-IaC.latest.gitlab-ci.yml
   - project: 'gitlab-org/quality/pipeline-common'
     file:
       - '/ci/danger-review.yml'
@@ -47,8 +47,6 @@ gemnasium-dependency_scanning:
     - !reference [.on_merge_request_and_merged_events, rules]
 
 gemnasium-python-dependency_scanning:
-  variables:
-    DS_MAJOR_VERSION: 2-python-3.9
   rules:
     - !reference [.on_merge_request_and_merged_events, rules]
 
@@ -125,7 +123,7 @@ check:markdown-link-check:
     name: ghcr.io/tcort/markdown-link-check
     entrypoint: [""]
   script:
-    - find *.md docs/*.md -print0 | xargs -0 -n1 /src/markdown-link-check
+    - /src/markdown-link-check *.md docs/*.md
   rules:
     - !reference [.on_merge_request_and_merged_events_except_schedule_and_tag, rules]
   retry: 2
