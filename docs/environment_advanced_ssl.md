@@ -18,7 +18,7 @@
 
 The Toolkit aims to enable you to configure SSL encryption for your GitLab environment.
 
-Encryption is an involved area that can become complex with various ways to configure depending on your requirements. With GitLab there are two general areas of Encryption the Toolkit seeks to enable you to configure - External and Internal SSL:
+Encryption is an complex area that can become complex with various ways to configure depending on your requirements. With GitLab there are two general areas of Encryption the Toolkit seeks to enable you to configure - External and Internal SSL:
 
 - External SSL - Where external connections to the main URL are encrypted. Also called External SSL Termination.
 - Internal SSL - Where internal connections between GitLab components are encrypted.
@@ -123,7 +123,7 @@ As an alternative you can also just reconfigure the specific nodes, depending on
 
 ## Internal SSL
 
-Unlike External SSL, Internal SSL is typically more involved. This is due to both servers and clients needing to be configured as well as each GitLab component, some being third party, each having their own implementations and options.
+Unlike External SSL, Internal SSL is typically more complex. This is due to both servers and clients needing to be configured as well as each GitLab component, some being third party, each having their own implementations and options.
 
 Due to this, how the Toolkit approaches Internal SSL varies depending on the component, and it's implementation as follows:
 
