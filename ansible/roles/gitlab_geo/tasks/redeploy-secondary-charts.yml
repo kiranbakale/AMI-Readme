@@ -71,6 +71,18 @@
 
 - name: Redeploy Secondary Charts - Get GitLab Charts version if App version specified
   block:
+    - name: Add GitLab Charts repo
+      become: false
+      delegate_to: localhost
+      kubernetes.core.helm_repository:
+        name: "{{ gitlab_charts_repo_name }}"
+        repo_url: "{{ gitlab_charts_repo_url }}"
+
+    - name: Update GitLab Charts repo
+      become: false
+      delegate_to: localhost
+      command: "helm repo update {{ gitlab_charts_repo_name }}"
+
     - name: Get all GitLab Charts versions
       command: helm search repo gitlab/gitlab -l -o json
       register: gitlab_charts_versions
