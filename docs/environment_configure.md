@@ -251,7 +251,7 @@ compose:
 
 Finally, the last thing to configure is authentication. This is required to allow Ansible to access AWS to build its dynamic inventory.
 
-Ansible provides several ways to authenticate with [AWS](https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html#id3), you can select any method that is desired.
+Ansible provides several ways to authenticate with [AWS](https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html#parameters), you can select any method that is desired.
 
 All the methods given involve the AWS Access Key you generated previously. We've found that the easiest and secure way to do this is with the official [environment variables](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#environment-variables):
 
@@ -390,7 +390,7 @@ Passwords and Secrets settings are what they suggest - all the various passwords
 - `praefect_external_token` **_Gitaly Cluster only_** - Sets the [external access token for Gitaly Cluster and Praefect](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#secrets).
 - `praefect_internal_token` **_Gitaly Cluster only_** - Sets the [internal access token for Gitaly Cluster and Praefect](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#secrets).
 - `praefect_postgres_password` **_Gitaly Cluster only_** - Sets the [password for Praefect's database user](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#secrets).
-- `gitaly_token` **_Gitaly Sharded only_** - Sets the [shared authentication token for Gitaly](https://docs.gitlab.com/ee/administration/gitaly/#configure-gitaly). Only used in [Gitaly Sharded](environment_advanced.md#gitaly-setups---cluster-or-sharded) setups.
+- `gitaly_token` **_Gitaly Sharded only_** - Sets the [shared authentication token for Gitaly](https://docs.gitlab.com/ee/administration/gitaly/#configure-gitaly). Only used in [Gitaly Sharded](environment_advanced.md#gitaly-setups-cluster-or-sharded) setups.
 
 #### Notable Optional Config
 
@@ -408,7 +408,7 @@ The package can be installed via two different methods - Repository or Direct. B
 
 The main method for installing the GitLab Omnibus package is from the [official repository](https://packages.gitlab.com/gitlab/gitlab-ee). This is the default method the Toolkit will look to use to both install and upgrade the package on subsequent runs.
 
-This method can be customised in several ways via the following variables in your [`vars.yml`](#environment-config---varsyml) file as follows:
+This method can be customised in several ways via the following variables in your [`vars.yml`](#environment-config-varsyml) file as follows:
 
 - `gitlab_version` - Sets the GitLab version to be installed from the repo. This should be set to the full semantic version, e.g. `14.0.0`. If left unset the Toolkit will look to install the latest version. Optional, default is `''`.
 - `gitlab_edition` - Sets the GitLab edition to install, i.e. CE or EE. If left unset the Toolkit will look to install the EE edition as recommended for the Reference Architectures. Optional, default is `gitlab-ee`.
@@ -419,7 +419,7 @@ This method can be customised in several ways via the following variables in you
 
 The GitLab Omnibus package can also be installed directly, for example a `.deb` or `.rpm` file. This is an alternative method for installing GitLab when access to a repo isn't desired. In this setup the file must be provided to the Toolkit locally or from a reachable URL.
 
-This method can be customised in several ways via the following variables in your [`vars.yml`](#environment-config---varsyml) file as follows:
+This method can be customised in several ways via the following variables in your [`vars.yml`](#environment-config-varsyml) file as follows:
 
 - `gitlab_deb_host_path` / `gitlab_rpm_host_path` - The local path of the installation file the Toolkit should use. Should not be used if file is to be downloaded from a URL via `gitlab_*_download_url`. Optional, default is `''`. Can also be specified via the environment variable `GITLAB_HOST_DEB_PATH` / `GITLAB_HOST_RPM_PATH`.
 - `gitlab_deb_download_url` / `gitlab_rpm_download_url` - The remote URL of the installation file the Toolkit should use. Should not be used if the file is to be copied locally via `gitlab_*_host_path`. Optional, default is `''`. Can also be specified via the environment variable `GITLAB_DEB_DOWNLOAD_URL` / `GITLAB_RPM_DOWNLOAD_URL`.
@@ -455,7 +455,7 @@ There are numerous available [Lookup plugins](https://docs.ansible.com/ansible/l
 
 It's possible to set your passwords as Environment Variables and then configure the Toolkit to pull these in at runtime via the [`env lookup` plugin](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/env_lookup.html).
 
-For example if you set an environment variable containing the GitLab Rails password named `GITLAB_RAILS_PASSWORD` Ansible can be configured to use this as follows in your [`vars.yml`](#environment-config---varsyml) file:
+For example if you set an environment variable containing the GitLab Rails password named `GITLAB_RAILS_PASSWORD` Ansible can be configured to use this as follows in your [`vars.yml`](#environment-config-varsyml) file:
 
 ```yaml
 gitlab_rails_password: "{{ lookup('env', 'GITLAB_RAILS_PASSWORD') }}"
@@ -465,7 +465,7 @@ This option is particularly useful for usage in CI, where passing variables in v
 
 ##### Secret Managers
 
-There are several plugins available for well known Secret Managers such as [AWS Secret Manager](https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_secret_lookup.html#ansible-collections-amazon-aws-aws-secret-lookup) or [HashiCorp Vault](https://docs.ansible.com/ansible/latest/collections/community/hashi_vault/hashi_vault_lookup.html#ansible-collections-community-hashi-vault-hashi-vault-lookup).
+There are several plugins available for well known Secret Managers such as [AWS Secret Manager](https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_secret_lookup.html) or [HashiCorp Vault](https://docs.ansible.com/ansible/latest/collections/community/hashi_vault/hashi_vault_lookup.html).
 
 These sorts of plugins will typically need authentication configured, which is usually done via environment variables (refer to each plugin's docs for more info).
 
@@ -556,7 +556,7 @@ First, installing the Collection is done as standard via the `ansible-galaxy` co
 ansible-galaxy collection install git+https://gitlab.com/gitlab-org/gitlab-environment-toolkit.git#/ansible/
 ```
 
-Once installed you can then run the Collection in [several possible ways](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#using-collections-in-a-playbook). As an example you can run the `all` playbook directly via the collection name as follows:
+Once installed you can then run the Collection in [several possible ways](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html). As an example you can run the `all` playbook directly via the collection name as follows:
 
 ```shell
 ansible-playbook -i environments/50k/inventory gitlab.gitlab_environment_toolkit.all

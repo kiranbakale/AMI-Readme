@@ -27,5 +27,6 @@
   "code-block-style": {
     "style": "fenced"
   },
-  "proper-names": false
+  "proper-names": false,
+  "links": false
 }

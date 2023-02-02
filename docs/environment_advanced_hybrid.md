@@ -468,7 +468,7 @@ The Toolkit provides several other settings that can customize a Cloud Native Hy
 - `gitlab_charts_sidekiq_max_replicas`: Override for the number of max Sidekiq replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
 - `gitlab_charts_sidekiq_min_replicas`: Override for the number of min Sidekiq replicas instead of them being automatically calculated. Setting this value may affect the performance of the environment and should only be done so for specific reasons. Defaults to blank.
 
-Once your config file is in place as desired you can proceed to [configure as normal](environment_configure.md#3-configure-update).
+Once your config file is in place as desired you can proceed to [configure as normal](environment_configure.md#4-configure).
 
 ### Custom Secrets (via Custom Tasks)
 

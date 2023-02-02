@@ -44,7 +44,7 @@ Installing Terraform with a version manager such as `asdf` has several benefits:
 
 Installing Terraform with `asdf` is done as follows (using `v1.2.0` as an example):
 
-1. Install `asdf` as per its [documentation](https://asdf-vm.com/#/core-manage-asdf?id=install)
+1. Install `asdf` as per its [documentation](https://asdf-vm.com/guide/getting-started.html)
 1. Add the Terraform asdf plugin, the intended version and set it to be the main on your PATH:
 
     ```sh
@@ -427,7 +427,7 @@ provider "aws" {
 
 - `terraform` - The main Terraform config block.
   - `backend "s3"` - The [`s3` backend](https://www.terraform.io/docs/language/settings/backends/s3.html) config block.
-    - `bucket` - The name of the bucket [previously created](environment_prep.md#3-setup-terraform-state-storage-s3) to store the State.
+    - `bucket` - The name of the bucket [previously created](environment_prep.md#3-setup-terraform-state-storage-aws-s3) to store the State.
     - `key` - The file path and name to store the state in (example: `path/to/my/key`- [must not start with '/'](https://github.com/hashicorp/terraform/blob/main/internal/backend/remote-state/s3/backend.go#L30-L41)).
     - `region` - The AWS region of the bucket.
   - `required_providers` - Config block for the required provider(s) Terraform needs to download and use.
