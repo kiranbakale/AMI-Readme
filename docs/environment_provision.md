@@ -20,6 +20,8 @@ With [Terraform](https://www.terraform.io/), you can automatically provision mac
 
 The Toolkit provides multiple curated [Terraform Modules](../terraform/modules) that will provision the machines for a GitLab environment as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/).
 
+:information_source:&nbsp; It's recommended that users have a good working knowledge of Terraform and GitLab administration before proceeding. This documentation assumes this throughout.
+
 [[_TOC_]]
 
 ## 1. Install Terraform
@@ -61,7 +63,7 @@ Before you start setting up the config you should select a Terraform Module sour
 
 Terraform can retrieve Modules from various [sources](https://www.terraform.io/language/modules/sources). The Toolkit's Modules are available from Local paths, Git URL or this Project's Terraform Module Registry.
 
-:information_source:&nbsp; These docs assume the Local method is being used but any of these sources can be used as desired.
+:information_source:&nbsp; This documentation assume the Local method is being used but any of these sources can be used as desired.
 
 Below we detail each source and how to configure them:
 
@@ -120,7 +122,7 @@ The `ref_arch` modules configure not only the VMs required for the environment b
 - `environment.tf` - `ref_arch` module configuration (machine count or sizes for example).
 - `variables.tf` - Variable definitions.
 
-Each of the above files must be set in the same folder for Terraform to merge. Due to relative path requirements in Terraform we recommend you create these in a unique folder for your environment under the provided [`terraform/environments` folder](../terraform/environments), e.g. `terraform/environments/<env_name>`. These docs will assume this is the case from now on.
+Each of the above files must be set in the same folder for Terraform to merge. Due to relative path requirements in Terraform we recommend you create these in a unique folder for your environment under the provided [`terraform/environments` folder](../terraform/environments), e.g. `terraform/environments/<env_name>`. This documentation will assume this is the case from now on.
 
 In this step there are sections for each supported host provider on how to configure the above files. Follow the section for your selected provider and then move onto the next step.
 

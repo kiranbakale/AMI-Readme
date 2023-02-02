@@ -20,11 +20,13 @@ With [Ansible](https://docs.ansible.com/ansible/latest/index.html), you can auto
 
 The Toolkit provides multiple curated [Ansible Playbooks and Roles](../ansible) that will install and configure GitLab as per the [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures/).
 
+:information_source:&nbsp; It's recommended that users have a good working knowledge of Ansible and GitLab administration before proceeding. This documentation assumes this throughout.
+
 [[_TOC_]]
 
 ## Overview
 
-Installing and configuring GitLab automatically is the most involved part of the process, as such Ansible is the most involved part of the Toolkit as a result. It's worth highlighting then how it works at a high level before we detail the steps on how to set up and use it.
+Installing and configuring GitLab automatically is the most complex part of the process, as such Ansible is the most complex part of the Toolkit as a result. It's worth highlighting then how it works at a high level before we detail the steps on how to set up and use it.
 
 ### Playbooks and Roles
 

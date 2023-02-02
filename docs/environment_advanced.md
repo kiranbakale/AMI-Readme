@@ -18,7 +18,7 @@
 
 The Toolkit by default will deploy the latest version of the selected [Reference Architecture](https://docs.gitlab.com/ee/administration/reference_architectures/). However, it can also support other advanced setups such as Geo or different component makeups such as Gitaly Sharded.
 
-On this page we'll detail all of the supported advanced setups you can do with the Toolkit. We recommend you only do these setups if you have a good working knowledge of both the Toolkit and what the specific setups involve.
+On this page we'll detail all the supported advanced setups you can do with the Toolkit. We recommend you only do these setups if you have a good working knowledge of both the Toolkit and what the specific setups involve.
 
 [[_TOC_]]
 
@@ -26,15 +26,17 @@ On this page we'll detail all of the supported advanced setups you can do with t
 
 The Toolkit allows for providing custom GitLab config that will be used when setting up components via Omnibus or Helm charts.
 
-:exclamation:&nbsp; **This is an advanced feature and it must be used with caution**. Any custom config passed will always take precedence and may lead to various unintended consequences or broken environments if not used carefully.
+:exclamation:&nbsp; **This is an advanced feature, and it must be used with caution**. Any custom config passed will always take precedence and may lead to various unintended consequences or broken environments if not used carefully.
 
 Custom config should only be used in advanced scenarios where you are fully aware of the intended effects or for areas that the Toolkit doesn't support natively due to potential permutations such as:
 
 - [OmniAuth](https://docs.gitlab.com/ee/integration/omniauth.html)
 - [Custom Object Storage](https://docs.gitlab.com/ee/administration/object_storage.html)
 - [Email](https://docs.gitlab.com/omnibus/settings/smtp.html)
+- [GitLab agent server for Kubernetes (KAS)](https://docs.gitlab.com/ee/administration/clusters/kas.html#for-omnibus)
+  - The KAS agent will be enabled in the environment as per it's defaults but further configuration of specific keys and URLs are required.
 
-Custom configs are treated the same as our built in config templates. As such you have access to the same variables for added flexibility.
+Custom configs are treated the same as our built-in config templates. As such you have access to the same variables for added flexibility.
 
 In this section we detail how to set up custom config for Omnibus and Helm charts components respectively.
 
@@ -63,17 +65,17 @@ With the above done the file will be picked up by the Toolkit and used when conf
 
 ## Custom Tasks
 
-The Toolkit allows for providing custom Ansible tasks that can be run at several different points in the setup. This allows you to run tasks as required in addition to the main GitLab setup such as installing monitoring tools, etc...
+The Toolkit allows for providing custom Ansible tasks that can be run at several points in the setup. This allows you to run tasks as required in addition to the main GitLab setup such as installing monitoring tools.
 
 The Toolkit has hooks to allow tasks to be run at the following points during the setup:
 
 - Common - Tasks to run on every VM **before** the component has deployed such as installing general monitoring tools.
-- Omnibus - Tasks to run on specific Omnibus VMs **after** the component has been setup via Omnibus such as installing any specific tools for the component.
+- Omnibus - Tasks to run on specific Omnibus VMs **after** the component has been set up via Omnibus such as installing any specific tools for the component.
 - Helm - Tasks to run for the Kubernetes Cluster **after** the Charts have been deployed such as deploying additional components into the Cluster.
 - Post Configure - Tasks to run against the environment **after** setup from the Ansible runner.
-- Uninstall - Tasks to run as part of the uninstall process such as uninstalling any additional tools.
+- Uninstall - Tasks to run as part of the uninstallation process such as uninstalling any additional tools.
 
-:exclamation:&nbsp; **This is an advanced feature and it must be used with caution**. Running custom tasks may lead to various unintended consequences or broken environments if not used carefully.
+:exclamation:&nbsp; **This is an advanced feature, and it must be used with caution**. Running custom tasks may lead to various unintended consequences or broken environments if not used carefully.
 
 Setting up common tasks is done in the same manner for each hook as follows:
 
@@ -86,19 +88,19 @@ Setting up common tasks is done in the same manner for each hook as follows:
       - Available component options: `consul`, `postgres`, `pgbouncer`, `redis`, `redis_cache`, `redis_persistent`, `praefect_postgres`, `praefect`, `gitaly`, `gitlab_rails`, `sidekiq` and `monitor`.
     - `gitlab_charts_custom_tasks_file` - Full path for the Helm custom tasks file. Defaults to `<inventory_dir>/files/gitlab_tasks/gitlab_charts.yml`.
     - `post_configure_custom_tasks_file` - Full path for the Post Configure custom tasks file. Defaults to `<inventory_dir>/files/gitlab_tasks/post_configure.yml`.
-    - `uninstall_custom_tasks_file` - Full path for the Uninstall custom tasks file. Defaults to `<inventory_dir>/files/gitlab_tasks/uninstall.yml`.
+    - `uninstall_custom_tasks_file` - Full path for the uninstallation custom tasks file. Defaults to `<inventory_dir>/files/gitlab_tasks/uninstall.yml`.
 
 Any task within the [Ansible library](https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html) can be used for custom tasks, although it's worth noting the following general guidance when writing tasks:
 
 - Any Ansible tasks that aren't core, i.e. available within a standard Ansible install, will need their requirements installed manually before running.
 - If there's a requirement to only run Common tasks across all Omnibus VMs only you can do this by setting a `when` condition on the tasks to the Toolkit provided variable `omnibus_node`.
-- With the exception of Common, tasks will run after component setup.
+- Except for Common, tasks will run after component setup.
 
 ## Custom Files
 
 The Toolkit allows for copying files or folders to component node groups as desired. This can be useful when additional files are required for setup such as SSL certificates.
 
-:exclamation:&nbsp; **This is an advanced feature and it must be used with caution**. Adding custom files may lead to various unintended consequences or broken environments if not used carefully.
+:exclamation:&nbsp; **This is an advanced feature, and it must be used with caution**. Adding custom files may lead to various unintended consequences or broken environments if not used carefully.
 
 Setting up common files is straightforward. All that's required is for you to have the files ready in a location that's reachable by Ansible on the machine it's running on and then configuring Ansible to copy the files or folder from that location to a specified one on the node group as follows:
 
@@ -166,7 +168,7 @@ gitaly_data_disks = [
 
 - `*_data_disks` - The main setting for each node group.
   - `name` - The name for each disk attached. Must be unique per machine. **Required**.
-  - `device_name` = The block device name for each disk attached. For AWS, due to limitations, this must be in the format `/dev/sd[f-p]` and unique for each disk (more info [here](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html)). Additionally each block device name must be available on all machines in the target group (e.g. `gitaly-1`, `gitaly-2`, etc...). **Required**.
+  - `device_name` = The block device name for each disk attached. For AWS, due to limitations, this must be in the format `/dev/sd[f-p]` and unique for each disk (more info [here](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html)). Additionally, each block device name must be available on all machines in the target group (e.g. `gitaly-1` or `gitaly-2`). **Required**.
   - `size` - The size of the disk in GB. **Optional**, default is `100`.
   - `type` - The [type](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html) of the disk. **Optional**, default is `gp3`.
   - `iops` - The amount of IOPS to provision for the disk. Only valid for types of `io1`, `io2` or `gp3`. **Optional**, default is `null`.
@@ -182,9 +184,9 @@ The next step is to configure and mount the disks.
 
 This is done with Ansible and as such will require additional config in your [`vars.yml`](environment_configure.md#environment-config-varsyml) file.
 
-It's worth noting that the Toolkit will always mount disks via UUID to ensure the correct disks are always mounted in the same way through reboots, etc...
+It's worth noting that the Toolkit will always mount disks via UUID to ensure the correct disks are always mounted in the same way through reboots.
 
-The config for this area is given per node type and is passed an array of dictionaries, where each dictionary represents a disk. The config has been designed to be platform agnostic but the actual values may differ, in such a case the difference will be called out clearly. Below is an example of this config with full details after:
+The config for this area is given per node type and is passed an array of dictionaries, where each dictionary represents a disk. The config has been designed to be platform-agnostic, but the actual values may differ, in such a case the difference will be called out clearly. Below is an example of this config with full details after:
 
 **GCP**
 
@@ -214,9 +216,9 @@ Note that for AWS, the Toolkit will create symlinks to [match the block device n
 
 This feature can support mounting a disk on any path in machine groups as desired.
 
-For GitLab we suggest the following mount paths are suggested:
+For GitLab, we suggest the following mount paths are suggested:
 
-- `/var/opt/gitlab` - Common path for GitLab to store stateful data (e.g. Git Repo data, etc...).
+- `/var/opt/gitlab` - Common path for GitLab to store stateful data (e.g. Git Repo data).
 - `/var/log/gitlab` - Common path for GitLab to store its logs.
 
 ## Gitaly Setups - Cluster or Sharded
@@ -243,7 +245,6 @@ Enabling Advanced Search on your environment is designed to be as easy possible 
 - Elasticsearch nodes should be provisioned as normal via Terraform.
 - Once the nodes are available Ansible will automatically configure them, downloading and setting up the Elasticsearch Docker image.
   - At the time of writing the Elasticsearch version deployed is `7.6.2`. To deploy a different version you can set the `elastic_version`.
-- The Toolkit will also setup a Kibana Docker container on the Primary Elasticsearch node for administration and debugging purposes. Kibana will be accessible on your external IP / URL and port `5602` by default, e.g. `http://<external_ip_or_url>:5602`.
 - Ansible will then configure the GitLab environment near the end of its run to enable Advanced Search against those nodes and perform the first index.
 
 ## Container Registry (GCP, AWS)
@@ -475,7 +476,7 @@ Unlike Dynamic Inventories, in this scenario only facts for the HAProxy hosts an
 
 :information_source:&nbsp; This _doesn't_ affect playbooks that run on all hosts, such as `all.yml`, as these will gather facts at runtime.
 
-To workaround this limitation a persistent [Fact Cache](https://docs.ansible.com/ansible/latest/plugins/cache.html#cache-plugins) is recommended where all host facts are saved and made available on subsequent runs.
+To work around this limitation a persistent [Fact Cache](https://docs.ansible.com/ansible/latest/plugins/cache.html#cache-plugins) is recommended where all host facts are saved and made available on subsequent runs.
 
 An example would be the [`jsonfile`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/jsonfile_cache.html#ansible-collections-ansible-builtin-jsonfile-cache) cache where all facts are saved to disk. This would only need to be generated once initially and only run again if any of the hosts change.
 
@@ -489,7 +490,7 @@ In addition to this it will configure automated security upgrades and can option
 
 ### Automatic Security Upgrades
 
-The Toolkit will setup automatic security upgrades as a convenience on the target OS as follows:
+The Toolkit will set up automatic security upgrades as a convenience on the target OS as follows:
 
 - Ubuntu - [Unattended Upgrades](https://help.ubuntu.com/community/AutomaticSecurityUpdates).
 - RHEL 8 - [DNF Automatic](https://dnf.readthedocs.io/en/latest/automatic.html).
@@ -517,7 +518,7 @@ How NFS is used by either both GitLab or the Toolkit is nuanced.
 The various ways it's used are as follows:
 
 - Toolkit - Requires NFS to propagate select config and SSH keys.
-- GitLab - Can be optionally used to store data but this isn't recommended over [Object Storage](https://docs.gitlab.com/ee/administration/object_storage.html).
+- GitLab - Can be optionally used to store data, but this isn't recommended over [Object Storage](https://docs.gitlab.com/ee/administration/object_storage.html).
   - Note this does **not** include Git repository data, which is [deprecated](https://docs.gitlab.com/ee/administration/nfs.html#gitaly-and-nfs-deprecation).
 
 As such, the Toolkit will always configure a NFS server for its own use only by default on a select node depending on what's available - NFS, Gitaly or Rails in that order. This happens seamlessly in the background and the server is only used during Toolkit runs.
@@ -530,7 +531,7 @@ It's possible to also use this NFS server to also store GitLab object data by se
 
 The Toolkit allows you to configure the external GitLab Shell SSH port - The port that is used externally to serve the `git+ssh` service on for Git actions such as pushes or pulls.
 
-Typically this is set up on port `22` but this differs slightly with Toolkit built environments as follows:
+Typically, this is set up on port `22`, but this differs slightly with Toolkit built environments as follows:
 
 - Omnibus - Port `2222`. This is to allow the external load balancer to have it's standard SSH service to run on port `22`, which is used by Ansible for configuring.
 - Cloud Native Hybrid - Port `22`. Due to the different nature of the setup port `22` can be used normally on the Kubernetes frontend.
@@ -543,7 +544,7 @@ The Toolkit provides several customization options for configuring AWS IAM.
 
 ### Custom IAM Instance Policies (AWS)
 
-[In AWS you can attach IAM Instance Profiles / Roles to EC2 Instances](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html). These Roles can then contain [Policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html) (AKA permissions) that are attached to the instance to allow it to perform actions against AWS APIs, e.g. accessing Object Storage.
+[In AWS, you can attach IAM Instance Profiles / Roles to EC2 Instances](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html). These Roles can then contain [Policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html) (AKA permissions) that are attached to the instance to allow it to perform actions against AWS APIs, e.g. accessing Object Storage.
 
 The Toolkit uses this functionality in several places to ensure the needed permissions for GitLab are set on the right instances.
 
@@ -558,11 +559,11 @@ Passing in your policies is done in Terraform via the following variables in you
 
 The Toolkit also allows for there to be a [Permissions Boundary](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html) to be set for all IAM Roles it creates.
 
-:exclamation:&nbsp; **This is an advanced feature and it must be used with caution**. Boundaries must allow for all Policies the Toolkit uses to be allowed or your environment will become unstable. [The latest list of policies used by the Toolkit is shown here](https://gitlab.com/search?search=2012-10-17&nav_source=navbar&project_id=14292404&group_id=9970&search_code=true&repository_ref=main).
+:exclamation:&nbsp; **This is an advanced feature, and it must be used with caution**. Boundaries must allow for all Policies the Toolkit uses to be allowed, or your environment will become unstable. [The latest list of policies used by the Toolkit is shown here](https://gitlab.com/search?search=2012-10-17&nav_source=navbar&project_id=14292404&group_id=9970&search_code=true&repository_ref=main).
 
 While the Toolkit will be designed in line with least privilege and ensuring all such IAM entities only have the access they require to do their role you may have a general policy to always apply a "global" permissions boundary as an additional security measure.
 
-To do this you first create the boundary policy separately in AWS and take note of its ARN. Then you should pass the ARN to the Toolkit via the following variable in the Terraform [Environment config file](environment_provision.md#configure-module-settings-environmenttf) file:
+To do this you first create the boundary policy separately in AWS and take note of its ARN. Then you should pass the ARN to the Toolkit via the following variable in the Terraform [Environment config file](environment_provision.md#configure-module-settings-environmenttf):
 
 - `default_iam_permissions_boundary_arn` - The IAM ARN of a [Permissions Boundary](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html) policy to be applied to all IAM Roles the Toolkit creates. Defaults to `null`.
 
@@ -572,7 +573,7 @@ The Toolkit will then apply this boundary on the next `terraform apply` run.
 
 The Toolkit allows to configure a custom [Path](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html) for all IAM Roles and Policies it creates. As detailed in the AWS documentation, you can use a single path, or nest multiple paths as a folder structure. This allows to match your company organizational structure.
 
-To configure custom Path add the following variable in the Terraform [Environment config file](environment_provision.md#configure-module-settings-environmenttf) file:
+To configure custom Path add the following variable in the Terraform [Environment config file](environment_provision.md#configure-module-settings-environmenttf):
 
 - `default_iam_identifier_path` - The IAM [Path](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html) to be applied to all IAM Policies and Roles the Toolkit creates. Defaults to `null` which in turn results in `/` default path in AWS.
 
