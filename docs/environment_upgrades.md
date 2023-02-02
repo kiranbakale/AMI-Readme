@@ -58,13 +58,13 @@ Typically, this should be seamless and running the same commands just as you did
 
 ### Follow GitLab Upgrade Paths
 
-The Toolkit by default will always attempt to install the latest GitLab version unless [configured differently](environment_configure.md#gitlab-version).
+The Toolkit by default will always attempt to install the latest GitLab version unless [configured differently](environment_configure.md#repository).
 
 However, the [standard GitLab Upgrade rules still apply](https://docs.gitlab.com/ee/update/#upgrade-paths) when upgrading across multiple GitLab versions. You should refer to the docs to ensure the intended upgrade can be performed directly or if you need to upgrade to a certain version first.
 
 ### Zero Downtime Updates
 
-For Zero Downtime Updates, the Toolkit translates the [documented manual process](https://docs.gitlab.com/omnibus/update/README.html#zero-downtime-updates) to achieve the same effect as much as possible.
+For Zero Downtime Updates, the Toolkit translates the [documented manual process](https://docs.gitlab.com/ee/update/zero_downtime.html) to achieve the same effect as much as possible.
 
 :information_source:&nbsp; Note that Zero Downtime Updates are **not available** for Cloud Native Hybrid environments as they aren't supported in the [GitLab Charts](https://docs.gitlab.com/charts/installation/upgrade.html).
 

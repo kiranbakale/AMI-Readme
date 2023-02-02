@@ -111,7 +111,7 @@ Config is recommended to be placed in a new folder named after the environment u
 
 First we need to install Terraform. To easily switch between Terraform versions we recommend installing with [`asdf`](https://asdf-vm.com/#/) as follows:
 
-1. Install `asdf` as per its [documentation](https://asdf-vm.com/#/core-manage-asdf?id=install)
+1. Install `asdf` as per its [documentation](https://asdf-vm.com/guide/getting-started.html)
 1. Add the Terraform asdf plugin, the intended version and set it to be the main on your PATH:
 
     ```sh
@@ -343,7 +343,7 @@ Next is the Environment config file that contains all the config for configuring
 
 <details><summary>Environment - <code>gitlab-environment-toolkit/ansible/environments/&#60;ENV_NAME&#62;/inventory/vars.yml</code></summary>
 
-:information_source:&nbsp; [As mentioned earlier in this guide](#select-passwords--tokens) all `<*_PASSWORD>` and `<*_TOKEN>` entries should be replaced with your own.
+:information_source:&nbsp; [As mentioned earlier in this guide](#select-passwords-tokens) all `<*_PASSWORD>` and `<*_TOKEN>` entries should be replaced with your own.
 
 ```yaml
 all:

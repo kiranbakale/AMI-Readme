@@ -256,7 +256,7 @@ After the container is created this is all that's required for now. We'll config
 A static IP can be generated in Azure as follows:
 
 - Reserve a static external IP address in your resource group [as detailed in the Azure docs](https://docs.microsoft.com/en-us/azure/virtual-network/create-public-ip-portal?tabs=option-create-public-ip-standard-zones)
-- Make sure to select the _[Standard SKU](https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-addresses#standard)_ to ensure that the allocation is static
+- Make sure to select the _[Standard SKU](https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/create-public-ip-portal?tabs=option-1-create-public-ip-standard#create-a-standard-sku-public-ip-address)_ to ensure that the allocation is static
 
 Once the IP is available take note of its name for later.
 

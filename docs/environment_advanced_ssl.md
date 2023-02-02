@@ -114,7 +114,7 @@ Once the config is in place you're ready to [configure the environment](#configu
 
 ### Configure the environment
 
-With the files and config in place all that's left is to update the environment. This can be done [the same as a normal environment update](environment_configure.md#3-configure-update).
+With the files and config in place all that's left is to update the environment. This can be done [the same as a normal environment update](environment_configure.md#4-configure).
 
 As an alternative you can also just reconfigure the specific nodes, depending on the type of environment, that will avoid doing a version update of GitLab as follows:
 
@@ -143,7 +143,7 @@ When preparing the certificates the following conditions should be met:
 - Certificates are in the `.pem` format and Keys in the `.pem` or `.key` format.
 - Certificates must contain a Subject Alternative Name (SAN) as Common Name (CN) use only is deprecated.
 - The files will be copied to each component node group. As such the SAN entries should either match each node group machine's specific hostname or be an appropriate wildcard.
-  - :information_source:&nbsp; The Toolkit by default uses IPs for internal connections. [However, this can be switched to use internal hostnames as discovered by Ansible](environment_advanced_network.md#configuring-internal-connection-type-ips--hostnames) which is generally preferred for Internal SSL.
+  - :information_source:&nbsp; The Toolkit by default uses IPs for internal connections. [However, this can be switched to use internal hostnames as discovered by Ansible](environment_advanced_network.md#configuring-internal-connection-type-ips-hostnames) which is generally preferred for Internal SSL.
   - :information_source:&nbsp; Terraform output contains the Hostnames / IPs for you to configure your certificates with.
 - For GitLab components to verify each certificate you will need either the CA file for your certificates or to upload the certificate itself to client components. Further guidance on this is given later.
 
