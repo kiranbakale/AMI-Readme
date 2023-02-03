@@ -226,6 +226,7 @@ redis_host: "{{ redis_primary_int_addr }}"
 redis_password: ""
 redis_port: 6379
 redis_external: "{{ 'redis' not in groups and redis_host != '' }}"
+redis_external_ssl: "{{ cloud_provider == 'aws' }}"
 
 ## Cache
 redis_cache_primary_int_addr: "{{ (groups['redis_cache_primary'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'redis_cache' in groups else '' }}"
@@ -235,6 +236,7 @@ redis_cache_host: "{{ redis_cache_primary_int_addr }}"
 redis_cache_password: "{{ redis_password }}"
 redis_cache_port: "{{ redis_port }}"
 redis_cache_external: "{{ 'redis_cache' not in groups and redis_cache_host != '' }}"
+redis_cache_external_ssl: "{{ redis_external_ssl }}"
 
 ## Persistent
 redis_persistent_primary_int_addr: "{{ (groups['redis_persistent_primary'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'redis_persistent' in groups else '' }}"
@@ -244,9 +246,9 @@ redis_persistent_host: "{{ redis_persistent_primary_int_addr }}"
 redis_persistent_password: "{{ redis_password }}"
 redis_persistent_port: "{{ redis_port }}"
 redis_persistent_external: "{{ 'redis_persistent' not in groups and redis_persistent_host != '' }}"
+redis_persistent_external_ssl: "{{ redis_external_ssl }}"
 
 redis_sentinel_port: 26379
-redis_external_ssl: "{{ cloud_provider == 'aws' }}"
 
 # Sidekiq
 sidekiq_max_concurrency: 20
