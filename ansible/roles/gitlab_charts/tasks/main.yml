@@ -50,6 +50,7 @@
   tags:
     - reconfigure
     - charts
+    - charts_values
 
 - name: Non Omnibus database related tasks
   block:
