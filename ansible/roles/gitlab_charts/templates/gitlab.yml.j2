@@ -249,32 +249,33 @@ global:
     scheme: "{{ 'rediss' if redis_external_ssl else 'redis' }}"
 {% elif redis_cache_external and redis_persistent_external %}
 ### Separate Queues
+#### Default
+    host: "{{ redis_persistent_host }}"
+    port: "{{ redis_persistent_port }}"
+    password:
+      secret: gitlab-redis-persistent-password
+      key: password
+    scheme: "{{ 'rediss' if redis_persistent_external_ssl else 'redis' }}"
+#### Cache
     cache:
       host: "{{ redis_cache_host }}"
       port: "{{ redis_cache_port }}"
       password:
         secret: gitlab-redis-cache-password
         key: password
-    host: "{{ redis_persistent_host }}"
-    port: "{{ redis_persistent_port }}"
-    password:
-      secret: gitlab-redis-persistent-password
-      key: password
-    scheme: "{{ 'rediss' if redis_external_ssl else 'redis' }}"
+      scheme: "{{ 'rediss' if redis_cache_external_ssl else 'redis' }}"
 {% elif 'redis' in groups %}
 ## Redis Omnibus - Separate Node(s)
-### Combined Queues
+### Single Node - Combined Queues
 {% if groups['redis'] | length == 1 %}
-#### Separate Single Node
     host: '{{ redis_host }}'
     port: '{{ redis_port }}'
     password:
       secret: gitlab-redis-password
       key: password
 {% elif groups['redis'] | length > 1 %}
-#### Separate Multi Node
+#### Multi Node - Combined Queues
     host: gitlab-redis
-    serviceName: redis
     password:
       secret: gitlab-redis-password
       key: password
@@ -285,8 +286,17 @@ global:
 {% endfor %}
 {% endif %}
 {% elif 'redis_cache' in groups and 'redis_persistent' in groups %}
-### Separate Queues
-#### Separate Multi Node
+### Multi Node - Separate Queues
+#### Default
+    host: gitlab-redis-persistent
+    password:
+      secret: gitlab-redis-persistent-password
+      key: password
+    sentinels:
+{% for ip in redis_persistent_int_addrs %}
+      - host: '{{ ip }}'
+{% endfor %}
+#### Cache
     cache:
       host: gitlab-redis-cache
       password:
@@ -294,14 +304,6 @@ global:
         key: password
       sentinels:
 {% for ip in redis_cache_int_addrs %}
-      - host: '{{ ip }}'
-{% endfor %}
-    host: gitlab-redis-persistent
-    password:
-      secret: gitlab-redis-persistent-password
-      key: password
-    sentinels:
-{% for ip in redis_persistent_int_addrs %}
       - host: '{{ ip }}'
 {% endfor %}
 {% endif %}
