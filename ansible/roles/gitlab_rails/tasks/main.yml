@@ -150,6 +150,7 @@
       loop: ['pg_trgm', 'btree_gist', 'plpgsql', 'pg_stat_statements']
   when:
     - postgres_external
+    - postgres_external_prep
     - "'gitlab_rails_primary' in group_names"
     - geo_secondary_site_group_name not in groups
   tags:

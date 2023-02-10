@@ -89,6 +89,7 @@
   become: true
   when:
     - postgres_external
+    - postgres_external_prep
     - cloud_native_hybrid_geo_role != 'secondary'
   tags:
     - reconfigure

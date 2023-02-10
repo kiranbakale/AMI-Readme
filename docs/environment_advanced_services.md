@@ -98,7 +98,7 @@ The available variables in Ansible for this are as follows:
 
 ## PostgreSQL
 
-The Toolkit supports provisioning and/or configuring alternative PostgreSQL database(s) and then pointing GitLab to use them accordingly, much in the same way as configuring Omnibus Postgres.
+The Toolkit supports provisioning and/or configuring alternative PostgreSQL database(s) that meet the [requirements](https://docs.gitlab.com/ee/install/requirements.html#postgresql-requirements) and then pointing GitLab to use them accordingly, much in the same way as configuring Omnibus Postgres.
 
 When using alternative PostgreSQL database(s) the following changes apply when deploying via the Toolkit:
 
@@ -121,6 +121,8 @@ How and where these are configured can be done in several ways depending on if G
 - Geo
   - GitLab and Praefect should be separated to avoid replication of the latter.
   - Geo Tracking DB can be configured on the same Database instance as Praefect on the secondary site (recommended) or separated
+
+:information_source:&nbsp; In each case the databases given will need to be prepared for GitLab to use, such as the creation of users. The Toolkit will attempt to do this automatically for you by default. However, this may not be compatible with your specific database depending on your setup. Refer to the [Database Preparation](#database-preparation) section below for more info.
 
 This section starts with the non Geo combined databases route with guidance being given on the alternatives where appropriate.
 
@@ -245,6 +247,8 @@ Configuring GitLab to use an alternative PostgreSQL database with Ansible is the
 
 :information_source:&nbsp; This config is the same for custom PostgreSQL databases that have been provisioned outside of Omnibus or Cloud Services. Although please note, in this setup it's expected that HA is in place and the URL to connect to the PostgreSQL instance never changes.
 
+:information_source:&nbsp; The Toolkit will attempt to do some database preparation by default when it's given external databases, such as creating users. However, this may not be compatible with your specific database depending on your setup. Refer to the [Database Preparation](#database-preparation) section below for more info.
+
 As detailed in [Database Setup Options](#database-setup-options) GitLab has several potential databases to configure. This section will start with the combined non Geo route with additional guidance given for the alternatives.
 
 The required variables in Ansible for this are as follows:
@@ -263,6 +267,7 @@ Depending on your Database instance setup some additional config may be required
 
 - `postgres_migrations_host` / `postgres_migrations_port` - Required for running GitLab Migrations if the main connection is not direct (e.g. via a connection pooler like PgBouncer). This should be set to the direct connection details of your database.
 - `postgres_admin_username` / `postgres_admin_password` - Required if the admin username for the Database instance differs from the main one.
+- `postgres_external_prep` - Sets up data on external main database as required by GitLab. Disable this if Ansible is unable to connect to the database directly. Refer to the [Database Preparation](#database-preparation) section below for more info. Optional, default is `true`.
 
 If a separate Database instance is to be used for Praefect then the additional following config may be required:
 
@@ -270,10 +275,28 @@ If a separate Database instance is to be used for Praefect then the additional f
 - `praefect_postgres_cache_host` / `praefect_postgres_cache_port` - Host and port for the [Praefect cache connection](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#reads-distribution-caching). This should be either set to the direct connection or through a PgBouncer connection that has session pooling enabled.
 - `praefect_postgres_migrations_host` / `praefect_postgres_migrations_port` - Required for running Praefect Migrations if the main connection is not direct (e.g. via a connection pooler like PgBouncer). This should be set to the direct connection details of your database.
 - `praefect_postgres_admin_username` / `praefect_postgres_admin_password` - Required if the admin username for the Database instance differs from the main one.
+- `praefect_postgres_external_prep` - Sets up data on the external Praefect database(s) as required by GitLab. Disable this if Ansible is unable to connect to the database directly. Refer to the [Database Preparation](#database-preparation) section below for more info. Optional, default is `true`.
 
 Once set, Ansible can then be run as normal. During the run it will configure the various GitLab components to use the database as well as any additional tasks such as setting up a separate database in the same instance for Praefect.
 
 After Ansible is finished running your environment will now be ready.
+
+#### Database Preparation
+
+When using an external database several preparation steps are required for GitLab to use them, including the setup of users, databases and extensions. 
+
+As a convenience, the Toolkit will attempt to do this for you automatically via Ansible's [`community.postgres`](https://docs.ansible.com/ansible/latest/collections/community/postgresql/) collection on one of the machines in the environment (as databases typically will only be available internally).
+
+In some cases this may not be compatible however with your selected database setup in relation to access. If you have options such as Mutual 2-way SSL authentication or any other restrictions on database access these convenience actions may fail with an error such as `unable to connect to database: FATAL: <reason>`.
+
+Due to the complexity of this area and restrictions in Ansible it's not possible to cover every potential permutation. In these cases you need to disable Ansible from attempting this behaviour by setting the `postgres_external_prep` / `praefect_postgres_external_prep` variables to `false` and doing the preparation steps manually as detailed in the main documentation as follows:
+
+- [GitLab Database](https://docs.gitlab.com/ee/administration/postgresql/external.html)
+- [Praefect Database](https://docs.gitlab.com/ee/administration/gitaly/praefect.html#manual-database-setup)
+- [Geo Tracking Database](https://docs.gitlab.com/ee/administration/geo/setup/external_database.html#configure-the-tracking-database)
+- [Required database extensions](https://docs.gitlab.com/ee/install/postgresql_extensions.html)
+
+:information_source:&nbsp; In each of the guides above only the steps that are required to be done on the actual database servers need to be followed. Steps on the GitLab side, such as adding config in `/etc/gitlab/gitlab.rb`, can be ignored as the Toolkit will still manage this for you.
 
 #### Geo
 
