@@ -83,6 +83,7 @@
       loop: ['pg_trgm', 'btree_gist', 'plpgsql', 'pg_stat_statements']
   when:
     - praefect_postgres_external
+    - praefect_postgres_external_prep
     - "'praefect_primary' in group_names"
     - (geo_secondary_site_group_name not in groups)
   tags:

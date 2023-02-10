@@ -72,7 +72,7 @@ omnibus_node: true
 
 ## When setting a specific version for upgrading to, review [standard GitLab Upgrade rules still apply](https://docs.gitlab.com/ee/update/#upgrade-paths)
 gitlab_version: ""
-## Alternatively set to "gitlab-ce" to install the Community Edition
+## Alternatively set to "gitlab-ce" to install the Community Edition (Does not work for environments with Consul, PGBouncer or Patroni - 3k+)
 gitlab_edition: "gitlab-ee"
 
 gitlab_node_type: "{{ lookup('vars', cloud_provider_labels_name, default = {}).gitlab_node_type | default((group_names | reject('match', '.*_primary|.*_secondary') | first), true) | replace('-', '_') }}"
@@ -161,6 +161,7 @@ postgres_admin_password: "{{ postgres_password }}"
 postgres_database_name: "gitlabhq_production"
 postgres_load_balancing_hosts: []
 postgres_external: "{{ 'postgres' not in groups and postgres_host != '' }}"
+postgres_external_prep: true
 
 ## Postgres Omnibus
 postgres_replication_manager: "{{ 'patroni' if ((groups['postgres'] is defined) and (groups['postgres'] | length > 0)) else 'none' }}"
@@ -207,6 +208,7 @@ praefect_postgres_admin_username: "{{ praefect_postgres_username if praefect_pos
 praefect_postgres_admin_password: "{{ praefect_postgres_password if praefect_postgres_host != postgres_host else postgres_admin_password }}"
 praefect_postgres_database_name: "praefect_production"
 praefect_postgres_external: "{{ 'praefect_postgres' not in groups and praefect_postgres_host != '' }}"
+praefect_postgres_external_prep: "{{ true if praefect_postgres_host != postgres_host else postgres_external_prep }}"
 
 # GitLab Monitor
 monitor_int_addr: "{{ (groups['monitor'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'monitor' in groups else '' }}"

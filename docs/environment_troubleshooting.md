@@ -160,6 +160,14 @@ sudo su - gitlab-psql -c '/opt/gitlab/embedded/bin/pg_resetwal -f /var/opt/gitla
 
 This wipes the records from the specific server and will unblock it to start replicating again. This should **only** be run on the specific Secondary server that is failing and no others as this would lead to data loss.
 
+### External Postgres Connection Error from Ansible - `unable to connect to database: FATAL: <reason>`
+
+As a convenience, the Toolkit attempts to prep any external database it's given for GitLab such as creating users or enabling extensions. It does this directly before setting up GitLab.
+
+There may be times though, depending on the database setup, where Ansible is unable to connect to the database such as when mutual 2-way SSL authentication is enabled due to limitations.
+
+When this is the case external database preparation needs to be completed manually before running Ansible. [Head to this section for more info](environment_advanced_services.md#database-preparation).
+
 ### Worker thread was found in dead state
 
 [This is due to an issue with certain Python plugins](https://github.com/ansible/ansible/issues/32554#issuecomment-642896861) on your system. You can work around this by running `export no_proxy="*"` before running the `ansible-playbook` commands.
