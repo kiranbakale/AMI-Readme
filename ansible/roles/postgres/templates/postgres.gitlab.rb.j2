@@ -69,7 +69,6 @@ pgbouncer['databases'] = {
     password: "{{ (pgbouncer_password + 'pgbouncer') | md5 }}"
   }
 }
-pgbouncer['max_db_connections'] = 150
 
 # Consul
 {% if groups['postgres'] | length > 1 %}
