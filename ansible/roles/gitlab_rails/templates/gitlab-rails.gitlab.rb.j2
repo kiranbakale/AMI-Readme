@@ -228,14 +228,15 @@ sidekiq['queue_groups'] = [
 {% if db_migrate is defined and db_migrate == true %}
 gitlab_rails['db_host'] = '{{ postgres_migrations_host }}'
 gitlab_rails['db_port'] = '{{ postgres_migrations_port }}'
+gitlab_rails['auto_migrate'] = {{ (('gitlab_rails_primary' in group_names) and (geo_secondary_site_group_name not in groups)) | lower }}
 {% else %}
 gitlab_rails['db_host'] = '{{ postgres_host }}'
 gitlab_rails['db_port'] = '{{ postgres_port }}'
+gitlab_rails['auto_migrate'] = false
 {% endif %}
 gitlab_rails['db_username'] = '{{ postgres_username }}'
 gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['db_database'] = '{{ postgres_database_name }}'
-gitlab_rails['auto_migrate'] = {{ (('gitlab_rails_primary' in group_names) and (geo_secondary_site_group_name not in groups)) | lower }}
 
 {% if postgres_load_balancing_hosts | length > 0 %}
 gitlab_rails['db_load_balancing'] = { 'hosts' => {{ postgres_load_balancing_hosts }} }
@@ -248,18 +249,16 @@ postgresql['enable'] = false
 {% if 'pgbouncer' not in groups or (db_migrate is defined and db_migrate == true) %}
 gitlab_rails['db_host'] = '{{ postgres_migrations_host }}'
 gitlab_rails['db_port'] = '{{ postgres_migrations_port }}'
-gitlab_rails['db_password'] = '{{ postgres_password }}'
-gitlab_rails['auto_migrate'] = {{ ('gitlab_rails_primary' in group_names) | lower }}
+gitlab_rails['auto_migrate'] = {{ (('gitlab_rails_primary' in group_names) and (geo_secondary_site_group_name not in groups)) | lower }}
 {% else %}
 gitlab_rails['db_host'] = "{{ internal_lb_host }}"
 gitlab_rails['db_port'] = 6432
-gitlab_rails['db_password'] = '{{ postgres_password }}'
 gitlab_rails['auto_migrate'] = false
+{% endif %}
+gitlab_rails['db_password'] = '{{ postgres_password }}'
 
 {% if groups['postgres'] | length > 1 %}
 gitlab_rails['db_load_balancing'] = { 'hosts' => {{ postgres_int_addrs }} }
-{% endif %}
-
 {% endif %}
 
 {% else %}

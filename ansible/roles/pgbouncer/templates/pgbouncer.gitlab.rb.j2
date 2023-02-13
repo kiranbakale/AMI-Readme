@@ -23,8 +23,6 @@ pgbouncer['databases'] = {
 }
 {% endif %}
 
-pgbouncer['max_db_connections'] = 150
-
 # Configure Consul agent
 {% if groups['postgres'] | length > 1 %}
 consul['watchers'] = %w(postgresql)
