@@ -20,4 +20,5 @@ license_file: '../LICENSE'
 tags:
     - gitlab
     - gitlab_environment_toolkit
+    - application
 repository: "https://gitlab.com/gitlab-org/gitlab-environment-toolkit"
