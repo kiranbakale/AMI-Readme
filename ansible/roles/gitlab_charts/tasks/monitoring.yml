@@ -149,17 +149,24 @@
 
     - name: Update CRDs on existing kube-prometheus-stack deployment
       shell: |
-        kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version }}/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
-        kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version }}/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
-        kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version }}/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
-        kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version }}/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
-        kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version }}/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
-        kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version }}/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
-        kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version }}/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
-        kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version }}/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
+        kubectl replace -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version | replace('v', '') }}/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+        kubectl replace -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version | replace('v', '') }}/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
+        kubectl replace -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version | replace('v', '') }}/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+        kubectl replace -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version | replace('v', '') }}/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
+        kubectl replace -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version | replace('v', '') }}/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
+        kubectl replace -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version | replace('v', '') }}/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
+        kubectl replace -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version | replace('v', '') }}/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+        kubectl replace -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v{{ kube_prometheus_stack_charts_app_version | replace('v', '') }}/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
       when:
         - kube_prometheus_stack_charts_existing_app_version is defined
-        - kube_prometheus_stack_charts_app_version is version(kube_prometheus_stack_charts_existing_app_version, '>')
+        - kube_prometheus_stack_charts_app_version != kube_prometheus_stack_charts_existing_app_version
+
+    - name: Delete old deprecated Node Exporter daemonset (<0.59.1)
+      command: kubectl delete daemonset -l app=prometheus-node-exporter
+      when:
+        - kube_prometheus_stack_charts_existing_app_version is defined
+        - (kube_prometheus_stack_charts_existing_app_version | replace('v', '')) is version('0.59.1', '<')
+        - kube_prometheus_stack_charts_app_version != kube_prometheus_stack_charts_existing_app_version
 
     - name: Get all kube-prometheus-stack versions
       command: helm search repo prometheus-community/kube-prometheus-stack -l -o json
@@ -191,6 +198,9 @@
         release_namespace: "{{ kube_prometheus_stack_charts_namespace }}"
         values: "{{ lookup('template', 'templates/kube-prometheus-stack.yml.j2') | from_yaml }}"
       register: kube_prometheus_stack_charts_deploy
+      retries: 3
+      delay: 3
+      until: kube_prometheus_stack_charts_deploy is success
 
 - name: Redeploy GitLab Charts to configure monitoring ServiceMonitors if first deploy
   block:

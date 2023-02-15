@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 15,
+  "id": 20,
   "links": [],
   "panels": [
     {
@@ -26,7 +26,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -61,7 +60,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -157,7 +156,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -192,7 +190,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -275,7 +273,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -310,7 +307,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -377,7 +374,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -412,7 +408,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -478,7 +474,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -514,7 +509,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -624,7 +619,6 @@
       "error": false,
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -660,7 +654,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -768,7 +762,6 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -803,7 +796,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -869,7 +862,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -904,7 +896,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -988,7 +980,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1023,7 +1014,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1105,7 +1096,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1140,7 +1130,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1222,7 +1212,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1258,7 +1247,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1334,7 +1323,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1369,7 +1357,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1460,7 +1448,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1495,7 +1482,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1583,7 +1570,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1618,7 +1604,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1710,7 +1696,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1745,7 +1730,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1755,8 +1740,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "label_replace(sum by (instance)(pg_stat_activity_count), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
+          "exemplar": true,
+          "expr": "label_replace(sum by (instance)(pg_stat_activity_count{state=\"active\"}), \"ip\", \"$1\", \"instance\", \"(.*):.*\") * on(ip) group_left(nodename) (label_replace(node_uname_info, \"ip\", \"$1\", \"instance\", \"(.*):.*\"))",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Activity Count - {{nodename}}",
           "refId": "A"
@@ -1819,7 +1806,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1854,7 +1840,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1920,7 +1906,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -1955,7 +1940,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2021,7 +2006,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2056,7 +2040,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2123,7 +2107,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2158,7 +2141,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2225,7 +2208,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2260,7 +2242,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2326,7 +2308,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2361,7 +2342,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2434,7 +2415,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2469,7 +2449,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2535,7 +2515,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2570,7 +2549,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2640,7 +2619,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2675,7 +2653,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2746,7 +2724,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2783,7 +2760,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2851,7 +2828,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2888,7 +2864,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2955,7 +2931,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -2991,7 +2966,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3070,7 +3045,6 @@
       "datasource": "GitLab Omnibus",
       "fieldConfig": {
         "defaults": {
-          "custom": {},
           "links": []
         },
         "overrides": []
@@ -3106,7 +3080,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.3.7",
+      "pluginVersion": "7.5.16",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -3189,7 +3163,7 @@
     }
   ],
   "refresh": "10s",
-  "schemaVersion": 26,
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -3227,5 +3201,5 @@
   "timezone": "",
   "title": "Server Performance",
   "uid": "tVdO8YIWz",
-  "version": 2
+  "version": 5
 }
