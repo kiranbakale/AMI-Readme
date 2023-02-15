@@ -98,6 +98,8 @@ prometheusOperator:
 
 grafana:
   enabled: true
+  image:
+    tag: "{{ kube_prometheus_stack_charts_grafana_image_tag }}"
   nodeSelector:
     workload: support
   admin:
