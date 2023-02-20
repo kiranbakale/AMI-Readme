@@ -197,11 +197,11 @@ praefect_ssl: "{{ praefect_ssl_cert_file != '' and praefect_ssl_key_file != '' }
 ## Praefect Postgres
 praefect_postgres_int_addr: "{{ (groups['praefect_postgres'] | map('extract', hostvars, internal_addr_lookup) | join('')) if 'praefect_postgres_primary' in groups else '' }}"
 praefect_postgres_host: "{{ praefect_postgres_int_addr if praefect_postgres_int_addr != '' else postgres_host }}"
-praefect_postgres_port: '5432'
+praefect_postgres_port: 5432
 praefect_postgres_cache_host: "{{ praefect_postgres_host }}"
-praefect_postgres_cache_port: '5432'
+praefect_postgres_cache_port: 5432
 praefect_postgres_migrations_host: "{{ praefect_postgres_host }}"
-praefect_postgres_migrations_port: '5432'
+praefect_postgres_migrations_port: 5432
 praefect_postgres_username: "praefect"
 praefect_postgres_password: ""
 praefect_postgres_admin_username: "{{ praefect_postgres_username if praefect_postgres_host != postgres_host else postgres_admin_username }}"

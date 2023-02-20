@@ -32,21 +32,21 @@ praefect['listen_addr'] = '0.0.0.0:2305'
 praefect['auto_migrate'] = true
 
 praefect['database_host'] = '{{ praefect_postgres_migrations_host }}'
-praefect['database_port'] = '{{ praefect_postgres_migrations_port }}'
+praefect['database_port'] = {{ praefect_postgres_migrations_port }}
 {% else %}
 praefect['auto_migrate'] = false
 
 praefect['database_host'] = '{{ praefect_postgres_host }}'
-praefect['database_port'] = '{{ praefect_postgres_port }}'
+praefect['database_port'] = {{ praefect_postgres_port }}
 {% endif %}
 
 ## Praefect Cache settings
 {% if gitlab_version != '' and gitlab_version is version('14.0', '<') %}
 praefect['database_host_no_proxy'] = '{{ praefect_postgres_cache_host }}'
-praefect['database_port_no_proxy'] = '{{ praefect_postgres_cache_port }}'
+praefect['database_port_no_proxy'] = {{ praefect_postgres_cache_port }}
 {% else %}
 praefect['database_direct_host'] = '{{ praefect_postgres_cache_host }}'
-praefect['database_direct_port'] = '{{ praefect_postgres_cache_port }}'
+praefect['database_direct_port'] = {{ praefect_postgres_cache_port }}
 {% endif %}
 
 praefect['database_user'] = '{{ praefect_postgres_username }}'
