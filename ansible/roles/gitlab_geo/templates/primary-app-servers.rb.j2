@@ -1,4 +1,4 @@
-{% if not geo_multi_node %}
+{% if not geo_primary_is_multi_node %}
 geo_primary_role['enable'] = true
 {% endif %}
 gitlab_rails['geo_node_name'] = "{{ geo_primary_site_name }}"

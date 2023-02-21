@@ -1,4 +1,4 @@
-{% if geo_multi_node %}
+{% if geo_secondary_is_multi_node %}
 patroni['standby_cluster']['enable'] = true
 patroni['standby_cluster']['host'] = '{{ internal_lb_host }}'
 patroni['standby_cluster']['port'] = 5432

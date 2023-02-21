@@ -1,5 +1,5 @@
 postgresql['sql_replication_password'] = "{{ geo_sql_replication_password_md5 }}"
-{% if geo_multi_node %}
+{% if geo_primary_is_multi_node %}
 patroni['replication_slots'] = {
     'geo_secondary' => { 'type' => 'physical' }
 }

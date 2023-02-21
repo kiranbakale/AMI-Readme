@@ -1,4 +1,5 @@
-geo_multi_node: "{{ 'postgres' in groups or postgres_external }}"
+geo_primary_is_multi_node: "{{ geo_primary_site_group_name + '_postgres_primary' in groups or postgres_external }}"
+geo_secondary_is_multi_node: "{{ geo_secondary_site_group_name + '_postgres_primary' in groups or postgres_external }}"
 
 geo_secondary_site_postgres_primary_nodename: "{{ (groups[geo_secondary_site_postgres_group_name] | map('extract', hostvars, ['ansible_nodename']) | join('')) }}"
 
