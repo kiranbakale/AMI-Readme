@@ -126,10 +126,6 @@ Each of the above files must be set in the same folder for Terraform to merge. D
 
 In this step there are sections for each supported host provider on how to configure the above files. Follow the section for your selected provider and then move onto the next step.
 
-## Config Examples
-
-[Full config examples are available for select Reference Architectures](../examples). The rest of this section will describe what the config does and how to use it.
-
 ### Google Cloud Platform (GCP)
 
 The Toolkit's module for seamlessly setting up a full GitLab Reference architecture on GCP is **[`gitlab_ref_arch_gcp`](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/tree/main/terraform/modules/gitlab_ref_arch_gcp)**.
@@ -849,6 +845,10 @@ module "gitlab_ref_arch_aws" {
 ```
 
 Any Terraform Data Source can be used similarly. Refer to the specific Data Source docs for more info.
+
+### Config Examples
+
+[Full config examples are available for select Reference Architectures](../examples). The rest of this section will describe what the config does and how to use it.
 
 ## 4. Run the GitLab Environment Toolkit's Docker container (optional)
 

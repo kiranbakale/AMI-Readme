@@ -16,11 +16,3 @@ all:
     # Passwords / Secrets
     gitlab_root_password: '<gitlab_root_password>'
     grafana_password: '<grafana_password>'
-    postgres_password: '<postgres_password>'
-    consul_database_password: '<consul_database_password>'
-    gitaly_token: '<gitaly_token>'
-    pgbouncer_password: '<pgbouncer_password>'
-    redis_password: '<redis_password>'
-    praefect_external_token: '<praefect_external_token>'
-    praefect_internal_token: '<praefect_internal_token>'
-    praefect_postgres_password: '<praefect_postgres_password>'
