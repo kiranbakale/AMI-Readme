@@ -105,6 +105,7 @@ check:ansible-lint:
     - ansible-lint
   rules:
     - !reference [.on_merge_request_and_merged_events_except_schedule_and_tag, rules]
+  retry: 2
 
 check:markdownlint:
   stage: test

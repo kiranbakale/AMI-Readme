@@ -14,11 +14,6 @@ all:
     external_url: "<external_url>"
     gitlab_license_file: "<gitlab_license_file_path>"
 
-    # Geo Settings
-    geo_secondary_external_url: "<external_url>"
-    geo_secondary_site_group_name: "<geo_site>" # Should match the geo_site variable used in Terraform. Replace - with _
-    geo_secondary_site_name: "<site_name>" # A name that appears in the UI.
-
     # Passwords / Secrets
     gitlab_root_password: '<gitlab_root_password>'
     grafana_password: '<grafana_password>'
