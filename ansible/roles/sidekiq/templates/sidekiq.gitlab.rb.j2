@@ -191,6 +191,10 @@ git_data_dirs({
 })
 {% endif %}
 
+{% if container_registry_enable %}
+registry_external_url "{{ container_registry_external_url }}"
+{% endif %}
+
 geo_confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.geo.*.rb"))
 geo_confs.each { |conf|
   from_file conf

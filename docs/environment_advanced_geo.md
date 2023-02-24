@@ -380,3 +380,10 @@ The RDS recovery process involves deleting the old primary RDS instance, this is
 - Set `rds_postgres_kms_key_arn` to the KMS key used for the primary site's RDS instance.
 - Remove `rds_postgres_password`.
 - Remove `rds_postgres_backup_retention_period`.
+
+## Container Registry Replication
+
+To enable Container registry replication you will need to define the below settings in your `vars.yml` file. For Cloud Native Hybrid environments you will need to specify these settings in both the primary and secondary inventories. For Omnibus environments you can specify these in just the primary inventory. These are both case sensitive alphanumeric strings that start with a letter.
+
+- `container_registry_token` - Secret value for the container registry authorization header.
+- `container_registry_notification_token` - Secret value for the notification endpoint to use.

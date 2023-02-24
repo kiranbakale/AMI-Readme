@@ -10,3 +10,8 @@ geo_secondary['db_host'] = '{{ geo_tracking_postgres_host }}'
 geo_secondary['db_password'] = '{{ geo_tracking_postgres_password }}'
 geo_secondary['db_port'] = '{{ geo_tracking_postgres_port }}'
 geo_secondary['auto_migrate'] = false
+
+{% if container_registry_enable and container_registry_token is defined %}
+gitlab_rails['geo_registry_replication_enabled'] = true
+gitlab_rails['geo_registry_replication_primary_api_url'] = '{{ container_registry_external_url }}'
+{% endif %}

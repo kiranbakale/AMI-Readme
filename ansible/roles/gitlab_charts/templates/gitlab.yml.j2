@@ -318,6 +318,12 @@ global:
       password:
         secret: gitlab-geo-tracking-postgres-password
         key: password
+{% if container_registry_enable %}
+    registry:
+      replication:
+        enabled: true
+        primaryApiUrl: "{{ container_registry_external_url }}"
+{% endif %}
 {% endif %}
 
 nginx-ingress:
@@ -357,6 +363,11 @@ registry:
     key: config
 {% if cloud_provider == 'gcp' %}
     extraKey: key.json
+{% endif %}
+{% if container_registry_notification_token is defined %}
+  notificationSecret:
+    secret: gitlab-registry-notification
+    key: secret
 {% endif %}
 {% else %}
   enabled: false
