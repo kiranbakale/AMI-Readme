@@ -69,6 +69,17 @@
     - "'values' in item.key"
     - geo_recovery is defined and geo_recovery
 
+- name: Redeploy Secondary Charts - Update Registry primary API Url
+  become: false
+  delegate_to: localhost
+  run_once: true
+  set_fact:
+    gitlab_values: "{{ item.value | regex_replace(\"'primaryApiUrl': '\" + geo_secondary_registry_url + \"'\", \"'primaryApiUrl': '\" + geo_primary_registry_url + \"'\") }}"
+  loop: "{{ lookup('dict', gitlab_info.status) }}"
+  when:
+    - "'values' in item.key"
+    - container_registry_enable
+
 - name: Redeploy Secondary Charts - Get GitLab Charts version if App version specified
   block:
     - name: Add GitLab Charts repo
