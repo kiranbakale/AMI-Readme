@@ -8,6 +8,12 @@
   shell: amazon-linux-extras install docker -y && systemctl enable docker && systemctl start docker
   when: ansible_facts['distribution'] == "Amazon"
 
+- name: Stop HAProxy if running
+  docker_container:
+    name: haproxy
+    state: absent
+  tags: reconfigure
+
 - name: Create /opt/haproxy directory
   file:
     path: /opt/haproxy
