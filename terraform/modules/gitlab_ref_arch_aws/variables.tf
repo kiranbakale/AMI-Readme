@@ -413,6 +413,44 @@ variable "monitor_iam_instance_policy_arns" {
   default = []
 }
 
+# Opensearch (self-managed)
+variable "opensearch_vm_node_count" {
+  type    = number
+  default = 0
+}
+variable "opensearch_vm_instance_type" {
+  type    = string
+  default = ""
+}
+variable "opensearch_vm_disk_type" {
+  type    = string
+  default = null
+}
+variable "opensearch_vm_disk_size" {
+  type    = string
+  default = "500"
+}
+variable "opensearch_vm_disk_encrypt" {
+  type    = bool
+  default = null
+}
+variable "opensearch_vm_disk_delete_on_termination" {
+  type    = bool
+  default = true
+}
+variable "opensearch_vm_disk_kms_key_arn" {
+  type    = string
+  default = null
+}
+variable "opensearch_vm_data_disks" {
+  type    = any
+  default = []
+}
+variable "opensearch_vm_iam_instance_policy_arns" {
+  type    = list(string)
+  default = []
+}
+
 variable "pgbouncer_node_count" {
   type    = number
   default = 0
