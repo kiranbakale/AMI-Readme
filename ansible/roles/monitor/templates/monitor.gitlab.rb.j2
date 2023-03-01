@@ -27,6 +27,9 @@ prometheus['scrape_configs'] = [
 {% for ip in elastic_int_addrs %}
         "{{ ip }}:9100",
 {% endfor %}
+{% for ip in opensearch_int_addrs %}
+        "{{ ip }}:9100",
+{% endfor %}
       ],
     ],
   },

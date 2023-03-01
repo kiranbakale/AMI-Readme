@@ -232,19 +232,21 @@ The Toolkit supports setting up both of these setups. This is controlled simply 
 
 :information_source:&nbsp; Attempting to switch an existing environment from using Gitaly Cluster to Sharded or vice versa is not supported in the Toolkit and may lead to data loss.
 
-## Advanced Search with Elasticsearch
+## Advanced Search
 
-The Toolkit supports automatically setting up GitLab's [Advanced Search](https://docs.gitlab.com/ee/integration/elasticsearch.html) functionality. This includes provisioning and configuring Elasticsearch nodes to be a cluster as well as configuring GitLab to use it.
+The Toolkit supports automatically setting up GitLab's [Advanced Search](https://docs.gitlab.com/ee/integration/advanced_search/elasticsearch.html) functionality. This includes provisioning and configuring OpenSearch or Elasticsearch nodes to be a cluster as well as configuring GitLab to use it.
 
-Note that to be able to enable Advanced Search you'll require at least a GitLab Premium License.
+:information_source:&nbsp; Note that to be able to enable Advanced Search you'll require at least a GitLab Premium License.
 
-Due to the nature of Elasticsearch it's difficult to give specific guidance on what size and shape the cluster should take as it's heavily dependent on things such as data, expected usage, etc... That being said [we do offer some guidance in our Elasticsearch docs](https://docs.gitlab.com/ee/integration/elasticsearch.html#guidance-on-choosing-optimal-cluster-configuration). For testing our data the Quality team has found a size similar to the Gitaly nodes in each Reference Architecture has sufficed so far.
+:warning:&nbsp; [Elastic changed the licensing for Elasticsearch](https://www.elastic.co/pricing/faq/licensing) in 2021. The license has restrictions in place for providing that application as a _service_. Due to this the Toolkit is configured to only provision the last version of Elasticsearch on the previous licence, `7.10.x`, and we recommend [OpenSearch](https://opensearch.org/) in its place, which has a compatible license.
+
+Due to the nature of OpenSearch / Elasticsearch it's difficult to give specific guidance on what size and shape the cluster should take as it's heavily dependent on aspects such as data or expected usage. That being said [some guidance can be found in our Advanced Search documentation](https://docs.gitlab.com/ee/integration/elasticsearch.html#guidance-on-choosing-optimal-cluster-configuration). As a starting point sizing similar to Gitaly seems to work well in most cases.
 
 Enabling Advanced Search on your environment is designed to be as easy possible and can be done as follows:
 
-- Elasticsearch nodes should be provisioned as normal via Terraform.
-- Once the nodes are available Ansible will automatically configure them, downloading and setting up the Elasticsearch Docker image.
-  - At the time of writing the Elasticsearch version deployed is `7.6.2`. To deploy a different version you can set the `elastic_version`.
+- OpenSearch / Elasticsearch nodes should be provisioned as normal via Terraform.
+- Once the nodes are available Ansible will automatically configure them, downloading and setting up the OpenSearch or Elasticsearch Docker image.
+  - At the time of writing the versions deployed for each service is `2.x` for OpenSearch and `7.10.2` for Elasticsearch. To deploy a different version you can set the `opensearch_version` or `elastic_version` variables in Ansible accordingly.
 - Ansible will then configure the GitLab environment near the end of its run to enable Advanced Search against those nodes and perform the first index.
 
 ## Container Registry (GCP, AWS)

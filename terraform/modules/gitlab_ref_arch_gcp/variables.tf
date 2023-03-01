@@ -234,6 +234,27 @@ variable "monitor_disks" {
   default = []
 }
 
+variable "opensearch_vm_node_count" {
+  type    = number
+  default = 0
+}
+variable "opensearch_vm_machine_type" {
+  type    = string
+  default = ""
+}
+variable "opensearch_vm_disk_type" {
+  type    = string
+  default = "pd-ssd"
+}
+variable "opensearch_vm_disk_size" {
+  type    = string
+  default = "500"
+}
+variable "opensearch_vm_disks" {
+  type    = list(any)
+  default = []
+}
+
 variable "pgbouncer_node_count" {
   type    = number
   default = 0
