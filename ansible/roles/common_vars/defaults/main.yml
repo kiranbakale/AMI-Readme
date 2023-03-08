@@ -229,6 +229,8 @@ redis_password: ""
 redis_port: 6379
 redis_external: "{{ 'redis' not in groups and redis_host != '' }}"
 redis_external_ssl: "{{ cloud_provider == 'aws' }}"
+# https://docs.gitlab.com/omnibus/settings/redis.html#using-google-cloud-memorystore
+redis_external_enable_client: "{{ cloud_provider != 'gcp' }}"
 
 ## Cache
 redis_cache_primary_int_addr: "{{ (groups['redis_cache_primary'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'redis_cache' in groups else '' }}"
