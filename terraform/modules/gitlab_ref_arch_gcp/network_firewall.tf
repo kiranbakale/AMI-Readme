@@ -31,6 +31,7 @@ resource "google_compute_firewall" "gitlab_ssh" {
 }
 
 resource "google_compute_firewall" "ssh" {
+  count   = var.setup_external_ips ? 1 : 0
   name    = "${var.prefix}-ssh"
   network = local.vpc_name
 

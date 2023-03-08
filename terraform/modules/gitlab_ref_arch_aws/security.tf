@@ -50,7 +50,7 @@ resource "aws_security_group" "gitlab_internal_networking" {
 }
 
 resource "aws_security_group" "gitlab_external_ssh" {
-  count = var.ssh_public_key != null || var.ssh_public_key_file != null ? 1 : 0
+  count = local.subnet_priv_ids == null && (var.ssh_public_key != null || var.ssh_public_key_file != null) ? 1 : 0
 
   name_prefix = "${var.prefix}-external-ssh-"
   vpc_id      = data.aws_vpc.selected.id
