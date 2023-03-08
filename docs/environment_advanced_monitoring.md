@@ -60,10 +60,11 @@ By default, as given by Omnibus, Grafana will be configured with no authenticati
 
 - `grafana_password` - Password for the Grafana Admin user. Will also configure the basic authentication method.
   - Note that changing this password after it has been set will have no effect. The password needs to be changed directly [as detailed here](https://docs.gitlab.com/omnibus/settings/grafana.html#resetting-the-admin-password).
+- `monitor_prometheus_scrape_config_setup` - Configures if any scrape configs should be configured by the Toolkit. Setting this to `false` will remove these to allow for more flexibility if desired. Optional, defaults to `true`.
 
 Once completed, Grafana will be available at the address `<ENVIRONMENT_URL>/-/grafana`.
 
-## Cloud Native Hybrid
+## Cloud Native Hybrid (`kube-prometheus-stack`)
 
 In Cloud Native Hybrid environments the Toolkit utilises the [`kube-prometheus-stack`](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack) and [`consul`](https://artifacthub.io/packages/helm/hashicorp/consul) Helm Charts to provide monitoring.
 
@@ -78,6 +79,7 @@ All of this is handled in Ansible via several settings in the [`vars.yml`](envir
 - `kube_prometheus_stack_charts_storage_class` - The [Storage Class](https://kubernetes.io/docs/concepts/storage/storage-classes/) of the [Persistent Volume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/). If left unset will use the provider's default (recommended). Defaults to `''`,
 - `kube_prometheus_stack_charts_app_version` - The application version of the `kube-prometheus-stack` chart to deploy. Defaults to `v0.63.0`.
   - :information_source:&nbsp; Upgrades of the `kube-prometheus-stack` have [several moving parts](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack#upgrading-an-existing-release-to-a-new-major-version). The Toolkit pins the version it uses for this reason and regular tested updates of the version will be made in subsequent Toolkit releases. If desired, this version can be changed to perform an upgrade and the Toolkit will attempt to manage this in full, but your experience may be different.
+- `kube_prometheus_stack_charts_prometheus_scrape_config_setup` - Configures if any scrape configs should be configured by the Toolkit. Setting this to `false` will remove these to allow for more flexibility if desired. Optional, defaults to `true`.
 - `consul_charts_namespace` - The [Kubernetes Namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) for the `consul` chart. Defaults to `consul`.
 - `consul_charts_app_version` - The application version of the `consul` chart to deploy. Typically, should not be changed to ensure compatibility with Omnibus Consul version. Defaults to `1.12.3`.
 
@@ -94,61 +96,43 @@ all:
 
 Once completed, Grafana will be available at the address `<ENVIRONMENT_URL>/-/grafana`.
 
-## Custom Grafana Dashboards
+## Custom Config
 
-The Toolkit allows for you to pass in custom dashboards to be used in Grafana for either the Omnibus or Cloud Native Hybrid setups described above.
+Like [other areas](environment_advanced.md#custom-config) you can pass in Custom Config for the monitoring stacks also.
 
-By default, the Toolkit will look for Dashboards under the `environments/<env_name>/files/grafana` folder. In Grafana, Dashboards are typically organised under folders, so the same is expected here. As such, Dashboards should be placed in their own folder in this path, for example `environments/<env_name>/files/grafana/<dashboards folder name>/<dashboard files>`. You can create multiple folders to store different dashboards or store everything in a single folder. You can also store the dashboards in a different location other than `environments/<env_name>/files/grafana/` for each setup.
+:exclamation:&nbsp; **This is an advanced feature, and it must be used with caution**. Any custom config passed will always take precedence and may lead to various unintended consequences or broken environments if not used carefully. This includes when setting [Scrape Config](#custom-prometheus-scrape-options) or [Rules](#custom-prometheus-rules) as detailed in later in this guide - Custom Config will always take precedence.
 
-Once the dashboards are in place you can then configure the Toolkit to set these up accordingly. This is done by configuring the Toolkit to know what sub-folders of dashboards to transfer over as well as configuring how they are displayed in the Grafana UI.
-
-For details on how to do this for each setup, refer to the applicable section below.
+How this works differs depending on the environment setup used as detailed in the below sections.
 
 ### Omnibus
 
-For Omnibus, the following variables are used to configure custom dashboards:
+As Prometheus and Grafana are packaged within Omnibus [the standard approach detailed here](environment_advanced.md#omnibus) for the `monitor` node can be followed for any [valid config](https://docs.gitlab.com/ee/administration/monitoring/prometheus/).
 
-- `monitor_custom_dashboards_path` - Path the Toolkit will look under for any Dashboards. Default is `environments/<env_name>/files/grafana`.
-- `monitor_custom_dashboards` - List of Dashboard folders under `monitor_custom_dashboards_path` the Toolkit should transfer. Each entry requires a couple of variables to be set in dict format: For each a dict should be set with the following sub-variables:
-  - `folder` - The folder under `monitor_custom_dashboards_path` to transfer over
-  - `display_name` - Display name of Folder to be shown in the Grafana UI.
+### Cloud Native Hybrid (`kube-prometheus-stack`)
 
-An example of how you would configure this for several folders in the default location would be as follows:
+Setting Custom Config for the [`kube-prometheus-stack`](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack) works as follows:
 
-```yaml
-monitor_custom_dashboards:
-  - folder: 'my_sidekiq_dashboards'
-    display_name: 'Sidekiq Dashboards'
-  - folder: 'my_gitaly_dashboards'
-    display_name: 'Gitaly Dashboards'
-```
+1. Create a [`kube-prometheus-stack`](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack) yaml template file in the correct format with the specific custom settings you wish to apply
+1. By default, the Toolkit looks for a [Jinja2 template file](https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html) named `kube_prometheus_stack_charts.yml.j2` in the [environment's](environment_configure.md#2-set-up-the-environments-inventory-and-config) `files/gitlab_configs` folder path. E.G. `ansible/environments/<env_name>/files/gitlab_configs/kube_prometheus_stack_charts.yml.j2`. Save your file in this location with the same name.
+    - Files should be saved in Ansible template format - `.j2`.
+    - If you wish to store your file in a different location or use a different name the full path that Ansible should use can be set via the `kube_prometheus_stack_charts_custom_config_file` inventory variable.
 
-### Cloud Native Hybrid
+With the above done the file will be picked up by the Toolkit and used when configuring the chart.
 
-For Cloud Native Hybrid, the following variables are used to configure custom dashboards:
+## Custom Prometheus scrape options
 
-- `kube_prometheus_stack_charts_custom_dashboards_path` - Path the Toolkit will look under for any Dashboards. Default is `environments/<env_name>/files/grafana`.
-- `kube_prometheus_stack_charts_custom_dashboards` - List of Dashboard folders under `kube_prometheus_stack_charts_custom_dashboards_path` the Toolkit should transfer. Each entry requires a couple of variables to be set in dict format: For each a dict should be set with the following sub-variables:
-  - `folder` - The folder under `kube_prometheus_stack_charts_custom_dashboards_path` to transfer over
-  - `display_name` - Display name of Folder to be shown in the Grafana UI.
+When deploying either of the above stacks there are various options available on how Prometheus can be configured to scrape its targets.
 
-An example of how you would configure this for several folders in the default location would be as follows:
+By default, the Toolkit has the following options depending on the setup:
 
-```yaml
-kube_prometheus_stack_charts_custom_dashboards:
-  - folder: 'my_sidekiq_dashboards'
-    display_name: 'Sidekiq Dashboards'
-  - folder: 'my_gitaly_dashboards'
-    display_name: 'Gitaly Dashboards'
-```
+- Consul auto-discovery - When Consul is deployed it will be utilised to provide auto-discovery for Prometheus. This is recommended in most cases as it can handle situations such as IPs changing.
+- Static internal IPs - When Consul is not deployed, static internal IPs will be used instead.
+- None - As an additional option the Toolkit can also add no scrape configs for flexibility as desired via the Ansible `monitor_prometheus_scrape_config_setup` / `kube_prometheus_stack_charts_prometheus_scrape_config_setup` variables.
+- Custom - Additive to any of the above options, you can also pass in your own custom scrape configs as desired.
 
-## Custom Prometheus Scrape configs
+How this works for each environment type differs as detailed in the below sections.
 
-The Toolkit allows for you to configure custom [Prometheus scape configs](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/additional-scrape-config.md) for either the Omnibus or Cloud Native Hybrid setups described above.
-
-For both setups this is done by passing in the configs for each setup's specific format in the Ansible [`vars.yml`](environment_configure.md#environment-config-varsyml) file.
-
-For details on how to do this for each setup, refer to the applicable section below.
+:information_source:&nbsp; Note that [Custom Config](#custom-config) will take precedence over this if the same underlying variables are specified.
 
 ### Omnibus
 
@@ -168,7 +152,7 @@ monitor_custom_prometheus_scrape_config: |
   },
 ```
 
-### Cloud Native Hybrid
+### Cloud Native Hybrid (`kube-prometheus-stack`)
 
 For Cloud Native Hybrid, [scrape configs are passed in a YAML dictionary format](https://prometheus.io/docs/prometheus/latest/configuration/configuration). This is done via the following variable:
 
@@ -194,6 +178,8 @@ Once the rules are in place you can then configure the Toolkit to set these up a
 
 For details on how to do this for each setup, refer to the applicable section below.
 
+:information_source:&nbsp; Note that [Custom Config](#custom-config) will take precedence over this if the same underlying variables are specified.
+
 ### Omnibus
 
 For Omnibus, the following variables are used to configure custom rules:
@@ -208,4 +194,54 @@ An example of how you would configure this for several folders in the default lo
 monitor_custom_rules:
   - folder: 'my_sidekiq_rules'
   - folder: 'my_gitaly_rules'
+```
+
+## Custom Grafana Dashboards
+
+The Toolkit allows you to pass in custom dashboards to be used in Grafana for either the Omnibus or Cloud Native Hybrid setups described above.
+
+By default, the Toolkit will look for Dashboards under the `environments/<env_name>/files/grafana` folder. In Grafana, Dashboards are typically organised under folders, so the same is expected here. As such, Dashboards should be placed in their own folder in this path, for example `environments/<env_name>/files/grafana/<dashboards folder name>/<dashboard files>`. You can create multiple folders to store different dashboards or store everything in a single folder. You can also store the dashboards in a different location other than `environments/<env_name>/files/grafana/` for each setup.
+
+Once the dashboards are in place you can then configure the Toolkit to set these up accordingly. This is done by configuring the Toolkit to know what sub-folders of dashboards to transfer over as well as configuring how they are displayed in the Grafana UI.
+
+For details on how to do this for each setup, refer to the applicable section below.
+
+:information_source:&nbsp; Note that [Custom Config](#custom-config) will take precedence over this if the same underlying variables are specified.
+
+### Omnibus
+
+For Omnibus, the following variables are used to configure custom dashboards:
+
+- `monitor_custom_dashboards_path` - Path the Toolkit will look under for any Dashboards. Default is `environments/<env_name>/files/grafana`.
+- `monitor_custom_dashboards` - List of Dashboard folders under `monitor_custom_dashboards_path` the Toolkit should transfer. Each entry requires a couple of variables to be set in dict format: For each a dict should be set with the following sub-variables:
+  - `folder` - The folder under `monitor_custom_dashboards_path` to transfer over
+  - `display_name` - Display name of Folder to be shown in the Grafana UI.
+
+An example of how you would configure this for several folders in the default location would be as follows:
+
+```yaml
+monitor_custom_dashboards:
+  - folder: 'my_sidekiq_dashboards'
+    display_name: 'Sidekiq Dashboards'
+  - folder: 'my_gitaly_dashboards'
+    display_name: 'Gitaly Dashboards'
+```
+
+### Cloud Native Hybrid (`kube-prometheus-stack`)
+
+For Cloud Native Hybrid, the following variables are used to configure custom dashboards:
+
+- `kube_prometheus_stack_charts_custom_dashboards_path` - Path the Toolkit will look under for any Dashboards. Default is `environments/<env_name>/files/grafana`.
+- `kube_prometheus_stack_charts_custom_dashboards` - List of Dashboard folders under `kube_prometheus_stack_charts_custom_dashboards_path` the Toolkit should transfer. Each entry requires a couple of variables to be set in dict format: For each a dict should be set with the following sub-variables:
+  - `folder` - The folder under `kube_prometheus_stack_charts_custom_dashboards_path` to transfer over
+  - `display_name` - Display name of Folder to be shown in the Grafana UI.
+
+An example of how you would configure this for several folders in the default location would be as follows:
+
+```yaml
+kube_prometheus_stack_charts_custom_dashboards:
+  - folder: 'my_sidekiq_dashboards'
+    display_name: 'Sidekiq Dashboards'
+  - folder: 'my_gitaly_dashboards'
+    display_name: 'Gitaly Dashboards'
 ```

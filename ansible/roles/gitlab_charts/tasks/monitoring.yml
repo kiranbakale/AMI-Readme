@@ -105,7 +105,7 @@
             datacenter: gitlab_consul
           client:
             enabled: true
-            join: "{{ consul_int_addrs if 'consul' in groups else [consul_single_server_int_addr] }}"
+            join: "{{ consul_int_addrs }}"
             nodeSelector: |
               workload: support
 
@@ -125,6 +125,7 @@
             selector:
               app: consul
               release: gitlab-consul
+  when: "'consul' in groups"
 
 - name: Setup kube-prometheus-stack chart
   block:
@@ -185,9 +186,23 @@
       debug:
         msg: "kube-prometheus-stack charts version for {{ kube_prometheus_stack_charts_app_version }} is {{ kube_prometheus_stack_charts_version }}"
 
+    - name: Lookup kube-prometheus-stack chart values values
+      set_fact:
+        kube_prometheus_stack_charts_values: "{{ lookup('template', 'templates/kube-prometheus-stack.yml.j2') | from_yaml }}"
+
+    - name: Check if custom kube-prometheus-stack chart values are provided
+      stat:
+        path: "{{ kube_prometheus_stack_charts_custom_config_file }}"
+      register: kube_custom_config_file
+
+    - name: Merge in custom kube-prometheus-stack chart values if provided
+      set_fact:
+        kube_prometheus_stack_charts_values: "{{ kube_prometheus_stack_charts_values | combine(lookup('template', kube_prometheus_stack_charts_custom_config_file) | from_yaml, recursive=True) }}"
+      when: kube_custom_config_file.stat.exists
+
     - name: Show charts values if configured
       debug:
-        msg: "{{ lookup('template', 'templates/kube-prometheus-stack.yml.j2') | from_yaml }}"
+        msg: "{{ kube_prometheus_stack_charts_values }}"
       when: gitlab_charts_show_values
 
     - name: Install kube-prometheus-stack chart
@@ -196,7 +211,7 @@
         chart_ref: prometheus-community/kube-prometheus-stack
         chart_version: "{{ kube_prometheus_stack_charts_version }}"
         release_namespace: "{{ kube_prometheus_stack_charts_namespace }}"
-        values: "{{ lookup('template', 'templates/kube-prometheus-stack.yml.j2') | from_yaml }}"
+        values: "{{ kube_prometheus_stack_charts_values }}"
       register: kube_prometheus_stack_charts_deploy
       retries: 3
       delay: 3

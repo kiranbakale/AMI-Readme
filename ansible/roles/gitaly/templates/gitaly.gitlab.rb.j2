@@ -31,17 +31,15 @@ gitaly['listen_addr'] = "0.0.0.0:8075"
 gitaly['ruby_num_workers'] = {{ gitaly_ruby_num_workers }}
 gitaly['pack_objects_cache_enabled'] = {{ gitaly_pack_objects_cache | lower }}
 
+{% if 'consul' in groups %}
+# Consul Agent (Monitoring Auto Discovery)
 consul['enable'] = true
 consul['configuration'] = {
   bind_addr: '{{ ansible_default_ipv4.address }}',
-{% if 'consul' not in groups and consul_single_server_target_group in group_names %}
-  server: true,
-  bootstrap_expect: 1    # Non HA leader (Monitoring only)
-{% else %}
-  retry_join: %w({{ (consul_int_addrs | join(' ')) if 'consul' in groups else consul_single_server_int_addr }})
-{% endif -%}
+  retry_join: %w({{ (consul_int_addrs | join(' ')) }})
 }
 consul['monitoring_service_discovery'] = true
+{% endif %}
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
 gitaly['prometheus_listen_addr'] = "0.0.0.0:9236"
