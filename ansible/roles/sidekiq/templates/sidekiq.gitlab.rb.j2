@@ -84,6 +84,7 @@ gitlab_rails['redis_host'] = '{{ redis_host }}'
 gitlab_rails['redis_port'] = '{{ redis_port }}'
 gitlab_rails['redis_password'] = '{{ redis_password }}'
 gitlab_rails['redis_ssl'] = {{ redis_external_ssl | lower }}
+gitlab_rails['redis_enable_client'] = {{ redis_external_enable_client | lower }}
 
 {% elif redis_cache_external and redis_persistent_external %}
 ### Separate Queues

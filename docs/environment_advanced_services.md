@@ -515,6 +515,9 @@ The variables to set are dependent on if the setup is to have combined or separa
   - **GCP only** - Default is `false`. Should only be changed when Memorystore have SSL configured.
     - If TLS encryption was enabled via `memorystore_redis*_transit_encryption_mode`, follow guidance on [how to configure internal SSL](environment_advanced_ssl.md#configuring-internal-ssl-via-custom-files-secrets-and-custom-config) for Redis.
       - :information_source:&nbsp; Note that the service will generate its own CA certificate and [you will need to download it from GCP directly](https://cloud.google.com/memorystore/docs/redis/enabling-in-transit-encryption#downloading_the_certificate_authority).
+- `redis_external_enable_client` - Configures the use of the Redis `client` command, as this is restricted on certain Cloud Providers such as [GCP](https://docs.gitlab.com/omnibus/settings/redis.html#using-google-cloud-memorystore). This command is only used for debugging purposes in Omnibus.
+  - **AWS only** - Default is `true`.
+  - **GCP only** - Default is `false`.
 
 Once set, Ansible can then be run as normal. During the run it will configure the various GitLab components to use the database as well as any additional tasks such as setting up a separate database in the same instance for Praefect.
 
