@@ -22,67 +22,14 @@ prometheus:
     podMonitorSelectorNilUsesHelmValues: false
     serviceMonitorSelectorNilUsesHelmValues: false
     additionalScrapeConfigs:
-      - job_name: node
-        consul_sd_configs:
-          - server: "gitlab-consul.{{ consul_charts_namespace }}.svc.cluster.local:8500"
-            services:
-              - node-exporter
-{% if 'gitaly' in groups %}
-      - job_name: gitaly
-        consul_sd_configs:
-          - server: "gitlab-consul.{{ consul_charts_namespace }}.svc.cluster.local:8500"
-            services:
-              - gitaly
+{% if kube_prometheus_stack_charts_prometheus_scrape_config_setup %}
+{% if 'consul' in groups %}
+      {{ lookup('template', 'prometheus_scrape_configs/consul_omnibus.yml.j2') | indent(width=6) }}
+{% else %}
+      {{ lookup('template', 'prometheus_scrape_configs/static_omnibus.yml.j2') | indent(width=6) }}
 {% endif %}
-{% if groups | select('match', 'redis.*') | length > 0 %}
-      - job_name: redis
-        consul_sd_configs:
-          - server: "gitlab-consul.{{ consul_charts_namespace }}.svc.cluster.local:8500"
-            services:
-              - redis-exporter
-{% endif %}
-{% if 'postgres' in groups %}
-      - job_name: postgres
-        consul_sd_configs:
-          - server: "gitlab-consul.{{ consul_charts_namespace }}.svc.cluster.local:8500"
-            services:
-              - postgres-exporter
-{% endif %}
-{% if 'praefect' in groups %}
-      - job_name: praefect
-        static_configs:
-          - targets:
-{% for ip in praefect_int_addrs %}
-            - "{{ ip }}:9652"
-{% endfor %}
-{% endif %}
-{% if 'pgbouncer' in groups %}
-      - job_name: pgbouncer
-        static_configs:
-          - targets:
-{% for ip in pgbouncer_int_addrs %}
-            - "{{ ip }}:9188"
-{% endfor %}
-{% endif %}
-{% if 'haproxy_internal' in groups or 'elastic' in groups or 'gitlab_nfs' in groups %}
-      - job_name: non_omnibus_node
-        static_configs:
-          - targets:
-{% if 'haproxy_internal' in groups %}
-            - "{{ haproxy_internal_int_addr }}:9100"
-{% endif %}
-{% if 'gitlab_nfs' in groups %}
-            - "{{ gitlab_nfs_int_addr }}:9100"
-{% endif %}
-{% for ip in elastic_int_addrs %}
-            - "{{ ip }}:9100"
-{% endfor %}
-{% endif %}
-{% if 'haproxy_internal' in groups %}
-      - job_name: haproxy
-        static_configs:
-          - targets:
-            - "{{ haproxy_internal_int_addr }}:1936"
+      {{ lookup('template', 'prometheus_scrape_configs/static_omnibus_non_discoverable.yml.j2') | indent(width=6) }}
+      {{ lookup('template', 'prometheus_scrape_configs/static_non_omnibus.yml.j2') | indent(width=6) }}
 {% endif %}
 {% for custom in kube_prometheus_stack_charts_custom_scrape_config %}
       - {{ custom }}

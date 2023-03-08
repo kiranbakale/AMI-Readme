@@ -85,7 +85,7 @@ gitlab_rails['object_store']['proxy_download'] = true
 
 ### Provider-specific connection settings
 gitlab_rails['object_store']['connection'] = {
-  {{ lookup('template', 'object_storage.' + cloud_provider + '.rb.j2') | indent(width=2) }}
+  {{ lookup('template', 'object_storage/' + cloud_provider + '.rb.j2') | indent(width=2) }}
 }
 
 gitlab_rails['object_store']['objects']['artifacts']['bucket'] = "{{ gitlab_object_storage_artifacts_bucket }}"
@@ -98,13 +98,13 @@ gitlab_rails['object_store']['objects']['uploads']['bucket'] = "{{ gitlab_object
 
 {% if container_registry_enable %}
 registry['storage'] = {
-  {{ lookup('template', 'registry.object_storage.' + cloud_provider + '.rb.j2') | indent(width=2) }}
+  {{ lookup('template', 'object_storage/registry.' + cloud_provider + '.rb.j2') | indent(width=2) }}
 }
 {% endif %}
 
 ## Object Storage - separated backups storage
 gitlab_rails['backup_upload_connection'] = {
-  {{ lookup('template', 'object_storage.' + cloud_provider + '.rb.j2') | indent(width=2) }}
+  {{ lookup('template', 'object_storage/' + cloud_provider + '.rb.j2') | indent(width=2) }}
 }
 gitlab_rails['backup_upload_remote_directory'] = "{{ gitlab_object_storage_backups_bucket }}"
 {% elif gitlab_object_storage_type == 'nfs'%}
@@ -115,18 +115,15 @@ gitlab_rails['shared_path'] = '{{ gitlab_nfs_path }}/shared'
 gitlab_ci['builds_directory'] = '{{ gitlab_nfs_path }}/builds'
 {% endif %}
 
-# Monitoring
+{% if 'consul' in groups %}
+# Consul Agent (Monitoring Auto Discovery)
 consul['enable'] = true
 consul['configuration'] = {
   bind_addr: '{{ ansible_default_ipv4.address }}',
-{% if 'consul' not in groups and consul_single_server_target_group in group_names %}
-  server: true,
-  bootstrap_expect: 1    # Non HA leader (Monitoring only)
-{% else %}
-  retry_join: %w({{ (consul_int_addrs | join(' ')) if 'consul' in groups else consul_single_server_int_addr }})
-{% endif -%}
+  retry_join: %w({{ (consul_int_addrs | join(' ')) }})
 }
 consul['monitoring_service_discovery'] = true
+{% endif %}
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
 gitlab_workhorse['prometheus_listen_addr'] = '0.0.0.0:9229'

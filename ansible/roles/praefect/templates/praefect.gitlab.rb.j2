@@ -90,13 +90,15 @@ praefect['virtual_storages'] = {
 gitlab_rails['rake_cache_clear'] = false
 gitlab_rails['auto_migrate'] = false
 
-# Consul
+{% if 'consul' in groups %}
+# Consul Agent (Monitoring Auto Discovery)
 consul['enable'] = true
 consul['configuration'] = {
   bind_addr: '{{ ansible_default_ipv4.address }}',
-  retry_join: %w({{ (consul_int_addrs | join(' ')) if 'consul' in groups else consul_single_server_int_addr }})
+  retry_join: %w({{ (consul_int_addrs | join(' ')) }})
 }
 consul['monitoring_service_discovery'] = true
+{% endif %}
 
 # Monitoring
 praefect['prometheus_listen_addr'] = '0.0.0.0:9652'

@@ -136,12 +136,8 @@ container_registry_external_host: "{{ container_registry_external_url | regex_re
 consul_int_addrs: "{{ (groups['consul'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'consul' in groups else [] }}"
 consul_additional_config: ''
 
-## Non HA (Monitoring only)
-consul_single_server_target_group: "{{ groups.keys() | select('match', 'gitaly_primary|gitlab_rails_primary') | first }}"
-consul_single_server_int_addr: "{{ groups[consul_single_server_target_group] | map('extract', hostvars, internal_addr_lookup) | join('') }}"
-
 # GitLab Rails (Application nodes)
-gitlab_rails_int_addrs: "{{ (groups['gitlab_rails'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'gitlab_rails_primary' in groups else [] }}"
+gitlab_rails_int_addrs: "{{ (groups['gitlab_rails'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'gitlab_rails' in groups else [] }}"
 gitlab_rails_monitoring_cidr_blocks: ['0.0.0.0/0']
 gitlab_rails_nginx_real_ip_trusted_cidr_blocks: []
 
@@ -213,6 +209,7 @@ praefect_postgres_external_prep: "{{ true if praefect_postgres_host != postgres_
 # GitLab Monitor
 monitor_int_addr: "{{ (groups['monitor'] | sort | map('extract', hostvars, internal_addr_lookup) | join('')) if 'monitor' in groups else '' }}"
 monitor_int_ip: "{{ (groups['monitor'] | sort | map('extract', hostvars, internal_ip_lookup[cloud_provider]) | join('')) if 'monitor' in groups else '' }}"
+monitor_prometheus_scrape_config_setup: true
 monitor_custom_dashboards: []
 monitor_custom_dashboards_path: "{{ inventory_path }}/../files/grafana"
 monitor_custom_prometheus_scrape_config: ''
@@ -255,6 +252,7 @@ redis_persistent_external_ssl: "{{ redis_external_ssl }}"
 redis_sentinel_port: 26379
 
 # Sidekiq
+sidekiq_int_addrs: "{{ (groups['sidekiq'] | sort | map('extract', hostvars, internal_addr_lookup) | list) if 'sidekiq' in groups else [] }}"
 sidekiq_max_concurrency: 20
 
 ################################################################################
@@ -320,6 +318,7 @@ kube_prometheus_stack_charts_storage_size: 100Gi
 kube_prometheus_stack_charts_storage_class: ""
 kube_prometheus_stack_charts_app_version: "v0.63.0"
 kube_prometheus_stack_charts_grafana_image_tag: "7.5.17"
+kube_prometheus_stack_charts_prometheus_scrape_config_setup: true
 
 kube_prometheus_stack_charts_custom_dashboards_path: "{{ inventory_path }}/../files/grafana"
 kube_prometheus_stack_charts_custom_dashboards: []
@@ -346,6 +345,7 @@ gitlab_rails_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/g
 sidekiq_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/sidekiq.rb.j2"
 monitor_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/monitor.rb.j2"
 gitlab_charts_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/gitlab_charts.yml.j2"
+kube_prometheus_stack_charts_custom_config_file: "{{ inventory_path }}/../files/gitlab_configs/kube_prometheus_stack_charts.yml.j2"
 
 ## Custom Tasks
 consul_custom_tasks_file: "{{ inventory_path }}/../files/gitlab_tasks/consul.yml"

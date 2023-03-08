@@ -70,15 +70,21 @@ pgbouncer['databases'] = {
   }
 }
 
-# Consul
+{% if 'consul' in groups %}
+# Consul Agent (Monitoring Auto Discovery)
+consul['enable'] = true
+consul['configuration'] = {
+  bind_addr: '{{ ansible_default_ipv4.address }}',
+  retry_join: %w({{ (consul_int_addrs | join(' ')) }})
+}
+consul['monitoring_service_discovery'] = true
+
+# Consul Agent (Postgres HA)
 {% if groups['postgres'] | length > 1 %}
 consul['services'] = %w(postgresql)
 {% endif %}
-consul['configuration'] = {
-  bind_addr: '{{ ansible_default_ipv4.address }}',
-  retry_join: %w({{ (consul_int_addrs | join(' ')) if 'consul' in groups else consul_single_server_int_addr }})
-}
-consul['monitoring_service_discovery'] = true
+
+{% endif %}
 
 # Monitoring
 postgres_exporter['listen_address'] = '0.0.0.0:9187'
