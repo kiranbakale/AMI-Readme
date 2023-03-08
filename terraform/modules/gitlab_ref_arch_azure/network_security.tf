@@ -72,7 +72,7 @@ resource "azurerm_network_security_rule" "git_ssh_rule" {
 }
 
 resource "azurerm_network_security_rule" "external_ssh_rule" {
-  count                                      = min(var.haproxy_external_node_count, 1)
+  count                                      = var.setup_external_ips && var.haproxy_external_node_count > 0 ? 1 : 0
   name                                       = "external_ssh_rule"
   description                                = "Allow SSH traffic"
   priority                                   = 1006
@@ -99,6 +99,7 @@ resource "azurerm_application_security_group" "ssh" {
 }
 
 resource "azurerm_network_security_rule" "ssh_rule" {
+  count                                      = var.setup_external_ips ? 1 : 0
   name                                       = "default_ssh"
   description                                = "Allow SSH traffic"
   priority                                   = 1001
