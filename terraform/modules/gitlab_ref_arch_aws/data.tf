@@ -1,11 +1,11 @@
-data "aws_ami" "ubuntu_18_04" {
+data "aws_ami" "ubuntu_default" {
   count = var.ami_id == null ? 1 : 0
 
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
 
   filter {
@@ -13,5 +13,5 @@ data "aws_ami" "ubuntu_18_04" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"] # Canonical
+  owners = ["amazon"]
 }

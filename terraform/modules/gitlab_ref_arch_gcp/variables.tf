@@ -15,7 +15,7 @@ variable "geo_deployment" {
 # GCP Settings
 variable "machine_image" {
   type    = string
-  default = "ubuntu-1804-lts"
+  default = "ubuntu-2004-lts"
 }
 
 variable "default_disk_size" {
