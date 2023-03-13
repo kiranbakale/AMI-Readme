@@ -4,7 +4,7 @@
   static_configs:
     - targets:
 {% for ip in ([haproxy_internal_int_addr] + opensearch_int_addrs + elastic_int_addrs) if ip != '' %}
-      - "{{ ip }}:9100",
+      - "{{ ip }}:9100"
 {% endfor %}
 {% if 'gitlab_nfs' in groups %}
       - "{{ gitlab_nfs_int_addr }}:9100"
