@@ -264,6 +264,7 @@ sidekiq_max_concurrency: 20
 gitlab_nfs_target_group: "{{ 'gitlab_nfs' if 'gitlab_nfs' in groups else (groups.keys() | select('match', 'gitaly_primary|gitlab_rails_primary') | first) }}"
 gitlab_nfs_int_addr: "{{ groups[gitlab_nfs_target_group] | map('extract', hostvars, internal_addr_lookup) | join('') }}"
 gitlab_nfs_path: "{{ '/mnt/gitlab-nfs' if cloud_provider != 'azure' else '/srv/gitlab-nfs' }}"
+gitlab_nfs_setup: true
 
 # Search
 elasticsearch_clean_install: "{{ lookup('env','ELASTICSEARCH_CLEAN_INSTALL') | default('false', true) }}"

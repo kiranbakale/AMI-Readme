@@ -75,6 +75,7 @@
 
     - name: Setup NFS
       import_tasks: nfs.yml
+      when: gitlab_nfs_setup
       tags: nfs
 
     # Create select GitLab folders if missing. Allows for setup before reconfigure.
