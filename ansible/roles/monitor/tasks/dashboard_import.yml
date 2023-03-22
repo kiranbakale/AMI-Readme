@@ -37,13 +37,13 @@
           file:
             path: "/opt/{{ dashboard_directory }}/dashboards"
             state: directory
-            mode: 0755
+            mode: "0755"
 
         - name: Copy {{ item.display_name }} Grafana dashboards
           copy:
             src: "{{ file_path }}"
             dest: "/opt/{{ dashboard_directory }}/dashboards"
-            mode: 0755
+            mode: "0755"
           with_fileglob:
             - "{{ monitor_custom_dashboards_path }}/{{ item.folder }}/*"
           loop_control:

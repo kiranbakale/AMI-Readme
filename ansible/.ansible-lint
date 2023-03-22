@@ -22,5 +22,7 @@ skip_list:
   - no-handler # Tasks that run when changed should likely be handlers
   - name[play] # All plays should be named.
   - name[template] # Jinja templates should only be end at name
-  - galaxy[no-changelog]
+  - galaxy[no-changelog] # Collection changelog missing - Optional in Ansible
+  - galaxy[no-runtime] # Collection runtime config file missing - Optional in Ansible
+  - key-order[task] # You can improve the task key order to: name, when, block - Optional in Ansible
 offline: true

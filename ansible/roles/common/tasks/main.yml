@@ -195,7 +195,7 @@
           copy:
             src: "{{ gitlab_deb_host_path }}"
             dest: "{{ gitlab_deb_target_path }}"
-            mode: 0755
+            mode: "0755"
             force: true
           when:
             - omnibus_node
@@ -226,7 +226,7 @@
           copy:
             src: "{{ gitlab_rpm_host_path }}"
             dest: "{{ gitlab_rpm_target_path }}"
-            mode: 0755
+            mode: "0755"
             force: true
           when:
             - omnibus_node

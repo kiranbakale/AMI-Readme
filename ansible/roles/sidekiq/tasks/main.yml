@@ -18,7 +18,7 @@
       template:
         src: "{{ sidekiq_custom_config_file }}"
         dest: "/etc/gitlab/gitlab.sidekiq.custom.rb"
-        mode: 0644
+        mode: "0644"
       when: sidekiq_custom_config_file_path.stat.exists
 
     - name: Remove old Custom Config if not configured
@@ -74,7 +74,7 @@
   copy:
     src: "{{ gcp_service_account_host_file }}"
     dest: "{{ gcp_service_account_target_file }}"
-    mode: 0755
+    mode: "0755"
   tags:
     - reconfigure
     - secrets

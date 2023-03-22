@@ -24,7 +24,7 @@
       #!/bin/sh
       docker stop haproxy
     create: true
-    mode: 0755
+    mode: "0755"
 
 - name: Setup certbot renew haproxy post hook script
   blockinfile:
@@ -35,4 +35,4 @@
       cp -u /etc/letsencrypt/live/{{ external_host }}/privkey.pem /opt/haproxy/{{ external_host }}.pem.key
       docker start haproxy
     create: true
-    mode: 0755
+    mode: "0755"
