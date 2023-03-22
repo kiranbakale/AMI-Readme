@@ -12,7 +12,6 @@
 - [GitLab Environment Toolkit - Advanced - Geo](environment_advanced_geo.md)
 - [GitLab Environment Toolkit - Advanced - Monitoring](environment_advanced_monitoring.md)
 - [GitLab Environment Toolkit - Upgrades (Toolkit, Environment)](environment_upgrades.md)
-- [GitLab Environment Toolkit - Legacy Setups](environment_legacy.md)
 - [**GitLab Environment Toolkit - Considerations After Deployment - Backups, Security**](environment_post_considerations.md)
 - [GitLab Environment Toolkit - Troubleshooting](environment_troubleshooting.md)
 
