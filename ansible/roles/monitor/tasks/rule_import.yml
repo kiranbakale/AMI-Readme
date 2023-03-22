@@ -24,13 +24,13 @@
           file:
             path: "/opt/prometheus/rules/{{ item.folder }}"
             state: directory
-            mode: 0755
+            mode: "0755"
 
         - name: Copy {{ item.folder }} Prometheus rules
           copy:
             src: "{{ file_path }}"
             dest: "/opt/prometheus/rules/{{ item.folder }}"
-            mode: 0755
+            mode: "0755"
           with_fileglob:
             - "{{ monitor_custom_rules_path }}/{{ item.folder }}/*"
           loop_control:

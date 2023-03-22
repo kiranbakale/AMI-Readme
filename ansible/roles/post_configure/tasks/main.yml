@@ -14,13 +14,6 @@
   delay: 5
   tags: healthcheck
 
-- name: GitLab Root Password check
-  fail:
-    msg: "GitLab Root Password is empty. Post Configure steps will be skipped. Refer to docs for more info - https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/docs/prep_toolkit.md#gitlab-initial-root-password "
-  ignore_errors: true
-  when: gitlab_root_password == ''
-  tags: config-check
-
 - name: Get details for running GitLab Charts Toolbox Pod
   block:
     - name: Configure local kubeconfig to point to correct cluster
@@ -111,7 +104,6 @@
       tags:
         - elasticsearch
         - opensearch
-  when: gitlab_root_password != ''
 
 - name: Run Custom Tasks
   block:
