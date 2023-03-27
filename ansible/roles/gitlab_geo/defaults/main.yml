@@ -14,3 +14,12 @@ local_tmp: "{{ local_tmp_dir if local_tmp_dir is defined else 'tmp/' }}"
 
 gitlab_charts_repo_name: 'gitlab'
 gitlab_charts_repo_url: "https://charts.gitlab.io/"
+
+geo_primary_site_prefix: ""
+geo_primary_site_gcp_project: ""
+geo_primary_site_gcp_zone: ""
+geo_primary_site_aws_region: ""
+geo_secondary_site_prefix: ""
+geo_secondary_site_gcp_project: ""
+geo_secondary_site_gcp_zone: ""
+geo_secondary_site_aws_region: ""

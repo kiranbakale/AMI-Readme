@@ -5,9 +5,9 @@
   import_tasks: kubeconfig.yml
   vars:
     geo_site_prefix: "{{ geo_secondary_site_prefix }}"
-    geo_site_gcp_project: "{{ geo_secondary_site_gcp_project if cloud_provider == 'gcp' else '' }}"
-    geo_site_gcp_zone: "{{ geo_secondary_site_gcp_zone if cloud_provider == 'gcp' else '' }}"
-    geo_site_aws_region: "{{ geo_secondary_site_aws_region if cloud_provider == 'aws' else '' }}"
+    geo_site_gcp_project: "{{ geo_secondary_site_gcp_project }}"
+    geo_site_gcp_zone: "{{ geo_secondary_site_gcp_zone }}"
+    geo_site_aws_region: "{{ geo_secondary_site_aws_region }}"
 
 - name: Redeploy Secondary Charts - Recreate GitLab Charts Secrets for Cloud Native Hybrid environments
   vars:
@@ -56,17 +56,14 @@
   loop: "{{ lookup('dict', gitlab_info.status) }}"
   when:
     - "'values' in item.key"
-    - geo_recovery is not defined or not geo_recovery
 
 - name: Redeploy Secondary Charts - Update Geo Role from primary to secondary
   become: false
   delegate_to: localhost
   run_once: true
   set_fact:
-    gitlab_values: "{{ item.value | regex_replace(\"'role': 'primary'\", \"'role': 'secondary'\") }}"
-  loop: "{{ lookup('dict', gitlab_info.status) }}"
+    gitlab_values: "{{ gitlab_values | regex_replace(\"'role': 'primary'\", \"'role': 'secondary'\") }}"
   when:
-    - "'values' in item.key"
     - geo_recovery is defined and geo_recovery
 
 - name: Redeploy Secondary Charts - Update Registry primary API Url
@@ -74,10 +71,8 @@
   delegate_to: localhost
   run_once: true
   set_fact:
-    gitlab_values: "{{ item.value | regex_replace(\"'primaryApiUrl': '\" + geo_secondary_registry_url + \"'\", \"'primaryApiUrl': '\" + geo_primary_registry_url + \"'\") }}"
-  loop: "{{ lookup('dict', gitlab_info.status) }}"
+    gitlab_values: "{{ gitlab_values | regex_replace(\"'primaryApiUrl': '\" + geo_secondary_registry_url + \"'\", \"'primaryApiUrl': '\" + geo_primary_registry_url + \"'\") }}"
   when:
-    - "'values' in item.key"
     - container_registry_enable
 
 - name: Redeploy Secondary Charts - Get GitLab Charts version if App version specified

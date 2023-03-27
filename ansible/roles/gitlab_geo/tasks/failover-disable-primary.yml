@@ -3,10 +3,11 @@
   vars:
     maintenance_mode_state: true
     site_group_name: "{{ geo_primary_site_group_name }}"
-  tags:
-    - maintenance-mode
-    - maintenance-mode-enable
-    - disable-primary
+    geo_site_prefix: "{{ geo_primary_site_prefix }}"
+    geo_site_gcp_project: "{{ geo_primary_site_gcp_project }}"
+    geo_site_gcp_zone: "{{ geo_primary_site_gcp_zone }}"
+    geo_site_aws_region: "{{ geo_primary_site_aws_region }}"
+  tags: maintenance-mode-enable
 
 - name: Disable Primary Site Omnibus nodes
   block:
@@ -17,7 +18,6 @@
       service:
         name: gitlab-runsvdir
         enabled: false
-  tags: disable-primary
   when:
     - omnibus_node
     - (geo_primary_site_group_name in group_names)
@@ -31,9 +31,9 @@
       import_tasks: kubeconfig.yml
       vars:
         geo_site_prefix: "{{ geo_primary_site_prefix }}"
-        geo_site_gcp_project: "{{ geo_primary_site_gcp_project if cloud_provider == 'gcp' else '' }}"
-        geo_site_gcp_zone: "{{ geo_primary_site_gcp_zone if cloud_provider == 'gcp' else '' }}"
-        geo_site_aws_region: "{{ geo_primary_site_aws_region if cloud_provider == 'aws' else '' }}"
+        geo_site_gcp_project: "{{ geo_primary_site_gcp_project }}"
+        geo_site_gcp_zone: "{{ geo_primary_site_gcp_zone }}"
+        geo_site_aws_region: "{{ geo_primary_site_aws_region }}"
 
     - name: Disable Webservice pods
       become: false
@@ -54,5 +54,4 @@
         kind: Deployment
         namespace: "{{ gitlab_charts_release_namespace }}"
         replicas: 0
-  tags: disable-primary
   when: cloud_native_hybrid_geo
