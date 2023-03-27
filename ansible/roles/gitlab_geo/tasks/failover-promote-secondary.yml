@@ -1,13 +1,11 @@
 - name: Promote Secondary Site Postgres, Sidekiq, and Gitaly Omnibus nodes
   command: gitlab-ctl geo promote -f
-  tags: promote-secondary
   when:
     - ('postgres' in group_names or 'sidekiq' in group_names or 'gitaly' in group_names)
     - (geo_secondary_site_group_name in group_names)
 
 - name: Promote GitLab Rails nodes for Omnibus environments
   command: gitlab-ctl geo promote -f
-  tags: promote-secondary
   when:
     - ('gitlab_rails' in group_names)
     - (geo_secondary_site_group_name in group_names)
@@ -21,9 +19,9 @@
       import_tasks: kubeconfig.yml
       vars:
         geo_site_prefix: "{{ geo_secondary_site_prefix }}"
-        geo_site_gcp_project: "{{ geo_secondary_site_gcp_project if cloud_provider == 'gcp' else '' }}"
-        geo_site_gcp_zone: "{{ geo_secondary_site_gcp_zone if cloud_provider == 'gcp' else '' }}"
-        geo_site_aws_region: "{{ geo_secondary_site_aws_region if cloud_provider == 'aws' else '' }}"
+        geo_site_gcp_project: "{{ geo_secondary_site_gcp_project }}"
+        geo_site_gcp_zone: "{{ geo_secondary_site_gcp_zone }}"
+        geo_site_aws_region: "{{ geo_secondary_site_aws_region }}"
 
     - name: Promote to Primary Site
       become: false
@@ -40,17 +38,11 @@
       kubernetes.core.helm_repository:
         name: "{{ gitlab_charts_repo_name }}"
         repo_url: "{{ gitlab_charts_repo_url }}"
-      tags:
-        - reconfigure
-        - charts
 
     - name: Update GitLab Charts repo
       become: false
       delegate_to: localhost
       command: "helm repo update {{ gitlab_charts_repo_name }}"
-      tags:
-        - reconfigure
-        - charts
 
     - name: Get GitLab Charts values
       become: false
@@ -97,20 +89,31 @@
         update_repo_cache: true
         release_namespace: "{{ gitlab_charts_release_namespace }}"
         values: "{{ gitlab_values }}"
-  tags: promote-secondary
   when: cloud_native_hybrid_geo
 
-- name: Disable Maintenance Mode
-  import_tasks: maintenance-mode.yml
-  vars:
-    maintenance_mode_state: false
-    maintenance_mode_message: "GitLab is undergoing maintenance"
-    site_group_name: "{{ geo_secondary_site_group_name }}"
-    site_prefix: "{{ geo_secondary_site_prefix }}"
-    site_gcp_project: "{{ geo_secondary_site_gcp_project if cloud_provider == 'gcp' else '' }}"
-    site_gcp_zone: "{{ geo_secondary_site_gcp_zone if cloud_provider == 'gcp' else '' }}"
-    site_aws_region: "{{ geo_secondary_site_aws_region if cloud_provider == 'aws' else '' }}"
-  tags:
-    - maintenance-mode
-    - maintenance-mode-disable
-    - promote-secondary
+- name: Disable Maintenance mode after GitLab has restarted
+  block:
+    - name: Wait for GitLab to be available
+      uri:
+        url: '{{ geo_secondary_external_url }}/-/readiness'
+        validate_certs: false
+        timeout: 60
+      register: result
+      until: result.status == 200
+      retries: 20
+      delay: 5
+      become: false
+      delegate_to: localhost
+      run_once: true
+
+    - name: Disable Maintenance Mode
+      import_tasks: maintenance-mode.yml
+      vars:
+        maintenance_mode_state: false
+        maintenance_mode_message: "GitLab is undergoing maintenance"
+        site_group_name: "{{ geo_secondary_site_group_name }}"
+        geo_site_prefix: "{{ geo_secondary_site_prefix }}"
+        geo_site_gcp_project: "{{ geo_secondary_site_gcp_project }}"
+        geo_site_gcp_zone: "{{ geo_secondary_site_gcp_zone }}"
+        geo_site_aws_region: "{{ geo_secondary_site_aws_region }}"
+  tags: maintenance-mode-disable

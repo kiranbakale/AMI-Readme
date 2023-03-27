@@ -14,6 +14,7 @@
       import_role:
         name: gitlab_geo
         tasks_from: failover-disable-primary
+      tags: disable-primary
 
 - hosts: all:!gitlab_cluster:!ungrouped
   become: true
@@ -27,3 +28,4 @@
       import_role:
         name: gitlab_geo
         tasks_from: failover-promote-secondary
+      tags: promote-secondary

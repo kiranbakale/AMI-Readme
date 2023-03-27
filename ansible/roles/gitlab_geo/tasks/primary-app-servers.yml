@@ -28,9 +28,9 @@
       import_tasks: kubeconfig.yml
       vars:
         geo_site_prefix: "{{ geo_primary_site_prefix }}"
-        geo_site_gcp_project: "{{ geo_primary_site_gcp_project if cloud_provider == 'gcp' else '' }}"
-        geo_site_gcp_zone: "{{ geo_primary_site_gcp_zone if cloud_provider == 'gcp' else '' }}"
-        geo_site_aws_region: "{{ geo_primary_site_aws_region if cloud_provider == 'aws' else '' }}"
+        geo_site_gcp_project: "{{ geo_primary_site_gcp_project }}"
+        geo_site_gcp_zone: "{{ geo_primary_site_gcp_zone }}"
+        geo_site_aws_region: "{{ geo_primary_site_aws_region }}"
 
     - name: Primary App Servers Hybrid - Set Primary site
       become: false
