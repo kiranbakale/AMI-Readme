@@ -96,3 +96,12 @@
     - redeploy-secondary-charts
     - secondary
   when: secondary_cloud_native_hybrid_geo
+
+- name: Restart backend app servers on primary site
+  command: gitlab-ctl restart
+  tags:
+    - primary-backend-app-servers
+    - primary
+  when:
+    - ('sidekiq' in group_names)
+    - (geo_primary_site_group_name in group_names)
