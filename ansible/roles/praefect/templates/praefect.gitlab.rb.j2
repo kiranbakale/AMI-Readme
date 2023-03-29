@@ -10,10 +10,7 @@ alertmanager['enable'] = false
 grafana['enable'] = false
 gitlab_exporter['enable'] = false
 nginx['enable'] = false
-
-{% if gitlab_version == '' or gitlab_version is version('13.5', '>') %}
 gitlab_kas['enable'] = false
-{% endif %}
 
 # Praefect Configuration
 praefect['enable'] = true
@@ -41,19 +38,13 @@ praefect['database_port'] = {{ praefect_postgres_port }}
 {% endif %}
 
 ## Praefect Cache settings
-{% if gitlab_version != '' and gitlab_version is version('14.0', '<') %}
-praefect['database_host_no_proxy'] = '{{ praefect_postgres_cache_host }}'
-praefect['database_port_no_proxy'] = {{ praefect_postgres_cache_port }}
-{% else %}
 praefect['database_direct_host'] = '{{ praefect_postgres_cache_host }}'
 praefect['database_direct_port'] = {{ praefect_postgres_cache_port }}
-{% endif %}
 
 praefect['database_user'] = '{{ praefect_postgres_username }}'
 praefect['database_password'] = '{{ praefect_postgres_password }}'
 praefect['database_dbname'] = '{{ praefect_postgres_database_name }}'
 
-{% if gitlab_version == '' or gitlab_version is version('14.0', '>=') %}
 praefect['virtual_storages'] = {
   'default' => {
     'nodes' => {
@@ -70,22 +61,6 @@ praefect['virtual_storages'] = {
     }
   }
 }
-{% else %}
-praefect['virtual_storages'] = {
-  'default' => {
-    'gitaly-1' => {
-      'address' => "{{ 'tls' if gitaly_ssl else 'tcp' }}://{{ gitaly_primary_int_addr }}:{{ gitaly_ssl_port if gitaly_ssl else '8075' }}",
-      'token'   => "{{ praefect_internal_token }}"
-    },
-{% for ip in gitaly_secondary_int_addrs %}
-    'gitaly-{{ loop.index + 1 }}' => {
-      'address' => "{{ 'tls' if gitaly_ssl else 'tcp' }}://{{ ip }}:{{ gitaly_ssl_port if gitaly_ssl else '8075' }}",
-      'token'   => "{{ praefect_internal_token }}"
-    },
-{% endfor %}
-  }
-}
-{% endif %}
 
 gitlab_rails['rake_cache_clear'] = false
 gitlab_rails['auto_migrate'] = false

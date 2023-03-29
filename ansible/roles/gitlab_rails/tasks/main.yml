@@ -110,7 +110,6 @@
         postgres_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
   when:
     - "'postgres' in groups and groups['postgres'] | length > 1"
-    - postgres_replication_manager == 'patroni'
     - not postgres_external
   tags:
     - reconfigure

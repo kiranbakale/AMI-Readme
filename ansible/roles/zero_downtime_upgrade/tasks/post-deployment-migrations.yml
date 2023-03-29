@@ -13,7 +13,6 @@
         postgres_migrations_port: "{{ postgres_leader_int_address.stdout.split(':')[1] }}"
   when:
     - ('postgres' in groups and groups['postgres'] | length > 1)
-    - postgres_replication_manager == 'patroni'
     - not postgres_external
     - (geo_secondary_site_group_name not in group_names)
 
