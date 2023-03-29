@@ -28,29 +28,10 @@
 
 - name: Secondary database - Remove existing cluster information for Patroni
   import_tasks: secondary-database-patroni-workaround.yml
-  when:
-    - postgres_replication_manager == 'patroni'
-    - ('postgres' in group_names)
+  when: ('postgres' in group_names)
 
 - name: Secondary Database - Run gitlab-ctl reconfigure
   command: gitlab-ctl reconfigure
 
 - name: Secondary Database - Restart Postgres
   command: gitlab-ctl restart
-
-# Not required when using Patroni as Patroni handles this automatically
-- name: Secondary Database - Replicate geo database
-  expect:
-    command: |
-      gitlab-ctl replicate-geo-database \
-        --slot-name={{ inventory_hostname | regex_replace("-", "_") }} \
-        --host={{ geo_primary_site_postgres_int_ip }} \
-        --sslmode=verify-ca \
-        --force
-    responses:
-      (.*)Confirmation: "replicate"
-      (.*)Enter the password for gitlab_replicator@(.*): "{{ postgres_password }}"
-    timeout: 300
-  when:
-    - postgres_replication_manager != 'patroni'
-    - ('postgres_primary' in group_names or ('gitlab_rails' in group_names and geo_secondary_site_group_name + '_postgres_primary' not in groups))

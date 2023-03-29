@@ -4,11 +4,6 @@
     path: /var/log/gitlab/patroni/current
   register: patroni_check
 
-- name: Warn if attempting to use repmgr on a patroni setup
-  fail:
-    msg: Attempt detected to switch from Patroni to Repmgr. This is not supported and will result in data loss. Exiting...
-  when: patroni_check.stat.exists and (postgres_replication_manager != 'patroni')
-
 - name: Setup GitLab config file
   template:
     src: templates/postgres.gitlab.rb.j2
@@ -86,22 +81,10 @@
 
 - name: Show debug output of postgres cluster status
   block:
-    - name: Debug capture output of 'gitlab-ctl repmgr cluster show'
-      shell: "gitlab-ctl repmgr cluster show 2>/dev/null"
-      register: cluster_show
-      ignore_errors: true
-      when: postgres_replication_manager != 'patroni'
-
-    - name: Debug show output of 'gitlab-ctl repmgr cluster show'
-      debug:
-        msg: "{{ cluster_show.stdout }}"
-      when: cluster_show.stdout is defined
-
     - name: Debug capture output of 'gitlab-ctl patroni members'
       shell: "gitlab-ctl patroni members 2>/dev/null"
       register: patroni_members
       ignore_errors: true
-      when: postgres_replication_manager == 'patroni'
 
     - name: Debug show output of 'gitlab-ctl patroni members'
       debug:
@@ -111,26 +94,6 @@
   tags:
     - debug
     - reconfigure
-
-- name: Check secondary standby status
-  shell: (gitlab-ctl repmgr cluster show 2>/dev/null | grep -E 'standby \| {{ ansible_hostname }}') || echo ""
-  register: postgres_secondary_standby_status
-  tags: postgres_secondary_standby
-  when:
-    - "'postgres_secondary' in group_names"
-    - postgres_replication_manager != 'patroni'
-
-- name: Enable secondary standby
-  shell: "gitlab-ctl repmgr standby setup {{ postgres_host }} -w"
-  register: postgres_secondary_standby_result
-  tags: postgres_secondary_standby
-  when:
-    - "'postgres_secondary' in group_names"
-    - postgres_replication_manager != 'patroni'
-    - postgres_secondary_standby_status.stdout == ''
-  failed_when:
-    - postgres_secondary_standby_result.rc != 0
-    - '"exists already" not in postgres_secondary_standby_result.stderr'
 
 - name: Create skip-auto-reconfigure file
   file:

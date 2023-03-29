@@ -74,8 +74,6 @@ The recommended way to do this is to first set them in the `variables.tf` file, 
 
 :information_source:&nbsp; The configurations below are needed on all geo sites.
 
-:information_source:&nbsp; When using repmgr on the secondary site the `node_count` in `postgres.tf` should be set to 1 for the secondary site's config. When using Patroni, this can be left at its original value.
-
 ```tf
 variable "geo_site" {
     default = "geo-site-london"

@@ -6,9 +6,7 @@ consul['configuration'] = {
   server: true,
   retry_join: %w({{ consul_int_addrs | join(' ') }}),
   bind_addr: '{{ ansible_default_ipv4.address }}',
-{% if gitlab_version == '' or gitlab_version is version('14.0', '>=') %}
   log_json: true,
-{% endif %}
   {{ consul_additional_config | indent( width=2 ) }}
 }
 consul['monitoring_service_discovery'] = true

@@ -1,5 +1,4 @@
 {% if groups['postgres'] | length > 1 %}
-{% if postgres_replication_manager == 'patroni' %}
 # Disable all components except PostgreSQL, Patroni, PgBouncer and Consul
 roles ['patroni_role', 'pgbouncer_role']
 
@@ -21,33 +20,12 @@ patroni['username'] = 'patroni-api'
 patroni['password'] = '{{ patroni_password }}'
 {% endif %}
 
-{% elif postgres_replication_manager == 'repmgr' %}
-# Disable all components except PostgreSQL, Repmgr and Consul
-roles ['postgres_role', 'pgbouncer_role']
-
-# Enable Repmgr
-postgresql['shared_preload_libraries'] = 'repmgr_funcs, pg_stat_statements'
-postgresql['wal_level'] = 'replica'
-postgresql['hot_standby'] = 'on'
-
-repmgr['host'] = '{{ ansible_default_ipv4.address }}'
-repmgr['trust_auth_cidr_addresses'] = {{ postgres_trust_auth_cidr_blocks }}
-repmgr['md5_auth_cidr_addresses'] = {{ postgres_md5_auth_cidr_blocks }}
-
-postgresql['max_wal_senders'] = {{ (groups['postgres'] | length) + 1 }}
-postgresql['max_replication_slots'] = {{ (groups['postgres'] | length) + 1 }}
-repmgr['master_on_initialization'] = {{ ('postgres_primary' in group_names) | lower }}
-
-{% endif %}
-
 {% else %}
 roles ['postgres_role', 'pgbouncer_role']
 {% endif %}
 
 {% if postgres_version is defined %}
 postgresql['version'] = {{ postgres_version }}
-{% elif postgres_replication_manager == 'repmgr' %}
-postgresql['version'] = 11
 {% endif %}
 
 # PostgreSQL configuration
