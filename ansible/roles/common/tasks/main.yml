@@ -124,6 +124,7 @@
       failed_when:
         - result.rc != 0
         - ('no matches' not in result.stderr)
+        - ('No packages found' not in result.stderr)
         - ('Unable to locate package' not in result.stderr)
       when: omnibus_node
 
