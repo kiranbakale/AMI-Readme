@@ -343,7 +343,7 @@ Additionally, the Toolkit needs to be configured to run in offline mode to stop 
 
 The Toolkit installs several system packages, required for GitLab or itself, on each target OS via the official repos as follows:
 
-- Ubuntu _Main_ - `aptitude curl openssh-server ca-certificates tzdata python3-pip nfs-common postfix jq libpq-dev nvme-cli`
+- Ubuntu / Debian _Main_ - `aptitude curl openssh-server ca-certificates tzdata python3-pip nfs-common postfix jq libpq-dev nvme-cli`
 - RHEL _Main, EPEL_ - `curl openssh-server ca-certificates tzdata python3-pip python3-devel nfs-utils postfix jq nvme-cli gcc yum-plugin-versionlock libpq-devel`
 - Amazon Linux 2 _Main, EPEL, Postgres_ - `curl openssh-server ca-certificates tzdata python3-pip python3-devel nfs-utils postfix jq nvme-cli gcc yum-plugin-versionlock postgresql-devel`
 

@@ -4,6 +4,9 @@
     - name: Populate service facts
       service_facts:
 
+    - name: Populate package facts
+      package_facts:
+
     - name: Set Internal Hostname to match inventory
       hostname:
         name: "{{ inventory_hostname }}"
@@ -14,7 +17,17 @@
 
     - name: Add GitLab repository GPG key
       block:
-        - name: Add GitLab repository GPG key (Ubuntu)
+        - name: Install gnupg (Debian)
+          apt:
+            name: "gnupg"
+            update_cache: true
+          register: result
+          retries: 20
+          delay: 5
+          until: result is success
+          when: ansible_facts['distribution'] == "Debian"
+
+        - name: Add GitLab repository GPG key (Ubuntu / Debian)
           apt_key:
             url: https://packages.gitlab.com/gpg.key
             state: present
@@ -117,22 +130,18 @@
       tags: reconfigure
 
     - name: Unlock GitLab package installs
-      command: "{{ 'yum versionlock delete' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark unhold' }} {{ gitlab_edition }}"
+      command: "{{ 'yum versionlock delete' if ansible_facts['os_family'] == 'RedHat' else 'aptitude unhold' }} {{ gitlab_edition }}"
       retries: 5
       delay: 5
-      register: result
-      failed_when:
-        - result.rc != 0
-        - ('no matches' not in result.stderr)
-        - ('No packages found' not in result.stderr)
-        - ('Unable to locate package' not in result.stderr)
-      when: omnibus_node
+      when:
+        - omnibus_node
+        - "'gitlab-ee' in packages"
 
     - name: Install GitLab package via repo if configured
       block:
         # Removes the official release repo if it's present as we typically want to stick with Nightly
         # Prevents apt from switching to the release channel (when an official release is younger than nightly)
-        - name: Ensure only GitLab Nightly apt repo is installed unless specified otherwise (Ubuntu)
+        - name: Ensure only GitLab Nightly apt repo is installed unless specified otherwise (Ubuntu / Debian)
           file:
             path: '/etc/apt/sources.list.d/gitlab_{{ gitlab_edition }}.list'
             state: absent
@@ -243,7 +252,7 @@
       when: ansible_facts['os_family'] == 'RedHat'
 
     - name: Lock GitLab package updates
-      command: "{{ 'yum versionlock' if ansible_facts['os_family'] == 'RedHat' else 'apt-mark hold' }} {{ gitlab_edition }}"
+      command: "{{ 'yum versionlock' if ansible_facts['os_family'] == 'RedHat' else 'aptitude hold' }} {{ gitlab_edition }}"
       register: result
       retries: 2
       delay: 10

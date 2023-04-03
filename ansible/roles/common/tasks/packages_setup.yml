@@ -1,6 +1,6 @@
 ---
 # Debian
-- name: Install system packages (Ubuntu)
+- name: Install system packages (Ubuntu / Debian)
   apt:
     name: "{{ system_packages_deb }}"
     update_cache: true

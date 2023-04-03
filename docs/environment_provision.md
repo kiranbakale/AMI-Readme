@@ -281,7 +281,7 @@ Next in the file are the various machine settings, separated the same as the Ref
 
 In addition to the above, the following optional settings are also available:
 
-- `machine_image` - The [GCP machine image name](https://cloud.google.com/compute/docs/images/os-details) to use for the VMs. Ubuntu 20.04+ and RHEL 8 images are supported at this time. Defaults to `ubuntu-2004-lts`
+- `machine_image` - The [GCP machine image name](https://cloud.google.com/compute/docs/images/os-details) to use for the VMs. Ubuntu 20.04+, Debian 11 and RHEL 8 images are supported at this time. Defaults to `ubuntu-2004-lts`
 - `machine_secure_boot` - Controls whether [Secure Boot](https://cloud.google.com/security/shielded-cloud/shielded-vm#secure-boot) is enabled on the VMs. Can only be enabled for OS Images that support the `Shielded VM` feature. Defaults to `false`.
 - `object_storage_location` - The [GCS Location](https://cloud.google.com/storage/docs/locations) buckets are created in. Refer to the [Object Storage Location (GCP)](#object-storage-location-gcp) below for more info.
 - `object_storage_force_destroy` - Controls whether Terraform can delete all objects (including any locked objects) from the bucket so that the bucket can be destroyed without error. Consider setting this value to `false` for production systems. Defaults to `true`.
@@ -297,9 +297,9 @@ In addition to the above, the following optional settings are also available:
 
 By default, the Toolkit will configure machines using Ubuntu 20.04.
 
-However, this can be changed via the `machine_image` in the [module's environment config file](#configure-module-settings-environmenttf) to the [machine image name as given by GCP](https://cloud.google.com/compute/docs/images/os-details), e.g. `ubuntu-1804-lts` or `rhel-8`.
+However, this can be changed via the `machine_image` in the [module's environment config file](#configure-module-settings-environmenttf) to the [machine image name as given by GCP](https://cloud.google.com/compute/docs/images/os-details), e.g. `ubuntu-2204-lts` or `rhel-8`.
 
-:information_source:&nbsp; The Toolkit currently supports Ubuntu 20.04+ and RHEL 8 images at this time.
+:information_source:&nbsp; The Toolkit currently supports Ubuntu 20.04+, Debian 11 and RHEL 8 images at this time.
 
 :exclamation:&nbsp; **{-After deployment, this value shouldn't be changed as this would trigger a full rebuild (as it's treated as the base disk) and lead to data loss-}**. [Upgrading the OS should be done directly on the machines via their standard process](environment_upgrades.md#avoid-changing-machine-os-image).
 
@@ -523,7 +523,7 @@ By default, the Toolkit will configure machines using the latest Ubuntu 20.04 AM
 
 However, this can be changed via the `ami_id` setting in the [module's environment config file](#configure-module-settings-environmenttf). [Refer to the AWS docs on how to find the specific AMI ID you require](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html).
 
-:information_source:&nbsp; The Toolkit currently supports Ubuntu 20.04+, RHEL 8 and Amazon Linux 2 images at this time.
+:information_source:&nbsp; The Toolkit currently supports Ubuntu 20.04+, Debian 11, RHEL 8 and Amazon Linux 2 images at this time.
 
 :exclamation:&nbsp; **{-After deployment, this value shouldn't be changed as this would trigger a full rebuild (as it's treated as the base disk) and lead to data loss-}**. [Upgrading the OS should be done directly on the machines via their standard process](environment_upgrades.md#avoid-changing-machine-os-image).
 
@@ -772,7 +772,7 @@ However, this can be changed via the `source_image_reference` dictionary setting
 
 When the image has been selected the setting will need the `publisher`, `offer`, `sku` and `version` fields set. For example:
 
-:information_source:&nbsp; The Toolkit currently supports Ubuntu 20.04+ and RHEL 8 images at this time.
+:information_source:&nbsp; The Toolkit currently supports Ubuntu 20.04+, Debian 11 and RHEL 8 images at this time.
 
 :exclamation:&nbsp; **{-After deployment, this value shouldn't be changed as this would trigger a full rebuild (as it's treated as the base disk) and lead to data loss-}**. [Upgrading the OS should be done directly on the machines via their standard process](environment_upgrades.md#avoid-changing-machine-os-image).
 
