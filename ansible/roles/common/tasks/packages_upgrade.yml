@@ -14,14 +14,14 @@
   when: system_packages_autoremove | bool
 
 # Automated Security Upgrades
-- name: Configure Automatic Security Upgrades (Ubuntu)
+- name: Configure Automatic Security Upgrades (Ubuntu / Debian)
   block:
     - name: Install unattended-upgrades package
       package:
         name: unattended-upgrades
         state: present
 
-    - name: Run Automatic Security Upgrades directly (Ubuntu)
+    - name: Run Automatic Security Upgrades directly (Ubuntu / Debian)
       command: unattended-upgrade
       register: result
       retries: 5

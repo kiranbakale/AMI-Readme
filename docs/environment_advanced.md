@@ -493,7 +493,7 @@ In addition to this it will configure automated security upgrades and can option
 
 The Toolkit will set up automatic security upgrades as a convenience on the target OS as follows:
 
-- Ubuntu - [Unattended Upgrades](https://help.ubuntu.com/community/AutomaticSecurityUpdates).
+- Ubuntu / Debian - [Unattended Upgrades](https://help.ubuntu.com/community/AutomaticSecurityUpdates).
 - RHEL 8 - [DNF Automatic](https://dnf.readthedocs.io/en/latest/automatic.html).
 - Amazon Linux 2 - [Yum Cron](https://linux.die.net/man/8/yum-cron)
 
