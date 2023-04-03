@@ -19,6 +19,16 @@ On this page you'll find troubleshooting guidance for various areas when using t
 
 [[_TOC_]]
 
+## Troubleshooting
+
+The Toolkit has been designed to deploy GitLab following the same steps as Omnibus or the Helm Charts. 
+
+When working with the Toolkit, you might encounter some of the following issues. 
+
+1. Check your config - The most common issues seen with the Toolkit are Terraform or Ansible misconfiguration. In below sections some of the most common misconfigurations are called out and these should be checked first.
+1. Check if Omnibus / Charts is the root cause of the issue - If the Toolkit configuration looks correct then check if there is an error being thrown by Omnibus or the Charts. This may be the case if the error is occurring in `reconfigure` or `deploy charts` steps. If that's the case you should connect to either the Omnibus VM or Kubernetes Cluster and examine the logs, just as you would a standard deployment, for further info.
+1. Raise an issue - If the above checks out and none of the below specific scenarios apply then that suggests it's a Toolkit issue. In that case, please reach out via a support ticket or issue on this tracker for further help.
+
 ## Terraform
 
 ### GCP Resource Creation Error - `Error 400: The resource '<subnetwork>' is not ready, resourceNotReady`
@@ -62,6 +72,16 @@ ERROR: No matching distribution found for ansible==7.1.0
 ```
 
 Upgrade your Python version to `3.9` or higher and try installing again to fix.
+
+### Ansible unable to parse Inventory
+
+You may see an error appear when running Ansible that it couldn't parse the passed Inventory source, for example `Failed to parse environments/<env_name>/files as an inventory source`.
+
+This can happen when the wrong path is given, if there's a misconfiguration in the Inventory files, or if the inventory contains extra files that should be stored in a different location e.g. [custom config files](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/docs/environment_advanced.md#custom-config).
+
+When using the Toolkit, [an Inventory will consist of several files](environment_configure.md#2-set-up-the-environments-inventory-and-config) that detail both node details and config for Ansible to use. When Ansible is passed a folder it takes all files present and combines them accordingly.
+
+If the above error is showing, check that you're passing the Inventory folder (note not any specific file) and that there are no mistakes in any of the files present.
 
 ### Ansible can't find any hosts
 
@@ -126,6 +146,14 @@ of the variables used in the playbooks:
 ansible-inventory -i environments/10k/inventory --graph --host mytest-gitaly-1
 ```
 
+### OS Package repository issues
+
+A subtle issue that can occur is when the OS repository script the [Toolkit is configured to use](environment_configure.md#repository) for setting up the repo is not correct for the target OS. When this occurs you may see a message such as `Package gitlab-ee cannot be found`. 
+
+Examples of this include the GitLab repo not having packages for the specific OS version or CPU architecture type.
+
+To fix this the "bad" repository should be removed as per the OS instructions and then the correct one configured via Ansible in a subsequent run.
+
 ### Postgres Upgrade Error - `PostgreSQL did not respond before service checks were exhausted`
 
 The following error can show when running the Toolkit on PostgreSQL nodes:
@@ -166,6 +194,18 @@ As a convenience, the Toolkit attempts to prep any external database it's given 
 There may be times though, depending on the database setup, where Ansible is unable to connect to the database such as when mutual 2-way SSL authentication is enabled due to limitations.
 
 When this is the case external database preparation needs to be completed manually before running Ansible. [Head to this section for more info](environment_advanced_services.md#database-preparation).
+
+### Rails or Sidekiq fails to deploy due to Redis `URI::InvalidURIError` error
+
+As part of the Omnibus reconfigure step you may see the following error occurring for Rails or Sidekiq nodes:
+
+```sh
+URI::InvalidURIError: bad URI(is not URI?): "redis://<password>@gitlab-redis-cache" 
+```
+
+This can happen as the password for the Redis cluster is required to be part of the URL for clients. As a result, if the password contains forbidden characters for http URLs the above error may show.
+
+To fix, adjust the Redis password to not contain any URL forbidden characters and rerun Ansible.
 
 ### Worker thread was found in dead state
 
@@ -256,7 +296,17 @@ In the Charts this is done via a specific Job named `migrations`. If it's failin
 
 [The debugging steps in this section of the Chart's documentation](https://docs.gitlab.com/charts/troubleshooting/#application-containers-constantly-initializing) can be followed to debug further.
 
-### AWS EKS - Cluster Autoscaler not scaling down nodes due to pod blocks
+### AWS EKS
+
+#### Load Balancer not deploying due to Elastic IP and Subnet counts mismatch
+
+Due to limitations around [AWS EKS networking](https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html) a cluster requires at least two subnets and each of those subnets requires their own Elastic IP when deploying a load balancer.
+
+As such, when deploying the Charts if you've not provided a number of Elastic Allocation IDs (via `aws_allocation_ids`) that match the number of subnets **exactly** the NGinx load balancer controller will fail to deploy and GitLab will not be accessible.
+
+This can be fixed by adjusting the number of allocation IDs and redeploying the GitLab Helm chart.
+
+#### Cluster Autoscaler not scaling down nodes due to pod blocks
 
 At times when using Cluster Autoscaler with AWS EKS, you may see it failing to scale down nodes.
 
@@ -273,7 +323,7 @@ kubectl annotate pod -n kube-system -l app.kubernetes.io/component=ebs-csi-contr
 
 After running the above commands you should see Autoscaler correctly scaling down nodes soon after.
 
-### AWS EKS - Pods not deploying due to Cluster Autoscaler and EBS Persistent Volume zone mismatch
+#### Pods not deploying due to Cluster Autoscaler and EBS Persistent Volume zone mismatch
 
 [Due to a limitation with AWS EKS and Cluster Autoscaler](https://github.com/kubernetes/autoscaler/issues/4772), deployments across multiple availability zones may sometimes result in a pod deployment clash if it's attached to an EBS backed Persistent Volume (PV).
 
@@ -285,7 +335,7 @@ When this occurs the easiest solution is to [scale up the node pool manually](ht
 
 Another solution suggested is to deploy [Karpenter](https://karpenter.sh/) manually instead of Cluster Autoscaler as [it has more permissions to handle this solution directly](https://karpenter.sh/preview/concepts/scheduling/#persistent-volume-topology).
 
-### AWS EKS - Unable to adjust Node Pool sizes due to Minimum / Desired Size limitations after deployment
+#### Unable to adjust Node Pool sizes due to Minimum / Desired Size limitations after deployment
 
 [Due to limitations with AWS EKS](https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1568) there are times when attempting to adjust Node Pool sizes may fail due to limitations with Desired Size. Specifically if the adjustment has the Minimum Size higher than the current Desired Size it will fail as follows:
 
@@ -319,3 +369,13 @@ For more details, see:
 
 1. [Documentation on installing the cryptography Python package](https://cryptography.io/en/latest/installation/#building-cryptography-on-macos)
 1. [Discussion in GitHub issue](https://github.com/pyca/cryptography/issues/3489#issuecomment-318070912)
+
+### Postgres' logs are missing (Omnibus HA)
+
+Postgres processes in Omnibus when configured are run under Patroni processes, which manages Postgres replication and failover for HA.
+
+As a result Postgres logs are typically found under `/var/log/gitlab/patroni` and not `/var/log/gitlab/postgres`.
+
+### HAProxy / OpenSearch logs are missing
+
+HAProxy / OpenSearch are run as Docker Containers. You can view their logs via the standard [Docker command](https://docs.docker.com/engine/reference/commandline/logs/).

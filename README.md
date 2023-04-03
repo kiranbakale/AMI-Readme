@@ -25,9 +25,9 @@ Created and maintained by the GitLab Quality Engineering Enablement team, the To
 
 It's recommended that users have a good working knowledge of Terraform, Ansible, GitLab administration as well as running applications at scale in production before using the Toolkit.
 
-While the Toolkit does aim to streamline the process notably, the same underlying challenges still apply when running applications at scale. For users who want a more managed solution it's recommended to explore our other offerings in [GitLab SaaS](https://docs.gitlab.com/ee/subscriptions/gitlab_com/) or [GitLab Dedicated](https://about.gitlab.com/dedicated/).
+While the Toolkit does aim to streamline the process notably, the same underlying challenges still apply when running applications at scale. For users who aren't in this position, our [Professional Services](https://about.gitlab.com/services/#implementation-services) team offers implementation services, but for those who want a more managed solution long term, it's recommended to instead explore our other offerings such as [GitLab SaaS](https://docs.gitlab.com/ee/subscriptions/gitlab_com/) or [GitLab Dedicated](https://about.gitlab.com/dedicated/).
 
-Additionally, it's strongly recommended that you independently review the Toolkit in full to ensure it meets your requirements, especially around [security](docs/environment_post_considerations.md#security). [Further manual setup](docs/environment_post_considerations.md) will also still likely be required based on your specific requirements.
+If you are interested in using the Toolkit, it's strongly recommended that you independently review the Toolkit in full to ensure it meets your requirements, especially around [security](docs/environment_post_considerations.md#security). [Further manual setup](docs/environment_post_considerations.md) will also still likely be required based on your specific requirements.
 
 ## Requirements
 
@@ -160,20 +160,17 @@ get --> azure
 @enduml
 ```
 
-## Issues or Feature Requests
+## Troubleshooting
 
-Everyone is welcome to open new Issues or Feature Requests (or to upvote existing ones) over on [our tracker](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues).
+Please refer to our [Troubleshooting guide](docs/environment_troubleshooting.md) if you are having issues deploying an environment with the Toolkit.
 
-Further information:
+[Technical support](https://about.gitlab.com/support/) for troubleshooting issues is only available for the current Toolkit major version.
 
-<!-- markdownlint-disable proper-names -->
-- Work in progress can be seen on our [issue tracker](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues).
-- Issues relating directly to the [Reference Architectures can be found in their own project](https://gitlab.com/gitlab-org/quality/reference-architectures).
-<!-- markdownlint-restore proper-names -->
+## Feature Requests
 
-[Technical support](https://about.gitlab.com/support/) for troubleshooting issues is only available for the current major version.
+Feature Requests can be raised in [our tracker](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues). Please check beforehand to see if a request already exists (and upvote in that case).
 
-## Features that won't be covered
+### Features that won't be covered
 
 Due to complexities, permutations or areas best left to be configured directly we do not plan to include the following:
 
@@ -184,7 +181,7 @@ Due to complexities, permutations or areas best left to be configured directly w
 
 The above areas are better tackled via [Custom Config](docs/environment_advanced.md#custom-config).
 
-## Contributions
+### Contributions
 
 This project accepts contributions to existing features. Refer to the [Contributing guide](CONTRIBUTING.md) for more information.
 
