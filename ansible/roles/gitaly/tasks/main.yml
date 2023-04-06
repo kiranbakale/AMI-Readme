@@ -77,19 +77,6 @@
   command: gitlab-ctl reconfigure
   tags: reconfigure
 
-- name: Restart Non Gitaly components
-  command: "gitlab-ctl restart {{ item.name }}"
-  loop:
-    - { name: "node-exporter" }
-    - { name: "consul", condition: "{{ 'consul' in groups }}"}
-  loop_control:
-    label: "{{ item.name }}"
-  when: (item.condition is not defined or item.condition)
-  tags:
-    - reconfigure
-    - restart
-    - test
-
 - name: Create Default Gitaly Sharded directory
   file:
     path: "{{ gitaly_sharded_storage_path }}/default/repositories"
