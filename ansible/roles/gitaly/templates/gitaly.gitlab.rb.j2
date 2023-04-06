@@ -17,6 +17,17 @@ gitlab_rails['auto_migrate'] = false
 
 gitlab_rails['internal_api_url'] = '{{ gitaly_callback_internal_api_url }}'
 
+{% if gitaly_ssl %}
+gitaly['tls_listen_addr'] = "0.0.0.0:{{ gitaly_ssl_port }}"
+gitaly['certificate_path'] = "/etc/gitlab/ssl/gitaly_cert.pem"
+gitaly['key_path'] = "/etc/gitlab/ssl/gitaly_key.pem"
+{% else %}
+gitaly['listen_addr'] = "0.0.0.0:8075"
+{% endif %}
+
+gitaly['ruby_num_workers'] = {{ gitaly_ruby_num_workers }}
+gitaly['pack_objects_cache_enabled'] = {{ gitaly_pack_objects_cache | lower }}
+
 {% if 'consul' in groups %}
 # Consul Agent (Monitoring Auto Discovery)
 consul['enable'] = true
@@ -28,68 +39,6 @@ consul['monitoring_service_discovery'] = true
 {% endif %}
 
 node_exporter['listen_address'] = '0.0.0.0:9100'
-
-# Gitaly Config
-{% if gitlab_version == '' or gitlab_version is version('15.10', '>=') %}
-gitaly['configuration'] = {
-{% if gitaly_ssl %}
-  tls_listen_addr: '0.0.0.0:{{ gitaly_ssl_port }}',
-  tls: {
-    certificate_path: '/etc/gitlab/ssl/gitaly_cert.pem',
-    key_path: '/etc/gitlab/ssl/gitaly_key.pem',
-  },
-{% else %}
-  listen_addr: '0.0.0.0:8075',
-{% endif %}
-
-  pack_objects_cache: {
-    enabled: {{ gitaly_pack_objects_cache | lower }},
-  },
-  gitaly_ruby: {
-    num_workers: {{ gitaly_ruby_num_workers }}
-  },
-  prometheus_listen_addr: '0.0.0.0:9236',
-
-{% if 'praefect' in groups %}
-  auth: {
-    token: '{{ praefect_internal_token }}',
-  },
-  storage: [
-    {
-      name: 'gitaly-{{ gitaly_number }}',
-      path: '{{ gitaly_cluster_storage_path }}'
-    }
-  ],
-{% else %}
-  auth: {
-    token: '{{ gitaly_token }}',
-  },
-  storage: [
-{% if 'gitaly_primary' in group_names %}
-    {
-      name: 'default',
-      path: '{{ gitaly_sharded_storage_path }}/default'
-    },
-{% endif %}
-    {
-      name: 'storage{{ gitaly_number }}',
-      path: '{{ gitaly_sharded_storage_path }}/storage{{ gitaly_number }}'
-    }
-  ],
-{% endif %}
-}
-
-{% else %}
-{% if gitaly_ssl %}
-gitaly['tls_listen_addr'] = "0.0.0.0:{{ gitaly_ssl_port }}"
-gitaly['certificate_path'] = "/etc/gitlab/ssl/gitaly_cert.pem"
-gitaly['key_path'] = "/etc/gitlab/ssl/gitaly_key.pem"
-{% else %}
-gitaly['listen_addr'] = "0.0.0.0:8075"
-{% endif %}
-
-gitaly['pack_objects_cache_enabled'] = {{ gitaly_pack_objects_cache | lower }}
-gitaly['ruby_num_workers'] = {{ gitaly_ruby_num_workers }}
 gitaly['prometheus_listen_addr'] = "0.0.0.0:9236"
 
 {% if 'praefect' in groups %}
@@ -110,8 +59,6 @@ git_data_dirs({
 {% endif %}
   "storage{{ gitaly_number }}" => { 'path' => "{{ gitaly_sharded_storage_path }}/storage{{ gitaly_number }}" },
 })
-{% endif %}
-
 {% endif %}
 
 custom_confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.gitaly.*.rb"))
