@@ -178,6 +178,7 @@ Due to complexities, permutations or areas best left to be configured directly w
 - Cloud accounts management
 - Observability stack beyond Prometheus and Grafana
 - Direct OmniAuth and Email support
+- DNS server management
 - Full GitLab agent server for Kubernetes (KAS) setup
 
 The above areas are better tackled via [Custom Config](docs/environment_advanced.md#custom-config).
