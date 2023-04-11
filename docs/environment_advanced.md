@@ -49,6 +49,8 @@ Providing custom config for components deployed via Omnibus is done as follows:
     - If you wish to store your file in a different location or use a different name the full path that Ansible should use can be set via a variable for each different component e.g. `<component>_custom_config_file`.
     - Available component options: `consul`, `postgres`, `pgbouncer`, `redis`, `redis_cache`, `redis_persistent`, `praefect_postgres`, `praefect`, `gitaly`, `gitlab_rails`, `sidekiq` and `monitor`.
 
+:information_source:&nbsp; From GitLab 16.0 onwards note that the config format for [Gitaly](https://docs.gitlab.com/ee/update/#gitaly-omnibus-gitlab-configuration-structure-change) and [Praefect](https://docs.gitlab.com/ee/update/#praefect-omnibus-gitlab-configuration-structure-change) respectively have changed to be under a new `['configuration']` key. When looking to add Custom Config for either of these components you can still do so normal, but you should follow the new structure. For example, to change the logging level for Gitaly you would set configure this as `gitaly['configuration']['logging']['level']`.
+
 With the above done the file will be picked up by the Toolkit and used when configuring Omnibus.
 
 ### Helm
