@@ -3,7 +3,7 @@
 
 The Toolkit has a nuanced and layered design that [integrates with numerous tools and services](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/TECHNICAL_DESIGN.md#integrations-list). As such, it's _strongly recommended_ that you raise an issue first to discuss the best way to tackle the problem that works with the Toolkit's and dependent tool and service designs.
 
-Any changes to the Toolkit _must_ follow our [Technical Design](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/TECHNICAL_DESIGN.md) guide. Changes should not go against [what the Toolkit isn't for](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/TECHNICAL_DESIGN.md#what-is-it-not) as well as follow our [Focused Design](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/TECHNICAL_DESIGN.md#focused-design) principals.
+Any contributions to the Toolkit _must_ follow our [Contributing](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/CONTRIBUTING.md) and [Technical Design](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/TECHNICAL_DESIGN.md) guides. Changes should not go against [what the Toolkit isn't for](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/TECHNICAL_DESIGN.md#what-is-it-not) as well as follow our [Focused Design](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/blob/main/TECHNICAL_DESIGN.md#focused-design) principals.
 
 We aim to review all MRs within 2 weeks although generally it's much quicker than this. If there's been no response please ping the @gl-quality/get-maintainers group.
 -->
