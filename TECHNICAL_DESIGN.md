@@ -180,14 +180,6 @@ We support Ansible versions from `2.9.*` onwards. From time to time we may bump 
 
 ### General
 
-#### Run as Source
-
-Currently the Toolkit is designed to be run as source, i.e. to run with the direct Terraform and Ansible commands.
-
-This allows for certain flexibility with the Tools that would be lost if we published them as "modules" to their respective registries, such as setting Ansible config. A [Docker image is currently planned to be released that maintains these needs](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/56).
-
-This design is under review however and we'll look to reevaluate if its possible to publish both our Terraform and Ansible code into the respective registries ([Terraform](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/205), [Ansible](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues/206)).
-
 #### Releases and Supported GitLab Versions
 
 The following rules apply for Toolkit releases and support between them:
