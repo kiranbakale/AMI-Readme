@@ -121,7 +121,7 @@ check:markdownlint:
 check:markdown-link-check:
   stage: test
   image:
-    name: ghcr.io/tcort/markdown-link-check
+    name: ghcr.io/tcort/markdown-link-check:3.11.0
     entrypoint: [""]
   script:
     - /src/markdown-link-check *.md docs/*.md
