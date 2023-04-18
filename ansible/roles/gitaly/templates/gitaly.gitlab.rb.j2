@@ -68,12 +68,12 @@ gitaly['configuration'] = {
 {% if 'gitaly_primary' in group_names %}
     {
       name: 'default',
-      path: '{{ gitaly_sharded_storage_path }}/default'
+      path: '{{ gitaly_sharded_storage_path }}/default/repositories'
     },
 {% endif %}
     {
       name: 'storage{{ gitaly_number }}',
-      path: '{{ gitaly_sharded_storage_path }}/storage{{ gitaly_number }}'
+      path: '{{ gitaly_sharded_storage_path }}/storage{{ gitaly_number }}/repositories'
     }
   ],
 {% endif %}
