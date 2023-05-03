@@ -279,7 +279,7 @@ Once done we can then run the command `ansible-playbook -i environments/my-geo-d
 
 Once complete the 2 sites will now be part of the same Geo deployment.
 
-:information_source:&nbsp; When setting up multiple Geo secondaries you will need to rerun the above command replacing the secondary path for each secondary inventory. After the first run the primary will be setup and its tasks can be skipped for each consecutive secondary with the following command `ansible-playbook -i environments/my-geo-deployment/<secondary>/inventory -i environments/my-geo-deployment/<primary>/inventory playbooks/gitlab-geo.yml -t secondary`. Each consecutive site can also be added in parallel by running the command from multiple terminals.
+:information_source:&nbsp; When setting up multiple Geo secondaries you will need to rerun the above command replacing the secondary path for each secondary inventory. After the first run the primary will be setup and its tasks can be skipped for each consecutive secondary with the following command `ansible-playbook -i environments/my-geo-deployment/<secondary>/inventory -i environments/my-geo-deployment/<primary>/inventory playbooks/gitlab_geo.yml -t secondary`. Each consecutive site can also be added in parallel by running the command from multiple terminals.
 
 ## Geo Proxying for Secondary Sites with a Unified URL
 
