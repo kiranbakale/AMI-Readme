@@ -88,6 +88,10 @@ Running the zero downtime update process with the Toolkit is done in the same wa
 
     `ansible-playbook -i environments/10k/inventory playbooks/haproxy.yml`
 
+1. If you are using OpenSearch deployed via the Toolkit, you will need to run the following command to update it _with_ downtime:
+
+    `ansible-playbook -i environments/10k/inventory playbooks/opensearch.yml`
+
 The update process can take a couple of hours to complete, and the full runtime will depend on the number of nodes in the deployment.
 
 ## OS Upgrades
