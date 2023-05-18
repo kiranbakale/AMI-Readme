@@ -19,6 +19,8 @@ The Toolkit supports setting up optional monitoring of the environment of metric
 
 :information_source:&nbsp; Note that the following monitoring setups are optional. You're not required to use this functionality for monitoring your environment, and you can use a different setup as desired.
 
+:information_source:&nbsp; As of GitLab 16.0, [Omnibus-bundled Grafana is deprecated](https://docs.gitlab.com/ee/administration/monitoring/performance/grafana_configuration.html#deprecation-of-bundled-grafana), and scheduled for removal from Omnibus in 16.3. This change does **not** affect the monitoring provided by GET for Cloud Native Hybrid environments. **ALL Omnibus GET users with monitoring enabled are urged to consult the docs section on [Deprecated Omnibus-bundled Grafana](#deprecated-omnibus-bundled-grafana) for further information and next steps.**
+
 While the implementation differs between Omnibus and Cloud Native Hybrid environments the same core components are used in each:
 
 - [Prometheus](https://prometheus.io/) - For metrics collection and storage.
@@ -27,15 +29,17 @@ While the implementation differs between Omnibus and Cloud Native Hybrid environ
 
 The Toolkit will configure these in each case, including scrape config, dashboard(s).
 
-On this page we'll detail how to deploy the monitoring setup for each environment type with the Toolkit. Head to the revenant section below depending on the type of environment you have. **It's also worth noting this guide assumes a working knowledge of Prometheus, Grafana and Consul as well as being supplementary to the rest of the docs.**
+On this page we'll detail how to deploy the monitoring setup for each environment type with the Toolkit. Head to the relevant section below depending on the type of environment you have. **It's also worth noting this guide assumes a working knowledge of Prometheus, Grafana and Consul as well as being supplementary to the rest of the docs.**
 
 [[_TOC_]]
 
 ## Omnibus
 
+:information_source:&nbsp; As of GitLab 16.0, [Omnibus-bundled Grafana is deprecated](https://docs.gitlab.com/ee/administration/monitoring/performance/grafana_configuration.html#deprecation-of-bundled-grafana), and scheduled for removal from Omnibus in 16.3. **ALL Omnibus GET users with monitoring enabled are urged to consult the docs section on [Deprecated Omnibus-bundled Grafana](#deprecated-omnibus-bundled-grafana) for further information and next steps.**
+
 In Omnibus environments the monitoring stack is provided by [Omnibus GitLab](https://docs.gitlab.com/omnibus/), which has Prometheus, Grafana and Consul built in.
 
-In this setup these components are deployed to their own VM named `monitor`. Like other Omnibus components this is enabled by simply deploying this node in Terraform and Ansible will configure it automatically. See the below sections for details on each.
+In this setup, these components are deployed to their own VM named `monitor`. Like other Omnibus components this is enabled by simply deploying this node in Terraform and Ansible will configure it automatically. See the below sections for details on each.
 
 **Terraform**
 
@@ -53,7 +57,7 @@ module "gitlab_ref_arch_gcp" {
 
 **Ansible**
 
-With that node provisioned Ansible will detect it and automatically configure the monitoring stack accordingly. It will configure the three components, the relevant Prometheus exporters on the component nodes and hook everything up. It will also deploy select Grafana Dashboard(s).
+With that node provisioned, Ansible will detect it, and configure the monitoring stack automatically. It will configure the relevant metrics exporters on the component nodes, and connect them to the Prometheus instance. It will also deploy select Grafana Dashboard(s).
 
 By default, as given by Omnibus, Grafana will be configured with no authentication option. [Various options are available on how to configure authentication for Grafana](https://docs.gitlab.com/omnibus/settings/grafana.html#authentication) which can be configured with [Custom Config](environment_advanced.md#custom-config), but the Toolkit also allows for basic authentication of an Admin user and password via the following setting in your Ansible [`vars.yml`](environment_configure.md#environment-config-varsyml) file:
 
@@ -62,6 +66,29 @@ By default, as given by Omnibus, Grafana will be configured with no authenticati
 - `monitor_prometheus_scrape_config_setup` - Configures if any scrape configs should be configured by the Toolkit. Setting this to `false` will remove these to allow for more flexibility if desired. Optional, defaults to `true`.
 
 Once completed, Grafana will be available at the address `<ENVIRONMENT_URL>/-/grafana`.
+
+### Deprecated Omnibus-bundled Grafana
+
+As of GitLab 16.0, [Omnibus-bundled Grafana has been deprecated](https://docs.gitlab.com/ee/administration/monitoring/performance/grafana_configuration.html#deprecation-of-bundled-grafana), and it is scheduled for removal from Omnibus in 16.3.
+
+To prevent the unexpected removal of Grafana instances for existing users with monitoring enabled, GET currently enables the [temporary workaround in Omnibus](https://docs.gitlab.com/ee/administration/monitoring/performance/grafana_configuration.html#temporary-workaround) by default, but new users are encouraged to disable it as detailed below. This workaround will only be available for GitLab version 16.2 and earlier.
+
+All users are urged to find [an alternative option to Omnibus-bundled Grafana](https://docs.gitlab.com/ee/administration/monitoring/performance/grafana_configuration.html#switch-to-new-grafana-instance), and can investigate [custom tasks in GET](environment_advanced.md#custom-tasks) as a means of installing an alternate visualization solution.
+
+Disabling the bundled Grafana will not affect Prometheus or Consul. If the monitoring role is enabled, metrics will still be collected, but will not have a visualization solution unless an alternate is provided.
+
+To disable Omnibus-bundled Grafana, include the following in your Ansible [`vars.yml`](environment_configure.md#environment-config-varsyml) file:
+
+```yml
+monitor_enable_deprecated_grafana: false
+```
+
+Then run `ansible-playbook` with the intended environment's inventory against the `monitor.yml` and `haproxy.yml` playbooks.
+
+```yml
+ansible-playbook -i environments/<ENV_NAME>/inventory playbooks/monitor.yml
+ansible-playbook -i environments/<ENV_NAME>/inventory playbooks/haproxy.yml
+```
 
 ## Cloud Native Hybrid (`kube-prometheus-stack`)
 

@@ -8,7 +8,7 @@ frontend http-in
     http-request set-header X-Forwarded-Ssl on if { ssl_fc }
 {% endif %}
 
-{% if 'monitor' in groups %}
+{% if 'monitor' in groups and monitor_install_bundled_grafana %}
     acl grafana path_beg -i /-/grafana
     use_backend grafana if grafana
 {% endif %}
@@ -46,7 +46,7 @@ backend gitlab-rails-ssh
     server gitlab-rails{{loop.index}} {{ ip }}:22 track gitlab-rails/gitlab-rails{{loop.index}}
 {% endfor %}
 
-{% if 'monitor' in groups %}
+{% if 'monitor' in groups and monitor_install_bundled_grafana %}
 backend grafana
     option httpchk GET /-/grafana/api/health
     option forwardfor

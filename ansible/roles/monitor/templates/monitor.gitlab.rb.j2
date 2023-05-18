@@ -28,7 +28,12 @@ prometheus['rules_files'] = [
 {% endfor %}
 ]
 
+{# Grafana section #}
+{% if monitor_install_bundled_grafana %}
 # Grafana
+grafana['enable'] = true
+grafana['enable_deprecated_service'] = true
+
 grafana['env'] = {
   'GF_SERVER_ROOT_URL' => '{{ external_url_sanitised }}/-/grafana'
 }
@@ -75,6 +80,10 @@ grafana['dashboards'] = [
   },
 {% endfor %}
 ]
+{% else %}
+grafana['enable'] = false
+{% endif %}
+{# End Grafana section #}
 
 {% if 'consul' in groups %}
 # Consul Agent (Monitoring Auto Discovery)
