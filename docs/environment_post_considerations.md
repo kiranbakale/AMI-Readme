@@ -42,9 +42,9 @@ In addition to this we have [further documentation on various practices that app
 
 ## Monitoring
 
-[The Toolkit does optionally provide a monitoring stack based on Prometheus and Grafana](environment_advanced_monitoring.md).
+[The Toolkit does optionally provide a monitoring stack based on Prometheus](environment_advanced_monitoring.md).
 
-However, do note this is optional and not required to be used. You can use a separate monitoring stack as desired and the Toolkit aims to provide reasonable hooks for this such as [Custom Tasks](environment_advanced.md#custom-tasks) or [Custom Files](environment_advanced.md#custom-files).
+However, do note this is optional and not required to be used. You can use a separate monitoring stack as desired, and the Toolkit aims to provide reasonable hooks for this such as [Custom Tasks](environment_advanced.md#custom-tasks) or [Custom Files](environment_advanced.md#custom-files).
 
 ### Logging
 
