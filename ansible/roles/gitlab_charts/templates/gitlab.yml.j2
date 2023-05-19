@@ -34,7 +34,7 @@ gitlab:
         serviceMonitor:
           enabled: true
 # Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
-{% if not container_registry_enable %}
+{% if not container_registry_enable and gitlab_version != '' and gitlab_version is version('16.0', '<') %}
     registry:
       enabled: false
 {% endif %}
@@ -62,7 +62,7 @@ gitlab:
     nodeSelector:
       workload: sidekiq
 # Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
-{% if not container_registry_enable %}
+{% if not container_registry_enable and gitlab_version != '' and gitlab_version is version('16.0', '<') %}
     registry:
       enabled: false
 {% endif %}
@@ -73,7 +73,7 @@ gitlab:
         {{ lookup('template', 'object_storage/task_runner_backups_object_storage.' + cloud_provider + '.yml.j2') | indent(width=8) }}
 {% endif %}
 # Workaround for project deletion bug https://gitlab.com/gitlab-org/gitlab/-/issues/24110#note_729703160
-{% if not container_registry_enable %}
+{% if not container_registry_enable and gitlab_version != '' and gitlab_version is version('16.0', '<') %}
     registry:
       enabled: false
 {% endif %}
@@ -133,6 +133,12 @@ global:
     key: password
   railsSecrets:
     secret: gitlab-rails-secrets
+  registry:
+{% if container_registry_enable %}
+    enabled: true
+{% else %}
+    enabled: false
+{% endif %}  
   shell:
     port: {{ gitlab_charts_shell_ssh_port }}
     authToken:
