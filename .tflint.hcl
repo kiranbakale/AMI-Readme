@@ -7,9 +7,9 @@
 
 config {
   module = false
-  force = false
+  force  = false
 
-  variables = [ "prefix=tflint" ]
+  variables = ["prefix=tflint"]
 }
 
 rule "terraform_deprecated_interpolation" {
