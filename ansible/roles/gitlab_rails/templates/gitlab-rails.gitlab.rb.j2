@@ -306,7 +306,15 @@ git_data_dirs({
 {% else %}
 ## Gitaly - Local
 gitaly['enable'] = true
+
+{% if gitlab_version == '' or gitlab_version is version('15.10', '>=') %}
+gitaly['configuration'] = {
+  prometheus_listen_addr: '0.0.0.0:9236',
+}
+{% else %}
 gitaly['prometheus_listen_addr'] = "0.0.0.0:9236"
+{% endif %}
+
 {% endif %}
 
 geo_confs = Dir.glob(File.join("/etc/gitlab/", "gitlab.geo.*.rb"))
