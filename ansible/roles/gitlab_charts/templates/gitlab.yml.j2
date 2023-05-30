@@ -138,7 +138,7 @@ global:
     enabled: true
 {% else %}
     enabled: false
-{% endif %}  
+{% endif %}
   shell:
     port: {{ gitlab_charts_shell_ssh_port }}
     authToken:
@@ -313,6 +313,18 @@ global:
       - host: '{{ ip }}'
 {% endfor %}
 {% endif %}
+{% if container_registry_enable %}
+  registry:
+    enabled: true
+    # global.registry.bucket is used by GitLab backups
+    bucket: "{{ gitlab_object_storage_registry_bucket }}"
+# Needed on Primary and Secondary sites to ensure secret is synced
+{% if (container_registry_token is defined) %}
+    notificationSecret:
+      secret: gitlab-registry-notification
+      key: secret_token
+{% endif %}
+{% endif %}
 {% if cloud_native_hybrid_geo %}
   geo:
     nodeName: "{{ geo_primary_site_name if cloud_native_hybrid_geo_role == 'primary' else geo_secondary_site_name }}"
@@ -328,7 +340,9 @@ global:
     registry:
       replication:
         enabled: true
+{% if cloud_native_hybrid_geo_role == 'secondary' %}
         primaryApiUrl: "{{ container_registry_external_url }}"
+{% endif %}
 {% endif %}
 {% endif %}
 
@@ -369,11 +383,6 @@ registry:
     key: config
 {% if cloud_provider == 'gcp' %}
     extraKey: key.json
-{% endif %}
-{% if container_registry_notification_token is defined %}
-  notificationSecret:
-    secret: gitlab-registry-notification
-    key: secret
 {% endif %}
 {% else %}
   enabled: false
