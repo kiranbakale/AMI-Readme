@@ -380,7 +380,6 @@ The RDS recovery process involves deleting the old primary RDS instance, this is
 
 ## Container Registry Replication
 
-To enable Container registry replication you will need to define the below settings in your `vars.yml` file. For Cloud Native Hybrid environments you will need to specify these settings in both the primary and secondary inventories. For Omnibus environments you can specify these in just the primary inventory. These are both case sensitive alphanumeric strings that start with a letter.
+To enable Container registry replication you will need to define `container_registry_token` in your `vars.yml` file. For Cloud Native Hybrid environments you will need to specify this setting in both the primary and secondary inventories. For Omnibus environments you can specify it in just the primary inventory.
 
-- `container_registry_token` - Secret value for the container registry authorization header.
-- `container_registry_notification_token` - Secret value for the notification endpoint to use.
+- `container_registry_token` - Secret value for the container registry authorization header and for the Geo event notification endpoint to use. Value should be a case-sensitive alphanumeric string that starts with a letter.
