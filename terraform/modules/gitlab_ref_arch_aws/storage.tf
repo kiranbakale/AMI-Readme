@@ -52,6 +52,9 @@ locals {
   gitlab_s3_policy_create          = length(var.object_storage_buckets) > 0
   gitlab_s3_registry_policy_create = length(var.object_storage_buckets) > 0 && contains(var.object_storage_buckets, "registry")
   gitlab_s3_kms_policy_create      = length(var.object_storage_buckets) > 0 && (var.object_storage_kms_key_arn != null || var.default_kms_key_arn != null)
+  # Special permission required for Geo to process HEAD requests
+  # https://docs.aws.amazon.com/AmazonS3/latest/API/API_HeadObject.html
+  gitlab_s3_list_bucket_permission = var.geo_site != null ? ["s3:ListBucket"] : []
 
   gitlab_s3_policy_arns = flatten([
     local.gitlab_s3_policy_create ? [aws_iam_policy.gitlab_s3_policy[0].arn] : [],
@@ -69,11 +72,14 @@ resource "aws_iam_policy" "gitlab_s3_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = [
-          "s3:PutObject",
-          "s3:GetObject",
-          "s3:DeleteObject",
-        ]
+        Action = setunion(
+          [
+            "s3:PutObject",
+            "s3:GetObject",
+            "s3:DeleteObject",
+          ],
+          local.gitlab_s3_list_bucket_permission,
+        )
         Effect   = "Allow"
         Resource = concat([for bucket in aws_s3_bucket.gitlab_object_storage_buckets : bucket.arn], [for bucket in aws_s3_bucket.gitlab_object_storage_buckets : "${bucket.arn}/*"])
       }
