@@ -28,7 +28,9 @@
 
 - name: Secondary database - Remove existing cluster information for Patroni
   import_tasks: secondary-database-patroni-workaround.yml
-  when: ('postgres' in group_names)
+  when:
+    - ('postgres' in group_names)
+    - geo_run_patroni_workaround
 
 - name: Secondary Database - Run gitlab-ctl reconfigure
   command: gitlab-ctl reconfigure
