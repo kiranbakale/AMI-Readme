@@ -1,39 +1,4 @@
 ---
-- name: Configure SSH Fast Lookup
-  blockinfile:
-    path: /etc/ssh/sshd_config
-    marker: "# {mark} ANSIBLE MANAGED BLOCK"
-    block: |
-      Match User git   # Apply the AuthorizedKeysCommands to the git user only
-        AuthorizedKeysCommand /opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell-authorized-keys-check git %u %k
-        AuthorizedKeysCommandUser git
-      Match all        # End match, settings apply to all users again
-
-- name: Propagate SSH Keys
-  block:
-    - name: Create SSH directory on GitLab NFS if missing
-      file:
-        path: "{{ gitlab_nfs_path }}/ssh"
-        state: directory
-      when: "'gitlab_rails_primary' in group_names"
-
-    - name: Copy SSH keys to NFS if missing
-      shell: "cp -n /etc/ssh/ssh_host_*_key* {{ gitlab_nfs_path }}/ssh"
-      when: "'gitlab_rails_primary' in group_names"
-
-    - name: Copy SSH keys from NFS
-      shell: "cp -u {{ gitlab_nfs_path }}/ssh/ssh_host_*_key* /etc/ssh"
-      when: "'gitlab_rails_secondary' in group_names"
-
-    - name: Reload SSH service
-      service:
-        name: "{{ 'sshd' if ansible_facts['os_family'] == 'RedHat' else 'ssh' }}"
-        state: reloaded
-  when: gitlab_secrets_setup
-  tags:
-    - secrets
-    - ssh_keys
-
 - name: Propagate Secrets if existing
   include_role:
     name: common
@@ -231,6 +196,70 @@
     - reconfigure
     - secrets
     - gitlab-secrets
+
+- name: Propagate SSH Keys
+  block:
+    - name: Set up temp folder on local
+      tempfile:
+        state: directory
+        prefix: "gitlab-environment-toolkit-"
+      register: ssh_temp_folder
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Find all SSH host keys on primary Rails node
+      ansible.builtin.find:
+        paths: "{{ gitlab_shell_ssh_key_path }}/"
+        patterns: 'ssh_host_*'
+      register: ssh_host_keys
+      when: "'gitlab_rails_primary' in group_names"
+
+    - name: Fetch all SSH host keys from primary Rails node to local
+      fetch:
+        src: "{{ item.path }}"
+        dest: "{{ ssh_temp_folder.path }}/"
+        flat: true
+      with_items: "{{ ssh_host_keys.files }}"
+      no_log: true
+      when: "'gitlab_rails_primary' in group_names"
+
+    - name: Copy all SSH host keys to secondary Rails nodes
+      copy:
+        src: "{{ item }}"
+        dest: "{{ gitlab_shell_ssh_key_path }}"
+      with_fileglob: "{{ ssh_temp_folder.path }}/ssh_host_*"
+      no_log: true
+      when: "'gitlab_rails_secondary' in group_names"
+
+    - name: Configure SSH Fast Lookup if OpenSSH service being used
+      blockinfile:
+        path: /etc/ssh/sshd_config
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        block: |
+          Match User git   # Apply the AuthorizedKeysCommands to the git user only
+            AuthorizedKeysCommand /opt/gitlab/embedded/service/gitlab-shell/bin/gitlab-shell-authorized-keys-check git %u %k
+            AuthorizedKeysCommandUser git
+          Match all        # End match, settings apply to all users again
+        state: "{{ 'present' if gitlab_shell_ssh_daemon == 'openssh' else 'absent' }}"
+
+    - name: Reload OpenSSH service if being used
+      service:
+        name: "{{ 'sshd' if ansible_facts['os_family'] == 'RedHat' else 'ssh' }}"
+        state: reloaded
+      when: gitlab_shell_ssh_daemon == 'openssh'
+
+    - name: Remove temp folder
+      file:
+        path: "{{ ssh_temp_folder.path }}"
+        state: absent
+      delegate_to: localhost
+      become: false
+      run_once: true
+  tags:
+    - reconfigure
+    - secrets
+    - ssh_keys
 
 - name: Restart GitLab
   shell: gitlab-ctl stop && gitlab-ctl start
