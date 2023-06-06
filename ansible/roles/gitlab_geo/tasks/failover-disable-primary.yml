@@ -1,4 +1,4 @@
-- name: Enable Maintenance Mode
+- name: Failover Disable Primary - Enable Maintenance Mode
   import_tasks: maintenance-mode.yml
   vars:
     maintenance_mode_state: true
@@ -9,7 +9,7 @@
     geo_site_aws_region: "{{ geo_primary_site_aws_region }}"
   tags: maintenance-mode-enable
 
-- name: Disable Primary Site Omnibus nodes
+- name: Failover Disable Primary - Disable Primary Site Omnibus nodes
   block:
     - name: Stop Primary Site
       command: gitlab-ctl stop
@@ -24,7 +24,7 @@
 
 - name: Disable Primary Site for Cloud Native Hybrid environments
   block:
-    - name: Configure kubeconfig credentials for Geo primary site
+    - name: Failover Disable Primary - Configure kubeconfig credentials for Geo primary site
       become: false
       delegate_to: localhost
       run_once: true
@@ -35,7 +35,7 @@
         geo_site_gcp_zone: "{{ geo_primary_site_gcp_zone }}"
         geo_site_aws_region: "{{ geo_primary_site_aws_region }}"
 
-    - name: Disable Webservice pods
+    - name: Failover Disable Primary - Disable Webservice pods
       become: false
       delegate_to: localhost
       run_once: true
@@ -45,7 +45,7 @@
         namespace: "{{ gitlab_charts_release_namespace }}"
         replicas: 0
 
-    - name: Disable Sidekiq pods
+    - name: Failover Disable Primary - Disable Sidekiq pods
       become: false
       delegate_to: localhost
       run_once: true

@@ -21,7 +21,7 @@
 
 - name: Configure primary app servers for Cloud Native Hybrid environments
   block:
-    - name: Primary App Servers Hybrid - Configure kubeconfig credentials for Geo primary site
+    - name: Primary App Servers - Configure kubeconfig credentials for Geo primary site
       become: false
       delegate_to: localhost
       run_once: true
@@ -32,7 +32,7 @@
         geo_site_gcp_zone: "{{ geo_primary_site_gcp_zone }}"
         geo_site_aws_region: "{{ geo_primary_site_aws_region }}"
 
-    - name: Primary App Servers Hybrid - Set Primary site
+    - name: Primary App Servers - Set Primary site
       become: false
       delegate_to: localhost
       run_once: true
@@ -45,7 +45,7 @@
         - result.rc == 1
         - ("GitLab Geo primary node already present" not in result.stderr)
 
-    - name: Primary App Servers Hybrid - Update internal URL for primary site
+    - name: Primary App Servers - Update internal URL for primary site
       become: false
       delegate_to: localhost
       run_once: true

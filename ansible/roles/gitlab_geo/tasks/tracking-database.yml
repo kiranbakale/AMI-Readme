@@ -15,7 +15,7 @@
       ('gitlab_rails' in group_names and geo_secondary_site_group_name + '_postgres_primary' not in groups and not postgres_external)
     - (geo_secondary_site_group_name in group_names)
 
-- name: Get random host to use as deploy node
+- name: Tracking Database - Get random host to use as deploy node
   run_once: true
   set_fact:
     deploy_host: "{{ groups[geo_secondary_site_group_name] | random }}"
@@ -25,7 +25,7 @@
 
 - name: Configure Tracking database for externally managed databases
   block:
-    - name: Create Geo tracking user
+    - name: Tracking Database - Create Geo tracking user
       community.postgresql.postgresql_user:
         login_host: "{{ geo_secondary_praefect_postgres_host }}"
         login_port: "{{ praefect_postgres_port }}"
@@ -37,7 +37,7 @@
         role_attr_flags: CREATEDB
         expires: infinity
 
-    - name: Create Geo tracking database
+    - name: Tracking Database - Create Geo tracking database
       community.postgresql.postgresql_db:
         login_host: "{{ geo_secondary_praefect_postgres_host }}"
         login_port: "{{ praefect_postgres_port }}"
@@ -46,7 +46,7 @@
         name: "{{ geo_tracking_postgres_database }}"
         encoding: UTF-8
 
-    - name: Enable required Postgres extensions
+    - name: Tracking Database - Enable required Postgres extensions
       community.postgresql.postgresql_ext:
         login_host: "{{ geo_secondary_praefect_postgres_host }}"
         login_port: "{{ praefect_postgres_port }}"

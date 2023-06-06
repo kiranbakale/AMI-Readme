@@ -3,9 +3,9 @@
     src: templates/primary-database.rb.j2
     dest: /etc/gitlab/gitlab.geo.primary-database.rb
 
-- name: Primary Database - Disable auto_migrate and re-enable for single node
+- name: Disable auto_migrate and re-enable for single node
   block:
-    - name: Disable auto_migrate
+    - name: Primary Database - Disable auto_migrate
       vars:
         db_migrate: false
       blockinfile:
@@ -19,7 +19,7 @@
     - name: Primary Database - Restart Postgres
       command: gitlab-ctl restart
 
-    - name: Enable auto_migrate
+    - name: Primary Database - Enable auto_migrate
       vars:
         db_migrate: true
       blockinfile:

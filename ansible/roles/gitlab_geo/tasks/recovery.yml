@@ -1,6 +1,6 @@
 - name: Enable Maintenance Mode
   block:
-    - name: Try to Enable Maintenance Mode on Primary Site
+    - name: Recovery - Try to Enable Maintenance Mode on Primary Site
       import_tasks: maintenance-mode.yml
       vars:
         maintenance_mode_state: true
@@ -10,7 +10,7 @@
         geo_site_gcp_zone: "{{ geo_primary_site_gcp_zone }}"
         geo_site_aws_region: "{{ geo_primary_site_aws_region }}"
 
-    - name: Try to Enable Maintenance Mode on Secondary Site
+    - name: Recovery - Try to Enable Maintenance Mode on Secondary Site
       import_tasks: maintenance-mode.yml
       vars:
         maintenance_mode_state: true
@@ -25,7 +25,7 @@
 
 - name: Re-enable Geo sites
   block:
-    - name: Re-enable Geo Primary Site
+    - name: Recovery - Re-enable Geo Primary Site
       import_tasks: recovery-reenable-sites.yml
       vars:
         site_group_name: "{{ geo_primary_site_group_name }}"
@@ -34,7 +34,7 @@
         geo_site_gcp_zone: "{{ geo_primary_site_gcp_zone }}"
         geo_site_aws_region: "{{ geo_primary_site_aws_region }}"
 
-    - name: Re-enable Geo Secondary Site
+    - name: Recovery - Re-enable Geo Secondary Site
       import_tasks: recovery-reenable-sites.yml
       vars:
         site_group_name: "{{ geo_secondary_site_group_name }}"
@@ -46,26 +46,26 @@
 
 - name: Delete Geo config
   block:
-    - name: Find Geo config files
+    - name: Recovery - Find Geo config files
       find:
         paths: "/etc/gitlab"
         recurse: true
         patterns: "gitlab.geo.*.rb"
       register: geo_config_files
 
-    - name: Remove existing Geo config
+    - name: Recovery - Remove existing Geo config
       file:
         path: "{{ item.path }}"
         state: absent
       with_items: "{{ geo_config_files.files }}"
 
-    - name: Remove existing Geo role settings
+    - name: Recovery - Remove existing Geo role settings
       file:
         path: /etc/gitlab/gitlab-cluster.json
         state: absent
   when: omnibus_node
 
-- name: Run GitLab Geo Recovery
+- name: Recovery - Run GitLab Geo Recovery
   vars:
     geo_recovery: true
   import_tasks: main.yml
@@ -73,7 +73,7 @@
 
 - name: Disable Maintenance mode after GitLab has restarted
   block:
-    - name: Wait for GitLab to be available
+    - name: Recovery - Wait for GitLab to be available
       uri:
         url: '{{ geo_primary_external_url }}/-/readiness'
         validate_certs: false
@@ -86,7 +86,7 @@
       delegate_to: localhost
       run_once: true
 
-    - name: Disable Maintenance Mode
+    - name: Recovery - Disable Maintenance Mode
       import_tasks: maintenance-mode.yml
       vars:
         maintenance_mode_state: false
