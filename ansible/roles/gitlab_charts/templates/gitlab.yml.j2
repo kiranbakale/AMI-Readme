@@ -88,6 +88,10 @@ gitlab:
       username: "{{ postgres_username }}"
       database: "{{ postgres_database_name }}"
 {% endif %}
+{% if gitlab_shell_ssh_daemon == 'gitlab-sshd' %}
+  gitlab-shell:
+    sshDaemon: "{{ gitlab_shell_ssh_daemon }}"
+{% endif %}
   gitlab-exporter:
     metrics:
       enabled: true
