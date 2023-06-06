@@ -86,7 +86,6 @@ gitlab_rails['external_diffs_when'] = 'outdated'
 
 {% if gitlab_object_storage_type == 'object_storage' and cloud_provider != 'none' %}
 gitlab_rails['object_store']['enabled'] = true
-gitlab_rails['object_store']['proxy_download'] = true
 
 ### Provider-specific connection settings
 gitlab_rails['object_store']['connection'] = {
