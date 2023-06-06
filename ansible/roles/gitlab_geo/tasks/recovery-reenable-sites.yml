@@ -1,11 +1,11 @@
 - name: Enable Primary Site Omnibus nodes
   block:
-    - name: Enable GitLab service
+    - name: Recovery Enable Sites - Enable GitLab service
       service:
         name: gitlab-runsvdir
         enabled: true
 
-    - name: Start Primary Site
+    - name: Recovery Enable Sites - Start Primary Site
       command: gitlab-ctl start
   when:
     - omnibus_node
@@ -13,7 +13,7 @@
 
 - name: Enable Primary Site for Cloud Native Hybrid environments
   block:
-    - name: Gather Gitaly group facts
+    - name: Recovery Enable Sites - Gather Gitaly group facts
       setup:
         filter: ansible_processor_vcpus
       register: result
@@ -26,23 +26,23 @@
       loop_control:
         loop_var: node
 
-    - name: Get Gitaly CPU count
+    - name: Recovery Enable Sites - Get Gitaly CPU count
       set_fact:
         gitaly_cpus: "{{ groups['gitaly'] | sort | map('extract', hostvars, ['ansible_processor_vcpus']) | list | sum }}"
 
-    - name: Set Pod Counts
+    - name: Recovery Enable Sites - Set Pod Counts
       set_fact:
         # Calculate maximum pod count by matching Gitaly CPU count to RA sizes or best effort if no matches
         webservice_replicas: "{{ webservice_default_replica_counts[gitaly_cpus] | default((gitaly_cpus | int / 2.4) | round | int, 'true') }}"
         sidekiq_replicas: "{{ sidekiq_default_replica_counts[gitaly_cpus] | default(14 if gitaly_cpus | int >= 48 else (8 if gitaly_cpus | int >= 12 else 2), 'true') }}"
 
-    - name: Configure kubeconfig credentials for Geo primary site
+    - name: Recovery Enable Sites - Configure kubeconfig credentials for Geo primary site
       become: false
       delegate_to: localhost
       run_once: true
       import_tasks: kubeconfig.yml
 
-    - name: Enable Webservice pods
+    - name: Recovery Enable Sites - Enable Webservice pods
       become: false
       delegate_to: localhost
       run_once: true
@@ -53,7 +53,7 @@
         replicas: "{{ webservice_replicas }}"
         wait_timeout: 300
 
-    - name: Enable Sidekiq pods
+    - name: Recovery Enable Sites - Enable Sidekiq pods
       become: false
       delegate_to: localhost
       run_once: true

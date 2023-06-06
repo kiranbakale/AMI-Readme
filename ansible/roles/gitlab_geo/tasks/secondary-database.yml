@@ -1,4 +1,4 @@
-- name: Secondary database - Stop puma/sidekiq for single node
+- name: Stop puma/sidekiq for single node
   block:
     - name: Secondary Database - Run gitlab-ctl stop puma
       command: gitlab-ctl stop puma
@@ -7,13 +7,13 @@
       command: gitlab-ctl stop sidekiq
   when: ('gitlab_rails' in group_names and geo_secondary_site_group_name + '_postgres_primary' not in groups)
 
-- name: Copy psql certificate
+- name: Secondary Database - Copy psql certificate
   copy:
     src: "{{ geo_psql_temp_folder.path }}/server.crt"
     dest: /tmp/
     mode: "0400"
 
-- name: Install certificate
+- name: Secondary Database - Install certificate
   command: |
     install -D \
             -o gitlab-psql \
