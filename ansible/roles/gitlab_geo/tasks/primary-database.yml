@@ -38,15 +38,6 @@
 - name: Primary Database - Restart Postgres
   command: gitlab-ctl restart
 
-- name: Set up Postgres config temp folder on local
-  tempfile:
-    state: directory
-    prefix: "gitlab-environment-toolkit-"
-  register: geo_psql_temp_folder
-  delegate_to: localhost
-  become: false
-  run_once: true
-
 - name: Primary Database - Fetch psql certificate
   fetch:
     src: ~gitlab-psql/data/server.crt
