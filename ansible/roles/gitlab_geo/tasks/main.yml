@@ -4,6 +4,15 @@
     - primary-app-servers
     - primary
 
+- name: Set up Postgres config temp folder on local
+  tempfile:
+    state: directory
+    prefix: "gitlab-environment-toolkit-"
+  register: geo_psql_temp_folder
+  delegate_to: localhost
+  become: false
+  run_once: true
+
 - name: Configure database for the primary site
   import_tasks: primary-database.yml
   tags:
@@ -32,6 +41,14 @@
     - ('postgres' in group_names) or
       ('gitlab_rails' in group_names and geo_secondary_site_group_name + '_postgres_primary' not in groups and not postgres_external)
     - (geo_secondary_site_group_name in group_names)
+
+- name: Remove Postgres config temp folder
+  file:
+    path: "{{ geo_psql_temp_folder.path }}"
+    state: absent
+  delegate_to: localhost
+  become: false
+  run_once: true
 
 - name: Configure the main read-only replica PostgreSQL database on the secondary site
   import_tasks: read-only-replica.yml
