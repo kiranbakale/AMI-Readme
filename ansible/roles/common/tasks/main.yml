@@ -132,9 +132,12 @@
     - name: Unlock GitLab package installs
       command: "{{ 'yum versionlock delete' if ansible_facts['os_family'] == 'RedHat' else 'aptitude unhold' }} {{ gitlab_edition }}"
       register: result
-      retries: 5
+      retries: 20
       delay: 5
       until: result is success
+      failed_when:
+        - result.rc != 0
+        - ('no matches' not in result.stderr)
       when:
         - omnibus_node
         - "'gitlab-ee' in packages"
@@ -257,8 +260,8 @@
     - name: Lock GitLab package updates
       command: "{{ 'yum versionlock' if ansible_facts['os_family'] == 'RedHat' else 'aptitude hold' }} {{ gitlab_edition }}"
       register: result
-      retries: 2
-      delay: 10
+      retries: 20
+      delay: 5
       until: result is success
       when: omnibus_node
       tags: packages
