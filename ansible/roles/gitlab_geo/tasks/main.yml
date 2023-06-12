@@ -12,6 +12,7 @@
   delegate_to: localhost
   become: false
   run_once: true
+  tags: always
 
 - name: Configure database for the primary site
   import_tasks: primary-database.yml
@@ -49,6 +50,7 @@
   delegate_to: localhost
   become: false
   run_once: true
+  tags: always
 
 - name: Configure the main read-only replica PostgreSQL database on the secondary site
   import_tasks: read-only-replica.yml

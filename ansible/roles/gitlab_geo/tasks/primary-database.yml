@@ -43,3 +43,4 @@
     src: ~gitlab-psql/data/server.crt
     dest: "{{ geo_psql_temp_folder.path }}/"
     flat: true
+  tags: secondary-database
