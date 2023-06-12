@@ -43,8 +43,8 @@
   expect:
     command: |
       gitlab-ctl replicate-geo-database \
-        --slot-name={{ inventory_hostname | regex_replace("-", "_") }} \
-        --host={{ geo_primary_site_postgres_int_ip }} \
+        --slot-name={{ 'geo_secondary' if geo_primary_is_multi_node else inventory_hostname | regex_replace("-", "_") }} \
+        --host={{ internal_lb_host if geo_primary_is_multi_node else geo_primary_site_postgres_int_ip }} \
         --sslmode=verify-ca \
         --force \
         --skip-backup
@@ -53,5 +53,4 @@
       (.*)Enter the password for gitlab_replicator@(.*): "{{ postgres_password }}"
     timeout: 300
   when:
-    - (groups['postgres'] is not defined or groups['postgres'] | length == 1)
-    - ('postgres_primary' in group_names or ('gitlab_rails' in group_names and geo_secondary_site_group_name + '_postgres_primary' not in groups))
+    - (not geo_secondary_is_multi_node)
