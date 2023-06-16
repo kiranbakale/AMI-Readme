@@ -1,4 +1,4 @@
-FROM python:slim as python-build
+FROM python:slim-bullseye as python-build
 
 COPY ansible /gitlab-environment-toolkit/ansible
 COPY terraform /gitlab-environment-toolkit/terraform
@@ -31,7 +31,7 @@ RUN /root/.local/bin/ansible-galaxy install -r ansible/requirements/ansible-gala
 
 #####
 
-FROM python:slim
+FROM python:slim-bullseye 
 
 COPY --from=python-build /root/ /root/
 COPY --from=python-build /gitlab-environment-toolkit /gitlab-environment-toolkit
