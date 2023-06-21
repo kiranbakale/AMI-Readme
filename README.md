@@ -6,11 +6,12 @@
 <p align="center">
   <img src ="https://img.shields.io/badge/GitLab-FFFFFF.svg?style&logo=GitLab&logoColor=Orange"/>
   <img src ="https://img.shields.io/badge/Terraform-412991.svg?style&logo=Terraform&logoColor=white"/>
+  <img src ="https://img.shields.io/badge/Helm-033695.svg?style&logo=helm&logoColor=white"/>
   <img src ="https://img.shields.io/badge/Ansible-000000.svg?style&logo=Ansible&logoColor=white"/>
   <img src ="https://img.shields.io/badge/kubernetes-033695.svg?style&logo=kubernetes&logoColor=white"/>
+  <img src ="https://img.shields.io/badge/Amazon_AWS-FFA500.svg?style&logo=amazonaws&logoColor=white" size = 40px/>
   
 </p>  
-
 
 
 Created and maintained by the Minfy team, the Guide supports the following features:
