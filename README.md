@@ -12,9 +12,9 @@ Created and maintained by the Minfy team, the Guide supports the following featu
 
 ## Before You Start
 
-It's recommended that users have a good working knowledge of Terraform, Ansible, GitLab administration as well as running applications at scale in production before using the Toolkit.
+It's recommended that users have a good working knowledge of Terraform, Ansible and GitLab administration as well as running applications at scale in production before using the Toolkit.
 
-While the Toolkit does aim to streamline the process notably, the same underlying challenges still apply when running applications at scale. For users who aren't in this position, our [Professional Services](https://about.gitlab.com/services/#implementation-services) team offers implementation services, but for those who want a more managed solution long term, it's recommended to instead explore our other offerings such as [GitLab SaaS](https://docs.gitlab.com/ee/subscriptions/gitlab_com/) or [GitLab Dedicated](https://about.gitlab.com/dedicated/).
+While the Toolkit does aim to streamline the process notably, the same underlying challenges still apply when running applications at scale. For users who aren't in this position, our [Professional Services](https://about.gitlab.com/services/#implementation-services) team offers implementation services, but for those who want a more managed solution long term, it's recommended to instead explore our other offerings such as [GitLab SaaS](https://docs.gitlab.com/ee/subscriptions/gitlab_com/) or [GitLab-Dedicated](https://about.gitlab.com/dedicated/).
 
 If you are interested in using the Toolkit, it's strongly recommended that you independently review the Toolkit in full to ensure it meets your requirements, especially around [security](docs/environment_post_considerations.md#security). [Further manual setup](docs/environment_post_considerations.md) will also still likely be required based on your specific requirements.
 
@@ -29,11 +29,6 @@ If you are interested in using the Toolkit, it's strongly recommended that you i
 |praefect | 3 | 2vCPU, 1.8GB memory | C5.large |
 |   Sidekiq | 4 | 2vCPU,7.5 GB memory | M5. large |
 |   Gitlab Rails | 3 | 16vCPU,14.4 GB memory | C5.4xlarge |
-
-
-
-
-
 
 
 
@@ -58,20 +53,6 @@ The requirements for the Toolkit are as follows:
 | Backup     | Gitlab Backup and Restore |
 
 
-## How To Use
-
-**Setup the Environment:**
-Install Required Dependencies
-
-```sh
-
-**Clone the repository:**
-
-```sh
-git clone https://Github_url
-cd ami-gitlab-modernization
-```
---
 
 ## How It Works
 
@@ -114,7 +95,51 @@ cd ami-gitlab-modernization
 -	Implement Guard Duty in a cloud-native deployment of GitLab using Helm is to enhance the security posture of your GitLab environment.
 
 
+## How To Use
 
+**Setup the Environment:**
+
+Use Installation guides given below to install dependencies based upon your operating system.
+- [Python](https://www.python.org/downloads/)
+- [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+- [Kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html)
+- [helm](https://helm.sh/docs/intro/install/)
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+
+
+**Clone the repository:**
+
+```sh
+git clone https://Github_url
+cd ami-gitlab-modernization
+```
+
+**Modifying Configurations**  
+
+```sh
+cd ansible\inventory
+vi vars.yaml
+```
+Replace - email, domain name, and version of gitlab as per your requirement.
+
+ 
+**Infra-Provisioning & GitLab Deployment**
+
+
+```sh
+cd terraform\environments\Dev
+terraform init
+terraform plan
+terraform apply
+```
+
+**Gitaly and praefact nodes configuration**
+ 
+
+```sh
+cd ansible\playbooks
+ansible-playbook -i inventory all.yml 
+```
 
 
 
@@ -147,6 +172,3 @@ This project accepts contributions to existing features. Refer to the [Contribut
 
 ## Licensing
 
-Requires [GitLab Premium](https://about.gitlab.com/pricing/) or above.
-
-Released under the [GitLab EE license](LICENSE).
