@@ -31,6 +31,13 @@ The requirements for the Toolkit are as follows:
 
 ## Tools used
 
+| Phase | Tools & Technologies |
+| :-------- | :------- |
+|  Infrastructure Provisioning        | `Terraform, Cloud Provider (AWS)` |
+| Configuration Management          | Ansible |
+| `Containerization and Orchestration`| `Kubernetes` |
+| `Infrastructure Provisioning`      | `Terraform, Cloud Provider (AWS)` |
+| `Infrastructure Provisioning`      | `Terraform, Cloud Provider (AWS)` |
 
 ## Documentation
 
@@ -61,12 +68,7 @@ The requirements for the Toolkit are as follows:
 
 ## How It Works
 
-
-
-![MicrosoftTeams-image (85)](https://github.com/kiranbakale/AMI-Readme/assets/46279617/0246fdfa-7694-4576-b7e7-9bddf7a3e295)
-
-
-
+![MicrosoftTeams-image (86)](https://github.com/kiranbakale/AMI-Readme/assets/46279617/1e0b3040-f860-4df8-9990-4e5f6f90df8a)
 
 - The Cloud Native GitLab architecture on Amazon EKS (Elastic Kubernetes Service) is designed to support a large-scale deployment of GitLab for ~5000 users.
 - The hybrid installation of GitLab combines predominantly stateless components (Webservice, Sidekiq) with a few stateful ones (Gitaly, Praefect). Stateless components will be deployed in a Kubernetes (EKS) cluster, while stateful components will utilize traditional compute resources (EC2 instances) for persistence.
