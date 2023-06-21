@@ -29,6 +29,9 @@ The requirements for the Toolkit are as follows:
 - Types of environment: The Toolkit is designed to deploy the official GitLab [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) (Standard or Cloud Native Hybrid) as environments.
   - The Toolkit requires [NFS to propagate certain files](docs/environment_advanced.md#nfs-options). This can be on a dedicated node, or it will dynamically set this up on other nodes as required.
 
+## Tools used
+
+
 ## Documentation
 
 - [GitLab Environment Toolkit - Quick Start Guide](docs/environment_quick_start_guide.md)
@@ -58,6 +61,13 @@ The requirements for the Toolkit are as follows:
 
 ## How It Works
 
+
+
+![MicrosoftTeams-image (85)](https://github.com/kiranbakale/AMI-Readme/assets/46279617/0246fdfa-7694-4576-b7e7-9bddf7a3e295)
+
+
+
+
 - The Cloud Native GitLab architecture on Amazon EKS (Elastic Kubernetes Service) is designed to support a large-scale deployment of GitLab for ~5000 users.
 - The hybrid installation of GitLab combines predominantly stateless components (Webservice, Sidekiq) with a few stateful ones (Gitaly, Praefect). Stateless components will be deployed in a Kubernetes (EKS) cluster, while stateful components will utilize traditional compute resources (EC2 instances) for persistence.
 - Additionally, NGINX, Task Runner, Migrations, Prometheus, and Grafana will also run on the EKS cluster. The database will be hosted on RDS, and cache/queue services will leverage ElastiCache.
@@ -68,6 +78,37 @@ The requirements for the Toolkit are as follows:
 
 
 ## DEVOPS WORKFLOW
+### INFRA PROVISIONING USING TERRAFORM
+-	Set up a bastion host to establish secure connections between the EKS cluster and the private instances.
+-	Provision the necessary infrastructure resources, including networking, storage, EKS, EC2, RDS, IAM roles, ELB, Elastic Cache, security, Gitaly and Praefect nodes.
+-	Setup the environments configs.
+-	‘ref_arch’ module per host provider and for each there are 3 config files to set up
+-	‘main.tf’ - Contains the main Terraform connection settings such as cloud provider or state backend.
+-	 `environment.tf` - `ref_arch` module configuration (machine count or sizes for example).
+-	`variables.tf` - Variable definitions.
+-	After configuring the settings, apply Terraform to provision all the necessary resources.
+
+### CONFIGURATION MANAGEMENT
+-	Employ Ansible to configure and manage the components of GitLab.
+-	Develop Ansible roles to automate the configuration of Gitaly and Praefect nodes.
+-	Setup the inventory and config
+-	Create vars.yml in inventory and retrieve all the passwords, connection settings variables from the secret manager.
+-	From the playbook create the kubernetes secrets for gitaly_token, praefect_internal_token, Praefect_external_token, gitlab_shell_token, postgres_password to configure the same tokens in the gitaly and praefect nodes
+-	Run ‘ansible-playbook’ with inventory against ‘all.yml’ playbook
+
+### CONTAINERIZATION AND ORCHESTRATION
+-	Deploy GitLab as containers in a Kubernetes cluster using Helm charts and Gitlab runner to be deployed on fargate.
+-	Deploy the Helm chart using an Ansible playbook by providing a custom configuration values file that merges with the existing default template.
+
+### NETWORKING AND SECURITY
+- To expose ingress controller’s endpoint to the external users, configure the hosted zone.
+-	Implement Guard Duty in a cloud-native deployment of GitLab using Helm is to enhance the security posture of your GitLab environment.
+
+
+
+
+
+
 
 ## Troubleshooting
 
