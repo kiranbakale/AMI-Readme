@@ -194,9 +194,5 @@ Due to complexities, permutations or areas best left to be configured directly w
 
 The above areas are better tackled via [Custom Config](docs/environment_advanced.md#custom-config).
 
-### Contributions
 
-This project accepts contributions to existing features. Refer to the [Contributing guide](CONTRIBUTING.md) for more information.
-
-## Licensing
 
