@@ -1,6 +1,16 @@
+
 # AMI GitLab Modernization
 
 ![MicrosoftTeams-image (89)](https://github.com/kiranbakale/AMI-Readme/assets/46279617/3d82fa9f-cac2-452c-8276-70810b5d0976)
+
+<p align="center">
+  <img src ="https://img.shields.io/badge/GitLab-FFFFFF.svg?style&logo=GitLab&logoColor=Orange"/>
+  <img src ="https://img.shields.io/badge/Terraform-412991.svg?style&logo=Terraform&logoColor=white"/>
+  <img src ="https://img.shields.io/badge/Ansible-000000.svg?style&logo=Ansible&logoColor=white"/>
+  <img src ="https://img.shields.io/badge/kubernetes-033695.svg?style&logo=kubernetes&logoColor=white"/>
+  
+</p>  
+
 
 
 Created and maintained by the Minfy team, the Guide supports the following features:
@@ -33,12 +43,12 @@ If you are interested in using the Guide, it's strongly recommended that you ind
 
 The requirements for the Guide are as follows:
 
-- GitLab version: `15.10.0` and upwards.
+- GitLab version: `15.0.7` and upwards.
 - OS: Canonical, Ubuntu, 22.04 LTS, Debian 11, RHEL 8, Amazon Linux 2
   - At this time the Guide only supports clean OS installations..
   - ARM based hardware is supported for Omnibus environments
 - Types of environment: The Guide is designed to deploy the official GitLab [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) (Standard or Cloud Native Hybrid) as environments.
-  - The Guide requires [NFS to propagate certain files](docs/environment_advanced.md#nfs-options). This can be on a dedicated node, or it will dynamically set this up on other nodes as required.
+ 
 
 ## Tools used
 
@@ -58,8 +68,7 @@ The requirements for the Guide are as follows:
 
  
 
-
-- The Cloud Native GitLab architecture on Amazon EKS (Elastic Kubernetes Service) is designed to support a large-scale deployment of GitLab for ~5000 users.
+- The Cloud Native GitLab architecture on Amazon EKS (Elastic Kubernetes Service) is designed to supports large-scale deployment of GitLab for ~5000 users.
 - The hybrid installation of GitLab combines predominantly stateless components (Webservice, Sidekiq) with a few stateful ones (Gitaly, Praefect). Stateless components will be deployed in a Kubernetes (EKS) cluster, while stateful components will utilize traditional compute resources (EC2 instances) for persistence.
 - Additionally, NGINX, Task Runner, Migrations, Prometheus, and Grafana will also run on the EKS cluster. The database will be hosted on RDS, and cache/queue services will leverage ElastiCache.
 -	GitLab is deployed as a set of containerized services within a Kubernetes cluster, leveraging the scalability and flexibility of EKS.
