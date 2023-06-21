@@ -20,6 +20,24 @@ If you are interested in using the Toolkit, it's strongly recommended that you i
 
 ## Requirements
 
+### Infrastructure Requirements
+| Service | Node | Configuration | AWS |
+| :-------- | :------- | :------- | :------- | 
+|  External load balancing node | 1 | 2vCPU,1.8 GB memory | C5. large |
+|   Internal load balancing node | 1 | 2vCPU,1.8 GB memory | C5. large |
+|   Gitaly | 3 | 8vCPU, 30GB memory | M5.2xlarge |
+|praefect | 3 | 2vCPU, 1.8GB memory | C5.large |
+|   Sidekiq | 4 | 2vCPU,7.5 GB memory | M5. large |
+|   Gitlab Rails | 3 | 16vCPU,14.4 GB memory | C5.4xlarge |
+
+
+
+
+
+
+
+
+
 The requirements for the Toolkit are as follows:
 
 - GitLab version: `15.10.0` and upwards.
@@ -33,32 +51,14 @@ The requirements for the Toolkit are as follows:
 
 | Phase | Tools & Technologies |
 | :-------- | :------- |
-|  Infrastructure Provisioning        | `Terraform, Cloud Provider (AWS)` |
+|  Infrastructure Provisioning        | Terraform, Cloud Provider (AWS) |
 | Configuration Management          | Ansible |
-| `Containerization and Orchestration`| `Kubernetes` |
-| `Infrastructure Provisioning`      | `Terraform, Cloud Provider (AWS)` |
-| `Infrastructure Provisioning`      | `Terraform, Cloud Provider (AWS)` |
+| Containerization and Orchestration | Kubernetes |
+| Deployment and Orchestration      | Helm, AWS Code Pipeline |
+| Backup     | Gitlab Backup and Restore |
 
-## Documentation
 
-- [GitLab Environment Toolkit - Quick Start Guide](docs/environment_quick_start_guide.md)
-- [GitLab Environment Toolkit - Preparing the environment](docs/environment_prep.md)
-- [GitLab Environment Toolkit - Provisioning the environment with Terraform](docs/environment_provision.md)
-- [GitLab Environment Toolkit - Configuring the environment with Ansible](docs/environment_configure.md)
-- [GitLab Environment Toolkit - Advanced - Custom Config / Tasks / Files, Data Disks, Advanced Search, Container Registry and more](docs/environment_advanced.md)
-- [GitLab Environment Toolkit - Advanced - Cloud Native Hybrid](docs/environment_advanced_hybrid.md)
-- [GitLab Environment Toolkit - Advanced - Component Cloud Services / Custom (Load Balancers, PostgreSQL, Redis)](docs/environment_advanced_services.md)
-- [GitLab Environment Toolkit - Advanced - SSL](docs/environment_advanced_ssl.md)
-- [GitLab Environment Toolkit - Advanced - Network Setup](docs/environment_advanced_network.md)
-- [GitLab Environment Toolkit - Advanced - Geo](docs/environment_advanced_geo.md)
-- [GitLab Environment Toolkit - Advanced - Monitoring](docs/environment_advanced_monitoring.md)
-- [GitLab Environment Toolkit - Upgrades (Toolkit, Environment)](docs/environment_upgrades.md)
-- [GitLab Environment Toolkit - Considerations After Deployment - Backups, Security](docs/environment_post_considerations.md)
-- [GitLab Environment Toolkit - Troubleshooting](docs/environment_troubleshooting.md)
 
-### Config Examples
-
-[Full config examples are available for select Reference Architectures](examples).
 
 ## How To Use
 
