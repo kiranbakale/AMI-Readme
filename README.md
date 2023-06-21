@@ -53,10 +53,10 @@ The requirements for the Guide are as follows:
 
 
 ## How It Works
+  ![MicrosoftTeams-image (87)](https://github.com/kiranbakale/AMI-Readme/assets/46279617/d4e76442-35f5-4230-b2e6-78d6ab6a2ddc)
 
-<div align="center">
-![MicrosoftTeams-image (86)](https://github.com/kiranbakale/AMI-Readme/assets/46279617/1e0b3040-f860-4df8-9990-4e5f6f90df8a)
-</div>
+
+ 
 
 
 - The Cloud Native GitLab architecture on Amazon EKS (Elastic Kubernetes Service) is designed to support a large-scale deployment of GitLab for ~5000 users.
