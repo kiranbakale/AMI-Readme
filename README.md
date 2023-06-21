@@ -58,12 +58,19 @@ The requirements for the Toolkit are as follows:
 | Backup     | Gitlab Backup and Restore |
 
 
-
-
 ## How To Use
 
+**Setup the Environment:**
+Install Required Dependencies
 
+```sh
 
+**Clone the repository:**
+
+```sh
+git clone https://Github_url
+cd ami-gitlab-modernization
+```
 --
 
 ## How It Works
