@@ -12,11 +12,9 @@ Created and maintained by the Minfy team, the Guide supports the following featu
 
 ## Before You Start
 
-It's recommended that users have a good working knowledge of Terraform, Ansible and GitLab administration as well as running applications at scale in production before using the Toolkit.
+It's recommended that users have a good working knowledge of Terraform, Ansible and GitLab administration as well as running applications at scale in production.While this Guide does aim to streamline the process notably, the same underlying challenges still apply when running applications at scale. 
 
-While the Toolkit does aim to streamline the process notably, the same underlying challenges still apply when running applications at scale. For users who aren't in this position, our [Professional Services](https://about.gitlab.com/services/#implementation-services) team offers implementation services, but for those who want a more managed solution long term, it's recommended to instead explore our other offerings such as [GitLab SaaS](https://docs.gitlab.com/ee/subscriptions/gitlab_com/) or [GitLab-Dedicated](https://about.gitlab.com/dedicated/).
-
-If you are interested in using the Toolkit, it's strongly recommended that you independently review the Toolkit in full to ensure it meets your requirements, especially around [security](docs/environment_post_considerations.md#security). [Further manual setup](docs/environment_post_considerations.md) will also still likely be required based on your specific requirements.
+If you are interested in using the Guide, it's strongly recommended that you independently review the Guide in full to ensure it meets your requirements, especially around [security](docs/environment_post_considerations.md#security). [Further manual setup](docs/environment_post_considerations.md) will also still likely be required based on your specific requirements.
 
 ## Requirements
 
@@ -33,14 +31,14 @@ If you are interested in using the Toolkit, it's strongly recommended that you i
 
 
 
-The requirements for the Toolkit are as follows:
+The requirements for the Guide are as follows:
 
 - GitLab version: `15.10.0` and upwards.
 - OS: Canonical, Ubuntu, 22.04 LTS, Debian 11, RHEL 8, Amazon Linux 2
-  - At this time the Toolkit only supports clean OS installations..
+  - At this time the Guide only supports clean OS installations..
   - ARM based hardware is supported for Omnibus environments
-- Types of environment: The Toolkit is designed to deploy the official GitLab [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) (Standard or Cloud Native Hybrid) as environments.
-  - The Toolkit requires [NFS to propagate certain files](docs/environment_advanced.md#nfs-options). This can be on a dedicated node, or it will dynamically set this up on other nodes as required.
+- Types of environment: The Guide is designed to deploy the official GitLab [Reference Architectures](https://docs.gitlab.com/ee/administration/reference_architectures) (Standard or Cloud Native Hybrid) as environments.
+  - The Guide requires [NFS to propagate certain files](docs/environment_advanced.md#nfs-options). This can be on a dedicated node, or it will dynamically set this up on other nodes as required.
 
 ## Tools used
 
@@ -56,7 +54,10 @@ The requirements for the Toolkit are as follows:
 
 ## How It Works
 
+<div align="center">
 ![MicrosoftTeams-image (86)](https://github.com/kiranbakale/AMI-Readme/assets/46279617/1e0b3040-f860-4df8-9990-4e5f6f90df8a)
+</div>
+
 
 - The Cloud Native GitLab architecture on Amazon EKS (Elastic Kubernetes Service) is designed to support a large-scale deployment of GitLab for ~5000 users.
 - The hybrid installation of GitLab combines predominantly stateless components (Webservice, Sidekiq) with a few stateful ones (Gitaly, Praefect). Stateless components will be deployed in a Kubernetes (EKS) cluster, while stateful components will utilize traditional compute resources (EC2 instances) for persistence.
@@ -96,35 +97,40 @@ The requirements for the Toolkit are as follows:
 
 
 ## How To Use
+ 
 
 **Setup the Environment:**
+ 
 
 Use Installation guides given below to install dependencies based upon your operating system.
 - [Python](https://www.python.org/downloads/)
 - [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 - [Kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html)
 - [helm](https://helm.sh/docs/intro/install/)
-- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) 
 
 
 **Clone the repository:**
+ 
 
 ```sh
 git clone https://Github_url
 cd ami-gitlab-modernization
 ```
+ 
 
-**Modifying Configurations**  
+**Modifying Configurations**   
 
 ```sh
 cd ansible\inventory
 vi vars.yaml
 ```
-Replace - email, domain name, and version of gitlab as per your requirement.
 
  
-**Infra-Provisioning & GitLab Deployment**
+Replace - email, domain name, and version of gitlab as per your requirement. 
 
+**Infra-Provisioning & GitLab Deployment**
+ 
 
 ```sh
 cd terraform\environments\Dev
@@ -132,27 +138,39 @@ terraform init
 terraform plan
 terraform apply
 ```
+ 
 
 **Gitaly and praefact nodes configuration**
- 
 
 ```sh
 cd ansible\playbooks
 ansible-playbook -i inventory all.yml 
 ```
 
+ 
+
+**Accessing GitLab**
+ 
+Use username:root, for password run below command:
+
+ 
+```sh
+kubectl get secret gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo
+``` 
+
+Use "gitlab.your_domain" as url for Accesssing GitLab UI And Sigin using credentials retrieved.
 
 
 
 ## Troubleshooting
 
-Please refer to our [Troubleshooting guide](docs/environment_troubleshooting.md) if you are having issues deploying an environment with the Toolkit.
+Please refer to our [Troubleshooting guide](docs/environment_troubleshooting.md) if you are having issues deploying an environment with the Guide.
 
-[Technical support](https://about.gitlab.com/support/) for troubleshooting issues is only available for the current Toolkit major version.
+[Technical support](https://about.gitlab.com/support/) for troubleshooting issues is only available for the current Guide major version.
 
 ## Feature Requests
 
-Feature Requests can be raised in [our tracker](https://gitlab.com/gitlab-org/gitlab-environment-toolkit/-/issues). Please check beforehand to see if a request already exists (and upvote in that case).
+Feature Requests can be raised in [our tracker](https://gitlab.com/gitlab-org/gitlab-environment-Guide/-/issues). Please check beforehand to see if a request already exists (and upvote in that case).
 
 ### Features that won't be covered
 
