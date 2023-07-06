@@ -1,7 +1,7 @@
 
 # AMI GitLab Modernization
 
-![MicrosoftTeams-image (89)](https://user-images.githubusercontent.com/46279617/247499513-3d82fa9f-cac2-452c-8276-70810b5d0976.png)
+![AMI-Gitlab-Modernization](https://user-images.githubusercontent.com/46279617/247499513-3d82fa9f-cac2-452c-8276-70810b5d0976.png)
 
 <p align="center">
   <img src ="https://img.shields.io/badge/GitLab-FFFFFF.svg?style&logo=GitLab&logoColor=Orange"/>
@@ -64,7 +64,7 @@ The requirements for the Guide are as follows:
 
 
 ## How It Works
-  ![MicrosoftTeams-image (87)](https://user-images.githubusercontent.com/46279617/247542537-d4e76442-35f5-4230-b2e6-78d6ab6a2ddc.png)
+  ![AMI-Gitlab-Modernization-tools-architecture](https://user-images.githubusercontent.com/46279617/247542537-d4e76442-35f5-4230-b2e6-78d6ab6a2ddc.png)
 
 
  
